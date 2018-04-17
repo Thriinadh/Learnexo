@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mFacebookBtn;
     private TextView mRegisterBtn;
 
+    String name = "Steve";
 
     private String user_id;
     private GoogleApiClient mGoogleApiClient;
