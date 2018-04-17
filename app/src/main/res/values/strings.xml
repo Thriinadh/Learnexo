@@ -1,0 +1,114 @@
+<resources>
+    <string name="app_name">Learnexo</string>
+    <string name="facebook_app_id">1843588632607184</string>
+    <string name="fb_login_protocol_scheme">fb1843588632607184</string>
+
+    <string name="email"><font size="10">Email address</font></string>
+    <string name="pass"><font size="10">Password</font></string>
+
+    <string name="tool_title"><b>Learexo</b></string>
+
+    <string name="setup">Account setup</string>
+    <string name="evolutionary_computation">Evolutionary Computation</string>
+    <string name="image_processing">Image Processing</string>
+    <string name="speech_recognition">Speech Recognition</string>
+    <string name="robotics">Robotics</string>
+    <string name="computer_vision">Computer Vision</string>
+    <string name="deep_learning">Deep Learning</string>
+    <string name="neural_networks">Neural Networks</string>
+    <string name="machine_learning">Machine Learning</string>
+    <string name="artificial">Artificial</string>
+    <string name="telecommunication_networks">Telecommunication Networks</string>
+    <string name="survival_networks">Survival Networks</string>
+    <string name="switched_network_management">Switched Network Management</string>
+    <string name="graph_theory">Graph Theory</string>
+    <string name="networking_services">Networking services</string>
+    <string name="introduction_to_wireless_networks">Introduction to wireless networks</string>
+    <string name="internet_protocols">Internet Protocols</string>
+    <string name="computer_networks">Computer Networks</string>
+    <string name="networking">Networking</string>
+    <string name="firebase">Firebase</string>
+    <string name="big_data">Big Data</string>
+    <string name="cassandra">Cassandra</string>
+    <string name="mongodb">MongoDB</string>
+    <string name="hadoop">Hadoop</string>
+    <string name="nosql">NoSQL</string>
+    <string name="sql">SQL</string>
+    <string name="db_fundamentals">DB Fundamentals</string>
+    <string name="databases">Databases</string>
+    <string name="design_patterns">Design Patterns</string>
+    <string name="objective_c">Objective C</string>
+    <string name="android">Android</string>
+    <string name="ruby">Ruby</string>
+    <string name="c_language">C languahe</string>
+    <string name="scala">Scala</string>
+    <string name="python">Python</string>
+    <string name="java">Java</string>
+    <string name="programming">Programming</string>
+    <string name="distributed_systems">Distributed Systems</string>
+    <string name="microprocessors">Microprocessors</string>
+    <string name="operations_research">Operations Research</string>
+    <string name="digital_logic_design">Digital Logic Design</string>
+    <string name="m_f_c_s">Mathematical foundations of computer science</string>
+    <string name="software_engineering">Software Engineering</string>
+    <string name="operating_systems">Operating Systems</string>
+    <string name="compiler_design">Compiler Design</string>
+    <string name="fundamentalss">Fundamentals</string>
+    <string name="header_text">You are almost done! Select your favorite subjects to personalize your feed.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="feed_text">This is Feed</string>
+    <string name="share_info">Share Info</string>
+    <string name="ask_a_query">Ask a Query</string>
+    <string name="post_a_challenge">Post a Challenge</string>
+    <string name="lesson_hint">Enter information or lesson and share it with other people</string>
+
+    <string name="subject_tag">TAG SUBJECT</string>
+    <string name="username">Username</string>
+    <string name="posted_time">Posted time</string>
+    <string name="tested_text">Posted Content of text jhfkjsdf want marine a linguistic f front so that it would loose in great pathetic lowerit a</string>
+    <string name="see_more">See more</string>
+    <string name="feed">Feed</string>
+    <string name="learnexo">Learnexo</string>
+    <string name="computer_science_engineering">Computer Science Engineering</string>
+    <string name="fundamentals">Fundamentals</string>
+    <string name="reinventing_education">Reinventing Education</string>
+    <string name="login">Login</string>
+    <string name="or">OR</string>
+    <string name="facebook">Facebook</string>
+    <string name="google">Google</string>
+    <string name="company_name">Company name</string>
+    <string name="not_a_member">Not a member?</string>
+    <string name="sign_up">Sign up</string>
+    <string name="options">Options</string>
+    <string name="textview">TextView</string>
+    <string name="image_posted">Image posted</string>
+    <string name="learnexo_header">Learnexo</string>
+    <string name="name_hint">Name</string>
+    <string name="email_address_hint">Email Address</string>
+    <string name="password_hint">Password</string>
+    <string name="sign_up_reg">Sign up</string>
+    <string name="undertaking">By Signing up, I agree to Learnexo\'s</string>
+    <string name="t_amp_c"><![CDATA[T&C]]></string>
+    <string name="nick_name">Nick Name</string>
+    <string name="save_account_settings">Save account settings</string>
+    <string name="more">More</string>
+
+    <string-array name="subject_names">
+        <item>Java</item>
+        <item>Algorithms</item>
+        <item>Data structures</item>
+        <item>Android</item>
+        <item>Machine Learning</item>
+        <item>Mongo DB</item>
+        <item>Scala</item>
+        <item>Python</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_learners_fragment">Hello Learner\'s fragment</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>

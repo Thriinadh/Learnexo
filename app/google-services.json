@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "144047843429",
+    "firebase_url": "https://authentication-5ca13.firebaseio.com",
+    "project_id": "authentication-5ca13",
+    "storage_bucket": "authentication-5ca13.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:144047843429:android:5083e31e12597a26",
+        "android_client_info": {
+          "package_name": "com.learnexo.main"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "144047843429-ecakvdab46epb4ei1e3jpsm1mgiach8j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.learnexo.main",
+            "certificate_hash": "dd24ab969653ccaf8cb0176565db9ce953d4230f"
+          }
+        },
+        {
+          "client_id": "144047843429-k0rapacjciufn89akdv6302c1unasnim.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.learnexo.main",
+            "certificate_hash": "48880330397ab133d98aac436ca0489ea2c44bf9"
+          }
+        },
+        {
+          "client_id": "144047843429-jfa65kvi5aldm44vnbr9n4b54pme4jae.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMC9kYX_eQqjfrVREb28hSETRwLXHsTeo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "144047843429-jfa65kvi5aldm44vnbr9n4b54pme4jae.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

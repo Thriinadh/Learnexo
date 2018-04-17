@@ -1,0 +1,17 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/subject_btn"
+        style="?android:buttonBarButtonStyle"
+        android:layout_width="132dp"
+        android:layout_height="92dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:background="#99cc00"
+        android:textColor="@color/white" />
+
+</LinearLayout>

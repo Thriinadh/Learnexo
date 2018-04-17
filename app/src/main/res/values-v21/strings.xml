@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="company_name">Company name</string>
+    <string name="google">Google</string>
+    <string name="not_a_member">Not a member?</string>
+    <string name="sign_up">Sign up</string>
+</resources>
