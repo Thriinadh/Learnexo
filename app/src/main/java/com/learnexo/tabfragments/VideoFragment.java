@@ -7,7 +7,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -96,7 +98,7 @@ public class VideoFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull SubBranchHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final SubBranchHolder holder, int position) {
 
             SubBranch subBranch =  mSubBranches.get(position);
 
@@ -109,6 +111,30 @@ public class VideoFragment extends Fragment {
             LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
             holder.mSubjectRecycler.setLayoutManager(layoutManager);
             holder.mSubjectRecycler.setAdapter(subjectAdapter);
+
+            holder.mSubjectRecycler.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+                @Override
+                public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                    int action = e.getAction();
+                    switch (action) {
+                        case MotionEvent.ACTION_MOVE:
+                            rv.getParent().requestDisallowInterceptTouchEvent(true);
+                            break;
+                    }
+                    return false;
+                }
+
+                @Override
+                public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+                }
+
+                @Override
+                public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+                }
+            });
+
         }
 
         @Override
@@ -124,6 +150,7 @@ public class VideoFragment extends Fragment {
         public SubjectHolder(View view) {
             super(view);
             mSubjectBtn = view.findViewById(R.id.subject_btn);
+
         }
 
         public void bind(Subject subject) {

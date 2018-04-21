@@ -40,6 +40,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -206,29 +207,36 @@ public class FeedFragment extends Fragment {
                 if(queryDocumentSnapshots != null)
                     for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
 
-                        if (doc.getType() == DocumentChange.Type.ADDED) {
+//                        if (doc.getType() == DocumentChange.Type.ADDED) {
+//
+//                            FeedSharePostModel feedSharePostModel = doc.getDocument().toObject(FeedSharePostModel.class);
+//                            feed_items_list.add(feedSharePostModel);
+//                            feedRecyclerAdapter.notifyDataSetChanged();
+//
+//                        }
 
-                            FeedSharePostModel feedSharePostModel = doc.getDocument().toObject(FeedSharePostModel.class);
-                            feed_items_list.add(feedSharePostModel);
-                            feedRecyclerAdapter.notifyDataSetChanged();
+                        FeedSharePostModel feedSharePostModel;
+                        switch (doc.getType()) {
 
+                            case ADDED:
+                                feedSharePostModel = doc.getDocument().toObject(FeedSharePostModel.class);
+                                feed_items_list.add(feedSharePostModel);
+                                feedRecyclerAdapter.notifyDataSetChanged();
+                                break;
+
+                            case REMOVED:
+                                feedSharePostModel = doc.getDocument().toObject(FeedSharePostModel.class);
+                                feed_items_list.remove(feedSharePostModel);
+                                feedRecyclerAdapter.notifyDataSetChanged();
+                                break;
+
+                            case MODIFIED:
+                                feedSharePostModel = doc.getDocument().toObject(FeedSharePostModel.class);
+                                feed_items_list.remove(feedSharePostModel);
+                                feedRecyclerAdapter.notifyDataSetChanged();
+                                break;
                         }
 
-                        if (doc.getType() == DocumentChange.Type.REMOVED) {
-
-                            FeedSharePostModel feedSharePostModel = doc.getDocument().toObject(FeedSharePostModel.class);
-                            feed_items_list.remove(feedSharePostModel);
-                            feedRecyclerAdapter.notifyDataSetChanged();
-
-                        }
-
-                        if (doc.getType() == DocumentChange.Type.MODIFIED) {
-
-                            FeedSharePostModel feedSharePostModel = doc.getDocument().toObject(FeedSharePostModel.class);
-                            feed_items_list.add(feedSharePostModel);
-                            feedRecyclerAdapter.notifyDataSetChanged();
-
-                        }
                     }
 
             }
@@ -259,7 +267,9 @@ public class FeedFragment extends Fragment {
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.default_photo);
 
-                        Glide.with(getActivity()).load(image).apply(placeholderRequest).into(userCircleIView);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            Glide.with(Objects.requireNonNull(getActivity())).load(image).apply(placeholderRequest).into(userCircleIView);
+                        }
 
                     }
 
@@ -299,9 +309,9 @@ public class FeedFragment extends Fragment {
     }
 
     public void hideCardview() {
-
-        cardView.setVisibility(View.INVISIBLE);
-        flag =true;
-
+        if(cardView != null) {
+            cardView.setVisibility(View.INVISIBLE);
+            flag = true;
+        }
     }
 }

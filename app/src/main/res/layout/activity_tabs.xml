@@ -10,13 +10,13 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/white"
             app:titleTextAppearance="@style/ActionBar.nameText"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/customPopupStyle">
@@ -25,7 +25,7 @@
                 android:id="@+id/toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="18sp"
                 android:layout_marginStart="18dp"
                 android:layout_marginLeft="18dp"/>
@@ -36,8 +36,9 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="@drawable/tablayout_border"
-            app:tabIndicatorColor="@color/red" />
+            app:tabIndicatorColor="@color/red"
+            android:background="@color/white"/>
+        <!--android:background="@drawable/tablayout_border"-->
 
     </android.support.design.widget.AppBarLayout>
 

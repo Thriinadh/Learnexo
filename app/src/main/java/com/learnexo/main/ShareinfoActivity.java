@@ -72,6 +72,7 @@ public class ShareinfoActivity extends AppCompatActivity {
     private AppCompatSpinner spinner;
     private Toolbar toolbar;
     private String selectedSub;
+    public String postId;
 
     private StorageReference storageReference;
     private FirebaseAuth mAuth;
@@ -318,30 +319,27 @@ public class ShareinfoActivity extends AppCompatActivity {
 
     public void saveToFirebaseGotoFeed() {
 
-       final Task<DocumentReference> documentReferenceTask= firebaseFirestore.collection("Posts").add(postMap);
+       final Task<DocumentReference> documentReferenceTask = firebaseFirestore.collection("Posts").add(postMap);
 
                 documentReferenceTask.addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
-
                 if (task.isSuccessful()) {
                     gotoFeedTab();
                 } else {
-
                     String error = task.getException().getMessage();
                     Toast.makeText(ShareinfoActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
-
                 }
                 shareProgressBar.setVisibility(View.INVISIBLE);
 
             }
 
                     private void gotoFeedTab() {
-                        //String postId = documentReferenceTask.getResult().getId();
+                        postId = documentReferenceTask.getResult().getId();
 
                         Intent feedIntent = TabsActivity.newIntent(ShareinfoActivity.this, FEED_FRAG_NO);
                         startActivity(feedIntent);
-//                        finish();
+                        finish();
                     }
                 });
 
@@ -395,7 +393,7 @@ public class ShareinfoActivity extends AppCompatActivity {
                         constraintKeyboardIn.setVisibility(View.INVISIBLE);
                         constraintKeyboard.setVisibility(View.VISIBLE);
                     }
-                }, 2000);
+                }, 1000);
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
