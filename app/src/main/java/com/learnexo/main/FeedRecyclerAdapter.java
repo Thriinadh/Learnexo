@@ -24,7 +24,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.learnexo.model.FeedSharePostModel;
+import com.learnexo.model.feed.FeedSharePostModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

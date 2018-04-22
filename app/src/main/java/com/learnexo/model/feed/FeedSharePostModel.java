@@ -1,4 +1,4 @@
-package com.learnexo.model;
+package com.learnexo.model.feed;
 
 
 import java.util.Date;

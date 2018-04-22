@@ -1,6 +1,6 @@
 package com.learnexo.model.chapter;
 
-import com.learnexo.model.VideoLesson;
+import com.learnexo.model.video.VideoLesson;
 
 import java.util.List;
 

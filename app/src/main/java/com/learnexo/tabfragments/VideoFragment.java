@@ -17,8 +17,8 @@ import android.widget.Toast;
 
 import com.learnexo.main.PlayVideoActivity;
 import com.learnexo.main.R;
-import com.learnexo.model.SubBranch;
-import com.learnexo.model.Subject;
+import com.learnexo.model.core.SubBranch;
+import com.learnexo.model.core.Subject;
 
 import java.util.ArrayList;
 import java.util.List;

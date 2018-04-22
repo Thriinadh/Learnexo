@@ -1,4 +1,4 @@
-package com.learnexo.model;
+package com.learnexo.model.video;
 
 public class VideoLesson {
 

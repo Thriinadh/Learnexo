@@ -15,12 +15,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.learnexo.main.R;
-import com.learnexo.model.LearnersModel;
+import com.learnexo.model.connect.LearnersModel;
 
 import java.util.List;
 
-import static com.learnexo.model.LearnersModel.LINE_TYPE;
-import static com.learnexo.model.LearnersModel.OPTION_TYPE;
+import static com.learnexo.model.connect.LearnersModel.LINE_TYPE;
+import static com.learnexo.model.connect.LearnersModel.OPTION_TYPE;
 
 /**
  * A simple {@link Fragment} subclass.

@@ -1,4 +1,4 @@
-package com.learnexo.model;
+package com.learnexo.model.core;
 
 import java.util.List;
 
