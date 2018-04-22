@@ -1,5 +1,5 @@
 package com.learnexo.model.user;
 
-class Pasword {
+class Password {
     private char[] password;
 }

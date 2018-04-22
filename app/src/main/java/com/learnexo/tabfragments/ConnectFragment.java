@@ -22,9 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConnectFragment extends Fragment implements View.OnClickListener {
-
-//    private ViewPager viewPager;
-//    private ViewPagerAdapter adapter;
     private Button learnersBtn;
     private Button mentorsBtn;
     private FrameLayout frameLayout;
@@ -50,13 +47,9 @@ public class ConnectFragment extends Fragment implements View.OnClickListener {
         learnersBtn.setOnClickListener(this);
         mentorsBtn.setOnClickListener(this);
 
-//        viewPager = view.findViewById(R.id.viewPager);
-//        setupViewPager(viewPager);
-
-        // Inflate the layout for this fragment
 
         if (savedInstanceState == null) {
-            getFragmentManager()
+            getChildFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_container, new LearnersFragment())
                     .commit();
@@ -65,14 +58,6 @@ public class ConnectFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-//    private void setupViewPager(ViewPager viewPager) {
-//        adapter = new ViewPagerAdapter(getFragmentManager());
-//
-//        adapter.addFragment(new LearnersFragment(), "ONE");
-//        adapter.addFragment(new MentorsFragment(), "TWO");
-//
-//        viewPager.setAdapter(adapter);
-//    }
 
     @Override
     public void onClick(View view) {
@@ -99,40 +84,10 @@ public class ConnectFragment extends Fragment implements View.OnClickListener {
     }
 
     public void replaceFragment(Fragment someFragment) {
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, someFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
-
-//    class ViewPagerAdapter extends FragmentPagerAdapter {
-//        private final List<Fragment> mFragmentList = new ArrayList<>();
-//        private final List<String> mFragmentTitleList = new ArrayList<>();
-//
-//        public ViewPagerAdapter(FragmentManager manager) {
-//            super(manager);
-//        }
-//
-//        @Override
-//        public Fragment getItem(int position) {
-//            return mFragmentList.get(position);
-//        }
-//
-//        @Override
-//        public int getCount() {
-//            return mFragmentList.size();
-//        }
-//
-//        @Override
-//        public CharSequence getPageTitle(int position) {
-//            // return null to display only the icon
-//            return null;
-//        }
-//
-//        public void addFragment(Fragment fragment, String title) {
-//            mFragmentList.add(fragment);
-//            mFragmentTitleList.add(title);
-//        }
-//    }
 
 }

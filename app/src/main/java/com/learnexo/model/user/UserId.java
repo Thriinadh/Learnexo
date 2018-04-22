@@ -2,6 +2,6 @@ package com.learnexo.model.user;
 
 import java.util.UUID;
 
-class UserId {
+public class UserId {
     private UUID userId;
 }

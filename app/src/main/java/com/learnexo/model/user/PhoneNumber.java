@@ -1,5 +1,5 @@
 package com.learnexo.model.user;
 
-class PhoneNumver {
+class PhoneNumber {
     private String phoneNumber;
 }
