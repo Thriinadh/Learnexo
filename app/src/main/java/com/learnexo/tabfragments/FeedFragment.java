@@ -24,7 +24,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.learnexo.main.FeedRecyclerAdapter;
-import com.learnexo.main.FeedSharePostModel;
+import com.learnexo.model.FeedSharePostModel;
 import com.learnexo.main.R;
 import com.learnexo.main.ShareinfoActivity;
 import com.google.android.gms.tasks.OnCompleteListener;

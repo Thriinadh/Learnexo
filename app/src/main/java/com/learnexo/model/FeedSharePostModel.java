@@ -1,4 +1,4 @@
-package com.learnexo.main;
+package com.learnexo.model;
 
 
 import java.util.Date;

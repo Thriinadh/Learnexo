@@ -1,4 +1,4 @@
-package com.learnexo.tabfragments;
+package com.learnexo.model.chapter;
 
 import java.util.List;
 

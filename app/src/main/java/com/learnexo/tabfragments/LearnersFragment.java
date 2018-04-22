@@ -1,7 +1,6 @@
 package com.learnexo.tabfragments;
 
 
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -16,12 +15,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.learnexo.main.R;
+import com.learnexo.model.LearnersModel;
 
 import java.util.List;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
-import static com.learnexo.tabfragments.LearnersModel.LINE_TYPE;
-import static com.learnexo.tabfragments.LearnersModel.OPTION_TYPE;
+import static com.learnexo.model.LearnersModel.LINE_TYPE;
+import static com.learnexo.model.LearnersModel.OPTION_TYPE;
 
 /**
  * A simple {@link Fragment} subclass.

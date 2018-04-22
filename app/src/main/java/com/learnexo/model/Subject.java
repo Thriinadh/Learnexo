@@ -1,8 +1,10 @@
-package com.learnexo.tabfragments;
+package com.learnexo.model;
+
+import com.learnexo.model.chapter.Chapter;
 
 import java.util.List;
 
-class Subject {
+public class Subject {
 
     private String name;
     private List<Chapter> chapterList;

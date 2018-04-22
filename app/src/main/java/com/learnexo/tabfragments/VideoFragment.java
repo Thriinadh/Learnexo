@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,6 +17,8 @@ import android.widget.Toast;
 
 import com.learnexo.main.PlayVideoActivity;
 import com.learnexo.main.R;
+import com.learnexo.model.SubBranch;
+import com.learnexo.model.Subject;
 
 import java.util.ArrayList;
 import java.util.List;

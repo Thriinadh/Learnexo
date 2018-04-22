@@ -1,8 +1,8 @@
-package com.learnexo.tabfragments;
+package com.learnexo.model;
 
 import java.util.List;
 
-class SubBranch {
+public class SubBranch {
 
     private String name;
     private List<Subject> subjectList;

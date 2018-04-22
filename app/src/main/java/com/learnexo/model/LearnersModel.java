@@ -1,4 +1,4 @@
-package com.learnexo.tabfragments;
+package com.learnexo.model;
 
 public class LearnersModel {
 

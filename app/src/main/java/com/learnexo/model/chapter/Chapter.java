@@ -1,8 +1,10 @@
-package com.learnexo.tabfragments;
+package com.learnexo.model.chapter;
+
+import com.learnexo.model.VideoLesson;
 
 import java.util.List;
 
-class Chapter {
+public class Chapter {
 
     private String name;
     private List<VideoLesson> videoLessons;

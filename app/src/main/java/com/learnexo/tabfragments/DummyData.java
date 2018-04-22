@@ -1,5 +1,7 @@
 package com.learnexo.tabfragments;
 
+import com.learnexo.model.LearnersModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
