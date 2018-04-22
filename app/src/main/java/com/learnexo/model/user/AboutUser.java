@@ -1,9 +1,6 @@
 package com.learnexo.model.user;
 
-
-public class UserData {
+class AboutUser {
     private UserId userId;
-
-
-
+    private String aboutUser;
 }

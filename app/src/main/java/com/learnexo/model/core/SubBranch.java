@@ -5,7 +5,7 @@ import java.util.List;
 public class SubBranch {
 
     private String name;
-    private List<Subject> subjectList;
+    private List<Topic> topicList;
 
     public String getName() {
         return name;
@@ -15,11 +15,11 @@ public class SubBranch {
         this.name = name;
     }
 
-    public List<Subject> getSubjectList() {
-        return subjectList;
+    public List<Topic> getTopicList() {
+        return topicList;
     }
 
-    public void setSubjectList(List<Subject> subjectList) {
-        this.subjectList = subjectList;
+    public void setTopicList(List<Topic> topicList) {
+        this.topicList = topicList;
     }
 }

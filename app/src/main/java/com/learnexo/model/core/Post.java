@@ -12,4 +12,9 @@ public class Post {
     private PostContent postContent;
     private List<String> imageUrlListl;
     private List<Tag> tagList;
+
+    private List<Like> likeList;
+    private List<Comment> commentList;
+    private List<Share> shareList;
+    private List<Bookmark> bookmarkList;
 }

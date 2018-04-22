@@ -18,8 +18,9 @@ import android.widget.Toast;
 import com.learnexo.main.PlayVideoActivity;
 import com.learnexo.main.R;
 import com.learnexo.model.core.SubBranch;
-import com.learnexo.model.core.Subject;
+import com.learnexo.model.core.Topic;
 import com.learnexo.model.core.SubjectName;
+import com.learnexo.model.core.Topic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,16 +49,16 @@ public class VideoFragment extends Fragment {
 
         for (int b = 0; b <= 5; b++) {
 
-            List<Subject> subjects = new ArrayList<>();
+            List<Topic> subjects = new ArrayList<>();
             subBranch = new SubBranch();
             subBranch.setName("Programming "+b);
 
             for (int i = 0; i <= 10; i++) {
-                Subject subject = new Subject();
-                subject.setSubjectName(new SubjectName("Java " + i));
-                subjects.add(subject);
+                Topic topic = new Topic();
+                topic.setSubjectName(new SubjectName("Java " + i));
+                subjects.add(topic);
             }
-            subBranch.setSubjectList(subjects);
+            subBranch.setTopicList(subjects);
             mSubBranches.add(subBranch);
         }
 
@@ -104,8 +105,8 @@ public class VideoFragment extends Fragment {
 
             SubBranch subBranch =  mSubBranches.get(position);
 
-            List<Subject> subjects = subBranch.getSubjectList();
-            SubjectAdapter subjectAdapter = new SubjectAdapter(context, subjects);
+            List<Topic> topicList = subBranch.getTopicList();
+            SubjectAdapter subjectAdapter = new SubjectAdapter(context, topicList);
 
             holder.mSubBranchTView.setText(subBranch.getName());
 
@@ -155,7 +156,7 @@ public class VideoFragment extends Fragment {
 
         }
 
-        public void bind(Subject subject) {
+        public void bind(Topic subject) {
             mSubjectBtn.setText(subject.getSubjectName().getSubjectName());
             mSubjectBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -172,9 +173,9 @@ public class VideoFragment extends Fragment {
     public class SubjectAdapter extends RecyclerView.Adapter<SubjectHolder> {
 
         private Context mContext;
-        private List<Subject> mSubjects;
+        private List<Topic> mSubjects;
 
-        public SubjectAdapter(Context context, List<Subject> subjects) {
+        public SubjectAdapter(Context context, List<Topic> subjects) {
             mContext = context;
             mSubjects = subjects;
         }
@@ -188,7 +189,7 @@ public class VideoFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull SubjectHolder holder, int position) {
-            Subject subject = mSubjects.get(position);
+            Topic subject = mSubjects.get(position);
             holder.bind(subject);
         }
 

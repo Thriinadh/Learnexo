@@ -5,7 +5,7 @@ import com.learnexo.model.chapter.Chapter;
 import java.util.Date;
 import java.util.List;
 
-public class Subject {
+public class Topic {
 
     private Branch branch;
     private SubBranch subBranch;
