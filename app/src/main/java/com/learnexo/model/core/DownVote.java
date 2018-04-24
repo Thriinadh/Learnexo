@@ -3,11 +3,9 @@ package com.learnexo.model.core;
 import com.learnexo.model.user.UserId;
 
 import java.util.Date;
-import java.util.UUID;
 
-public class Like{
-    private UUID postId;//should be unique across posts, questions & challenges
+class DownVote {
+    private String id;
     private UserId userId;
     private Date likedTime;
-
 }

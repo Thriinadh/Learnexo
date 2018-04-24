@@ -5,8 +5,9 @@ import com.learnexo.model.user.UserId;
 import java.util.Date;
 import java.util.UUID;
 
-public class Share {
+public class UpVote {
     private String id;
     private UserId userId;
     private Date likedTime;
+
 }

@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.UUID;
 
 public class Comment {
-    private UUID postId;//should be unique across posts, questions & challenges
+    private String id;
     private UserId userId;
     private Date likedTime;
     private String commentContent;

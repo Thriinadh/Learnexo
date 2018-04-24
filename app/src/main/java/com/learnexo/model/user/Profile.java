@@ -7,7 +7,7 @@ public class Profile {
 
     private AboutUser aboutUser;
 
-    private List<FollowingUsers> followingUsersList;
+    private List<Following> followingList;
     private List<Follower> followerList;
 
 

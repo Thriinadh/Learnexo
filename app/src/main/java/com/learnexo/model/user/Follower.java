@@ -1,6 +1,6 @@
 package com.learnexo.model.user;
 
-class Follower {
+public class Follower {
     private User follower;
 
     public User getFollower() {
