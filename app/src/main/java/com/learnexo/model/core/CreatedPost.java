@@ -1,5 +1,5 @@
 package com.learnexo.model.core;
 
-public class CreatedPost {
-    private String postId;
+public class CreatedPost extends Post{
+
 }

@@ -1,9 +1,9 @@
 package com.learnexo.model.user;
 
 public class UserCredential {
-    private UserId userId;
-    private Language language;
-    private EdQualification edQualification;
-    private CurrentJob currentJob;
+    private String userId;
+    private String language;
+    private String edQualification;
+    private String currentJob;
     private JobHistory jobHistory;
 }

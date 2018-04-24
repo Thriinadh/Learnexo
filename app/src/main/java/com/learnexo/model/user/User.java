@@ -1,11 +1,11 @@
 package com.learnexo.model.user;
 
 public class User {
-    private UserId userId;
-    private FirstName firstName;
-    private LastName lastName;
+    private String userId;
+    private String firstName;
+    private String lastName;
     private Gender gender;
-    private Photo photo;
+    private String photo;
 
 
 

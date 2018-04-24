@@ -3,7 +3,7 @@ package com.learnexo.model.user;
 import java.util.List;
 
 public class Profile {
-    private UserId userId;
+    private String userId;
 
     private AboutUser aboutUser;
 

@@ -1,4 +1,4 @@
 package com.learnexo.model.user;
 
-class Following {
+class Following extends User{
 }

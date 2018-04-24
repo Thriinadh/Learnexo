@@ -8,7 +8,7 @@ import com.learnexo.model.core.Share;
 import java.util.List;
 
 public class ActivityLog {
-    private UserId userId;
+    private String userId;
     private List<UpVote> upVoteList;
     private List<Comment> commentList;
     private List<Share> shareList;

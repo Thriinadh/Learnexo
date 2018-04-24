@@ -1,7 +1,7 @@
 package com.learnexo.model.user;
 
 public class UserAuthentication {
-    private UserId userId;
-    private Email email;
-    private Password password;
+    private String userId;
+    private String email;
+    private char[] password;
 }

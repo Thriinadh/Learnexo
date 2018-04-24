@@ -34,15 +34,15 @@ public class Topic {
         this.lastUpdated = lastUpdated;
     }
 
-    private SubjectName subjectName;
+    private String subjectName;
     private List<Chapter> chapterList;
     private Date lastUpdated;
 
-    public SubjectName getSubjectName() {
+    public String getSubjectName() {
         return subjectName;
     }
 
-    public void setSubjectName(SubjectName subjectName) {
+    public void setSubjectName(String subjectName) {
         this.subjectName = subjectName;
     }
 

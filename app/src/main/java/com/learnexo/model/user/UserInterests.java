@@ -5,6 +5,6 @@ import com.learnexo.model.core.Topic;
 import java.util.List;
 
 public class UserInterests {
-    private UserId userId;
+    private String userId;
     List<Topic> topics;
 }

@@ -19,8 +19,6 @@ import com.learnexo.main.PlayVideoActivity;
 import com.learnexo.main.R;
 import com.learnexo.model.core.SubBranch;
 import com.learnexo.model.core.Topic;
-import com.learnexo.model.core.SubjectName;
-import com.learnexo.model.core.Topic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +53,7 @@ public class VideoFragment extends Fragment {
 
             for (int i = 0; i <= 10; i++) {
                 Topic topic = new Topic();
-                topic.setSubjectName(new SubjectName("Java " + i));
+                topic.setSubjectName("Java " + i);
                 subjects.add(topic);
             }
             subBranch.setTopicList(subjects);
@@ -157,7 +155,7 @@ public class VideoFragment extends Fragment {
         }
 
         public void bind(Topic subject) {
-            mSubjectBtn.setText(subject.getSubjectName().getSubjectName());
+            mSubjectBtn.setText(subject.getSubjectName());
             mSubjectBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
