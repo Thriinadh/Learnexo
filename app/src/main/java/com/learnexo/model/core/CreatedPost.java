@@ -1,5 +1,7 @@
 package com.learnexo.model.core;
 
-public class CreatedPost extends Post{
+import com.learnexo.model.core.post.Post;
+
+public class CreatedPost extends Post {
 
 }

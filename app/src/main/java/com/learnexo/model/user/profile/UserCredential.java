@@ -1,4 +1,6 @@
-package com.learnexo.model.user;
+package com.learnexo.model.user.profile;
+
+import com.learnexo.model.user.JobHistory;
 
 public class UserCredential {
     private String userId;

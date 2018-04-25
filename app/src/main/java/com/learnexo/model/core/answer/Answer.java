@@ -1,17 +1,22 @@
-package com.learnexo.model.core;
+package com.learnexo.model.core.answer;
 
 import java.util.Date;
 import java.util.List;
 
-public class Post {
-    private String postContent;
-    private Date postedDate;
+public class Answer {
+    private String answer;
+    private Date answeredDate;
+
+    private String questionId;
+    private String questionName;
 
     private String userId;
     private String userName;
 
     private List<String> imageUrls;
     private List<String> tagList;
+
+    private boolean isCrack;
 
     private int noOfBookMarks;
     private int noOfViews;
@@ -21,7 +26,4 @@ public class Post {
     private int noOfDownVotes;
 
     private boolean is_notifiable;
-
-
-
 }

@@ -1,4 +1,4 @@
 package com.learnexo.model.user;
 
-enum Gender {
+public enum Gender {
 }

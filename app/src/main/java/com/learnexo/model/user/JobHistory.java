@@ -1,4 +1,4 @@
 package com.learnexo.model.user;
 
-class JobHistory {
+public class JobHistory {
 }

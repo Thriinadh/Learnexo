@@ -2,7 +2,8 @@ package com.learnexo.model.user;
 
 import java.util.List;
 
-//T can be Post, Question, Answer or User
+//T can be PostFollower, QuestionFollower, AnswerFollower
 public class Followers<T> {
-    private List<Follower<T>> tFollowers;
+    List<T> followers;
+
 }

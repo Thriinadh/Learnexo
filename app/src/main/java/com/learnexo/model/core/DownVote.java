@@ -2,8 +2,7 @@ package com.learnexo.model.core;
 
 import java.util.Date;
 
-class DownVote {
-    private String postId;
+public class DownVote {
     private String userId;
-    private Date likedTime;
+    private Date downVoteTime;
 }

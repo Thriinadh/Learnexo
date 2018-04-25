@@ -2,9 +2,6 @@ package com.learnexo.model.user;
 
 import com.learnexo.model.user.profile.User;
 
-import java.util.List;
-
-public class QuestionRequests {
+public class QuestionFollower extends User {
     private String questionId;
-    private List<User> requestedUsers;
 }

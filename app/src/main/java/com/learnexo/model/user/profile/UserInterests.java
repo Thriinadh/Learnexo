@@ -1,4 +1,4 @@
-package com.learnexo.model.user;
+package com.learnexo.model.user.profile;
 
 import com.learnexo.model.core.Topic;
 

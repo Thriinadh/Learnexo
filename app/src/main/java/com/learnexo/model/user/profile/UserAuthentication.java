@@ -1,4 +1,4 @@
-package com.learnexo.model.user;
+package com.learnexo.model.user.profile;
 
 public class UserAuthentication {
     private String userId;
