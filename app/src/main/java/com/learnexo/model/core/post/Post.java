@@ -23,6 +23,4 @@ public class Post {
 
     private boolean is_notifiable;
 
-
-
 }
