@@ -1,7 +1,6 @@
 package com.learnexo.model.core;
 
 import com.learnexo.model.user.Follower;
-import com.learnexo.model.user.RequestedUser;
 import com.learnexo.model.user.User;
 
 import java.util.Date;

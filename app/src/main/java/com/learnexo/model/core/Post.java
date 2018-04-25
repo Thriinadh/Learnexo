@@ -1,7 +1,5 @@
 package com.learnexo.model.core;
 
-import com.learnexo.model.user.Follower;
-
 import java.util.Date;
 import java.util.List;
 
@@ -21,8 +19,6 @@ public class Post {
     private int noOfShares;
     private int noOfComments;
     private int noOfDownVotes;
-
-    private List<Follower> followers;
 
     private boolean is_notifiable;
     private Report report;
