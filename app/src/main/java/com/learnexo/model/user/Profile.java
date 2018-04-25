@@ -4,11 +4,10 @@ import java.util.List;
 
 public class Profile {
     private String userId;
+    private String aboutUser;
 
-    private AboutUser aboutUser;
-
-    private List<Following> followingList;
-    private List<Follower> followerList;
+    private List<Following> followings;
+    private List<Follower> followers;
 
 
 

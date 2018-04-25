@@ -5,11 +5,11 @@ import java.util.List;
 
 public class Post {
     private String postContent;
+    private Date postedDate;
 
     private String userId;
     private String userName;
 
-    private Date postedDate;
     private List<String> imageUrls;
     private List<String> tagList;
 
@@ -21,7 +21,7 @@ public class Post {
     private int noOfDownVotes;
 
     private boolean is_notifiable;
-    private Report report;
+
 
 
 }

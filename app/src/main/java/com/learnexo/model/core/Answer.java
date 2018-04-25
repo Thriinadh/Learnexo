@@ -1,22 +1,21 @@
 package com.learnexo.model.core;
 
-import com.learnexo.model.user.Follower;
-
 import java.util.Date;
 import java.util.List;
 
 public class Answer {
     private String answer;
+    private Date answeredDate;
+
     private String questionId;
     private String questionName;
 
     private String userId;
     private String userName;
-    private Date answeredDate;
+
     private List<String> imageUrls;
     private List<String> tagList;
 
-    private List<Follower> followers;
     private boolean isCrack;
 
     private int noOfBookMarks;
@@ -27,5 +26,4 @@ public class Answer {
     private int noOfDownVotes;
 
     private boolean is_notifiable;
-    private Report report;
 }
