@@ -5,7 +5,6 @@ import com.learnexo.model.core.answer.AnswerComment;
 import com.learnexo.model.core.answer.AnswerDownVote;
 import com.learnexo.model.core.answer.AnswerShare;
 import com.learnexo.model.core.answer.AnswerUpVote;
-import com.learnexo.model.core.answer.Answers;
 import com.learnexo.model.core.post.PostBookMark;
 import com.learnexo.model.core.post.PostComment;
 import com.learnexo.model.core.post.PostDownVote;
@@ -29,17 +28,17 @@ public class ActivityLog {
     private List<PostDownVote> postDownVotes;
 
 
-    private List<QuestionUpVote> questionUpVotes;
-    private List<QuestionComment> questionComments;
-    private List<QuestionShare> questionShares;
-    private List<QuestionBookMark> questionBookMarks;
-    private List<QuestionDownVote> questionDownVotes;
+    private List<QuestionUpVote> quesUpVotes;
+    private List<QuestionComment> quesComments;
+    private List<QuestionShare> quesShares;
+    private List<QuestionBookMark> quesBookMarks;
+    private List<QuestionDownVote> quesDownVotes;
 
-    private List<AnswerUpVote> answerUpVotes;
-    private List<AnswerComment> answerComments;
-    private List<AnswerShare> answerShares;
-    private List<AnswerBookMark> answerBookMarks;
-    private List<AnswerDownVote> answerDownVotes;
+    private List<AnswerUpVote> ansUpVotes;
+    private List<AnswerComment> ansComments;
+    private List<AnswerShare> ansShares;
+    private List<AnswerBookMark> ansBookMarks;
+    private List<AnswerDownVote> ansDownVotes;
 
 
 

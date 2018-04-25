@@ -1,6 +1,6 @@
-package com.learnexo.model.user;
+package com.learnexo.model.core.question;
 
-import com.learnexo.model.user.profile.User;
+import com.learnexo.model.user.User;
 
 import java.util.List;
 

@@ -4,5 +4,5 @@ import java.util.Date;
 
 public class Share {
     private String userId;
-    private Date sharedTime;
+    private Date shareTime;
 }

@@ -1,4 +1,4 @@
-package com.learnexo.model.core;
+package com.learnexo.model.video;
 
 import java.util.List;
 

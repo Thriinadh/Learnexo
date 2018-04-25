@@ -15,12 +15,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.learnexo.main.R;
-import com.learnexo.model.connect.LearnersModel;
+import com.learnexo.model.connect.LearnerOptions;
 
 import java.util.List;
 
-import static com.learnexo.model.connect.LearnersModel.LINE_TYPE;
-import static com.learnexo.model.connect.LearnersModel.OPTION_TYPE;
+import static com.learnexo.model.connect.LearnerOptions.LINE_TYPE;
+import static com.learnexo.model.connect.LearnerOptions.OPTION_TYPE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,8 +48,8 @@ public class LearnersFragment extends Fragment {
     }
 
     public class DifferentRowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        private List<LearnersModel> mList;
-        public DifferentRowAdapter(List<LearnersModel> list) {
+        private List<LearnerOptions> mList;
+        public DifferentRowAdapter(List<LearnerOptions> list) {
             this.mList = list;
         }
 
@@ -70,15 +70,15 @@ public class LearnersFragment extends Fragment {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-            LearnersModel object = mList.get(position);
+            LearnerOptions object = mList.get(position);
             if (object != null) {
-                switch (object.getmType()) {
+                switch (object.getmOptionType()) {
                     case OPTION_TYPE:
-                        ((LearnersViewHolder) holder).mTitle.setText(object.getmName());
+                        ((LearnersViewHolder) holder).mTitle.setText(object.getmOption());
 
                         String uri="@drawable/connect_icon";
-                        if(null != object.getImageName())
-                        uri = "@drawable/"+object.getImageName();  // where myresource (without the extension) is the file
+                        if(null != object.getmOptionIcon())
+                        uri = "@drawable/"+object.getmOptionIcon();  // where myresource (without the extension) is the file
 
                         int imageResource = getResources().getIdentifier(uri, "drawable", getActivity().getPackageName());
                         Drawable res = getResources().getDrawable(imageResource);
@@ -99,9 +99,9 @@ public class LearnersFragment extends Fragment {
         @Override
         public int getItemViewType(int position) {
             if (mList != null) {
-                LearnersModel object = mList.get(position);
+                LearnerOptions object = mList.get(position);
                 if (object != null) {
-                    return object.getmType();
+                    return object.getmOptionType();
                 }
             }
             return 0;

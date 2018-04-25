@@ -1,4 +1,4 @@
-package com.learnexo.model.core;
+package com.learnexo.model.video;
 
 public class Branch {
     private String branchName;

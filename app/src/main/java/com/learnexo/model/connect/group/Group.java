@@ -1,12 +1,12 @@
-package com.learnexo.model.group;
+package com.learnexo.model.connect.group;
 
 import java.util.Date;
+import java.util.Map;
 
 public class Group {
-    private String groupId;
     private String groupName;
     private String adminId;
     private Date dateCreated;
 
-    private Members members;
+    private Map<String,Boolean> members;//user_id, true
 }

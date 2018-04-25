@@ -1,4 +1,4 @@
-package com.learnexo.model.user.profile;
+package com.learnexo.model.user;
 
 import com.learnexo.model.core.post.Post;
 

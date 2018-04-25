@@ -1,6 +1,6 @@
-package com.learnexo.model.core;
+package com.learnexo.model.video;
 
-import com.learnexo.model.chapter.Chapter;
+import com.learnexo.model.video.chapter.Chapter;
 
 import java.util.Date;
 import java.util.List;
