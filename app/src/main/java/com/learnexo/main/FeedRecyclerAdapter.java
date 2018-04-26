@@ -24,7 +24,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.learnexo.model.feed.FeedSharePostModel;
+  import com.learnexo.model.feed.FeedSharePostModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,8 +34,6 @@ import java.util.concurrent.TimeUnit;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.PostHolder> {
-
-    ShareinfoActivity shareinfoActivity;
 
     public  List<FeedSharePostModel> feed_items_list;
     public Context context;
