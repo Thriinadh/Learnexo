@@ -2,7 +2,7 @@ package com.learnexo.model.user.profile;
 
 import java.util.Map;
 
-public class ProfileFollowers {
+public class ProfileFollowings {
     private String profileId;
-    private Map<String,Boolean> proFollowers;
+    private Map<String,Boolean> proFollowings;
 }
