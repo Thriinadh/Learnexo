@@ -40,12 +40,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.learnexo.model.feed.post.Post;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -61,7 +63,7 @@ public class ShareinfoActivity extends AppCompatActivity {
     private ProgressBar shareProgressBar;
     private ConstraintLayout constraintKeyboardIn;
     private ConstraintLayout constraintKeyboard;
-    private EditText enterContent;
+    private EditText content;
     private ImageView loadImage;
     private String user_id;
     private Button postBtn;
@@ -72,6 +74,7 @@ public class ShareinfoActivity extends AppCompatActivity {
     private AppCompatSpinner spinner;
     private Toolbar toolbar;
     private String selectedSub;
+    private String name;
     public String postId;
 
     private StorageReference storageReference;
@@ -80,7 +83,8 @@ public class ShareinfoActivity extends AppCompatActivity {
 
     private Bitmap compressedImageFile;
 
-    Map<String, Object> postMap;
+//    Map<String, Object> postMap;
+    Post mPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,17 +109,23 @@ public class ShareinfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final String enteredText = enterContent.getText().toString();
+                final String enteredText = content.getText().toString();
 
                 if(!TextUtils.isEmpty(enteredText) && selectedSub != null) {
 
                     shareProgressBar.setVisibility(View.VISIBLE);
 
-                    postMap = new HashMap<>();
-                    postMap.put("postedContent", enteredText);
-                    postMap.put("subject", selectedSub);
-                    postMap.put("user_id", user_id);
-                    postMap.put("timestamp", FieldValue.serverTimestamp());
+                    mPost = new Post();
+                    mPost.setContent(enteredText);
+                    mPost.setTags(Collections.singletonList(selectedSub));
+                    mPost.setUserId(user_id);
+                    mPost.setUserName(name);
+                  //  mPost.setPosTime(FieldValue.serverTimestamp());
+//                    postMap = new HashMap<>();
+//                    postMap.put("postedContent", enteredText);
+//                    postMap.put("subject", selectedSub);
+//                    postMap.put("user_id", user_id);
+//                    postMap.put("timestamp", FieldValue.serverTimestamp());
 
                     if(postedImageURI != null) {
 
@@ -155,8 +165,10 @@ public class ShareinfoActivity extends AppCompatActivity {
 
                                             String downloadthumbUri = taskSnapshot.getDownloadUrl().toString();
 
-                                            postMap.put("image_url", downloadUri);
-                                            postMap.put("image_thumb", downloadthumbUri);
+                                            mPost.setImgUrl(downloadUri);
+                                            mPost.setImgThmb(downloadthumbUri);
+//                                            postMap.put("image_url", downloadUri);
+//                                            postMap.put("image_thumb", downloadthumbUri);
 
                                             saveToFirebaseGotoFeed();
 
@@ -187,7 +199,7 @@ public class ShareinfoActivity extends AppCompatActivity {
     }
 
     private void enablePostBtnAfterFiveCharsInEditText() {
-        enterContent.addTextChangedListener(new TextWatcher() {
+        content.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 //...
@@ -262,7 +274,7 @@ public class ShareinfoActivity extends AppCompatActivity {
 
                     if(task.getResult().exists()) {
 
-                        String name = task.getResult().getString("Nick name");
+                         name = task.getResult().getString("Nick name");
                         String image = task.getResult().getString("Image");
 
                         username.setText(name);
@@ -304,7 +316,7 @@ public class ShareinfoActivity extends AppCompatActivity {
 
     private void wiringViews() {
         shareProgressBar = findViewById(R.id.shareProgressBar);
-        enterContent = findViewById(R.id.enterContent);
+        content = findViewById(R.id.enterContent);
         username = findViewById(R.id.userNameTView);
         imageView = findViewById(R.id.smallCircleImageView);
         timeofPost = findViewById(R.id.timeofPost);
@@ -319,9 +331,11 @@ public class ShareinfoActivity extends AppCompatActivity {
 
     public void saveToFirebaseGotoFeed() {
 
-       final Task<DocumentReference> documentReferenceTask = firebaseFirestore.collection("Posts").add(postMap);
+       final Task<DocumentReference> documentReferenceTask = firebaseFirestore.collection("users")
+               .document(user_id).collection("posts").add(mPost);
 
                 documentReferenceTask.addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if (task.isSuccessful()) {
@@ -397,13 +411,14 @@ public class ShareinfoActivity extends AppCompatActivity {
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
+                Toast.makeText(ShareinfoActivity.this, "ImgagePicker " +error, Toast.LENGTH_LONG).show();
             }
         }
     }
 
     public void enableSubmitIfReady() {
 
-        boolean isReady = enterContent.getText().toString().length() > 5;
+        boolean isReady = content.getText().toString().length() > 5;
         postBtn.setEnabled(isReady);
         if(isReady) {
             postBtn.setBackgroundColor(Color.parseColor("#32CD32"));
