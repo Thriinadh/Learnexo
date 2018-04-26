@@ -17,7 +17,7 @@ public class Answer {
     private String imgThmb;
     private List<String> tags;
 
-    private boolean isCrack;//tell whether it is a challenge
+    private boolean isCrack;//tells whether it is a challenge
 
     private int bookMarks;
     private long views;

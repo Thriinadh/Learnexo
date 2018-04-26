@@ -1,4 +1,4 @@
-package com.learnexo.tabfragments;
+package com.learnexo.fragments;
 
 import com.learnexo.model.connect.LearnerOptions;
 

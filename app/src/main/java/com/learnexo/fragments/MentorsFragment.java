@@ -1,4 +1,4 @@
-package com.learnexo.tabfragments;
+package com.learnexo.fragments;
 
 
 import android.os.Bundle;

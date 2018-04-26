@@ -1,10 +1,8 @@
 package com.learnexo.model.feed.question;
 
-import com.learnexo.model.user.User;
-
-import java.util.List;
+import java.util.Map;
 
 public class QuestionRequests {
     private String questionId;
-    private List<User> requestedUsers;
+    private Map<String,Boolean> reqToUsers;
 }

@@ -1,7 +1,7 @@
 package com.learnexo.model.feed.likediv;
 
-import java.util.List;
+import java.util.Map;
 
-public class Shares {
-    private List<Share> shares;
+public class Shares<T> {
+    private Map<T,Boolean>  shares;
 }

@@ -2,9 +2,9 @@ package com.learnexo.model.feed;
 
 import com.learnexo.model.feed.post.Post;
 
-import java.util.List;
+import java.util.Map;
 
 public class UserPosts {
     private String userId;
-    private List<Post> posts;
+    private Map<Post,Boolean> posts;
 }

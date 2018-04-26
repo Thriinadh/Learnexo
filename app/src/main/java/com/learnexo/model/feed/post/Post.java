@@ -12,15 +12,15 @@ public class Post {
 
     private String imgUrl;
     private String imgThmb;
-    private List<String> tags;
 
-    private int bookMarks;
     private long views;
     private int upvotes;
     private int shares;
     private int comments;
+    private int bookMarks;
     private int downVotes;
 
     private boolean is_notifiable;
 
+    private List<String> tags;
 }

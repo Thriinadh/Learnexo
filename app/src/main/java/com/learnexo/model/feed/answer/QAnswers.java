@@ -1,8 +1,8 @@
 package com.learnexo.model.feed.answer;
 
-import java.util.List;
+import java.util.Map;
 
 public class QAnswers {
     private String quesId;
-    private List<Answer> answers;
+    private Map<Answer,Boolean> answers;
 }

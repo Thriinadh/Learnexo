@@ -1,7 +1,7 @@
 package com.learnexo.model.feed.likediv;
 
-import java.util.List;
+import java.util.Map;
 
-public class UpVotes {
-    private List<UpVote> upVotes;
+public class UpVotes<T> {
+    private Map<T,Boolean> upVotes;
 }

@@ -1,7 +1,7 @@
 package com.learnexo.model.feed.likediv;
 
-import java.util.List;
-
-public class Comments {
-    private List<Comment> comments;
+import java.util.Map;
+// T can be PostComment, AnswerComment, QuestionComment
+public class Comments<T> {
+    private Map<T,Boolean> comments;
 }

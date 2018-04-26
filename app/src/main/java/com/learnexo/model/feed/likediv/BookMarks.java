@@ -1,7 +1,8 @@
 package com.learnexo.model.feed.likediv;
 
-import java.util.List;
+import java.util.Map;
 
-public class BookMarks {
-    private List<Bookmark> bookmarks;
+//T can be PostBookMark, AnswerBookMark, QuestionBookMark
+public class BookMarks<T> {
+    private Map<T,Boolean> bookmarks;
 }

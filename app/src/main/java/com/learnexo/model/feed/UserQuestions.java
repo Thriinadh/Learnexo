@@ -2,9 +2,9 @@ package com.learnexo.model.feed;
 
 import com.learnexo.model.feed.question.Question;
 
-import java.util.List;
+import java.util.Map;
 
 public class UserQuestions {
     private String userId;
-    private List<Question> mQuestions;
+    private Map<Question,Boolean> mQuestions;
 }

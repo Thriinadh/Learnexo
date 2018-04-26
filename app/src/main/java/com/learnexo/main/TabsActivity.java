@@ -26,11 +26,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.learnexo.tabfragments.ConnectFragment;
-import com.learnexo.tabfragments.FeedFragment;
-import com.learnexo.tabfragments.HotQFragment;
-import com.learnexo.tabfragments.ProfileFragment;
-import com.learnexo.tabfragments.VideoFragment;
+import com.learnexo.fragments.ConnectFragment;
+import com.learnexo.fragments.FeedFragment;
+import com.learnexo.fragments.HotQFragment;
+import com.learnexo.fragments.ProfileFragment;
+import com.learnexo.fragments.VideoFragment;
 
 import java.util.ArrayList;
 import java.util.List;
