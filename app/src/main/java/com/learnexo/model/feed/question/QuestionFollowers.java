@@ -1,4 +1,4 @@
-package com.learnexo.model.feed.follower;
+package com.learnexo.model.feed.question;
 
 import java.util.Map;
 

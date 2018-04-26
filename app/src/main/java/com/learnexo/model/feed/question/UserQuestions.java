@@ -1,4 +1,4 @@
-package com.learnexo.model.feed;
+package com.learnexo.model.feed.question;
 
 import com.learnexo.model.feed.question.Question;
 

@@ -1,4 +1,4 @@
-package com.learnexo.model.feed;
+package com.learnexo.model.feed.post;
 
 import com.learnexo.model.feed.post.Post;
 
