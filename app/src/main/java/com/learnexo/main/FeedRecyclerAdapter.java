@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,23 +23,25 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-  import com.learnexo.model.feed.FeedSharePostModel;
+import com.learnexo.model.feed.post.Post;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.learnexo.util.DateUtil.convertDateToAgo;
+
+//  import com.learnexo.model.feed.Post;
+
 public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.PostHolder> {
 
-    public  List<FeedSharePostModel> feed_items_list;
+    public  List<Post> feed_items_list;
     public Context context;
 
     private FirebaseFirestore firebaseFirestore;
 
-    public FeedRecyclerAdapter(List<FeedSharePostModel> feed_items_list) {
+    public FeedRecyclerAdapter(List<Post> feed_items_list) {
         this.feed_items_list = feed_items_list;
     }
 
@@ -58,11 +59,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     @Override
     public void onBindViewHolder(@NonNull final PostHolder holder, int position) {
 
-        final String user_id = feed_items_list.get(position).getUser_id();
-        final String itemContent = feed_items_list.get(position).getPostedContent();
-        final String imagePosted = feed_items_list.get(position).getImage_url();
+        final String user_id = feed_items_list.get(position).getUserId();
+        final String itemContent = feed_items_list.get(position).getContent();
+        final String imagePosted = feed_items_list.get(position).getImgUrl();
 
-        handleItemContent(holder, itemContent, imagePosted);
+        String timeAgo=convertDateToAgo(feed_items_list.get(position).getPosTime());
+
+        handleItemContent(holder, itemContent, imagePosted, timeAgo);
 
         handleOverflowIView(holder, user_id);
 
@@ -73,45 +76,24 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     }
 
     private void setPostedTime(@NonNull PostHolder holder, int position) {
-        if(feed_items_list.get(position).getTimestamp() != null) {
-            long millisecond = feed_items_list.get(position).getTimestamp().getTime();
-            String dateString = DateFormat.format("yyyy.MM.dd 'AD at' HH:mm:ss", new Date(millisecond)).toString();
+        if(feed_items_list.get(position).getPosTime() != null) {
 
-            try {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss");
-                Date past = format.parse(dateString);
 
-                Date now = new Date();
-                long seconds = TimeUnit.MILLISECONDS.toSeconds(now.getTime() - past.getTime());
-                long minutes = TimeUnit.MILLISECONDS.toMinutes(now.getTime() - past.getTime());
-                long hours = TimeUnit.MILLISECONDS.toHours(now.getTime() - past.getTime());
-                long days = TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime());
+                Date date = feed_items_list.get(position).getPosTime();
 
-                if (seconds < 60) {
-                    holder.setTime(seconds + " seconds ago");
-                } else if (minutes < 60) {
-                    holder.setTime(minutes + " minutes ago");
-                } else if (hours < 24) {
-                    holder.setTime(hours + " hours ago");
-                } else {
-                    if (days > 365) {
-                        long years = days / 365;
-                        if (years > 1)
-                            holder.setTime(years + " years ago");
-                        else
-                            holder.setTime(years + " year ago");
-                    }
-                    holder.setTime(days + " days ago");
-                }
-            } catch (Exception j) {
-                j.printStackTrace();
-            }
+                String timeAgo = convertDateToAgo(date);
+                holder.setTime(timeAgo);
+
+
         }
     }
 
+
+
     private void getDPandName(@NonNull final PostHolder holder, String user_id) {
         firebaseFirestore.collection("Users").document(user_id).
-                collection("Setup Details").document("Setup Fields").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                collection("Setup Details").document("Setup Fields").get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
@@ -191,13 +173,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     }
 
     private void handleItemContent(@NonNull PostHolder holder, final String itemContent,
-                                   final String imagePosted) {
+                                   final String imagePosted, final String posTime) {
         holder.setViewItemContent(itemContent);
         holder.setPostedIView(imagePosted);
         holder.contentTView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               Intent intent = FullPostActivity.newIntent(context, itemContent, imagePosted);
+               Intent intent = FullPostActivity.newIntent(context, itemContent, imagePosted, posTime);
                context.startActivity(intent);
             }
         });
