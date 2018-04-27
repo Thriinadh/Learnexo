@@ -24,7 +24,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.learnexo.main.FeedRecyclerAdapter;
-import com.learnexo.model.feed.FeedSharePostModel;
 import com.learnexo.main.R;
 import com.learnexo.main.ShareinfoActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,6 +36,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.learnexo.model.feed.post.Post;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public class FeedFragment extends Fragment {
     private TextView askQuestionTView;
 
     private RecyclerView feedListRecyclerView;
-    private List<FeedSharePostModel> feed_items_list;
+    private List<Post> feed_items_list;
     private FeedRecyclerAdapter feedRecyclerAdapter;
 
     private ProgressBar progressBar;
@@ -200,7 +200,8 @@ public class FeedFragment extends Fragment {
     }
 
     private void getFreshPostsAndPopulatePostList() {
-        firebaseFirestore.collection("Posts").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        firebaseFirestore.collection("users").document(user_id).collection("posts")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
 
@@ -209,30 +210,30 @@ public class FeedFragment extends Fragment {
 
 //                        if (doc.getType() == DocumentChange.Type.ADDED) {
 //
-//                            FeedSharePostModel feedSharePostModel = doc.getDocument().toObject(FeedSharePostModel.class);
-//                            feed_items_list.add(feedSharePostModel);
+//                            Post Post = doc.getDocument().toObject(Post.class);
+//                            feed_items_list.add(Post);
 //                            feedRecyclerAdapter.notifyDataSetChanged();
 //
 //                        }
 
-                        FeedSharePostModel feedSharePostModel;
+                        Post post;
                         switch (doc.getType()) {
 
                             case ADDED:
-                                feedSharePostModel = doc.getDocument().toObject(FeedSharePostModel.class);
-                                feed_items_list.add(feedSharePostModel);
+                                post = doc.getDocument().toObject(Post.class);
+                                feed_items_list.add(post);
                                 feedRecyclerAdapter.notifyDataSetChanged();
                                 break;
 
                             case REMOVED:
-                                feedSharePostModel = doc.getDocument().toObject(FeedSharePostModel.class);
-                                feed_items_list.remove(feedSharePostModel);
+                                post = doc.getDocument().toObject(Post.class);
+                                feed_items_list.remove(post);
                                 feedRecyclerAdapter.notifyDataSetChanged();
                                 break;
 
                             case MODIFIED:
-                                feedSharePostModel = doc.getDocument().toObject(FeedSharePostModel.class);
-                                feed_items_list.remove(feedSharePostModel);
+                                post = doc.getDocument().toObject(Post.class);
+                                feed_items_list.remove(post);
                                 feedRecyclerAdapter.notifyDataSetChanged();
                                 break;
                         }
@@ -265,7 +266,8 @@ public class FeedFragment extends Fragment {
                         userNameTView.setText(name);
 
                         RequestOptions placeholderRequest = new RequestOptions();
-                        placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.default_photo);
+                        placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .placeholder(R.drawable.default_photo);
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                             Glide.with(Objects.requireNonNull(getActivity())).load(image).apply(placeholderRequest).into(userCircleIView);

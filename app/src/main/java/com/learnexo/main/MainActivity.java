@@ -1,9 +1,10 @@
 package com.learnexo.main;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -118,6 +119,16 @@ public class MainActivity extends AppCompatActivity {
         try {
             // Google Sign In was successful, authenticate with Firebase
             GoogleSignInAccount account = task.getResult(ApiException.class);
+
+            if (account != null) {
+                String personName = account.getDisplayName();
+                String personGivenName = account.getGivenName();
+                String personFamilyName = account.getFamilyName();
+                String personEmail = account.getEmail();
+                String personId = account.getId();
+                Uri personPhoto = account.getPhotoUrl();
+            }
+
             firebaseAuthWithGoogle(account);
         } catch (ApiException e) {
             //Google Sign In failed, update UI appropriately
