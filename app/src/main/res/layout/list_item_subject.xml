@@ -2,7 +2,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
-
     <Button
         android:id="@+id/subject_btn"
         style="?android:buttonBarButtonStyle"
@@ -13,5 +12,4 @@
         android:layout_marginRight="4dp"
         android:background="#99cc00"
         android:textColor="@color/white" />
-
 </LinearLayout>

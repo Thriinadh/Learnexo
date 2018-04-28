@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.learnexo.main.FeedRecyclerAdapter;
+import com.learnexo.main.MainActivity;
 import com.learnexo.main.R;
 import com.learnexo.main.ShareinfoActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -261,7 +262,8 @@ public class FeedFragment extends Fragment {
                     if(task.getResult().exists()) {
 
                         String name = task.getResult().getString("Nick name");
-                        String image = task.getResult().getString("Image");
+
+                        String image = (null==MainActivity.photoUrl)?task.getResult().getString("Image"):MainActivity.photoUrl;
 
                         userNameTView.setText(name);
 
@@ -269,7 +271,7 @@ public class FeedFragment extends Fragment {
                         placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL)
                                 .placeholder(R.drawable.default_photo);
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && image!=null) {
                             Glide.with(Objects.requireNonNull(getActivity())).load(image).apply(placeholderRequest).into(userCircleIView);
                         }
 
