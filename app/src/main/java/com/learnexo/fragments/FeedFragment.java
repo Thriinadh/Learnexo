@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.learnexo.main.AskQuestionActivity;
 import com.learnexo.main.FeedRecyclerAdapter;
 import com.learnexo.main.MainActivity;
 import com.learnexo.main.R;
@@ -98,6 +99,14 @@ public class FeedFragment extends Fragment {
 
         handleShareInfoBtn();
 
+        askBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent askIntent = new Intent(getActivity(), AskQuestionActivity.class);
+                startActivity(askIntent);
+            }
+        });
+
         return view;
     }
 
@@ -128,23 +137,23 @@ public class FeedFragment extends Fragment {
                     // Check if the runtime version is at least Lollipop
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         // get the center for the clipping circle
-                        int cx = cardView.getWidth() / 2;
-                        int cy = cardView.getHeight() / 2;
+                       // int cx = cardView.getWidth() / 2;
+                       // int cy = cardView.getHeight() / 2;
 
                         // get the center for the clipping circle
-                       // int cx = (view.getLeft() + view.getRight()) / 2;
-                       // int cy = (view.getTop() + view.getBottom()) / 2;
+                        int cx = (view.getLeft() + view.getRight()) / 2;
+                        int cy = (view.getTop() + view.getBottom()) / 2;
 
-                       // int startRadius = 0;
+                        int startRadius = 0;
                        // get the final radius for the clipping circle
-                       // int endRadius = Math.max(view.getWidth(), view.getHeight());
+                        int endRadius = Math.max(view.getWidth(), view.getHeight());
 
                         // get the final radius for the clipping circle
-                        float finalRadius = (float) Math.hypot(cx, cy);
+                       // float finalRadius = (float) Math.hypot(cx, cy);
 
                         // create the animator for this view (the start radius is zero)
                         Animator anim =
-                                ViewAnimationUtils.createCircularReveal(cardView, cx, cy, 0, finalRadius);
+                                ViewAnimationUtils.createCircularReveal(cardView, cx, cy, startRadius, endRadius);
 
                         // make the view visible and start the animation
                         cardView.setVisibility(View.VISIBLE);
@@ -160,23 +169,23 @@ public class FeedFragment extends Fragment {
                     // Check if the runtime version is at least Lollipop
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         // get the center for the clipping circle
-                        int cx = cardView.getWidth() / 2;
-                        int cy = cardView.getHeight() / 2;
+                       // int cx = cardView.getWidth() / 2;
+                       // int cy = cardView.getHeight() / 2;
 
                         // get the center for the clipping circle
-                       // int cx = (view.getLeft() + view.getRight()) / 2;
-                       // int cy = (view.getTop() + view.getBottom()) / 2;
+                        int cx = (view.getLeft() + view.getRight()) / 2;
+                        int cy = (view.getTop() + view.getBottom()) / 2;
 
                         // get the initial radius for the clipping circle
-                        float initialRadius = (float) Math.hypot(cx, cy);
+                       // float initialRadius = (float) Math.hypot(cx, cy);
 
-                       // int endRadius = 0;
+                        int endRadius = 0;
                         // get the final radius for the clipping circle
-                       // int startRadius = Math.max(view.getWidth(), view.getHeight());
+                        int startRadius = Math.max(view.getWidth(), view.getHeight());
 
                          // create the animation (the final radius is zero)
                         Animator anim =
-                                ViewAnimationUtils.createCircularReveal(cardView, cx, cy, initialRadius, 0);
+                                ViewAnimationUtils.createCircularReveal(cardView, cx, cy, startRadius, endRadius);
 
                        // make the view invisible when the animation is done
                         anim.addListener(new AnimatorListenerAdapter() {
@@ -263,7 +272,8 @@ public class FeedFragment extends Fragment {
 
                         String name = task.getResult().getString("Nick name");
 
-                        String image = (null==MainActivity.photoUrl)?task.getResult().getString("Image"):MainActivity.photoUrl;
+                        String image = (null==MainActivity.photoUrl)?task.getResult()
+                                .getString("Image"):MainActivity.photoUrl;
 
                         userNameTView.setText(name);
 
@@ -272,7 +282,8 @@ public class FeedFragment extends Fragment {
                                 .placeholder(R.drawable.default_photo);
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && image!=null) {
-                            Glide.with(Objects.requireNonNull(getActivity())).load(image).apply(placeholderRequest).into(userCircleIView);
+                            Glide.with(Objects.requireNonNull(getActivity())).load(image)
+                                    .apply(placeholderRequest).into(userCircleIView);
                         }
 
                     }

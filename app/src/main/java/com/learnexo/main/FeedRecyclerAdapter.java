@@ -32,8 +32,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.learnexo.util.DateUtil.convertDateToAgo;
 
-//  import com.learnexo.model.feed.Post;
-
 public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.PostHolder> {
 
     public  List<Post> feed_items_list;
@@ -78,17 +76,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     private void setPostedTime(@NonNull PostHolder holder, int position) {
         if(feed_items_list.get(position).getPosTime() != null) {
 
-
                 Date date = feed_items_list.get(position).getPosTime();
 
                 String timeAgo = convertDateToAgo(date);
                 holder.setTime(timeAgo);
 
-
         }
     }
-
-
 
     private void getDPandName(@NonNull final PostHolder holder, String user_id) {
         firebaseFirestore.collection("Users").document(user_id).
