@@ -26,6 +26,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.learnexo.main.AskQuestionActivity;
 import com.learnexo.main.FeedRecyclerAdapter;
 import com.learnexo.main.MainActivity;
+import com.learnexo.main.PostChallengeActivity;
 import com.learnexo.main.R;
 import com.learnexo.main.ShareinfoActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -99,13 +100,9 @@ public class FeedFragment extends Fragment {
 
         handleShareInfoBtn();
 
-        askBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent askIntent = new Intent(getActivity(), AskQuestionActivity.class);
-                startActivity(askIntent);
-            }
-        });
+        handleQuestionBtn();
+
+        handleChallengeBtn();
 
         return view;
     }
@@ -125,6 +122,28 @@ public class FeedFragment extends Fragment {
                     startActivity(shareIntent);
                 }
             });
+    }
+
+    private void handleChallengeBtn() {
+        challengeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent challengeIntent = new Intent(getActivity(), PostChallengeActivity.class);
+                startActivity(challengeIntent);
+
+            }
+        });
+    }
+
+    private void handleQuestionBtn() {
+        askBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent askIntent = new Intent(getActivity(), AskQuestionActivity.class);
+                startActivity(askIntent);
+            }
+        });
     }
 
     private void handleFloatingBtn() {

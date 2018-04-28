@@ -1,11 +1,17 @@
 package com.learnexo.model.feed.question;
 
+import com.google.firebase.firestore.IgnoreExtraProperties;
+import com.google.firebase.firestore.ServerTimestamp;
+
 import java.util.Date;
 import java.util.List;
 
 //only used for unanswered questions
+@IgnoreExtraProperties
 public class Question {
     private String question;
+
+    @ServerTimestamp
     private Date askTime;
     private String userId;
     private String userName;

@@ -58,7 +58,8 @@
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".FullPostActivity" />
         <activity android:name=".PlayVideoActivity" />
-        <activity android:name=".AskQuestionActivity"></activity>
+        <activity android:name=".AskQuestionActivity" />
+        <activity android:name=".PostChallengeActivity"></activity>
     </application>
 
 </manifest>

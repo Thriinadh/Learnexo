@@ -111,5 +111,6 @@
     <string name="ask_question_hint">Ask your query here... \nit will be answered by experts sooner</string>
     <string name="ask_a_query">Ask a Query</string>
     <string name="post_a_challenge">Post a Challenge</string>
+    <string name="post_challenge_hint"><font size="20">Post your challenge and </font>\nimpact the community...</string>
 
 </resources>
