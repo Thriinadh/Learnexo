@@ -35,12 +35,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.learnexo.model.feed.post.Post;
+import com.learnexo.model.feed.question.Question;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -48,22 +47,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
 
-public class ShareinfoActivity extends AppCompatActivity {
+public class PostChallengeActivity extends AppCompatActivity {
 
     private static final int FEED_FRAG_NO = 0;
     private Uri postedImageURI = null;
 
-    private ProgressBar shareProgressBar;
+    private ProgressBar challengeProgressBar;
     private ConstraintLayout constraintKeyboardIn;
     private ConstraintLayout constraintKeyboard;
-    private EditText content;
+    private EditText challengeContent;
     private ImageView loadImage;
     private String user_id;
     private Button postBtn;
@@ -75,7 +72,7 @@ public class ShareinfoActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private String selectedSub;
     private String name;
-    public String postId;
+    public String challengeId;
 
     private StorageReference storageReference;
     private FirebaseAuth mAuth;
@@ -83,13 +80,12 @@ public class ShareinfoActivity extends AppCompatActivity {
 
     private Bitmap compressedImageFile;
 
-//    Map<String, Object> postMap;
-    Post mPost;
+    Question mQuestion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shareinfo);
+        setContentView(R.layout.activity_post_challenge);
 
         wiringViews();
         postBtn.setEnabled(false);
@@ -102,6 +98,7 @@ public class ShareinfoActivity extends AppCompatActivity {
         galleryBtnOnclick();
         enablePostBtnAfterFiveCharsInEditText();
         postBtnOnclick();
+
     }
 
     private void postBtnOnclick() {
@@ -109,29 +106,23 @@ public class ShareinfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final String enteredText = content.getText().toString();
+                final String enteredText = challengeContent.getText().toString();
 
                 if(!TextUtils.isEmpty(enteredText) && selectedSub != null) {
 
-                    shareProgressBar.setVisibility(View.VISIBLE);
+                    challengeProgressBar.setVisibility(View.VISIBLE);
 
-                    mPost = new Post();
-                    mPost.setContent(enteredText);
-                    mPost.setTags(Collections.singletonList(selectedSub));
-                    mPost.setUserId(user_id);
-                    mPost.setUserName(name);
-                  //  mPost.setPosTime(FieldValue.serverTimestamp());
-//                    postMap = new HashMap<>();
-//                    postMap.put("postedContent", enteredText);
-//                    postMap.put("subject", selectedSub);
-//                    postMap.put("user_id", user_id);
-//                    postMap.put("timestamp", FieldValue.serverTimestamp());
+                    mQuestion = new Question();
+                    mQuestion.setQuestion(enteredText);
+                    mQuestion.setTags(Collections.singletonList(selectedSub));
+                    mQuestion.setUserId(user_id);
+                    mQuestion.setUserName(name);
 
                     if(postedImageURI != null) {
 
                         final String randomName = UUID.randomUUID().toString();
 
-                        StorageReference filepath = storageReference.child("post_images").child(randomName + ".jpg");
+                        StorageReference filepath = storageReference.child("challenge_images").child(randomName + ".jpg");
                         filepath.putFile(postedImageURI).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
@@ -142,7 +133,7 @@ public class ShareinfoActivity extends AppCompatActivity {
 
                                     File newImageFile = new File(postedImageURI.getPath());
                                     try {
-                                        compressedImageFile = new Compressor(ShareinfoActivity.this)
+                                        compressedImageFile = new Compressor(PostChallengeActivity.this)
                                                 .setMaxHeight(100)
                                                 .setMaxWidth(100)
                                                 .setQuality(2)
@@ -156,7 +147,7 @@ public class ShareinfoActivity extends AppCompatActivity {
                                     compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                                     byte[] thumbData = baos.toByteArray();
 
-                                    UploadTask uploadTask = storageReference.child("post_images/thumbs")
+                                    UploadTask uploadTask = storageReference.child("challenge_images/thumbs")
                                             .child(randomName + ".jpg").putBytes(thumbData);
 
                                     uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -165,10 +156,8 @@ public class ShareinfoActivity extends AppCompatActivity {
 
                                             String downloadthumbUri = taskSnapshot.getDownloadUrl().toString();
 
-                                            mPost.setImgUrl(downloadUri);
-                                            mPost.setImgThmb(downloadthumbUri);
-//                                            postMap.put("image_url", downloadUri);
-//                                            postMap.put("image_thumb", downloadthumbUri);
+                                            mQuestion.setImgUrl(downloadUri);
+                                            mQuestion.setImgThmb(downloadthumbUri);
 
                                             saveToFirebaseGotoFeed();
 
@@ -177,13 +166,14 @@ public class ShareinfoActivity extends AppCompatActivity {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
                                             String error = task.getException().getMessage();
-                                            Toast.makeText(ShareinfoActivity.this,
-                                                    "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
+                                            Toast.makeText(PostChallengeActivity.this,
+                                                    "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG)
+                                                    .show();
                                         }
                                     });
 
                                 } else {
-                                    shareProgressBar.setVisibility(View.INVISIBLE);
+                                    challengeProgressBar.setVisibility(View.INVISIBLE);
                                 }
 
                             }
@@ -199,7 +189,7 @@ public class ShareinfoActivity extends AppCompatActivity {
     }
 
     private void enablePostBtnAfterFiveCharsInEditText() {
-        content.addTextChangedListener(new TextWatcher() {
+        challengeContent.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 //...
@@ -231,9 +221,9 @@ public class ShareinfoActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
 
-               Object object = adapterView.getItemAtPosition(position);
+                Object object = adapterView.getItemAtPosition(position);
                 if(object != null)
-                       selectedSub = object.toString();
+                    selectedSub = object.toString();
             }
 
             @Override
@@ -274,7 +264,7 @@ public class ShareinfoActivity extends AppCompatActivity {
 
                     if(task.getResult().exists()) {
 
-                         name = task.getResult().getString("Nick name");
+                        name = task.getResult().getString("Nick name");
                         String image = task.getResult().getString("Image");
 
                         username.setText(name);
@@ -282,14 +272,14 @@ public class ShareinfoActivity extends AppCompatActivity {
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.apply(placeholderRequest).placeholder(R.drawable.default_photo);
 
-                        Glide.with(ShareinfoActivity.this).load(image).apply(placeholderRequest).into(imageView);
+                        Glide.with(PostChallengeActivity.this).load(image).apply(placeholderRequest).into(imageView);
 
                     }
 
                 } else {
 
                     String error = task.getException().getMessage();
-                    Toast.makeText(ShareinfoActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
+                    Toast.makeText(PostChallengeActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
 
                 }
 
@@ -310,13 +300,14 @@ public class ShareinfoActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null){
-            getSupportActionBar().setTitle("Share info");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Post a challenge");
         }
     }
 
     private void wiringViews() {
-        shareProgressBar = findViewById(R.id.shareProgressBar);
-        content = findViewById(R.id.enterContent);
+        challengeProgressBar = findViewById(R.id.shareProgressBar);
+        challengeContent = findViewById(R.id.enterContent);
         username = findViewById(R.id.userNameTView);
         imageView = findViewById(R.id.smallCircleImageView);
         timeofPost = findViewById(R.id.timeofPost);
@@ -331,29 +322,29 @@ public class ShareinfoActivity extends AppCompatActivity {
 
     public void saveToFirebaseGotoFeed() {
 
-       final Task<DocumentReference> documentReferenceTask = firebaseFirestore.collection("users")
-               .document(user_id).collection("posts").add(mPost);
-                documentReferenceTask.addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+        final Task<DocumentReference> documentReferenceTask = firebaseFirestore.collection("users")
+                .document(user_id).collection("challenges").add(mQuestion);
+        documentReferenceTask.addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if (task.isSuccessful()) {
                     gotoFeedTab();
                 } else {
                     String error = task.getException().getMessage();
-                    Toast.makeText(ShareinfoActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
+                    Toast.makeText(PostChallengeActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
                 }
-                shareProgressBar.setVisibility(View.INVISIBLE);
+                challengeProgressBar.setVisibility(View.INVISIBLE);
 
             }
 
-                    private void gotoFeedTab() {
-                        postId = documentReferenceTask.getResult().getId();
+            private void gotoFeedTab() {
+                challengeId = documentReferenceTask.getResult().getId();
 
-                        Intent feedIntent = TabsActivity.newIntent(ShareinfoActivity.this, FEED_FRAG_NO);
-                        startActivity(feedIntent);
-                        finish();
-                    }
-                });
+                Intent feedIntent = TabsActivity.newIntent(PostChallengeActivity.this, FEED_FRAG_NO);
+                startActivity(feedIntent);
+                finish();
+            }
+        });
 
     }
 
@@ -378,7 +369,7 @@ public class ShareinfoActivity extends AppCompatActivity {
         // start picker to get image for cropping and then use the image in cropping activity
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
-                .start(ShareinfoActivity.this);
+                .start(PostChallengeActivity.this);
 
     }
 
@@ -401,7 +392,7 @@ public class ShareinfoActivity extends AppCompatActivity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(ShareinfoActivity.this, "Uploaded", Toast.LENGTH_LONG).show();
+                        Toast.makeText(PostChallengeActivity.this, "Uploaded", Toast.LENGTH_LONG).show();
                         constraintKeyboardIn.setVisibility(View.INVISIBLE);
                         constraintKeyboard.setVisibility(View.VISIBLE);
                     }
@@ -409,14 +400,14 @@ public class ShareinfoActivity extends AppCompatActivity {
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-                Toast.makeText(ShareinfoActivity.this, "ImgagePicker " +error, Toast.LENGTH_LONG).show();
+                Toast.makeText(PostChallengeActivity.this, "ImgagePicker " +error, Toast.LENGTH_LONG).show();
             }
         }
     }
 
     public void enableSubmitIfReady() {
 
-        boolean isReady = content.getText().toString().length() > 5;
+        boolean isReady = challengeContent.getText().toString().length() > 5;
         postBtn.setEnabled(isReady);
         if(isReady) {
             postBtn.setBackgroundColor(Color.parseColor("#32CD32"));
@@ -426,5 +417,6 @@ public class ShareinfoActivity extends AppCompatActivity {
             postBtn.setTextColor(Color.parseColor("#000000"));
         }
     }
+
 
 }

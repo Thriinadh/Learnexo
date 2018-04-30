@@ -28,21 +28,30 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.learnexo.model.user.User;
 
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static String photoUrl;
     private static final int GOOGLE_SIGN_IN_REQ_CODE = 1;
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -59,8 +68,12 @@ public class MainActivity extends AppCompatActivity {
     // Firebase instance variables
     private FirebaseAuth mAuth;
     private FirebaseFirestore firebaseFirestore;
+    private DatabaseReference mDatabase;
+
+    private AuthCredential credential;
 
     // Facebook callbackmanager
+    FirebaseUser currentUser;
     private CallbackManager mFbCallbackManager;
 
     @Override
@@ -157,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                        checkFbAccInFirebase(loginResult.getAccessToken());
+                        handleFacebookAccessToken(loginResult.getAccessToken());
                     }
 
                     @Override
@@ -243,13 +256,14 @@ public class MainActivity extends AppCompatActivity {
 
                             FirebaseUser user = mAuth.getCurrentUser();
                             if(user != null) {
+                                photoUrl = user.getPhotoUrl().toString();
                                 mGoogleBtn.setEnabled(true);
                                 gotoFeed();
                             }
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "GoogleSignInWithCredential:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Error occurred", Toast.LENGTH_LONG).show();
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(MainActivity.this, "Error occured", Toast.LENGTH_LONG).show();
                             mGoogleBtn.setEnabled(true);
                            // Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                            // updateUI(null);
@@ -263,7 +277,10 @@ public class MainActivity extends AppCompatActivity {
     private void checkFbAccInFirebase(AccessToken token) {
         Log.d(TAG, "checkFbAccInFirebase:" + token);
 
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        facebookOnlySignin(credential);
+    }
+
+    private void facebookOnlySignin(AuthCredential credential) {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -273,7 +290,15 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "fbSignInWithCredential:success");
 
                             FirebaseUser user = mAuth.getCurrentUser();
+
                             if(user != null) {
+
+                                if (!user.getProviderData().isEmpty() && user.getProviderData().size() > 1)
+                                    photoUrl = "https://graph.facebook.com/" + user.getProviderData()
+                                            .get(1).getUid() + "/picture?type=large";
+
+                            //    photoUrl = "https://graph.facebook.com/" + facebookUserId + "/picture?height=500";
+
                                 mFacebookBtn.setEnabled(true);
                                 gotoFeed();
                             }
@@ -293,7 +318,13 @@ public class MainActivity extends AppCompatActivity {
 
         String email = loginEmail.getText().toString().trim();
         String pass = loginPass.getText().toString().trim();
+     //   credential = EmailAuthProvider.getCredential(email, pass);
 
+        emailpassSignin(email, pass);
+
+    }
+
+    private void emailpassSignin(String email, String pass) {
         if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)) {
             mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
@@ -308,14 +339,20 @@ public class MainActivity extends AppCompatActivity {
                        } catch(Exception e) {
                            e.printStackTrace();
                        }
+
                     } else {
                         checkIfUserExists();
                     }
+
                 }
             });
+
         } else {
+
             Toast.makeText(MainActivity.this, "Fields can't be empty", Toast.LENGTH_LONG).show();
+
         }
+
     }
 
     public void checkIfUserExists() {
@@ -326,6 +363,7 @@ public class MainActivity extends AppCompatActivity {
         firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
                 if(task.isSuccessful()) {
                     gotoFeed();
                 }else {

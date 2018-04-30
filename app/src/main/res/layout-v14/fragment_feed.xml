@@ -121,7 +121,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@color/white"
+                        android:background="@color/least_black"
                         android:text="@string/share_info"
                         android:textAllCaps="false"
                         android:textColor="#00ccff"
@@ -137,11 +137,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@color/white"
-                        android:text="Ask a Query"
+                        android:background="@color/least_black"
+                        android:text="@string/ask_a_query"
                         android:textAllCaps="false"
                         android:textColor="#ff3300"
-                        android:textSize="24dp" />
+                        android:textSize="24sp" />
 
                     <View
                         android:layout_width="match_parent"
@@ -153,11 +153,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:background="@color/white"
-                        android:text="Post a Challenge"
+                        android:background="@color/least_black"
+                        android:text="@string/post_a_challenge"
                         android:textAllCaps="false"
                         android:textColor="#cc9900"
-                        android:textSize="24dp" />
+                        android:textSize="24sp" />
 
                 </LinearLayout>
 

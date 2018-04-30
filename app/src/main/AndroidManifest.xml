@@ -57,7 +57,9 @@
             android:name=".ShareinfoActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".FullPostActivity" />
-        <activity android:name=".PlayVideoActivity"></activity>
+        <activity android:name=".PlayVideoActivity" />
+        <activity android:name=".AskQuestionActivity" />
+        <activity android:name=".PostChallengeActivity"></activity>
     </application>
 
 </manifest>
