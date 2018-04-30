@@ -9,22 +9,18 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegistrationActivity extends AppCompatActivity {
 
     private EditText mNameField;
     private EditText mEmailField;
@@ -88,7 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                                 if(task.isSuccessful()) {
 
-                                    Intent interestsIntent = new Intent(RegisterActivity.this, TabsActivity.class);
+                                    Intent interestsIntent = new Intent(RegistrationActivity.this, TabsActivity.class);
                                     startActivity(interestsIntent);
                                     finish();
 
@@ -96,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                                     progressBar.setVisibility(View.INVISIBLE);
                                     String error = task.getException().getMessage();
-                                    Toast.makeText(RegisterActivity.this, "Firestore error : " + error,
+                                    Toast.makeText(RegistrationActivity.this, "Firestore error : " + error,
                                             Toast.LENGTH_LONG).show();
 
                                 }
@@ -108,7 +104,7 @@ public class RegisterActivity extends AppCompatActivity {
                     } else {
 
                         progressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(RegisterActivity.this, "Email already exists", Toast.LENGTH_LONG).show();
+                        Toast.makeText(RegistrationActivity.this, "Email already exists", Toast.LENGTH_LONG).show();
 
                     }
                 }

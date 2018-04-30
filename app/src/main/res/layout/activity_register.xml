@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.learnexo.main.RegisterActivity">
+    tools:context="com.learnexo.main.RegistrationActivity">
 
     <include
         android:id="@+id/include"
