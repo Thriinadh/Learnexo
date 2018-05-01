@@ -1,6 +1,7 @@
 package com.learnexo.main;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -30,16 +31,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,14 +54,10 @@ public class MainActivity extends AppCompatActivity {
     private Button mFacebookBtn;
     private TextView mRegisterBtn;
 
-    private String user_id;
     private GoogleApiClient mGoogleApiClient;
 
-    // Firebase instance variables
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore mFirestore;
+    private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
 
-    private AuthCredential credential;
     private CallbackManager mFbCallbackManager;
 
     @Override
@@ -70,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         wireViews();
-        setUpFirebase();
+
 
         setupGoogleApiClient();
         googleLoginListener();
@@ -202,11 +198,6 @@ public class MainActivity extends AppCompatActivity {
                 .build();
     }
 
-    private void setUpFirebase() {
-        mAuth = FirebaseAuth.getInstance();
-        mFirestore = FirebaseFirestore.getInstance();
-    }
-
     private void wireViews() {
         loginEmail = findViewById(R.id.loginEmail);
         loginPass = findViewById(R.id.loginPass);
@@ -227,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
     private void checkGoogleAccInFirebase(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
 
-        mAuth.signInWithCredential(credential)
+        FirebaseUtil.sAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -235,9 +226,10 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "GoogleSignInWithCredential:success");
 
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            if(user != null) {
-                                photoUrl = user.getPhotoUrl().toString();
+                            if(FirebaseUtil.doesUserExist()) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                    photoUrl = Objects.requireNonNull(FirebaseUtil.getCurrentUser().getPhotoUrl()).toString();
+                                }
                                 gotoFeed();
                             }
                         } else {
@@ -256,8 +248,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkFbAccInFirebase(AccessToken token) {
         Log.d(TAG, "checkFbAccInFirebase:" + token);
-        credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        FirebaseUtil.sAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -265,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "fbSignInWithCredential:success");
 
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            FirebaseUser user = FirebaseUtil.getCurrentUser();
                             if(user != null) {
                                 if (!user.getProviderData().isEmpty() && user.getProviderData().size() > 1)
                                     photoUrl = "https://graph.facebook.com/" + user.getProviderData()
@@ -290,12 +282,14 @@ public class MainActivity extends AppCompatActivity {
         String pass = loginPass.getText().toString().trim();
 
         if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)) {
-            mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            FirebaseUtil.sAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(!task.isSuccessful()) {
                        try {
-                           throw task.getException();
+                           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                               throw Objects.requireNonNull(task.getException());
+                           }
                        } catch(FirebaseAuthInvalidUserException wrongEmail) {
                            Toast.makeText(MainActivity.this, "Invalid Email", Toast.LENGTH_LONG).show();
                         } catch(FirebaseAuthInvalidCredentialsException wrongPassword) {
@@ -316,15 +310,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void checkIfUserExists() {
 
-        user_id = FirebaseUtil.getCurrentUserId();
-        mFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        String user_id = FirebaseUtil.getCurrentUserId();
+        mFirebaseUtil.mFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                 if(task.isSuccessful()) {
                     gotoFeed();
                 }else {
-                    String errorMessage = task.getException().getMessage();
+                    String errorMessage = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                        errorMessage = Objects.requireNonNull(task.getException()).getMessage();
+                    }
                     Toast.makeText(MainActivity.this, "Error : " + errorMessage, Toast.LENGTH_LONG).show();
                 }
             }

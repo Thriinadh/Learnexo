@@ -31,6 +31,10 @@ public class FirebaseUtil {
         }
     }
 
+    public static FirebaseUser getCurrentUser() {
+        return sAuth.getCurrentUser();
+    }
+
     public static void sAuthSingOut() {
         sAuth.signOut();
     }

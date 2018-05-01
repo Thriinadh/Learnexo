@@ -25,20 +25,20 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.learnexo.util.FirebaseUtil;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.learnexo.util.FirebaseUtil.sStorageReference;
 
 public class SetupActivity extends AppCompatActivity {
 
@@ -52,11 +52,7 @@ public class SetupActivity extends AppCompatActivity {
     private Button edit_name_button;
 
     private boolean isChanged = false;
-
-    private StorageReference storageReference;
-    private FirebaseAuth mAuth;
-
-    private FirebaseFirestore firebaseFirestore;
+    private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +60,12 @@ public class SetupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setup);
 
         setupToolbar();
-        setupFirebase();
         setUserId();
 
         wireViews();
 
         getFromFirebaseAndSet();
-        handleSetupBtn();
+        setupBtnListener();
 
         profileImageOnclick();
         enableNameField();
@@ -121,7 +116,7 @@ public class SetupActivity extends AppCompatActivity {
         });
     }
 
-    private void handleSetupBtn() {
+    private void setupBtnListener() {
         setupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -129,56 +124,45 @@ public class SetupActivity extends AppCompatActivity {
                 final String nick_name = setup_nickName.getText().toString();
 
                 if (!TextUtils.isEmpty(nick_name) && mainImageURI != null) {
-
                     setupProgerss.setVisibility(View.VISIBLE);
 
                     if (isChanged) {
-
-                        user_id = mAuth.getCurrentUser().getUid();
-
-                        StorageReference image_path = storageReference.child("Profile_images").child(user_id + ".jpg");
+                        user_id = FirebaseUtil.getCurrentUserId();
+                        StorageReference image_path = sStorageReference.child("Profile_images").child(user_id + ".jpg");
                         image_path.putFile(mainImageURI).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                                 if (task.isSuccessful()) {
-
                                     storeFirestore(task, nick_name);
-
                                 } else {
-
-                                    String error = task.getException().getMessage();
+                                    String error = null;
+                                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                                        error = Objects.requireNonNull(task.getException()).getMessage();
+                                    }
                                     Toast.makeText(SetupActivity.this, "Image Error : " + error, Toast.LENGTH_LONG).show();
                                     setupProgerss.setVisibility(View.INVISIBLE);
-
                                 }
-
                             }
                         });
-
                     } else {
                         storeFirestore(null, nick_name);
                     }
-
                 }
-
             }
         });
     }
 
     private void getFromFirebaseAndSet() {
-        firebaseFirestore.collection("Users").document(user_id).
+        mFirebaseUtil.mFirestore.collection("Users").document(user_id).
                 collection("Setup Details").document("Setup Fields").get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                 if (task.isSuccessful()) {
-
                     if (task.getResult().exists()) {
-
                         String name = task.getResult().getString("Nick name");
                         String image = task.getResult().getString("Image");
-
                         if (image != null)
                             mainImageURI = Uri.parse(image);
 
@@ -191,18 +175,17 @@ public class SetupActivity extends AppCompatActivity {
 
                         Glide.with(SetupActivity.this)
                                 .load(image).apply(placeholderRequest).into(setupImage);
-
                     }
 
                 } else {
-
-                    String error = task.getException().getMessage();
+                    String error = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                        error = Objects.requireNonNull(task.getException()).getMessage();
+                    }
                     Toast.makeText(SetupActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
-
                 }
                 setupProgerss.setVisibility(View.INVISIBLE);
                 setupBtn.setEnabled(true);
-
             }
         });
     }
@@ -217,17 +200,9 @@ public class SetupActivity extends AppCompatActivity {
         setupBtn.setEnabled(false);
     }
 
-    private void setupFirebase() {
-        mAuth = FirebaseAuth.getInstance();
-        firebaseFirestore = FirebaseFirestore.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReference();
-
-    }
 
     private void setUserId() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        if(user != null)
-            user_id = user.getUid();
+        user_id = FirebaseUtil.getCurrentUserId();
     }
 
     private void setupToolbar() {
@@ -235,11 +210,11 @@ public class SetupActivity extends AppCompatActivity {
         setSupportActionBar(setupToolbar);
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
-            supportActionBar.setTitle("Account setup");
+            supportActionBar.setTitle("Profile completion");
         }
     }
 
-    private void storeFirestore(@NonNull Task<UploadTask.TaskSnapshot> task, String nick_name) {
+    private void storeFirestore(Task<UploadTask.TaskSnapshot> task, String nick_name) {
 
         Uri download_uri;
 
@@ -255,9 +230,11 @@ public class SetupActivity extends AppCompatActivity {
         Map<String, String> userMap = new HashMap<>();
 
         userMap.put("Nick name", nick_name);
-        userMap.put("Image", download_uri.toString());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            userMap.put("Image", Objects.requireNonNull(download_uri).toString());
+        }
 
-        firebaseFirestore.collection("Users").document(user_id).collection("Setup Details")
+        mFirebaseUtil.mFirestore.collection("Users").document(user_id).collection("Setup Details")
                 .document("Setup Fields").set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -267,7 +244,10 @@ public class SetupActivity extends AppCompatActivity {
                     startActivity(tabIntent);
                     finish();
                 } else {
-                    String error = task.getException().getMessage();
+                    String error = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                        error = Objects.requireNonNull(task.getException()).getMessage();
+                    }
                     Toast.makeText(SetupActivity.this, "Firestore Error : " + error, Toast.LENGTH_LONG).show();
                 }
 
