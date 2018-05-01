@@ -28,32 +28,24 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.EmailAuthProvider;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.learnexo.model.user.User;
 
 import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int GOOGLE_REQ_CODE_SIGN_IN = 1;
-    private static final String TAG = "MAIN_ACTIVITY";
     public static String photoUrl;
+    private static final int GOOGLE_SIGN_IN_REQ_CODE = 1;
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private EditText loginEmail;
     private EditText loginPass;
@@ -73,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
     private AuthCredential credential;
 
     // Facebook callbackmanager
-    private CallbackManager mCallbackManager;
     FirebaseUser currentUser;
+    private CallbackManager mFbCallbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,13 +76,12 @@ public class MainActivity extends AppCompatActivity {
         wiringViews();
         firebaseSetup();
 
-        googleSetup();
-        googleLoginOnclick();
+        setupGoogleApiClient();
+        googleLoginListener();
 
-        facebookSetup();
-        facebookLoginOnclick();
+        facebookLoginListener();
 
-        registerOnclick();
+        registrationListener();
 
     }
 
@@ -109,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == GOOGLE_REQ_CODE_SIGN_IN) {
+        if(requestCode == GOOGLE_SIGN_IN_REQ_CODE) {
             handleGoogleSigninIntent(data);
         } else {
             handleFBsigninIntent(requestCode, resultCode, data);
@@ -119,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleFBsigninIntent(int requestCode, int resultCode, Intent data) {
         // Pass the activity result back to the Facebook SDK
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        mFbCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void handleGoogleSigninIntent(Intent data) {
@@ -128,24 +119,37 @@ public class MainActivity extends AppCompatActivity {
             // Google Sign In was successful, authenticate with Firebase
             GoogleSignInAccount account = task.getResult(ApiException.class);
 
-            firebaseAuthWithGoogle(account);
+            if (account != null) {
+                String personName = account.getDisplayName();
+                String personGivenName = account.getGivenName();
+                String personFamilyName = account.getFamilyName();
+                String personEmail = account.getEmail();
+                String personId = account.getId();
+                Uri personPhoto = account.getPhotoUrl();
+
+                checkGoogleAccInFirebase(account);
+            }
+
         } catch (ApiException e) {
             //Google Sign In failed, update UI appropriately
             Log.w(TAG, "Google sign in failed", e);
         }
     }
 
-    private void registerOnclick() {
+    private void registrationListener() {
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent regIntent = new Intent(MainActivity.this, RegisterActivity.class);
+                Intent regIntent = new Intent(MainActivity.this, RegistrationActivity.class);
                 startActivity(regIntent);
             }
         });
     }
 
-    private void facebookLoginOnclick() {
+    private void facebookLoginListener() {
+        //Facebook callback manager
+        mFbCallbackManager = CallbackManager.Factory.create();
+
         // Facebook Login Button Listener
         mFacebookBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,11 +158,11 @@ public class MainActivity extends AppCompatActivity {
                 mFacebookBtn.setEnabled(false);
 
                 LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, Arrays.asList("email", "public_profile"));
-                LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+                LoginManager.getInstance().registerCallback(mFbCallbackManager, new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                        handleFacebookAccessToken(loginResult.getAccessToken());
+                        checkFbAccInFirebase(loginResult.getAccessToken());
                     }
 
                     @Override
@@ -177,23 +181,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void facebookSetup() {
-        //Facebook callback manager
-        mCallbackManager = CallbackManager.Factory.create();
-    }
-
-    private void googleLoginOnclick() {
+    private void googleLoginListener() {
         // Google sign in Button Listener
         mGoogleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mGoogleBtn.setEnabled(false);
-                googleSignin();
+
+                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(MainActivity.this.mGoogleApiClient);
+                startActivityForResult(signInIntent, GOOGLE_SIGN_IN_REQ_CODE);
             }
         });
     }
 
-    private void googleSetup() {
+    private void setupGoogleApiClient() {
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -215,8 +216,6 @@ public class MainActivity extends AppCompatActivity {
     private void firebaseSetup() {
         mAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
-        // Firebase Realtime Database reference
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
     }
 
     private void wiringViews() {
@@ -228,33 +227,25 @@ public class MainActivity extends AppCompatActivity {
         mRegisterBtn = findViewById(R.id.registerBtn);
     }
 
+
     private void gotoFeed() {
         Intent tabsActivityIntent = new Intent(MainActivity.this, TabsActivity.class);
         startActivity(tabsActivityIntent);
         finish();
     }
 
-    private void googleSignin() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(this.mGoogleApiClient);
-        startActivityForResult(signInIntent, GOOGLE_REQ_CODE_SIGN_IN);
-    }
 
+    private void checkGoogleAccInFirebase(GoogleSignInAccount account) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
-
-        credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-
-        googleOnlySignin(credential);
-    }
-
-    private void googleOnlySignin(AuthCredential credential) {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
+                            Log.d(TAG, "GoogleSignInWithCredential:success");
+
                             FirebaseUser user = mAuth.getCurrentUser();
                             if(user != null) {
                                 photoUrl = user.getPhotoUrl().toString();
@@ -275,9 +266,8 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
-        credential = FacebookAuthProvider.getCredential(token.getToken());
+    private void checkFbAccInFirebase(AccessToken token) {
+        Log.d(TAG, "checkFbAccInFirebase:" + token);
 
         facebookOnlySignin(credential);
     }
@@ -287,10 +277,10 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
+                            Log.d(TAG, "fbSignInWithCredential:success");
+
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             if(user != null) {
@@ -307,18 +297,16 @@ public class MainActivity extends AppCompatActivity {
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.d(TAG, "signInWithCredential:failure", task.getException());
+                            Log.d(TAG, "fbSignInWithCredential:failure", task.getException());
                             Toast.makeText(MainActivity.this, "Authentication Failed", Toast.LENGTH_SHORT).show();
                             mFacebookBtn.setEnabled(true);
                           //  updateUI();
                         }
-
-                        // ...
                     }
                 });
     }
 
-    public void loginButtonClicked(View view) {
+    public void loginButtonListener(View view) {
 
         String email = loginEmail.getText().toString().trim();
         String pass = loginPass.getText().toString().trim();
@@ -330,33 +318,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void emailpassSignin(String email, String pass) {
         if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)) {
-
             mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-
                     if(!task.isSuccessful()) {
-
                        try {
-
                            throw task.getException();
-
                        } catch(FirebaseAuthInvalidUserException wrongEmail) {
-
                            Toast.makeText(MainActivity.this, "Invalid Email", Toast.LENGTH_LONG).show();
-
                         } catch(FirebaseAuthInvalidCredentialsException wrongPassword) {
-
                            Toast.makeText(MainActivity.this, "Wrong Password", Toast.LENGTH_LONG).show();
-
                        } catch(Exception e) {
                            e.printStackTrace();
                        }
 
                     } else {
-
-                        checkUserExists();
-
+                        checkIfUserExists();
                     }
 
                 }
@@ -367,10 +344,10 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Fields can't be empty", Toast.LENGTH_LONG).show();
 
         }
+
     }
 
-    public void checkUserExists() {
-
+    public void checkIfUserExists() {
         FirebaseUser user = mAuth.getCurrentUser();
         if(user != null)
             user_id = mAuth.getCurrentUser().getUid();
@@ -381,8 +358,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if(task.isSuccessful()) {
                     gotoFeed();
-                    }
-                    else {
+                }else {
                     String errorMessage = task.getException().getMessage();
                     Toast.makeText(MainActivity.this, "Error : " + errorMessage, Toast.LENGTH_LONG).show();
                 }

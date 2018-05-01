@@ -127,7 +127,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/login_button"
-                android:onClick="loginButtonClicked"
+                android:onClick="loginButtonListener"
                 android:text="@string/login"
                 android:textColor="#ffffff"
                 android:textSize="20sp" />
