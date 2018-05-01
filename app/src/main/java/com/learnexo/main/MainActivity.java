@@ -36,7 +36,6 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -61,12 +60,8 @@ public class MainActivity extends AppCompatActivity {
     // Firebase instance variables
     private FirebaseAuth mAuth;
     private FirebaseFirestore firebaseFirestore;
-    private DatabaseReference mDatabase;
 
     private AuthCredential credential;
-
-    // Facebook callbackmanager
-    FirebaseUser currentUser;
     private CallbackManager mFbCallbackManager;
 
     @Override
@@ -270,10 +265,6 @@ public class MainActivity extends AppCompatActivity {
     private void checkFbAccInFirebase(AccessToken token) {
         Log.d(TAG, "checkFbAccInFirebase:" + token);
         credential = FacebookAuthProvider.getCredential(token.getToken());
-        facebookOnlySignin(credential);
-    }
-
-    private void facebookOnlySignin(AuthCredential credential) {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -283,15 +274,11 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "fbSignInWithCredential:success");
 
                             FirebaseUser user = mAuth.getCurrentUser();
-
                             if(user != null) {
-
                                 if (!user.getProviderData().isEmpty() && user.getProviderData().size() > 1)
                                     photoUrl = "https://graph.facebook.com/" + user.getProviderData()
                                             .get(1).getUid() + "/picture?type=large";
-
-                            //    photoUrl = "https://graph.facebook.com/" + facebookUserId + "/picture?height=500";
-
+                                    //photoUrl = "https://graph.facebook.com/" + facebookUserId + "/picture?height=500";
                                 mFacebookBtn.setEnabled(true);
                                 gotoFeed();
                             }
@@ -308,13 +295,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loginButtonListener(View view) {
-
         String email = loginEmail.getText().toString().trim();
         String pass = loginPass.getText().toString().trim();
-     //   credential = EmailAuthProvider.getCredential(email, pass);
+        //credential = EmailAuthProvider.getCredential(email, pass);
 
         emailpassSignin(email, pass);
-
     }
 
     private void emailpassSignin(String email, String pass) {
@@ -332,18 +317,13 @@ public class MainActivity extends AppCompatActivity {
                        } catch(Exception e) {
                            e.printStackTrace();
                        }
-
                     } else {
                         checkIfUserExists();
                     }
-
                 }
             });
-
         } else {
-
             Toast.makeText(MainActivity.this, "Fields can't be empty", Toast.LENGTH_LONG).show();
-
         }
 
     }
@@ -363,7 +343,6 @@ public class MainActivity extends AppCompatActivity {
                     String errorMessage = task.getException().getMessage();
                     Toast.makeText(MainActivity.this, "Error : " + errorMessage, Toast.LENGTH_LONG).show();
                 }
-
             }
         });
 
