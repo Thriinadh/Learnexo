@@ -2,14 +2,15 @@ package com.learnexo.model.feed.question;
 
 import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.ServerTimestamp;
+import com.learnexo.model.feed.FeedItem;
 
 import java.util.Date;
 import java.util.List;
 
 //only used for unanswered questions
 @IgnoreExtraProperties
-public class Question {
-    private String question;
+public class Question extends FeedItem{
+    private String content;
 
     @ServerTimestamp
     private Date askTime;
@@ -26,7 +27,7 @@ public class Question {
     public Question() {}
 
     public Question(String question, Date askTime, String userId, String userName, String imgUrl, String imgThmb, List<String> tags, boolean is_notifiable, boolean isChallenge) {
-        this.question = question;
+        this.content = question;
         this.askTime = askTime;
         this.userId = userId;
         this.userName = userName;
@@ -37,12 +38,12 @@ public class Question {
         this.isChallenge = isChallenge;
     }
 
-    public String getQuestion() {
-        return question;
+    public String getContent() {
+        return content;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public Date getAskTime() {

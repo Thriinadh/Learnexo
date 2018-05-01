@@ -54,7 +54,7 @@
             android:theme="@style/Base.Theme.AppCompat" />
         <activity android:name=".TabsActivity" />
         <activity
-            android:name=".ShareinfoActivity"
+            android:name=".PublishActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".FullPostActivity" />
         <activity android:name=".PlayVideoActivity" />

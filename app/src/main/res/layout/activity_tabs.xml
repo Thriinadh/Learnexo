@@ -18,7 +18,7 @@
             android:layout_height="56dp"
             android:background="@color/white"
             app:titleTextAppearance="@style/ActionBar.nameText"
-            app:layout_scrollFlags="scroll|enterAlways"
+            app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
             app:popupTheme="@style/customPopupStyle">
 
             <TextView

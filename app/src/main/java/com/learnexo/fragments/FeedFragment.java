@@ -23,12 +23,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.learnexo.main.AskQuestionActivity;
 import com.learnexo.main.FeedRecyclerAdapter;
 import com.learnexo.main.MainActivity;
-import com.learnexo.main.PostChallengeActivity;
 import com.learnexo.main.R;
-import com.learnexo.main.ShareinfoActivity;
+import com.learnexo.main.PublishActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -118,20 +116,29 @@ public class FeedFragment extends Fragment {
         shareInfoBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent shareIntent = new Intent(getActivity(), ShareinfoActivity.class);
-                    startActivity(shareIntent);
+//                    Intent shareIntent = new Intent(getActivity(), PublishActivity.class);
+//                    shareIntent.putExtra("PUBLISH_TYPE", );
+//                    startActivity(shareIntent);
+
+                    startPublishActivity("Share Info");
+
                 }
             });
+    }
+
+    private void startPublishActivity(String publish_type) {
+
+        Intent shareIntent = new Intent(getActivity(), PublishActivity.class);
+                    shareIntent.putExtra("PUBLISH_TYPE", publish_type);
+                    startActivity(shareIntent);
+
     }
 
     private void handleChallengeBtn() {
         challengeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Intent challengeIntent = new Intent(getActivity(), PostChallengeActivity.class);
-                startActivity(challengeIntent);
-
+                startPublishActivity("Post challenge");
             }
         });
     }
@@ -140,8 +147,7 @@ public class FeedFragment extends Fragment {
         askBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent askIntent = new Intent(getActivity(), AskQuestionActivity.class);
-                startActivity(askIntent);
+                startPublishActivity("Ask question");
             }
         });
     }

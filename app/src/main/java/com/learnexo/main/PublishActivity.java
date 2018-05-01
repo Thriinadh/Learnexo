@@ -35,12 +35,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.post.Post;
+import com.learnexo.model.feed.question.Question;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -48,19 +49,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
 
-public class ShareinfoActivity extends AppCompatActivity {
+public class PublishActivity extends AppCompatActivity {
 
     private static final int FEED_FRAG_NO = 0;
     private Uri postedImageURI = null;
 
-    private ProgressBar shareProgressBar;
+    private ProgressBar mProgressBar;
     private ConstraintLayout constraintKeyboardIn;
     private ConstraintLayout constraintKeyboard;
     private EditText content;
@@ -83,18 +82,21 @@ public class ShareinfoActivity extends AppCompatActivity {
 
     private Bitmap compressedImageFile;
 
-//    Map<String, Object> postMap;
-    Post mPost;
+    String publishType;
+
+    FeedItem mFeedItem;
+    Question mQuestion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shareinfo);
+        setContentView(R.layout.activity_publish);
 
+        publishType = getIntent().getStringExtra("PUBLISH_TYPE");
         wiringViews();
         postBtn.setEnabled(false);
         timeofPost.setText("Now");
-        setupToolbar();
+        setupToolbar(publishType);
         setupFirebase();
         getDPandNameAndSet();
         setupDropDownSpinner();
@@ -113,14 +115,18 @@ public class ShareinfoActivity extends AppCompatActivity {
 
                 if(!TextUtils.isEmpty(enteredText) && selectedSub != null) {
 
-                    shareProgressBar.setVisibility(View.VISIBLE);
+                    mProgressBar.setVisibility(View.VISIBLE);
 
-                    mPost = new Post();
-                    mPost.setContent(enteredText);
-                    mPost.setTags(Collections.singletonList(selectedSub));
-                    mPost.setUserId(user_id);
-                    mPost.setUserName(name);
-                  //  mPost.setPosTime(FieldValue.serverTimestamp());
+                    if(publishType.equals("Share Info")) {
+                        mFeedItem = new Post();
+                    } else {
+                        mFeedItem = new Question();
+                    }
+                    mFeedItem.setContent(enteredText);
+                    mFeedItem.setTags(Collections.singletonList(selectedSub));
+                    mFeedItem.setUserId(user_id);
+                    mFeedItem.setUserName(name);
+                  //  mFeedItem.setPosTime(FieldValue.serverTimestamp());
 //                    postMap = new HashMap<>();
 //                    postMap.put("postedContent", enteredText);
 //                    postMap.put("subject", selectedSub);
@@ -142,7 +148,7 @@ public class ShareinfoActivity extends AppCompatActivity {
 
                                     File newImageFile = new File(postedImageURI.getPath());
                                     try {
-                                        compressedImageFile = new Compressor(ShareinfoActivity.this)
+                                        compressedImageFile = new Compressor(PublishActivity.this)
                                                 .setMaxHeight(100)
                                                 .setMaxWidth(100)
                                                 .setQuality(2)
@@ -165,8 +171,8 @@ public class ShareinfoActivity extends AppCompatActivity {
 
                                             String downloadthumbUri = taskSnapshot.getDownloadUrl().toString();
 
-                                            mPost.setImgUrl(downloadUri);
-                                            mPost.setImgThmb(downloadthumbUri);
+                                            mFeedItem.setImgUrl(downloadUri);
+                                            mFeedItem.setImgThmb(downloadthumbUri);
 //                                            postMap.put("image_url", downloadUri);
 //                                            postMap.put("image_thumb", downloadthumbUri);
 
@@ -177,13 +183,13 @@ public class ShareinfoActivity extends AppCompatActivity {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
                                             String error = task.getException().getMessage();
-                                            Toast.makeText(ShareinfoActivity.this,
+                                            Toast.makeText(PublishActivity.this,
                                                     "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
                                         }
                                     });
 
                                 } else {
-                                    shareProgressBar.setVisibility(View.INVISIBLE);
+                                    mProgressBar.setVisibility(View.INVISIBLE);
                                 }
 
                             }
@@ -282,14 +288,14 @@ public class ShareinfoActivity extends AppCompatActivity {
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.apply(placeholderRequest).placeholder(R.drawable.default_photo);
 
-                        Glide.with(ShareinfoActivity.this).load(image).apply(placeholderRequest).into(imageView);
+                        Glide.with(PublishActivity.this).load(image).apply(placeholderRequest).into(imageView);
 
                     }
 
                 } else {
 
                     String error = task.getException().getMessage();
-                    Toast.makeText(ShareinfoActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
+                    Toast.makeText(PublishActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
 
                 }
 
@@ -306,16 +312,16 @@ public class ShareinfoActivity extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
     }
 
-    private void setupToolbar() {
+    private void setupToolbar(String title) {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null){
-            getSupportActionBar().setTitle("Share info");
+            getSupportActionBar().setTitle(title);
         }
     }
 
     private void wiringViews() {
-        shareProgressBar = findViewById(R.id.shareProgressBar);
+        mProgressBar = findViewById(R.id.shareProgressBar);
         content = findViewById(R.id.enterContent);
         username = findViewById(R.id.userNameTView);
         imageView = findViewById(R.id.smallCircleImageView);
@@ -332,7 +338,7 @@ public class ShareinfoActivity extends AppCompatActivity {
     public void saveToFirebaseGotoFeed() {
 
        final Task<DocumentReference> documentReferenceTask = firebaseFirestore.collection("users")
-               .document(user_id).collection("posts").add(mPost);
+               .document(user_id).collection("posts").add(mFeedItem);
                 documentReferenceTask.addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
@@ -340,16 +346,16 @@ public class ShareinfoActivity extends AppCompatActivity {
                     gotoFeedTab();
                 } else {
                     String error = task.getException().getMessage();
-                    Toast.makeText(ShareinfoActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
+                    Toast.makeText(PublishActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
                 }
-                shareProgressBar.setVisibility(View.INVISIBLE);
+                mProgressBar.setVisibility(View.INVISIBLE);
 
             }
 
                     private void gotoFeedTab() {
                         postId = documentReferenceTask.getResult().getId();
 
-                        Intent feedIntent = TabsActivity.newIntent(ShareinfoActivity.this, FEED_FRAG_NO);
+                        Intent feedIntent = TabsActivity.newIntent(PublishActivity.this, FEED_FRAG_NO);
                         startActivity(feedIntent);
                         finish();
                     }
@@ -378,7 +384,7 @@ public class ShareinfoActivity extends AppCompatActivity {
         // start picker to get image for cropping and then use the image in cropping activity
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
-                .start(ShareinfoActivity.this);
+                .start(PublishActivity.this);
 
     }
 
@@ -401,7 +407,7 @@ public class ShareinfoActivity extends AppCompatActivity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(ShareinfoActivity.this, "Uploaded", Toast.LENGTH_LONG).show();
+                        Toast.makeText(PublishActivity.this, "Uploaded", Toast.LENGTH_LONG).show();
                         constraintKeyboardIn.setVisibility(View.INVISIBLE);
                         constraintKeyboard.setVisibility(View.VISIBLE);
                     }
@@ -409,7 +415,7 @@ public class ShareinfoActivity extends AppCompatActivity {
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-                Toast.makeText(ShareinfoActivity.this, "ImgagePicker " +error, Toast.LENGTH_LONG).show();
+                Toast.makeText(PublishActivity.this, "ImgagePicker " +error, Toast.LENGTH_LONG).show();
             }
         }
     }

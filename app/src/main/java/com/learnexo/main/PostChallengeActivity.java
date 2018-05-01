@@ -57,10 +57,10 @@ public class PostChallengeActivity extends AppCompatActivity {
     private static final int FEED_FRAG_NO = 0;
     private Uri postedImageURI = null;
 
-    private ProgressBar challengeProgressBar;
+    private ProgressBar mProgressBar;
     private ConstraintLayout constraintKeyboardIn;
     private ConstraintLayout constraintKeyboard;
-    private EditText challengeContent;
+    private EditText content;
     private ImageView loadImage;
     private String user_id;
     private Button postBtn;
@@ -106,14 +106,14 @@ public class PostChallengeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final String enteredText = challengeContent.getText().toString();
+                final String enteredText = content.getText().toString();
 
                 if(!TextUtils.isEmpty(enteredText) && selectedSub != null) {
 
-                    challengeProgressBar.setVisibility(View.VISIBLE);
+                    mProgressBar.setVisibility(View.VISIBLE);
 
                     mQuestion = new Question();
-                    mQuestion.setQuestion(enteredText);
+                    mQuestion.setContent(enteredText);
                     mQuestion.setTags(Collections.singletonList(selectedSub));
                     mQuestion.setUserId(user_id);
                     mQuestion.setUserName(name);
@@ -173,7 +173,7 @@ public class PostChallengeActivity extends AppCompatActivity {
                                     });
 
                                 } else {
-                                    challengeProgressBar.setVisibility(View.INVISIBLE);
+                                    mProgressBar.setVisibility(View.INVISIBLE);
                                 }
 
                             }
@@ -189,7 +189,7 @@ public class PostChallengeActivity extends AppCompatActivity {
     }
 
     private void enablePostBtnAfterFiveCharsInEditText() {
-        challengeContent.addTextChangedListener(new TextWatcher() {
+        content.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 //...
@@ -306,8 +306,8 @@ public class PostChallengeActivity extends AppCompatActivity {
     }
 
     private void wiringViews() {
-        challengeProgressBar = findViewById(R.id.shareProgressBar);
-        challengeContent = findViewById(R.id.enterContent);
+        mProgressBar = findViewById(R.id.shareProgressBar);
+        content = findViewById(R.id.enterContent);
         username = findViewById(R.id.userNameTView);
         imageView = findViewById(R.id.smallCircleImageView);
         timeofPost = findViewById(R.id.timeofPost);
@@ -333,7 +333,7 @@ public class PostChallengeActivity extends AppCompatActivity {
                     String error = task.getException().getMessage();
                     Toast.makeText(PostChallengeActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
                 }
-                challengeProgressBar.setVisibility(View.INVISIBLE);
+                mProgressBar.setVisibility(View.INVISIBLE);
 
             }
 
@@ -407,7 +407,7 @@ public class PostChallengeActivity extends AppCompatActivity {
 
     public void enableSubmitIfReady() {
 
-        boolean isReady = challengeContent.getText().toString().length() > 5;
+        boolean isReady = content.getText().toString().length() > 5;
         postBtn.setEnabled(isReady);
         if(isReady) {
             postBtn.setBackgroundColor(Color.parseColor("#32CD32"));

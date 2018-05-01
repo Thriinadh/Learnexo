@@ -1,14 +1,12 @@
-package com.learnexo.model.feed.post;
+package com.learnexo.model.feed;
 
-import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.ServerTimestamp;
-import com.learnexo.model.feed.FeedItem;
 
 import java.util.Date;
 import java.util.List;
 
-@IgnoreExtraProperties
-public class Post extends FeedItem {
+public class FeedItem {
+
     private String content;
 
     @ServerTimestamp
@@ -30,10 +28,9 @@ public class Post extends FeedItem {
     private boolean is_notifiable;
 
     private List<String> tags;
+    public FeedItem() {}
 
-    public Post() {}
-
-    public Post(String content, Date posTime, String userId, String userName, String imgUrl, String imgThmb, long views, int upvotes, int shares, int comments, int bookMarks, int downVotes, boolean is_notifiable, List<String> tags) {
+    public FeedItem(String content, Date posTime, String userId, String userName, String imgUrl, String imgThmb, long views, int upvotes, int shares, int comments, int bookMarks, int downVotes, boolean is_notifiable, List<String> tags) {
         this.content = content;
         this.posTime = posTime;
         this.userId = userId;

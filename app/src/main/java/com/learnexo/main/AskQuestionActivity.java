@@ -39,7 +39,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.feed.question.Question;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -58,10 +57,10 @@ public class AskQuestionActivity extends AppCompatActivity {
     private static final int FEED_FRAG_NO = 0;
     private Uri postedImageURI = null;
 
-    private ProgressBar questionProgressBar;
+    private ProgressBar mProgressBar;
     private ConstraintLayout constraintKeyboardIn;
     private ConstraintLayout constraintKeyboard;
-    private EditText questionContent;
+    private EditText content;
     private ImageView loadImage;
     private String user_id;
     private Button postBtn;
@@ -107,14 +106,14 @@ public class AskQuestionActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final String enteredText = questionContent.getText().toString();
+                final String enteredText = content.getText().toString();
 
                 if(!TextUtils.isEmpty(enteredText) && selectedSub != null) {
 
-                    questionProgressBar.setVisibility(View.VISIBLE);
+                    mProgressBar.setVisibility(View.VISIBLE);
 
                     mQuestion = new Question();
-                    mQuestion.setQuestion(enteredText);
+                    mQuestion.setContent(enteredText);
                     mQuestion.setTags(Collections.singletonList(selectedSub));
                     mQuestion.setUserId(user_id);
                     mQuestion.setUserName(name);
@@ -174,7 +173,7 @@ public class AskQuestionActivity extends AppCompatActivity {
                                     });
 
                                 } else {
-                                    questionProgressBar.setVisibility(View.INVISIBLE);
+                                    mProgressBar.setVisibility(View.INVISIBLE);
                                 }
 
                             }
@@ -190,7 +189,7 @@ public class AskQuestionActivity extends AppCompatActivity {
     }
 
     private void enablePostBtnAfterFiveCharsInEditText() {
-        questionContent.addTextChangedListener(new TextWatcher() {
+        content.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 //...
@@ -307,8 +306,8 @@ public class AskQuestionActivity extends AppCompatActivity {
     }
 
     private void wiringViews() {
-        questionProgressBar = findViewById(R.id.shareProgressBar);
-        questionContent = findViewById(R.id.enterContent);
+        mProgressBar = findViewById(R.id.shareProgressBar);
+        content = findViewById(R.id.enterContent);
         username = findViewById(R.id.userNameTView);
         imageView = findViewById(R.id.smallCircleImageView);
         timeofPost = findViewById(R.id.timeofPost);
@@ -334,7 +333,7 @@ public class AskQuestionActivity extends AppCompatActivity {
                     String error = task.getException().getMessage();
                     Toast.makeText(AskQuestionActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
                 }
-                questionProgressBar.setVisibility(View.INVISIBLE);
+                mProgressBar.setVisibility(View.INVISIBLE);
 
             }
 
@@ -408,7 +407,7 @@ public class AskQuestionActivity extends AppCompatActivity {
 
     public void enableSubmitIfReady() {
 
-        boolean isReady = questionContent.getText().toString().length() > 5;
+        boolean isReady = content.getText().toString().length() > 5;
         postBtn.setEnabled(isReady);
         if(isReady) {
             postBtn.setBackgroundColor(Color.parseColor("#32CD32"));
