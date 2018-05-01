@@ -30,6 +30,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
@@ -268,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkFbAccInFirebase(AccessToken token) {
         Log.d(TAG, "checkFbAccInFirebase:" + token);
-
+        credential = FacebookAuthProvider.getCredential(token.getToken());
         facebookOnlySignin(credential);
     }
 
