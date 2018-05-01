@@ -49,7 +49,7 @@ public class RegistrationActivity extends AppCompatActivity {
         final String email = mEmail.getText().toString();
         final String pass = mPass.getText().toString();
 
-        if(!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)) {
+        if(!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)&&!email.contains(" ")) {
             createUserinFirestore(name, email, pass);
         }
     }
@@ -90,7 +90,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 } else {
                     progressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(RegistrationActivity.this,
-                            "Email already in use Or improper email",
+                            "Email already in use.",
                             Toast.LENGTH_LONG).show();
 
                 }

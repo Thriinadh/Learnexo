@@ -353,7 +353,7 @@ public class PublishActivity extends AppCompatActivity {
             }
 
                     private void gotoFeedTab() {
-                        postId = documentReferenceTask.getResult().getId();
+                        //postId = documentReferenceTask.getResult().getId();
 
                         Intent feedIntent = TabsActivity.newIntent(PublishActivity.this, FEED_FRAG_NO);
                         startActivity(feedIntent);

@@ -22,34 +22,27 @@ import android.widget.Toast;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.learnexo.fragments.ConnectFragment;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.HotQFragment;
 import com.learnexo.fragments.ProfileFragment;
 import com.learnexo.fragments.VideoFragment;
+import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TabsActivity extends AppCompatActivity {
 
-    public static final String EXTRA_SHARE_POST_TO_FEED = "com.authen.authentication.extra_share";
+    public static final String EXTRA_SHARE_POST_TO_FEED = "com.learnexo.main.extra_share";
 
     private Toolbar toolbar;
     private TextView mToolbarTitle;
     private TabLayout tabLayout;
 
     private ViewPager viewPager;
-    private ViewPagerAdapter adapter;
-
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore firebaseFirestore;
-
-    private String current_user_id;
+    private ViewPagerAdapter mAdapter;
 
     private int[] tabIconIDArray = {
             R.drawable.home_icon,
@@ -64,37 +57,26 @@ public class TabsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
 
-        setupFirebase();
         setupToolbar();
-
-        viewPager = findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-
+        setupViewPager();
         setupTablayout();
-        onTabSelect();
+        tabSelectListener();
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         checkIfUserExistsAndHandle();
+
     }
 
     private void checkIfUserExistsAndHandle() {
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
-            gotoLoginPage();
+        if (FirebaseUtil.doesUserExist()) {
+            checkIfUserProvidedInterests(FirebaseUtil.getCurrentUserId());
         } else {
-            current_user_id = mAuth.getCurrentUser().getUid();
-            checkIfUserProvidedInterests();
+            gotoLoginPage();
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
@@ -116,14 +98,14 @@ public class TabsActivity extends AppCompatActivity {
         }
     }
 
-    private void checkIfUserProvidedInterests() {
-        firebaseFirestore.collection("Users").document(current_user_id).collection("Interests")
-                         .document("Inter").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+    private void checkIfUserProvidedInterests(final String userId) {
+        new FirebaseUtil().mFirestore.collection("Users").document(userId).collection("Interests")
+                         .document("Inter").get().addOnCompleteListener(
+                                 new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
                 if (task.isSuccessful()) {
-                    takeUserInterests(task);
+                    takeUserInterests(task, userId);
                 } else {
                     toastErrorMsg(task);
                 }
@@ -134,64 +116,76 @@ public class TabsActivity extends AppCompatActivity {
                 Toast.makeText(TabsActivity.this, "Error : " + errorMessage, Toast.LENGTH_LONG).show();
             }
 
-            private void takeUserInterests(@NonNull Task<DocumentSnapshot> task) {
+            private void takeUserInterests(@NonNull Task<DocumentSnapshot> task, String userId) {
                 if (!task.getResult().exists()) {
-
-                    Intent interestIntent = new Intent(TabsActivity.this, InterestsActivity.class);
-                    startActivity(interestIntent);
+                    Intent intent = new Intent(TabsActivity.this, InterestsActivity.class);
+                    startActivity(intent);
                     finish();
-
                 } else {
-
-                    firebaseFirestore.collection("Users").document(current_user_id).
-                            collection("Setup Details").document("Setup Fields").get()
-                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()) {
-
-                                if(!task.getResult().exists()) {
-                                    Intent setupIntent = new Intent(TabsActivity.this, SetupActivity.class);
-                                    startActivity(setupIntent);
-                                    finish();
-                                }
-
-                            } else {
-                                toastErrorMsg(task);
-
-                            }
-                        }
-                    });
+                    checkIfUserhadSetup(userId);
 
                 }
             }
-        });
+
+                                     private void checkIfUserhadSetup(String userId) {
+                                         new FirebaseUtil().mFirestore.collection("Users").document(userId).
+                                                 collection("Setup Details").document("Setup Fields").get()
+                                                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                             @Override
+                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                 if(task.isSuccessful()) {
+                                                     if(!task.getResult().exists()) {
+                                                         Intent intent = new Intent(TabsActivity.this, SetupActivity.class);
+                                                         startActivity(intent);
+                                                         finish();
+                                                     }
+
+                                                 } else {
+                                                     toastErrorMsg(task);
+
+                                                 }
+                                             }
+                                         });
+                                     }
+                                 });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        handleIntentFromShareInfoActivity();
+        handleIntentFromPublishActivity();
     }
 
-    private void handleIntentFromShareInfoActivity() {
+    private void handleIntentFromPublishActivity() {
         TabLayout.Tab tab = tabLayout.getTabAt(getIntent().getIntExtra(EXTRA_SHARE_POST_TO_FEED, 0));
         tab.select();
     }
 
-    private void onTabSelect() {
+    private void tabSelectListener() {
         tabLayout.addOnTabSelectedListener (
                 new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
                     @Override
                     public void onTabSelected(TabLayout.Tab tab) {
                         super.onTabSelected(tab);
 
-                        hideCardviewInFeedFragmentWhenUsergoesToOtherTabs();
-                        setToolbarTitleBasedOnTab(tab);
                         tab.getIcon().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
+                        hideCardviewInFeedFragmentWhenUsergoesToOtherTabs();
+                        setToolbarTitle(tab);
                     }
 
-                    private void setToolbarTitleBasedOnTab(TabLayout.Tab tab) {
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) {
+                        super.onTabUnselected(tab);
+                        tab.getIcon().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
+                    }
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
+                        super.onTabReselected(tab);
+                    }
+
+                    private void setToolbarTitle(TabLayout.Tab tab) {
                         switch (tab.getPosition()) {
 
                             case 0:
@@ -223,22 +217,12 @@ public class TabsActivity extends AppCompatActivity {
                     }
 
                     private void hideCardviewInFeedFragmentWhenUsergoesToOtherTabs() {
-                        Fragment feedFragment = adapter.getItem(0);
+                        Fragment feedFragment = mAdapter.getItem(0);
                         int pos = viewPager.getCurrentItem();
                         if(pos == 1 || pos == 2 || pos == 3 || pos == 4)
                             ((FeedFragment)feedFragment).hideCardview();
                     }
 
-                    @Override
-                    public void onTabUnselected(TabLayout.Tab tab) {
-                        super.onTabUnselected(tab);
-                        tab.getIcon().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
-                    }
-
-                    @Override
-                    public void onTabReselected(TabLayout.Tab tab) {
-                        super.onTabReselected(tab);
-                    }
 
                 });
     }
@@ -259,11 +243,6 @@ public class TabsActivity extends AppCompatActivity {
         mToolbarTitle.setText(R.string.feed);
     }
 
-    private void setupFirebase() {
-        mAuth = FirebaseAuth.getInstance();
-        firebaseFirestore = FirebaseFirestore.getInstance();
-    }
-
     public static Intent newIntent(Context context, int tabNo) {
         Intent feedIntent = new Intent(context, TabsActivity.class);
         feedIntent.putExtra(EXTRA_SHARE_POST_TO_FEED, tabNo);
@@ -271,7 +250,7 @@ public class TabsActivity extends AppCompatActivity {
     }
 
     private void logout() {
-        mAuth.signOut();
+        FirebaseUtil.sAuthSingOut();
         LoginManager.getInstance().logOut();
         gotoLoginPage();
     }
@@ -296,19 +275,22 @@ public class TabsActivity extends AppCompatActivity {
         tabLayout.getTabAt(4).getIcon().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
     }
 
-    private void setupViewPager(ViewPager viewPager) {
-        adapter = new ViewPagerAdapter(getSupportFragmentManager());
+    private void setupViewPager() {
+        viewPager = findViewById(R.id.viewpager);
+        mAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        adapter.addFragment(new FeedFragment(), "ONE");
-        adapter.addFragment(new VideoFragment(), "TWO");
-        adapter.addFragment(new HotQFragment(), "THREE");
-        adapter.addFragment(new ConnectFragment(), "Four");
-        adapter.addFragment(new ProfileFragment(), "Five");
+        mAdapter.addFragment(new FeedFragment(), "ONE");
+        mAdapter.addFragment(new VideoFragment(), "TWO");
+        mAdapter.addFragment(new HotQFragment(), "THREE");
+        mAdapter.addFragment(new ConnectFragment(), "Four");
+        mAdapter.addFragment(new ProfileFragment(), "Five");
 
-        viewPager.setAdapter(adapter);
+        viewPager.setAdapter(mAdapter);
         viewPager.setOffscreenPageLimit(2);
     }
 
+
+    //inner custom class
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();

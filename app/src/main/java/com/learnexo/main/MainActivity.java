@@ -1,7 +1,6 @@
 package com.learnexo.main;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -38,6 +37,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.learnexo.util.FirebaseUtil;
 
 import java.util.Arrays;
 
@@ -84,9 +84,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null) {
+        if(FirebaseUtil.doesUserExist()) {
             gotoFeed();
         }
 
@@ -317,10 +315,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void checkIfUserExists() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        if(user != null)
-            user_id = user.getUid();
 
+        user_id = FirebaseUtil.getCurrentUserId();
         mFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
