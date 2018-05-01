@@ -6,11 +6,13 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -62,19 +64,15 @@ public class SetupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setup);
 
         setupToolbar();
-
         setupFirebase();
+        setUserId();
 
-        wiringViews();
-
-        setupBtn.setEnabled(false);
+        wireViews();
 
         getFromFirebaseAndSet();
-
         handleSetupBtn();
 
         profileImageOnclick();
-
         enableNameField();
 
     }
@@ -209,28 +207,35 @@ public class SetupActivity extends AppCompatActivity {
         });
     }
 
-    private void wiringViews() {
+    private void wireViews() {
         edit_name_button = findViewById(R.id.editNameBtn);
         setupImage = findViewById(R.id.setup_image);
         setup_nickName = findViewById(R.id.setup_nickName);
-        setupBtn = findViewById(R.id.setup_btn);
         setupProgerss = findViewById(R.id.setup_progress);
+
+        setupBtn = findViewById(R.id.setup_btn);
+        setupBtn.setEnabled(false);
     }
 
     private void setupFirebase() {
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-        if(user != null)
-        user_id = mAuth.getCurrentUser().getUid();
         firebaseFirestore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
+
+    }
+
+    private void setUserId() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(user != null)
+            user_id = user.getUid();
     }
 
     private void setupToolbar() {
-        android.support.v7.widget.Toolbar setupToolbar = findViewById(R.id.include);
+        Toolbar setupToolbar = findViewById(R.id.include);
         setSupportActionBar(setupToolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Account setup");
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setTitle("Account setup");
         }
     }
 

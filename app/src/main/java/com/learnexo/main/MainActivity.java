@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Firebase instance variables
     private FirebaseAuth mAuth;
-    private FirebaseFirestore firebaseFirestore;
+    private FirebaseFirestore mFirestore;
 
     private AuthCredential credential;
     private CallbackManager mFbCallbackManager;
@@ -69,13 +69,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        wiringViews();
-        firebaseSetup();
+        wireViews();
+        setUpFirebase();
 
         setupGoogleApiClient();
         googleLoginListener();
 
-        facebookLoginListener();
+        fbLoginListener();
 
         registrationListener();
 
@@ -99,14 +99,10 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == GOOGLE_SIGN_IN_REQ_CODE) {
             handleGoogleSigninIntent(data);
         } else {
-            handleFBsigninIntent(requestCode, resultCode, data);
+            // Pass the activity result back to the Facebook SDK
+            mFbCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
 
-    }
-
-    private void handleFBsigninIntent(int requestCode, int resultCode, Intent data) {
-        // Pass the activity result back to the Facebook SDK
-        mFbCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void handleGoogleSigninIntent(Intent data) {
@@ -116,12 +112,12 @@ public class MainActivity extends AppCompatActivity {
             GoogleSignInAccount account = task.getResult(ApiException.class);
 
             if (account != null) {
-                String personName = account.getDisplayName();
-                String personGivenName = account.getGivenName();
-                String personFamilyName = account.getFamilyName();
-                String personEmail = account.getEmail();
-                String personId = account.getId();
-                Uri personPhoto = account.getPhotoUrl();
+//                String personName = account.getDisplayName();
+//                String personGivenName = account.getGivenName();
+//                String personFamilyName = account.getFamilyName();
+//                String personEmail = account.getEmail();
+//                String personId = account.getId();
+//                Uri personPhoto = account.getPhotoUrl();
 
                 checkGoogleAccInFirebase(account);
             }
@@ -142,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void facebookLoginListener() {
+    private void fbLoginListener() {
         //Facebook callback manager
         mFbCallbackManager = CallbackManager.Factory.create();
 
@@ -150,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
         mFacebookBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 mFacebookBtn.setEnabled(false);
 
                 LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, Arrays.asList("email", "public_profile"));
@@ -184,8 +179,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 mGoogleBtn.setEnabled(false);
 
-                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(MainActivity.this.mGoogleApiClient);
-                startActivityForResult(signInIntent, GOOGLE_SIGN_IN_REQ_CODE);
+                Intent gglSigninIntent = Auth.GoogleSignInApi.getSignInIntent(MainActivity.this.mGoogleApiClient);
+                startActivityForResult(gglSigninIntent, GOOGLE_SIGN_IN_REQ_CODE);
             }
         });
     }
@@ -209,12 +204,12 @@ public class MainActivity extends AppCompatActivity {
                 .build();
     }
 
-    private void firebaseSetup() {
+    private void setUpFirebase() {
         mAuth = FirebaseAuth.getInstance();
-        firebaseFirestore = FirebaseFirestore.getInstance();
+        mFirestore = FirebaseFirestore.getInstance();
     }
 
-    private void wiringViews() {
+    private void wireViews() {
         loginEmail = findViewById(R.id.loginEmail);
         loginPass = findViewById(R.id.loginPass);
 
@@ -245,17 +240,16 @@ public class MainActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             if(user != null) {
                                 photoUrl = user.getPhotoUrl().toString();
-                                mGoogleBtn.setEnabled(true);
                                 gotoFeed();
                             }
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(MainActivity.this, "Error occured", Toast.LENGTH_LONG).show();
-                            mGoogleBtn.setEnabled(true);
                            // Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                            // updateUI(null);
                         }
+                        mGoogleBtn.setEnabled(true);
 
                         // ...
                     }
@@ -279,7 +273,6 @@ public class MainActivity extends AppCompatActivity {
                                     photoUrl = "https://graph.facebook.com/" + user.getProviderData()
                                             .get(1).getUid() + "/picture?type=large";
                                     //photoUrl = "https://graph.facebook.com/" + facebookUserId + "/picture?height=500";
-                                mFacebookBtn.setEnabled(true);
                                 gotoFeed();
                             }
 
@@ -287,9 +280,9 @@ public class MainActivity extends AppCompatActivity {
                             // If sign in fails, display a message to the user.
                             Log.d(TAG, "fbSignInWithCredential:failure", task.getException());
                             Toast.makeText(MainActivity.this, "Authentication Failed", Toast.LENGTH_SHORT).show();
-                            mFacebookBtn.setEnabled(true);
                           //  updateUI();
                         }
+                        mFacebookBtn.setEnabled(true);
                     }
                 });
     }
@@ -297,12 +290,7 @@ public class MainActivity extends AppCompatActivity {
     public void loginButtonListener(View view) {
         String email = loginEmail.getText().toString().trim();
         String pass = loginPass.getText().toString().trim();
-        //credential = EmailAuthProvider.getCredential(email, pass);
 
-        emailpassSignin(email, pass);
-    }
-
-    private void emailpassSignin(String email, String pass) {
         if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)) {
             mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
@@ -315,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
                         } catch(FirebaseAuthInvalidCredentialsException wrongPassword) {
                            Toast.makeText(MainActivity.this, "Wrong Password", Toast.LENGTH_LONG).show();
                        } catch(Exception e) {
-                           e.printStackTrace();
+                           Log.e(TAG, Arrays.toString(e.getStackTrace()));
                        }
                     } else {
                         checkIfUserExists();
@@ -331,9 +319,9 @@ public class MainActivity extends AppCompatActivity {
     public void checkIfUserExists() {
         FirebaseUser user = mAuth.getCurrentUser();
         if(user != null)
-            user_id = mAuth.getCurrentUser().getUid();
+            user_id = user.getUid();
 
-        firebaseFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        mFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 

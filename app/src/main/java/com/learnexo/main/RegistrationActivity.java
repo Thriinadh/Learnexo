@@ -1,9 +1,10 @@
 package com.learnexo.main;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -22,15 +23,15 @@ import java.util.Map;
 
 public class RegistrationActivity extends AppCompatActivity {
 
-    private EditText mNameField;
-    private EditText mEmailField;
-    private EditText mPassField;
+    private EditText mName;
+    private EditText mEmail;
+    private EditText mPass;
     private ProgressBar progressBar;
 
-    private android.support.v7.widget.Toolbar setupToolbar;
+    Toolbar setupToolbar;
 
     private FirebaseAuth mAuth;
-    private FirebaseFirestore firebaseFirestore;
+    private FirebaseFirestore mFirestore;
 
 
     @Override
@@ -38,79 +39,87 @@ public class RegistrationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
-        mNameField = findViewById(R.id.regName);
-        mEmailField = findViewById(R.id.regEmail);
-        mPassField = findViewById(R.id.regPassword);
+        wireViews();
+        setupToolbar();
+        setupFirebase();
+    }
 
-        progressBar = findViewById(R.id.progressBar);
+    public void registerBtnListener(View view) {
+        final String name = mName.getText().toString();
+        final String email = mEmail.getText().toString();
+        final String pass = mPass.getText().toString();
 
+        if(!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)) {
+            createUserinFirestore(name, email, pass);
+        }
+    }
+
+    private void createUserinFirestore(final String name, final String email, String pass) {
+        mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                progressBar.setVisibility(View.VISIBLE);
+                FirebaseUser user = mAuth.getCurrentUser();
+
+                if(user != null) {
+                    String user_id = user.getUid();
+
+                    Map<String, String> userMap = new HashMap<>();
+                    userMap.put("Name", name);
+                    userMap.put("Email Id", email);
+
+                    mFirestore.collection("Users").document(user_id).collection("Registration Details")
+                            .document("Register Fields").set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                            if(task.isSuccessful()) {
+                                Intent intent = new Intent(RegistrationActivity.this, TabsActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                progressBar.setVisibility(View.INVISIBLE);
+                                String error = task.getException().getMessage();
+                                Toast.makeText(RegistrationActivity.this,
+                                        "Firestore error : " + error,
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                } else {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    Toast.makeText(RegistrationActivity.this,
+                            "Email already in use Or improper email",
+                            Toast.LENGTH_LONG).show();
+
+                }
+            }
+        });
+    }
+
+    private void setupFirebase() {
+        mAuth = FirebaseAuth.getInstance();
+        mFirestore = FirebaseFirestore.getInstance();
+    }
+
+    private void setupToolbar() {
         setupToolbar = findViewById(R.id.include);
         setSupportActionBar(setupToolbar);
         if(getSupportActionBar() != null){
             getSupportActionBar().setTitle("Sign up");
         }
+    }
 
-        mAuth = FirebaseAuth.getInstance();
-        firebaseFirestore = FirebaseFirestore.getInstance();
+    private void wireViews() {
+        mName = findViewById(R.id.regName);
+        mEmail = findViewById(R.id.regEmail);
+        mPass = findViewById(R.id.regPassword);
 
+        progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.INVISIBLE);
     }
 
-        public void registerButtonClicked(View view) {
 
-        final String name_field = mNameField.getText().toString();
-        final String email_field = mEmailField.getText().toString();
-        String pass_field = mPassField.getText().toString();
-
-        if(!TextUtils.isEmpty(name_field) && !TextUtils.isEmpty(email_field) && !TextUtils.isEmpty(pass_field)) {
-            mAuth.createUserWithEmailAndPassword(email_field, pass_field).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-
-                    progressBar.setVisibility(View.VISIBLE);
-
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    if(user != null) {
-                        String user_id = user.getUid();
-
-                        Map<String, String> userMap = new HashMap<>();
-                        userMap.put("Name", name_field);
-                        userMap.put("Email Id", email_field);
-
-                        firebaseFirestore.collection("Users").document(user_id).collection("Registration Details")
-                                .document("Register Fields").set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-
-                                if(task.isSuccessful()) {
-
-                                    Intent interestsIntent = new Intent(RegistrationActivity.this, TabsActivity.class);
-                                    startActivity(interestsIntent);
-                                    finish();
-
-                                } else {
-
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                    String error = task.getException().getMessage();
-                                    Toast.makeText(RegistrationActivity.this, "Firestore error : " + error,
-                                            Toast.LENGTH_LONG).show();
-
-                                }
-
-                            }
-                        });
-
-
-                    } else {
-
-                        progressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(RegistrationActivity.this, "Email already exists", Toast.LENGTH_LONG).show();
-
-                    }
-                }
-            });
-        }
-
-    }
 
 }

@@ -100,7 +100,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/login_button"
-                android:onClick="registerButtonClicked"
+                android:onClick="registerBtnListener"
                 android:text="@string/sign_up_reg"
                 android:textColor="#ffffff" />
 
