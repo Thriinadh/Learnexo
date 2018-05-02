@@ -178,11 +178,11 @@ public class SetupActivity extends AppCompatActivity {
                     }
 
                 } else {
-                    String error = null;
+                    String errorMsg = null;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                        error = Objects.requireNonNull(task.getException()).getMessage();
+                        errorMsg = Objects.requireNonNull(task.getException()).getMessage();
                     }
-                    Toast.makeText(SetupActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
+                    Toast.makeText(SetupActivity.this, "Firestore Retrieve Error : " + errorMsg, Toast.LENGTH_LONG).show();
                 }
                 setupProgerss.setVisibility(View.INVISIBLE);
                 setupBtn.setEnabled(true);

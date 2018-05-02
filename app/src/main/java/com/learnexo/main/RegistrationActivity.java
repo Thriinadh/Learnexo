@@ -80,9 +80,9 @@ public class RegistrationActivity extends AppCompatActivity {
                                 finish();
                             } else {
                                 progressBar.setVisibility(View.INVISIBLE);
-                                String error = task.getException().getMessage();
+                                String errorMsg = task.getException().getMessage();
                                 Toast.makeText(RegistrationActivity.this,
-                                        "Firestore error : " + error,
+                                        "Firestore error : " + errorMsg,
                                         Toast.LENGTH_LONG).show();
                             }
                         }
