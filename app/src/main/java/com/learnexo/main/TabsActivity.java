@@ -268,13 +268,11 @@ public class TabsActivity extends AppCompatActivity {
     }
 
     private void setupTabIcons() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Objects.requireNonNull(tabLayout.getTabAt(0)).setIcon(tabIcons[0]);
-            Objects.requireNonNull(tabLayout.getTabAt(1)).setIcon(tabIcons[1]);
-            Objects.requireNonNull(tabLayout.getTabAt(2)).setIcon(tabIcons[2]);
-            Objects.requireNonNull(tabLayout.getTabAt(3)).setIcon(tabIcons[3]);
-            Objects.requireNonNull(tabLayout.getTabAt(4)).setIcon(tabIcons[4]);
-        }
+            tabLayout.getTabAt(0).setIcon(tabIcons[0]);
+            tabLayout.getTabAt(1).setIcon(tabIcons[1]);
+            tabLayout.getTabAt(2).setIcon(tabIcons[2]);
+            tabLayout.getTabAt(3).setIcon(tabIcons[3]);
+            tabLayout.getTabAt(4).setIcon(tabIcons[4]);
 
         tabLayout.getTabAt(0).getIcon().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
         tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);

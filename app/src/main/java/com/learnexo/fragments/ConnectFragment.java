@@ -40,7 +40,6 @@ public class ConnectFragment extends Fragment implements View.OnClickListener {
         learnersBtn.setOnClickListener(this);
         mentorsBtn.setOnClickListener(this);
 
-
         if (savedInstanceState == null) {
             getChildFragmentManager()
                     .beginTransaction()

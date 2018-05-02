@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -172,6 +173,8 @@ public class SetupActivity extends AppCompatActivity {
 
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.default_photo);
+
+                        setupImage.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
 
                         Glide.with(SetupActivity.this)
                                 .load(image).apply(placeholderRequest).into(setupImage);

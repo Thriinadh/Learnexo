@@ -23,7 +23,7 @@
     
     <style name="customToolbarStyle" parent="Theme.AppCompat.Light.NoActionBar">
         
-        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:background">@color/white</item>
         <item name="android:textColorSecondary">@color/black</item>
         
     </style>

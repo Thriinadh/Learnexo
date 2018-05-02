@@ -7,7 +7,7 @@
     tools:context="com.learnexo.main.MainActivity">
 
     <TextView
-        android:id="@+id/imageView3"
+        android:id="@+id/companyNameIView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -24,20 +24,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--<ImageView-->
-    <!--android:id="@+id/imageView4"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:layout_marginStart="8dp"-->
-    <!--android:layout_marginTop="24dp"-->
-    <!--android:contentDescription="@string/company_name"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintHorizontal_bias="0.502"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toTopOf="parent"-->
-    <!--app:srcCompat="@drawable/learnexo" />-->
-
     <TextView
         android:id="@+id/caption"
         android:layout_width="0dp"
@@ -50,7 +36,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toBottomOf="@+id/companyNameIView" />
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardview"
@@ -68,7 +54,7 @@
         app:layout_constraintTop_toBottomOf="@+id/caption">
 
         <LinearLayout
-            android:id="@+id/nameCardview"
+            android:id="@+id/loginLinearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:focusableInTouchMode="true"
