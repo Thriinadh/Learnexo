@@ -124,7 +124,7 @@ public class FeedFragment extends Fragment {
         mChallengeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startPublishActivity("Post challenge");
+                startPublishActivity("Post Challenge");
             }
         });
     }
@@ -133,7 +133,7 @@ public class FeedFragment extends Fragment {
         mAskBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startPublishActivity("Ask question");
+                startPublishActivity("Ask Your Question");
             }
         });
     }

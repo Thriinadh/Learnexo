@@ -5,7 +5,6 @@ import com.learnexo.model.feed.FeedItem;
 
 @IgnoreExtraProperties
 public class Post extends FeedItem {
-
     private long views;
     private int upvotes;
     private int shares;
@@ -15,7 +14,7 @@ public class Post extends FeedItem {
 
     public Post() {}
 
-    public Post( long views, int upvotes, int shares, int comments, int bookMarks, int downVotes) {
+    public Post(long views, int upvotes, int shares, int comments, int bookMarks, int downVotes) {
         this.views = views;
         this.upvotes = upvotes;
         this.shares = shares;

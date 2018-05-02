@@ -1,16 +1,18 @@
 package com.learnexo.model.feed;
 
+import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
 import java.util.List;
 
+@IgnoreExtraProperties
 public class FeedItem {
 
     private String content;
 
     @ServerTimestamp
-    private Date mPublishTime;
+    private Date publishTime;
 
     private String userId;
     private String userName;
@@ -25,7 +27,7 @@ public class FeedItem {
 
     public FeedItem(String content, Date mPublishTime, String userId, String userName, String imgUrl, String imgThmb, boolean is_notifiable, List<String> tags) {
         this.content = content;
-        this.mPublishTime = mPublishTime;
+        this.publishTime = mPublishTime;
         this.userId = userId;
         this.userName = userName;
         this.imgUrl = imgUrl;
@@ -44,11 +46,11 @@ public class FeedItem {
     }
 
     public Date getPublishTime() {
-        return mPublishTime;
+        return publishTime;
     }
 
     public void setPublishTime(Date publishTime) {
-        this.mPublishTime = publishTime;
+        this.publishTime = publishTime;
     }
 
     public String getUserId() {
