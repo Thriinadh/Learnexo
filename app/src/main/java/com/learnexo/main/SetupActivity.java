@@ -68,7 +68,7 @@ public class SetupActivity extends AppCompatActivity {
         getFromFirebaseAndSet();
         setupBtnListener();
 
-        profileImageOnclick();
+        profileImageListener();
         enableNameField();
 
     }
@@ -92,7 +92,7 @@ public class SetupActivity extends AppCompatActivity {
         });
     }
 
-    private void profileImageOnclick() {
+    private void profileImageListener() {
         setupImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

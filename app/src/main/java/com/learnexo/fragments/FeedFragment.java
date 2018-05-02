@@ -16,28 +16,26 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.learnexo.main.FeedRecyclerAdapter;
-import com.learnexo.main.MainActivity;
-import com.learnexo.main.R;
-import com.learnexo.main.PublishActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.learnexo.main.FeedRecyclerAdapter;
+import com.learnexo.main.MainActivity;
+import com.learnexo.main.PublishActivity;
+import com.learnexo.main.R;
+import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.post.Post;
+import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,29 +45,23 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeedFragment extends Fragment {
 
-    private CircleImageView userCircleIView;
-    private TextView userNameTView;
-    private TextView askQuestionTView;
+    private CircleImageView mCircleImageView;
+    private TextView mNameTView;
 
-    private RecyclerView feedListRecyclerView;
-    private List<Post> feed_items_list;
-    private FeedRecyclerAdapter feedRecyclerAdapter;
+    private List<FeedItem> mFeedItems;
+    private FeedRecyclerAdapter mAdapter;
 
-    private ProgressBar progressBar;
+    private Button mShareInfoBtn;
+    private Button mAskBtn;
+    private Button mChallengeBtn;
+    private FloatingActionButton mFloatingBtn;
+    private CardView mCardView;
 
-    private Button shareInfoBtn;
-    private Button askBtn;
-    private Button challengeBtn;
-
-    private String user_id;
-
-    private FloatingActionButton floatingBtn;
-    private CardView cardView;
+    private String mUserId;
     boolean flag = true;
 
-    private FirebaseAuth mAuth;
+    FirebaseUtil mFirebaseUtil=new FirebaseUtil();
 
-    private FirebaseFirestore firebaseFirestore;
 
     public FeedFragment() {
         // Required empty public constructor
@@ -81,25 +73,19 @@ public class FeedFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
-
-        setupRecycler(view);
-
+        setupFeedRecyclerAdapter(view);
         wiringViews(view);
 
         getDPandUserNameandSet();
-
         getFreshPostsAndPopulatePostList();
 
         handleFloatingBtn();
-
         handleShareInfoBtn();
-
         handleQuestionBtn();
-
         handleChallengeBtn();
 
         return view;
@@ -108,12 +94,12 @@ public class FeedFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        cardView.setVisibility(View.INVISIBLE);
+        mCardView.setVisibility(View.INVISIBLE);
         flag = true;
     }
 
     private void handleShareInfoBtn() {
-        shareInfoBtn.setOnClickListener(new View.OnClickListener() {
+        mShareInfoBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 //                    Intent shareIntent = new Intent(getActivity(), PublishActivity.class);
@@ -135,7 +121,7 @@ public class FeedFragment extends Fragment {
     }
 
     private void handleChallengeBtn() {
-        challengeBtn.setOnClickListener(new View.OnClickListener() {
+        mChallengeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startPublishActivity("Post challenge");
@@ -144,7 +130,7 @@ public class FeedFragment extends Fragment {
     }
 
     private void handleQuestionBtn() {
-        askBtn.setOnClickListener(new View.OnClickListener() {
+        mAskBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startPublishActivity("Ask question");
@@ -153,7 +139,7 @@ public class FeedFragment extends Fragment {
     }
 
     private void handleFloatingBtn() {
-        floatingBtn.setOnClickListener(new View.OnClickListener() {
+        mFloatingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -162,8 +148,8 @@ public class FeedFragment extends Fragment {
                     // Check if the runtime version is at least Lollipop
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         // get the center for the clipping circle
-                       // int cx = cardView.getWidth() / 2;
-                       // int cy = cardView.getHeight() / 2;
+                       // int cx = mCardView.getWidth() / 2;
+                       // int cy = mCardView.getHeight() / 2;
 
                         // get the center for the clipping circle
                         int cx = (view.getLeft() + view.getRight()) / 2;
@@ -178,14 +164,14 @@ public class FeedFragment extends Fragment {
 
                         // create the animator for this view (the start radius is zero)
                         Animator anim =
-                                ViewAnimationUtils.createCircularReveal(cardView, cx, cy, startRadius, endRadius);
+                                ViewAnimationUtils.createCircularReveal(mCardView, cx, cy, startRadius, endRadius);
 
                         // make the view visible and start the animation
-                        cardView.setVisibility(View.VISIBLE);
+                        mCardView.setVisibility(View.VISIBLE);
                         anim.start();
                     } else {
                         // set the view to visible without a circular reveal animation below Lollipop
-                        cardView.setVisibility(View.VISIBLE);
+                        mCardView.setVisibility(View.VISIBLE);
                     }
 
                     flag = false;
@@ -194,8 +180,8 @@ public class FeedFragment extends Fragment {
                     // Check if the runtime version is at least Lollipop
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         // get the center for the clipping circle
-                       // int cx = cardView.getWidth() / 2;
-                       // int cy = cardView.getHeight() / 2;
+                       // int cx = mCardView.getWidth() / 2;
+                       // int cy = mCardView.getHeight() / 2;
 
                         // get the center for the clipping circle
                         int cx = (view.getLeft() + view.getRight()) / 2;
@@ -210,14 +196,14 @@ public class FeedFragment extends Fragment {
 
                          // create the animation (the final radius is zero)
                         Animator anim =
-                                ViewAnimationUtils.createCircularReveal(cardView, cx, cy, startRadius, endRadius);
+                                ViewAnimationUtils.createCircularReveal(mCardView, cx, cy, startRadius, endRadius);
 
                        // make the view invisible when the animation is done
                         anim.addListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
                                 super.onAnimationEnd(animation);
-                                cardView.setVisibility(View.INVISIBLE);
+                                mCardView.setVisibility(View.INVISIBLE);
                             }
                         });
 
@@ -225,7 +211,7 @@ public class FeedFragment extends Fragment {
                         anim.start();
                     } else {
                         // set the view to visible without a circular reveal animation below Lollipop
-                        cardView.setVisibility(View.INVISIBLE);
+                        mCardView.setVisibility(View.INVISIBLE);
                     }
                     flag = true;
                 }
@@ -235,7 +221,7 @@ public class FeedFragment extends Fragment {
     }
 
     private void getFreshPostsAndPopulatePostList() {
-        firebaseFirestore.collection("users").document(user_id).collection("posts")
+        mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("posts")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
@@ -246,8 +232,8 @@ public class FeedFragment extends Fragment {
 //                        if (doc.getType() == DocumentChange.Type.ADDED) {
 //
 //                            Post Post = doc.getDocument().toObject(Post.class);
-//                            feed_items_list.add(Post);
-//                            feedRecyclerAdapter.notifyDataSetChanged();
+//                            mFeedItems.add(Post);
+//                            mAdapter.notifyDataSetChanged();
 //
 //                        }
 
@@ -256,20 +242,20 @@ public class FeedFragment extends Fragment {
 
                             case ADDED:
                                 post = doc.getDocument().toObject(Post.class);
-                                feed_items_list.add(post);
-                                feedRecyclerAdapter.notifyDataSetChanged();
+                                mFeedItems.add(post);
+                                mAdapter.notifyDataSetChanged();
                                 break;
 
                             case REMOVED:
                                 post = doc.getDocument().toObject(Post.class);
-                                feed_items_list.remove(post);
-                                feedRecyclerAdapter.notifyDataSetChanged();
+                                mFeedItems.remove(post);
+                                mAdapter.notifyDataSetChanged();
                                 break;
 
                             case MODIFIED:
                                 post = doc.getDocument().toObject(Post.class);
-                                feed_items_list.remove(post);
-                                feedRecyclerAdapter.notifyDataSetChanged();
+                                mFeedItems.remove(post);
+                                mAdapter.notifyDataSetChanged();
                                 break;
                         }
 
@@ -280,27 +266,20 @@ public class FeedFragment extends Fragment {
     }
 
     private void getDPandUserNameandSet() {
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-        if(user != null)
-            user_id = mAuth.getCurrentUser().getUid();
-
-        firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("Users").document(user_id).
+        mUserId = FirebaseUtil.getCurrentUserId();
+        mFirebaseUtil.mFirestore.collection("Users").document(mUserId).
                 collection("Setup Details").document("Setup Fields").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                 if(task.isSuccessful()) {
-
                     if(task.getResult().exists()) {
-
                         String name = task.getResult().getString("Nick name");
 
                         String image = (null==MainActivity.photoUrl)?task.getResult()
                                 .getString("Image"):MainActivity.photoUrl;
 
-                        userNameTView.setText(name);
+                        mNameTView.setText(name);
 
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -308,7 +287,7 @@ public class FeedFragment extends Fragment {
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && image!=null) {
                             Glide.with(Objects.requireNonNull(getActivity())).load(image)
-                                    .apply(placeholderRequest).into(userCircleIView);
+                                    .apply(placeholderRequest).into(mCircleImageView);
                         }
 
                     }
@@ -325,32 +304,32 @@ public class FeedFragment extends Fragment {
     }
 
     private void wiringViews(View view) {
-        userCircleIView = view.findViewById(R.id.userCircleIView);
-        userNameTView = view.findViewById(R.id.userNameTView);
-        askQuestionTView = view.findViewById(R.id.askQuestionTView);
+        mCircleImageView = view.findViewById(R.id.userCircleIView);
+        mNameTView = view.findViewById(R.id.userNameTView);
 
-        progressBar = view.findViewById(R.id.progressBar);
+//        TextView askQuestionTView = view.findViewById(R.id.askQuestionTView);
+//        ProgressBar progressBar = view.findViewById(R.id.progressBar);
 
-        floatingBtn = view.findViewById(R.id.floatBtn);
-        cardView = view.findViewById(R.id.cardView);
+        mFloatingBtn = view.findViewById(R.id.floatBtn);
+        mCardView = view.findViewById(R.id.cardView);
 
-        shareInfoBtn = view.findViewById(R.id.shareBtn);
-        askBtn = view.findViewById(R.id.askBtn);
-        challengeBtn = view.findViewById(R.id.challengeBtn);
+        mShareInfoBtn = view.findViewById(R.id.shareBtn);
+        mAskBtn = view.findViewById(R.id.askBtn);
+        mChallengeBtn = view.findViewById(R.id.challengeBtn);
     }
 
-    private void setupRecycler(View view) {
-        feed_items_list = new ArrayList<>();
-        feedListRecyclerView = view.findViewById(R.id.feed_list_recycler_view);
-        feedRecyclerAdapter = new FeedRecyclerAdapter(feed_items_list);
+    private void setupFeedRecyclerAdapter(View view) {
+        mFeedItems = new ArrayList<>();
+        mAdapter = new FeedRecyclerAdapter(mFeedItems);
 
-        feedListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        feedListRecyclerView.setAdapter(feedRecyclerAdapter);
+        RecyclerView feedRecyclerView = view.findViewById(R.id.feed_list_recycler_view);
+        feedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        feedRecyclerView.setAdapter(mAdapter);
     }
 
-    public void hideCardview() {
-        if(cardView != null) {
-            cardView.setVisibility(View.INVISIBLE);
+    public void hideCardView() {
+        if(mCardView != null) {
+            mCardView.setVisibility(View.INVISIBLE);
             flag = true;
         }
     }

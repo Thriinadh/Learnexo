@@ -126,7 +126,7 @@ public class PublishActivity extends AppCompatActivity {
                     mFeedItem.setTags(Collections.singletonList(selectedSub));
                     mFeedItem.setUserId(user_id);
                     mFeedItem.setUserName(name);
-                  //  mFeedItem.setPosTime(FieldValue.serverTimestamp());
+                  //  mFeedItem.setPublishTime(FieldValue.serverTimestamp());
 //                    postMap = new HashMap<>();
 //                    postMap.put("postedContent", enteredText);
 //                    postMap.put("subject", selectedSub);

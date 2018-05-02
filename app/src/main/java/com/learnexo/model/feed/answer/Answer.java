@@ -1,23 +1,12 @@
 package com.learnexo.model.feed.answer;
 
-import java.util.Date;
-import java.util.List;
+import com.learnexo.model.feed.FeedItem;
 
-public class Answer {
-    private String answer;
-    private Date ansTime;
-
+public class Answer extends FeedItem {
     private String quesId;
     private String quesName;
 
-    private String userId;//answerer id
-    private String userName;//answerer name
-
-    private String imgUrl;
-    private String imgThmb;
-    private List<String> tags;
-
-    private boolean isCrack;//tells whether it is a challenge
+    private boolean isCrack;
 
     private int bookMarks;
     private long views;
@@ -26,5 +15,5 @@ public class Answer {
     private int comments;
     private int downVotes;
 
-    private boolean is_notifiable;
+
 }

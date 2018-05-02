@@ -10,39 +10,27 @@ public class FeedItem {
     private String content;
 
     @ServerTimestamp
-    private Date posTime;
+    private Date mPublishTime;
 
-    private String userId;//publisher
+    private String userId;
     private String userName;
 
     private String imgUrl;
     private String imgThmb;
 
-    private long views;
-    private int upvotes;
-    private int shares;
-    private int comments;
-    private int bookMarks;
-    private int downVotes;
-
     private boolean is_notifiable;
-
     private List<String> tags;
+
     public FeedItem() {}
 
-    public FeedItem(String content, Date posTime, String userId, String userName, String imgUrl, String imgThmb, long views, int upvotes, int shares, int comments, int bookMarks, int downVotes, boolean is_notifiable, List<String> tags) {
+    public FeedItem(String content, Date mPublishTime, String userId, String userName, String imgUrl, String imgThmb, boolean is_notifiable, List<String> tags) {
         this.content = content;
-        this.posTime = posTime;
+        this.mPublishTime = mPublishTime;
         this.userId = userId;
         this.userName = userName;
         this.imgUrl = imgUrl;
         this.imgThmb = imgThmb;
-        this.views = views;
-        this.upvotes = upvotes;
-        this.shares = shares;
-        this.comments = comments;
-        this.bookMarks = bookMarks;
-        this.downVotes = downVotes;
+
         this.is_notifiable = is_notifiable;
         this.tags = tags;
     }
@@ -55,12 +43,12 @@ public class FeedItem {
         this.content = content;
     }
 
-    public Date getPosTime() {
-        return posTime;
+    public Date getPublishTime() {
+        return mPublishTime;
     }
 
-    public void setPosTime(Date posTime) {
-        this.posTime = posTime;
+    public void setPublishTime(Date publishTime) {
+        this.mPublishTime = publishTime;
     }
 
     public String getUserId() {
@@ -95,53 +83,7 @@ public class FeedItem {
         this.imgThmb = imgThmb;
     }
 
-    public long getViews() {
-        return views;
-    }
 
-    public void setViews(long views) {
-        this.views = views;
-    }
-
-    public int getUpvotes() {
-        return upvotes;
-    }
-
-    public void setUpvotes(int upvotes) {
-        this.upvotes = upvotes;
-    }
-
-    public int getShares() {
-        return shares;
-    }
-
-    public void setShares(int shares) {
-        this.shares = shares;
-    }
-
-    public int getComments() {
-        return comments;
-    }
-
-    public void setComments(int comments) {
-        this.comments = comments;
-    }
-
-    public int getBookMarks() {
-        return bookMarks;
-    }
-
-    public void setBookMarks(int bookMarks) {
-        this.bookMarks = bookMarks;
-    }
-
-    public int getDownVotes() {
-        return downVotes;
-    }
-
-    public void setDownVotes(int downVotes) {
-        this.downVotes = downVotes;
-    }
 
     public boolean isIs_notifiable() {
         return is_notifiable;

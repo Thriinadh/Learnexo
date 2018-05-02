@@ -10,6 +10,7 @@ public class FirebaseUtil {
 
     public static FirebaseAuth sAuth;
     public static StorageReference sStorageReference;
+
     public FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
 
 

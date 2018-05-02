@@ -23,7 +23,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.learnexo.model.feed.post.Post;
+import com.learnexo.model.feed.FeedItem;
 
 import java.util.Date;
 import java.util.List;
@@ -34,13 +34,13 @@ import static com.learnexo.util.DateUtil.convertDateToAgo;
 
 public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.PostHolder> {
 
-    public  List<Post> feed_items_list;
+    public  List<FeedItem> mFeedItems;
     public Context context;
 
     private FirebaseFirestore firebaseFirestore;
 
-    public FeedRecyclerAdapter(List<Post> feed_items_list) {
-        this.feed_items_list = feed_items_list;
+    public FeedRecyclerAdapter(List<FeedItem> mFeedItems) {
+        this.mFeedItems = mFeedItems;
     }
 
     @NonNull
@@ -57,11 +57,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     @Override
     public void onBindViewHolder(@NonNull final PostHolder holder, int position) {
 
-        final String user_id = feed_items_list.get(position).getUserId();
-        final String itemContent = feed_items_list.get(position).getContent();
-        final String imagePosted = feed_items_list.get(position).getImgUrl();
+        final String user_id = mFeedItems.get(position).getUserId();
+        final String itemContent = mFeedItems.get(position).getContent();
+        final String imagePosted = mFeedItems.get(position).getImgUrl();
 
-        String timeAgo=convertDateToAgo(feed_items_list.get(position).getPosTime());
+        String timeAgo=convertDateToAgo(mFeedItems.get(position).getPublishTime());
 
         handleItemContent(holder, itemContent, imagePosted, timeAgo);
 
@@ -74,9 +74,9 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     }
 
     private void setPostedTime(@NonNull PostHolder holder, int position) {
-        if(feed_items_list.get(position).getPosTime() != null) {
+        if(mFeedItems.get(position).getPublishTime() != null) {
 
-                Date date = feed_items_list.get(position).getPosTime();
+                Date date = mFeedItems.get(position).getPublishTime();
 
                 String timeAgo = convertDateToAgo(date);
                 holder.setTime(timeAgo);
@@ -181,7 +181,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
     @Override
     public int getItemCount() {
-        return feed_items_list.size();
+        return mFeedItems.size();
     }
 
     public class PostHolder extends RecyclerView.ViewHolder {

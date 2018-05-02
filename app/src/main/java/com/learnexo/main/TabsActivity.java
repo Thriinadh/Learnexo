@@ -139,7 +139,7 @@ public class TabsActivity extends AppCompatActivity {
                         Fragment feedFragment = mAdapter.getItem(0);
                         int pos = viewPager.getCurrentItem();
                         if(pos == 1 || pos == 2 || pos == 3 || pos == 4)
-                            ((FeedFragment)feedFragment).hideCardview();
+                            ((FeedFragment)feedFragment).hideCardView();
                     }
 
 
