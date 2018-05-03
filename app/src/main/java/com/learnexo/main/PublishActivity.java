@@ -48,7 +48,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -59,7 +58,7 @@ public class PublishActivity extends AppCompatActivity {
     private static final int FEED_FRAG_NO = 0;
     private static final String TAG = PublishActivity.class.getSimpleName();
 
-    private Uri postedImageURI;
+    private Uri mPublishedImageUri;
     private ProgressBar mProgressBar;
 
     private ConstraintLayout constraintKeyboardIn;
@@ -87,7 +86,8 @@ public class PublishActivity extends AppCompatActivity {
 
 
     FeedItem mFeedItem;
-
+    Post post=null;
+    Question question=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,39 +119,64 @@ public class PublishActivity extends AppCompatActivity {
                     mProgressBar.setVisibility(View.VISIBLE);
 
                     if(publishType.equals("Share Info")) {
-                        mFeedItem = new Post();
+                        post = new Post();
+                        saveFeedItem(content,publishType);
                     } else {
-                        mFeedItem = new Question();
+                        question = new Question();
+                        if(publishType.equals("Ask Your Question")){
+                            // question
+                            saveFeedItem(content,publishType);
+                        }else{
+                            // challenge
+                            saveFeedItem(content,publishType);
+                        }
                     }
-                    mFeedItem.setContent(content);
-                    mFeedItem.setTags(Collections.singletonList(tag));
-                    mFeedItem.setUserId(mUserId);
-                    mFeedItem.setUserName(name);
-//                    mFeedItem.setPublishTime(new Date());
-
-                    if(postedImageURI != null) {
-                        saveImagetoStorage();
-                    }
-                    saveFeedItem(mFeedItem);
-
                 }
-
             }
         });
     }
 
-    private void saveImagetoStorage() {
+    private void saveFeedItem(String content, String publishType) {
+        if(publishType.equals("Share Info")){
+            post.setContent(content);
+            post.setTags(Collections.singletonList(tag));
+            post.setUserId(mUserId);
+            post.setUserName(name);
+
+            if(mPublishedImageUri != null) {
+                saveImagetoStorage("post_images");
+            }else {
+                saveFeedItem(post);
+            }
+
+        }else{
+            question.setContent(content);
+            question.setTags(Collections.singletonList(tag));
+            question.setUserId(mUserId);
+            question.setUserName(name);
+
+            if(mPublishedImageUri != null) {
+                saveImagetoStorage("question_images");
+            }else {
+                saveFeedItem(question);
+            }
+        }
+
+    }
+
+    private void saveImagetoStorage(final String path) {
         final String randomName = UUID.randomUUID().toString();
 
-        StorageReference filepath = FirebaseUtil.sStorageReference.child("post_images").child(randomName + ".jpg");
-        filepath.putFile(postedImageURI).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+        StorageReference filepath = FirebaseUtil.sStorageReference.child(path).child(randomName + ".jpg");
+
+        filepath.putFile(mPublishedImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
 
                 final String downloadUri = task.getResult().getDownloadUrl().toString();
 
                 if (task.isSuccessful()) {
-                    File newImageFile = new File(postedImageURI.getPath());
+                    File newImageFile = new File(mPublishedImageUri.getPath());
                     try {
                         mBitmap = new Compressor(PublishActivity.this)
                                 .setMaxHeight(100)
@@ -166,7 +191,34 @@ public class PublishActivity extends AppCompatActivity {
                     mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                     byte[] thumbData = baos.toByteArray();
 
-                    uploadImage(task, downloadUri, thumbData, randomName);
+                    String thumbs= path.concat("/thumbs");
+                    UploadTask uploadTask = FirebaseUtil.sStorageReference.child(thumbs)
+                            .child(randomName + ".jpg").putBytes(thumbData);
+
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            String downloadthumbUri = taskSnapshot.getDownloadUrl().toString();
+
+                            if(path.equals("post_images")){
+                                post.setImgUrl(downloadUri);
+                                post.setImgThmb(downloadthumbUri);
+                                saveFeedItem(post);
+                            }else{
+                                question.setImgUrl(downloadUri);
+                                question.setImgThmb(downloadthumbUri);
+                                saveFeedItem(question);
+                            }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            String error = task.getException().getMessage();
+                            Toast.makeText(PublishActivity.this,
+                                    "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
+                        }
+                    });
 
                 } else {
                     mProgressBar.setVisibility(View.INVISIBLE);
@@ -175,31 +227,17 @@ public class PublishActivity extends AppCompatActivity {
         });
     }
 
-    private void uploadImage(@NonNull final Task<UploadTask.TaskSnapshot> task, final String downloadUri, byte[] thumbData, String randomName) {
-        UploadTask uploadTask = FirebaseUtil.sStorageReference.child("post_images/thumbs")
-                .child(randomName + ".jpg").putBytes(thumbData);
-
-        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                String downloadthumbUri = taskSnapshot.getDownloadUrl().toString();
-                mFeedItem.setImgUrl(downloadUri);
-                mFeedItem.setImgThmb(downloadthumbUri);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                String error = task.getException().getMessage();
-                Toast.makeText(PublishActivity.this,
-                        "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
-            }
-        });
-    }
 
     public void saveFeedItem(FeedItem mFeedItem) {
+        String path;
+        if(mFeedItem.getClass()==Post.class){
+            path="posts";
+        }else{
+            path="questions";
+        }
+
         final Task<DocumentReference> documentReferenceTask = mFirebaseUtil.mFirestore.collection("users")
-                .document(mUserId).collection("posts").add(mFeedItem);
+                .document(mUserId).collection(path).add(mFeedItem);
         documentReferenceTask.addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
@@ -246,8 +284,8 @@ public class PublishActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 constraintKeyboard.setVisibility(View.INVISIBLE);
                 constraintKeyboardIn.setVisibility(View.VISIBLE);
-                postedImageURI = result.getUri();
-                loadImage.setImageURI(postedImageURI);
+                mPublishedImageUri = result.getUri();
+                loadImage.setImageURI(mPublishedImageUri);
 
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -330,8 +368,6 @@ public class PublishActivity extends AppCompatActivity {
 
         // Specify the layout to use when the list of choices appears
         staticAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spinner.setPrompt("Select related subject");
 
         // Apply the adapter to the spinner
         spinner.setAdapter(new NothingSelectedSpinnerAdapter(staticAdapter,
