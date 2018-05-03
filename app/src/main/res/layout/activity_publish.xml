@@ -87,7 +87,6 @@
             android:layout_marginTop="16dp"
             android:background="@android:color/transparent"
             android:gravity="top"
-            android:hint="@string/lesson_hint"
             android:inputType="textMultiLine"
             android:overScrollMode="always"
             android:scrollbarStyle="insideInset"

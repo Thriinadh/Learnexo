@@ -7,6 +7,15 @@ import com.learnexo.model.feed.FeedItem;
 @IgnoreExtraProperties
 public class Question extends FeedItem{
     private boolean isChallenge;
+    private String answerForChallenge;
+
+    public String getAnswerForChallenge() {
+        return answerForChallenge;
+    }
+
+    public void setAnswerForChallenge(String answerForChallenge) {
+        this.answerForChallenge = answerForChallenge;
+    }
 
     public Question() {}
 

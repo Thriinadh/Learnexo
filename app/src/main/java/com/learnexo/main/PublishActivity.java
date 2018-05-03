@@ -36,6 +36,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.learnexo.fragments.FeedFragment;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.feed.question.Question;
@@ -79,26 +80,21 @@ public class PublishActivity extends AppCompatActivity {
 
     private Bitmap mBitmap;
 
-    public String postId;
     private String mUserId = FirebaseUtil.getCurrentUserId();
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
-
-
-    FeedItem mFeedItem;
-    Post post=null;
-    Question question=null;
+    Post post;
+    Question question;
+    String publishType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publish);
-
-        String publishType;
-        publishType = getIntent().getStringExtra("PUBLISH_TYPE");
+        publishType = getIntent().getStringExtra(FeedFragment.PUBLISH_TYPE);
 
         wiringViews();
-        setupToolbar(publishType);
+        setupToolbar();
 
         getDPandNameAndSet();
         setupDropDownSpinner();
@@ -106,10 +102,10 @@ public class PublishActivity extends AppCompatActivity {
         galleryBtnListener();
         enablePublishBtn();
 
-        postBtnListener(publishType);
+        postBtnListener();
     }
 
-    private void postBtnListener(final String publishType) {
+    private void postBtnListener() {
         postBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,18 +114,18 @@ public class PublishActivity extends AppCompatActivity {
                 if(!TextUtils.isEmpty(content) && tag != null) {
                     mProgressBar.setVisibility(View.VISIBLE);
 
-                    if(publishType.equals("Share Info")) {
+                    if(publishType.equals(getString(R.string.shareInfo))) {
                         post = new Post();
                         saveFeedItem(content,publishType);
                     } else {
                         question = new Question();
-                        if(publishType.equals("Ask Your Question")){
-                            // question
-                            saveFeedItem(content,publishType);
-                        }else{
-                            // challenge
-                            saveFeedItem(content,publishType);
+                        if(publishType.equals(getString(R.string.postChallenge))){
+                            question.setChallenge(true);
+                            question.setAnswerForChallenge("This is answer for the challenge and it should come from Answer for challenge edit text in PostChallenge");
                         }
+                        //for both questions and challenges
+                        saveFeedItem(content,publishType);
+
                     }
                 }
             }
@@ -137,14 +133,14 @@ public class PublishActivity extends AppCompatActivity {
     }
 
     private void saveFeedItem(String content, String publishType) {
-        if(publishType.equals("Share Info")){
+        if(publishType.equals(getString(R.string.shareInfo))){
             post.setContent(content);
             post.setTags(Collections.singletonList(tag));
             post.setUserId(mUserId);
             post.setUserName(name);
 
             if(mPublishedImageUri != null) {
-                saveImagetoStorage("post_images");
+                saveImagetoStorage(getString(R.string.post_images));
             }else {
                 saveFeedItem(post);
             }
@@ -156,7 +152,7 @@ public class PublishActivity extends AppCompatActivity {
             question.setUserName(name);
 
             if(mPublishedImageUri != null) {
-                saveImagetoStorage("question_images");
+                saveImagetoStorage(getString(R.string.question_images));
             }else {
                 saveFeedItem(question);
             }
@@ -201,7 +197,7 @@ public class PublishActivity extends AppCompatActivity {
 
                             String downloadthumbUri = taskSnapshot.getDownloadUrl().toString();
 
-                            if(path.equals("post_images")){
+                            if(path.equals(getString(R.string.post_images))){
                                 post.setImgUrl(downloadUri);
                                 post.setImgThmb(downloadthumbUri);
                                 saveFeedItem(post);
@@ -259,6 +255,7 @@ public class PublishActivity extends AppCompatActivity {
     }
 
     public boolean onTouch(View view, MotionEvent event) {
+
         if(view.getId() == R.id.enterContent) {
             view.getParent().requestDisallowInterceptTouchEvent(true);
 
@@ -299,7 +296,7 @@ public class PublishActivity extends AppCompatActivity {
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-                Toast.makeText(PublishActivity.this, "ImgagePicker " +error, Toast.LENGTH_LONG).show();
+                Toast.makeText(PublishActivity.this, "ImagePicker " +error, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -400,7 +397,7 @@ public class PublishActivity extends AppCompatActivity {
         });
     }
 
-    private void setupToolbar(String publishType) {
+    private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null){
@@ -411,6 +408,8 @@ public class PublishActivity extends AppCompatActivity {
     private void wiringViews() {
         mProgressBar = findViewById(R.id.shareProgressBar);
         content = findViewById(R.id.enterContent);
+        setHint(content);
+
         username = findViewById(R.id.userNameTView);
         imageView = findViewById(R.id.smallCircleImageView);
 
@@ -428,6 +427,18 @@ public class PublishActivity extends AppCompatActivity {
         spinner = findViewById(R.id.spinner);
     }
 
+    private void setHint(EditText content) {
+
+        if(publishType.equals(getString(R.string.shareInfo))) {
+            content.setHint(getString(R.string.share_info_hint));
+
+        }else if(publishType.equals(getString(R.string.askYourQuestion))) {
+            content.setHint(getString(R.string.ask_question_hint));
+
+        } else {
+            content.setHint(getString(R.string.post_challenge_hint));
+        }
+    }
 
 
 }

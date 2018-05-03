@@ -59,7 +59,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="feed_text">This is Feed</string>
     <string name="share_info">Share Info</string>
-    <string name="lesson_hint">Enter information or lesson and share it with other people</string>
+    <string name="share_info_hint">Enter information or lesson and share it with other people.</string>
 
     <string name="subject_tag">TAG SUBJECT</string>
     <string name="username">Username</string>
@@ -117,5 +117,10 @@
     <string name="ivqsTabTitle">InterviewQs</string>
     <string name="connectTabTitle">Connect</string>
     <string name="profileTabTitle">Profile</string>
+    <string name="shareInfo">Share Info</string>
+    <string name="postChallenge">Post Challenge</string>
+    <string name="askYourQuestion">Ask Your Question</string>
+    <string name="post_images">post_images</string>
+    <string name="question_images">question_images</string>
 
 </resources>

@@ -45,6 +45,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeedFragment extends Fragment {
 
+    public static final String PUBLISH_TYPE="com.learnexo.fragment.FeedFragment.PUBLISH_TYPE";
+
     private CircleImageView mCircleImageView;
     private TextView mNameTView;
 
@@ -102,29 +104,22 @@ public class FeedFragment extends Fragment {
         mShareInfoBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    Intent shareIntent = new Intent(getActivity(), PublishActivity.class);
-//                    shareIntent.putExtra("PUBLISH_TYPE", );
-//                    startActivity(shareIntent);
-
-                    startPublishActivity("Share Info");
-
+                  startPublishActivity(getString(R.string.share_info));
                 }
             });
     }
 
     private void startPublishActivity(String publish_type) {
-
         Intent shareIntent = new Intent(getActivity(), PublishActivity.class);
-                    shareIntent.putExtra("PUBLISH_TYPE", publish_type);
+                    shareIntent.putExtra(PUBLISH_TYPE, publish_type);
                     startActivity(shareIntent);
-
     }
 
     private void handleChallengeBtn() {
         mChallengeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startPublishActivity("Post Challenge");
+                startPublishActivity(getString(R.string.postChallenge));
             }
         });
     }
@@ -133,7 +128,7 @@ public class FeedFragment extends Fragment {
         mAskBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startPublishActivity("Ask Your Question");
+                startPublishActivity(getString(R.string.askYourQuestion));
             }
         });
     }
