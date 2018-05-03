@@ -1,5 +1,6 @@
 package com.learnexo.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -10,13 +11,17 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.learnexo.main.MyBounceInterpolator;
 import com.learnexo.main.R;
 
 public class ConnectFragment extends Fragment implements View.OnClickListener {
-    private Button learnersBtn;
-    private Button mentorsBtn;
+//    private Button learnersBtn;
+//    private Button mentorsBtn;
+
+    private TextView learnersTView;
+    private TextView mentorsTView;
     private FrameLayout frameLayout;
 
     public ConnectFragment() {
@@ -33,12 +38,13 @@ public class ConnectFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_connect, container, false);
 
-        learnersBtn = view.findViewById(R.id.learnersBtn);
-        mentorsBtn = view.findViewById(R.id.mentorsBtn);
+        learnersTView = view.findViewById(R.id.learnersTView);
+        mentorsTView = view.findViewById(R.id.mentorsTView);
         frameLayout = view.findViewById(R.id.fragment_container);
 
-        learnersBtn.setOnClickListener(this);
-        mentorsBtn.setOnClickListener(this);
+        learnersTView.setOnClickListener(this);
+        mentorsTView.setOnClickListener(this);
+        learnersTView.setTextColor(Color.RED);
 
         if (savedInstanceState == null) {
             getChildFragmentManager()
@@ -60,17 +66,22 @@ public class ConnectFragment extends Fragment implements View.OnClickListener {
         // Use bounce interpolator with amplitude 0.2 and frequency 20
         MyBounceInterpolator interpolator = new MyBounceInterpolator(0.1, 5);
         myAnim.setInterpolator(interpolator);
+       // int DefaultTextColor = learnersTView.getTextColors().getDefaultColor();
 
         switch (view.getId()){
-            case R.id.learnersBtn:
+            case R.id.learnersTView:
                 fragment = new LearnersFragment();
                 replaceFragment(fragment);
-                learnersBtn.startAnimation(myAnim);
+                learnersTView.startAnimation(myAnim);
+                learnersTView.setTextColor(Color.RED);
+                mentorsTView.setTextColor(getResources().getColor(R.color.light_black));
                 break;
-            case R.id.mentorsBtn:
+            case R.id.mentorsTView:
                 fragment = new MentorsFragment();
                 replaceFragment(fragment);
-                mentorsBtn.startAnimation(myAnim);
+                mentorsTView.startAnimation(myAnim);
+                mentorsTView.setTextColor(Color.RED);
+                learnersTView.setTextColor(getResources().getColor(R.color.light_black));
                 break;
         }
     }
