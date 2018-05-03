@@ -205,17 +205,45 @@ public class TabsActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 } else {
-                    checkProfileCompletion(userId);
+                    checkifSkippedProfile(userId);
                 }
             }
+                                     private void checkifSkippedProfile(final String userId) {
+                                        //check if skip is there - if skip he is second time user and do not want to complete his profile, then do not ckeck the below one
+                                         new FirebaseUtil().mFirestore.collection("users").document(userId).get()
+                                                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                     @Override
+                                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                         if(task.isSuccessful()) {
+                                                             Boolean isSkipped= (Boolean) task.getResult().get("IS_SKIPPED_PROFILE");
+                                                             if(isSkipped!=null)
+                                                                if(!isSkipped){
+                                                                    checkProfileCompletion(userId);
+                                                                }
+
+                                                         } else {
+                                                             toastErrorMsg(task);
+                                                         }
+                                                     }
+                                                 });
+
+
+
+                                     }
+
                                      private void checkProfileCompletion(String userId) {
+                                         // - if skip is not available then check the below path if both are not available then he is first time user
+                                         //so send him to setup activity
+
                                          new FirebaseUtil().mFirestore.collection("Users").document(userId).
                                                  collection("Setup Details").document("Setup Fields").get()
                                                  .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                              @Override
                                              public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                  if(task.isSuccessful()) {
-                                                     boolean is_skipped_profile_completion=getIntent().getBooleanExtra("com.learnexo.main.IS_SKIPPED_PROFILE_COMPLETION",false);
+                                                     boolean is_skipped_profile_completion=getIntent().getBooleanExtra("com.learnexo.main.IS_SKIPPED_PROFILE",false);
+
+                                                     //intent can only be useful if he did not remove the app from memory.
                                                      if(!task.getResult().exists()&&!is_skipped_profile_completion) {
                                                          Intent intent = new Intent(TabsActivity.this, SetupActivity.class);
                                                          startActivity(intent);

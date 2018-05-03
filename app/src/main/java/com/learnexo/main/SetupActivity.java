@@ -104,10 +104,32 @@ public class SetupActivity extends AppCompatActivity {
         skipTView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent tabIntent = new Intent(SetupActivity.this, TabsActivity.class);
-                tabIntent.putExtra("com.learnexo.main.IS_SKIPPED_PROFILE_COMPLETION",true);
-                startActivity(tabIntent);
-                finish();
+                Map<String, Object> is_skipped_profile = new HashMap<>();
+                is_skipped_profile.put("IS_SKIPPED_PROFILE", true);
+
+                mFirebaseUtil.mFirestore.collection("users").document(user_id).
+                        set(is_skipped_profile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        if (task.isSuccessful()) {
+                            Intent tabIntent = new Intent(SetupActivity.this, TabsActivity.class);
+                            tabIntent.putExtra("com.learnexo.main.IS_SKIPPED_PROFILE",true);
+                            startActivity(tabIntent);
+                            finish();
+                        } else {
+                            String error = null;
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                                error = Objects.requireNonNull(task.getException()).getMessage();
+                            }
+                            Toast.makeText(SetupActivity.this, "Firestore Error : " + error, Toast.LENGTH_LONG).show();
+                        }
+
+                        setupProgerss.setVisibility(View.INVISIBLE);
+                    }
+                });
+
+
             }
         });
     }
