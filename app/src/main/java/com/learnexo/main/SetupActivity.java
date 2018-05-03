@@ -105,6 +105,7 @@ public class SetupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent tabIntent = new Intent(SetupActivity.this, TabsActivity.class);
+                tabIntent.putExtra("com.learnexo.main.IS_SKIPPED_PROFILE_COMPLETION",true);
                 startActivity(tabIntent);
                 finish();
             }

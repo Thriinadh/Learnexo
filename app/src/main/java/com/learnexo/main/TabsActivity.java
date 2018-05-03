@@ -215,7 +215,8 @@ public class TabsActivity extends AppCompatActivity {
                                              @Override
                                              public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                  if(task.isSuccessful()) {
-                                                     if(!task.getResult().exists()) {
+                                                     boolean is_skipped_profile_completion=getIntent().getBooleanExtra("com.learnexo.main.IS_SKIPPED_PROFILE_COMPLETION",false);
+                                                     if(!task.getResult().exists()&&!is_skipped_profile_completion) {
                                                          Intent intent = new Intent(TabsActivity.this, SetupActivity.class);
                                                          startActivity(intent);
                                                          finish();
