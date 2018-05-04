@@ -22,8 +22,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.learnexo.model.feed.FeedItem;
+import com.learnexo.util.FirebaseUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -32,12 +32,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.learnexo.util.DateUtil.convertDateToAgo;
 
-public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.PostHolder> {
+public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.FeedItemHolder> {
 
-    public  List<FeedItem> mFeedItems;
-    public Context context;
+    private List<FeedItem> mFeedItems;
+    private Context context;
+    private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
-    private FirebaseFirestore firebaseFirestore;
 
     public FeedRecyclerAdapter(List<FeedItem> mFeedItems) {
         this.mFeedItems = mFeedItems;
@@ -45,61 +45,50 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
     @NonNull
     @Override
-    public PostHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_list_item, parent, false);
-
+    public FeedItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
-        firebaseFirestore = FirebaseFirestore.getInstance();
-        return new PostHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_list_item, parent, false);
+        return new FeedItemHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final PostHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final FeedItemHolder holder, int position) {
 
         final String user_id = mFeedItems.get(position).getUserId();
         final String itemContent = mFeedItems.get(position).getContent();
         final String imagePosted = mFeedItems.get(position).getImgUrl();
+        final String timeAgo = convertDateToAgo(mFeedItems.get(position).getPublishTime());
 
-        String timeAgo=convertDateToAgo(mFeedItems.get(position).getPublishTime());
+        bind(holder, itemContent, imagePosted, timeAgo);
+        bindUserData(holder, user_id);
 
-        handleItemContent(holder, itemContent, imagePosted, timeAgo);
-
-        handleOverflowIView(holder, user_id);
-
-        getDPandName(holder, user_id);
-
-        setPostedTime(holder, position);
-
+        contentListener(holder, itemContent, imagePosted, timeAgo);
+        overflowImgViewListener(holder, user_id);
     }
 
-    private void setPostedTime(@NonNull PostHolder holder, int position) {
-        if(mFeedItems.get(position).getPublishTime() != null) {
-
-                Date date = mFeedItems.get(position).getPublishTime();
-
-                String timeAgo = convertDateToAgo(date);
-                holder.setTime(timeAgo);
-
-        }
+    private void contentListener(@NonNull FeedItemHolder holder, final String itemContent, final String imagePosted, final String timeAgo) {
+        holder.content.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = FullPostActivity.newIntent(context, itemContent, imagePosted, timeAgo);
+                context.startActivity(intent);
+            }
+        });
     }
 
-    private void getDPandName(@NonNull final PostHolder holder, String user_id) {
-        firebaseFirestore.collection("Users").document(user_id).
+    private void bindUserData(@NonNull final FeedItemHolder holder, String user_id) {
+        mFirebaseUtil.mFirestore.collection("Users").document(user_id).
                 collection("Setup Details").document("Setup Fields").get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                 if(task.isSuccessful()) {
-
                         String name = task.getResult().getString("Nick name");
                         String image = task.getResult().getString("Image");
-
                         holder.setUserData(name, image);
 
                 } else {
-
                     // Error handling here
                 }
 
@@ -107,9 +96,9 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         });
     }
 
-    private void handleOverflowIView(@NonNull PostHolder holder, final String user_id) {
-        holder.setOverflowIView();
-        holder.overflowIView.setOnClickListener(new View.OnClickListener() {
+    private void overflowImgViewListener(@NonNull FeedItemHolder holder, final String user_id) {
+        holder.setOverflowImgView();
+        holder.overflowImgView.setOnClickListener(new View.OnClickListener() {
 
             private LinearLayout deleteBtnLayout;
             private LinearLayout editBtnLayout;
@@ -142,7 +131,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
                     @Override
                     public void onClick(View view) {
 
-                       firebaseFirestore.collection("Posts").document(user_id).delete()
+                       mFirebaseUtil.mFirestore.collection("Posts").document(user_id).delete()
                                .addOnSuccessListener(new OnSuccessListener<Void>() {
                            @Override
                            public void onSuccess(Void aVoid) {
@@ -166,17 +155,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         });
     }
 
-    private void handleItemContent(@NonNull PostHolder holder, final String itemContent,
-                                   final String imagePosted, final String posTime) {
-        holder.setViewItemContent(itemContent);
-        holder.setPostedIView(imagePosted);
-        holder.contentTView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               Intent intent = FullPostActivity.newIntent(context, itemContent, imagePosted, posTime);
-               context.startActivity(intent);
-            }
-        });
+    private void bind(@NonNull FeedItemHolder holder, final String content, final String publishedImg, String timeAgo) {
+        holder.setContent(content);
+        holder.setPostedImgView(publishedImg);
+        holder.setTime(timeAgo);
     }
 
     @Override
@@ -184,53 +166,58 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         return mFeedItems.size();
     }
 
-    public class PostHolder extends RecyclerView.ViewHolder {
+
+
+    // Inner class
+    public class FeedItemHolder extends RecyclerView.ViewHolder {
 
         private View mView;
-        private TextView contentTView;
-        private TextView dateTView;
-        private TextView userNameTView;
-        private CircleImageView userCircleIView;
-        private ImageView overflowIView;
-        private ImageView postedIView;
 
-        // PostHolder constructor
-        public PostHolder(View itemView) {
+        private TextView content;
+        private TextView timeAgo;
+        private TextView userName;
+        private CircleImageView userImage;
+        private ImageView overflowImgView;
+        private ImageView postedImgView;
+
+        // FeedItemHolder constructor
+        public FeedItemHolder(View itemView) {
             super(itemView);
             mView = itemView;
         }
 
-        public void setOverflowIView() {
-            overflowIView = mView.findViewById(R.id.overflow);
+        public void setContent(String postedText) {
+            content = mView.findViewById(R.id.feed_content);
+            content.setText(postedText);
         }
 
-        public void setViewItemContent(String postedText) {
-            contentTView = mView.findViewById(R.id.feed_content);
-            contentTView.setText(postedText);
-        }
+        public void setPostedImgView(String imageUrl) {
+            // if(imageUrl != null)
+            // postedImgView.setImageURI(Uri.parse(imageUrl));
 
-        public void setPostedIView(String imageUrl) {
-            postedIView = mView.findViewById(R.id.postedImagee);
-//            if(imageUrl != null)
-//            postedIView.setImageURI(Uri.parse(imageUrl));
+            postedImgView = mView.findViewById(R.id.postedImagee);
             if(imageUrl != null)
-            Glide.with(context).load(imageUrl).into(postedIView);
+            Glide.with(context).load(imageUrl).into(postedImgView);
         }
 
-        public void setTime(String date) {
-            dateTView = mView.findViewById(R.id.feed_date);
-            dateTView.setText(date);
+        public void setTime(String timeAgo) {
+            this.timeAgo = mView.findViewById(R.id.feed_date);
+            this.timeAgo.setText(timeAgo);
         }
 
         public void setUserData(String name, String image) {
-            userCircleIView = mView.findViewById(R.id.feed_user_image);
-            userNameTView = mView.findViewById(R.id.userNameTView);
-            userNameTView.setText(name);
+            userName = mView.findViewById(R.id.userNameTView);
+            userName.setText(name);
 
+            userImage = mView.findViewById(R.id.feed_user_image);
             RequestOptions placeholderOption = new RequestOptions();
             placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.default_photo);
-            Glide.with(context).load(image).apply(placeholderOption).into(userCircleIView);
+            Glide.with(context).load(image).apply(placeholderOption).into(userImage);
 
+        }
+
+        public void setOverflowImgView() {
+            overflowImgView = mView.findViewById(R.id.overflow);
         }
 
     }

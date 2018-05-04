@@ -45,7 +45,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeedFragment extends Fragment {
 
-    public static final String PUBLISH_TYPE="com.learnexo.fragment.FeedFragment.PUBLISH_TYPE";
+    public static final String EXTRA_PUBLISH_TYPE ="com.learnexo.fragment.FeedFragment.EXTRA_PUBLISH_TYPE";
 
     private CircleImageView mCircleImageView;
     private TextView mNameTView;
@@ -62,7 +62,7 @@ public class FeedFragment extends Fragment {
     private String mUserId;
     boolean flag = true;
 
-    FirebaseUtil mFirebaseUtil=new FirebaseUtil();
+    FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
 
     public FeedFragment() {
@@ -80,15 +80,16 @@ public class FeedFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
         setupFeedRecyclerAdapter(view);
-        wiringViews(view);
+        wireViews(view);
 
         getDPandUserNameandSet();
-        getFreshPostsAndPopulatePostList();
+        generateFeedItemList();
 
-        handleFloatingBtn();
-        handleShareInfoBtn();
-        handleQuestionBtn();
-        handleChallengeBtn();
+        floatingBtnListener();
+
+        shareInfoBtnListener();
+        askQuestionBtnListener();
+        postChallengeBtnListener();
 
         return view;
     }
@@ -100,7 +101,13 @@ public class FeedFragment extends Fragment {
         flag = true;
     }
 
-    private void handleShareInfoBtn() {
+    private void startPublishActivity(String publish_type) {
+        Intent shareIntent = new Intent(getActivity(), PublishActivity.class);
+        shareIntent.putExtra(EXTRA_PUBLISH_TYPE, publish_type);
+        startActivity(shareIntent);
+    }
+
+    private void shareInfoBtnListener() {
         mShareInfoBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -109,13 +116,7 @@ public class FeedFragment extends Fragment {
             });
     }
 
-    private void startPublishActivity(String publish_type) {
-        Intent shareIntent = new Intent(getActivity(), PublishActivity.class);
-                    shareIntent.putExtra(PUBLISH_TYPE, publish_type);
-                    startActivity(shareIntent);
-    }
-
-    private void handleChallengeBtn() {
+    private void postChallengeBtnListener() {
         mChallengeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,7 +125,7 @@ public class FeedFragment extends Fragment {
         });
     }
 
-    private void handleQuestionBtn() {
+    private void askQuestionBtnListener() {
         mAskBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -133,7 +134,7 @@ public class FeedFragment extends Fragment {
         });
     }
 
-    private void handleFloatingBtn() {
+    private void floatingBtnListener() {
         mFloatingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -215,7 +216,7 @@ public class FeedFragment extends Fragment {
         });
     }
 
-    private void getFreshPostsAndPopulatePostList() {
+    private void generateFeedItemList() {
         mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("posts")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -223,14 +224,6 @@ public class FeedFragment extends Fragment {
 
                 if(queryDocumentSnapshots != null)
                     for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
-
-//                        if (doc.getType() == DocumentChange.Type.ADDED) {
-//
-//                            Post Post = doc.getDocument().toObject(Post.class);
-//                            mFeedItems.add(Post);
-//                            mAdapter.notifyDataSetChanged();
-//
-//                        }
 
                         Post post;
                         switch (doc.getType()) {
@@ -269,41 +262,36 @@ public class FeedFragment extends Fragment {
 
                 if(task.isSuccessful()) {
                     if(task.getResult().exists()) {
+
                         String name = task.getResult().getString("Nick name");
-
-                        String image = (null==MainActivity.photoUrl)?task.getResult()
-                                .getString("Image"):MainActivity.photoUrl;
-
                         mNameTView.setText(name);
 
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL)
                                 .placeholder(R.drawable.default_photo);
 
+                        String image = (null==MainActivity.photoUrl)?task.getResult()
+                                .getString("Image"):MainActivity.photoUrl;
+
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && image!=null) {
                             Glide.with(Objects.requireNonNull(getActivity())).load(image)
                                     .apply(placeholderRequest).into(mCircleImageView);
                         }
-
                     }
-
                 } else {
-
                     String error = task.getException().getMessage();
                     Toast.makeText(getActivity(), "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
-
                 }
-
             }
         });
     }
 
-    private void wiringViews(View view) {
+    private void wireViews(View view) {
         mCircleImageView = view.findViewById(R.id.userCircleIView);
         mNameTView = view.findViewById(R.id.userNameTView);
 
-//        TextView askQuestionTView = view.findViewById(R.id.askQuestionTView);
-//        ProgressBar progressBar = view.findViewById(R.id.progressBar);
+        // TextView askQuestionTView = view.findViewById(R.id.askQuestionTView);
+        // ProgressBar progressBar = view.findViewById(R.id.progressBar);
 
         mFloatingBtn = view.findViewById(R.id.floatBtn);
         mCardView = view.findViewById(R.id.cardView);
