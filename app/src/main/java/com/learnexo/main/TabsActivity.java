@@ -227,8 +227,6 @@ public class TabsActivity extends AppCompatActivity {
                                                      }
                                                  });
 
-
-
                                      }
 
                                      private void checkProfileCompletion(String userId) {

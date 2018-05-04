@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -58,6 +59,7 @@ public class FeedFragment extends Fragment {
     private Button mChallengeBtn;
     private FloatingActionButton mFloatingBtn;
     private CardView mCardView;
+    private TextView askQuestionTView;
 
     private String mUserId;
     boolean flag = true;
@@ -85,8 +87,14 @@ public class FeedFragment extends Fragment {
         getDPandUserNameandSet();
         generateFeedItemList();
 
-        floatingBtnListener();
+        askQuestionTView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startPublishActivity(getString(R.string.askYourQuestion));
+            }
+        });
 
+        floatingBtnListener();
         shareInfoBtnListener();
         askQuestionBtnListener();
         postChallengeBtnListener();
@@ -279,9 +287,12 @@ public class FeedFragment extends Fragment {
                         }
                     }
                 } else {
+
                     String error = task.getException().getMessage();
                     Toast.makeText(getActivity(), "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
+
                 }
+
             }
         });
     }
@@ -290,7 +301,7 @@ public class FeedFragment extends Fragment {
         mCircleImageView = view.findViewById(R.id.userCircleIView);
         mNameTView = view.findViewById(R.id.userNameTView);
 
-        // TextView askQuestionTView = view.findViewById(R.id.askQuestionTView);
+        askQuestionTView = view.findViewById(R.id.askQuestionTView);
         // ProgressBar progressBar = view.findViewById(R.id.progressBar);
 
         mFloatingBtn = view.findViewById(R.id.floatBtn);

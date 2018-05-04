@@ -166,6 +166,15 @@ public class SetupActivity extends AppCompatActivity {
 
                 final String nick_name = setup_nickName.getText().toString();
 
+                if(mainImageURI == null)
+                    Toast.makeText(SetupActivity.this, "Select DP", Toast.LENGTH_LONG).show();
+
+                if(TextUtils.isEmpty(nick_name))
+                    Toast.makeText(SetupActivity.this, "Describe yourself", Toast.LENGTH_LONG).show();
+
+                if(TextUtils.isEmpty(nick_name) && mainImageURI == null)
+                    Toast.makeText(SetupActivity.this, "Fields can't be empty", Toast.LENGTH_LONG).show();
+
                 if (!TextUtils.isEmpty(nick_name) && mainImageURI != null) {
                     setupProgerss.setVisibility(View.VISIBLE);
 
