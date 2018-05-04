@@ -3,11 +3,13 @@ package com.learnexo.main;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,9 +59,9 @@ public class InterestsActivity extends AppCompatActivity {
             subBranch = new SubBranch();
             subBranch.setName("Programming "+b);
 
-            for (int i = 0; i <= 10; i++) {
+            for (int i = 0; i <= 7; i++) {
                 Topic topic = new Topic();
-                topic.setSubjectName("Java " + i);
+                topic.setSubjectName("Branch"+b+" Java " + i);
                 subjects.add(topic);
             }
             subBranch.setTopicList(subjects);
@@ -105,10 +107,9 @@ public class InterestsActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
         MenuItem item = menu.findItem(R.id.action_button);
-
-        if(interestMap.size()>=4)
-            item.setEnabled(true);
+        item.setEnabled(true);
 
         return true;
     }
@@ -199,6 +200,7 @@ public class InterestsActivity extends AppCompatActivity {
         }
 
         public void bind(final Topic subject) {
+            Log.d("this","size");
             interestMap=new HashMap<>();
             mSubjectCheckbox.setText(subject.getSubjectName());
             mSubjectCheckbox.setOnClickListener(new View.OnClickListener() {
@@ -212,8 +214,11 @@ public class InterestsActivity extends AppCompatActivity {
                     mSubjectCheckbox.startAnimation(myAnim);
 
                     interestMap.put(subject.getSubjectName(),true);
-                    if(interestMap.size()>=4)
-                        invalidateOptionsMenu();
+                    Log.d("this","size"+interestMap.size());
+                    if(interestMap.size()>=4) {
+                        InterestsActivity.this.invalidateOptionsMenu();
+                        Log.d(InterestsActivity.class.getSimpleName(), "size is >= 4");
+                    }
 
                 }
             });
