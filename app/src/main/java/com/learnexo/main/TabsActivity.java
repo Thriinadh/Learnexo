@@ -179,8 +179,8 @@ public class TabsActivity extends AppCompatActivity {
     }
 
     private void checkInterestsAndProfile(final String userId) {
-        new FirebaseUtil().mFirestore.collection("Users").document(userId).collection("Interests")
-                         .document("Inter").get().addOnCompleteListener(
+        new FirebaseUtil().mFirestore.collection("users").document(userId).collection("interests").document()
+                         .get().addOnCompleteListener(
                                  new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

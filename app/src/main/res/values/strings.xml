@@ -54,7 +54,7 @@
     <string name="operating_systems">Operating Systems</string>
     <string name="compiler_design">Compiler Design</string>
     <string name="fundamentalss">Fundamentals</string>
-    <string name="header_text">You are almost done! Select your favorite subjects to personalize your feed.</string>
+    <string name="header_text">You are almost done! Select at least 4 interests to personalize your feed.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="feed_text">This is Feed</string>
@@ -122,5 +122,6 @@
     <string name="askYourQuestion">Ask Your Question</string>
     <string name="post_images">post_images</string>
     <string name="question_images">question_images</string>
+    <string name="next_interests">NEXT</string>
 
 </resources>
