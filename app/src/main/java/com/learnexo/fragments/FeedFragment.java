@@ -1,21 +1,15 @@
 package com.learnexo.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +25,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.main.FeedRecyclerAdapter;
 import com.learnexo.main.MainActivity;
-import com.learnexo.main.PublishActivity;
 import com.learnexo.main.R;
 import com.learnexo.main.TabsActivity;
 import com.learnexo.model.feed.FeedItem;
@@ -53,17 +46,11 @@ public class FeedFragment extends Fragment {
 
     private List<FeedItem> mFeedItems;
     private FeedRecyclerAdapter mAdapter;
-     TabsActivity mTabsActivity;
 
-//    private Button mShareInfoBtn;
-//    private Button mAskBtn;
-//    private Button mChallengeBtn;
-  //  private FloatingActionButton mFloatingBtn;
-  //  private CardView mCardView;
     private TextView askQuestionTView;
 
     private String mUserId;
-//    boolean flag = true;
+
 
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
@@ -88,142 +75,10 @@ public class FeedFragment extends Fragment {
         getDPandUserNameandSet();
         generateFeedItemList();
 
-//        askQuestionTView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startPublishActivity(getString(R.string.askYourQuestion));
-//            }
-//        });
-
-      //  floatingBtnListener();
-//        shareInfoBtnListener();
-//        askQuestionBtnListener();
-//        postChallengeBtnListener();
-
         return view;
     }
 
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        mCardView.setVisibility(View.INVISIBLE);
-//        flag = true;
-//    }
 
-//    private void startPublishActivity(String publish_type) {
-//        Intent shareIntent = new Intent(getActivity(), PublishActivity.class);
-//        shareIntent.putExtra(EXTRA_PUBLISH_TYPE, publish_type);
-//        startActivity(shareIntent);
-//    }
-
-//    private void shareInfoBtnListener() {
-//        mShareInfoBtn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                  startPublishActivity(getString(R.string.share_info));
-//                }
-//            });
-//    }
-//
-//    private void postChallengeBtnListener() {
-//        mChallengeBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startPublishActivity(getString(R.string.postChallenge));
-//            }
-//        });
-//    }
-//
-//    private void askQuestionBtnListener() {
-//        mAskBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startPublishActivity(getString(R.string.askYourQuestion));
-//            }
-//        });
-//    }
-
-//    private void floatingBtnListener() {
-//        mFloatingBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                if(flag) {
-//
-//                    // Check if the runtime version is at least Lollipop
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                        // get the center for the clipping circle
-//                       // int cx = mCardView.getWidth() / 2;
-//                       // int cy = mCardView.getHeight() / 2;
-//
-//                        // get the center for the clipping circle
-//                        int cx = (view.getLeft() + view.getRight()) / 2;
-//                        int cy = (view.getTop() + view.getBottom()) / 2;
-//
-//                        int startRadius = 0;
-//                       // get the final radius for the clipping circle
-//                        int endRadius = Math.max(view.getWidth(), view.getHeight());
-//
-//                        // get the final radius for the clipping circle
-//                       // float finalRadius = (float) Math.hypot(cx, cy);
-//
-//                        // create the animator for this view (the start radius is zero)
-//                        Animator anim =
-//                                ViewAnimationUtils.createCircularReveal(mCardView, cx, cy, startRadius, endRadius);
-//
-//                        // make the view visible and start the animation
-//                        mCardView.setVisibility(View.VISIBLE);
-//                        anim.start();
-//                    } else {
-//                        // set the view to visible without a circular reveal animation below Lollipop
-//                        mCardView.setVisibility(View.VISIBLE);
-//                    }
-//
-//                    flag = false;
-//                } else {
-//
-//                    // Check if the runtime version is at least Lollipop
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                        // get the center for the clipping circle
-//                       // int cx = mCardView.getWidth() / 2;
-//                       // int cy = mCardView.getHeight() / 2;
-//
-//                        // get the center for the clipping circle
-//                        int cx = (view.getLeft() + view.getRight()) / 2;
-//                        int cy = (view.getTop() + view.getBottom()) / 2;
-//
-//                        // get the initial radius for the clipping circle
-//                       // float initialRadius = (float) Math.hypot(cx, cy);
-//
-//                        int endRadius = 0;
-//                        // get the final radius for the clipping circle
-//                        int startRadius = Math.max(view.getWidth(), view.getHeight());
-//
-//                         // create the animation (the final radius is zero)
-//                        Animator anim =
-//                                ViewAnimationUtils.createCircularReveal(mCardView, cx, cy, startRadius, endRadius);
-//
-//                       // make the view invisible when the animation is done
-//                        anim.addListener(new AnimatorListenerAdapter() {
-//                            @Override
-//                            public void onAnimationEnd(Animator animation) {
-//                                super.onAnimationEnd(animation);
-//                                mCardView.setVisibility(View.INVISIBLE);
-//                            }
-//                        });
-//
-//                     // start the animation
-//                        anim.start();
-//                    } else {
-//                        // set the view to visible without a circular reveal animation below Lollipop
-//                        mCardView.setVisibility(View.INVISIBLE);
-//                    }
-//                    flag = true;
-//                }
-//
-//            }
-//        });
-//    }
 
     private void generateFeedItemList() {
         mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("posts")
@@ -303,14 +158,7 @@ public class FeedFragment extends Fragment {
         mNameTView = view.findViewById(R.id.userNameTView);
 
         askQuestionTView = view.findViewById(R.id.askQuestionTView);
-        // ProgressBar progressBar = view.findViewById(R.id.progressBar);
 
-//        mFloatingBtn = view.findViewById(R.id.floatBtn);
-//        mCardView = view.findViewById(R.id.cardView);
-
-//        mShareInfoBtn = view.findViewById(R.id.shareBtn);
-//        mAskBtn = view.findViewById(R.id.askBtn);
-//        mChallengeBtn = view.findViewById(R.id.challengeBtn);
     }
 
     private void setupFeedRecyclerAdapter(View view) {
@@ -321,22 +169,27 @@ public class FeedFragment extends Fragment {
         feedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         feedRecyclerView.setAdapter(mAdapter);
 
-//        feedRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//
-//                if(dy > 0 || dx < 0)
-//                if(mTabsActivity != null)
-//                mTabsActivity.hideCardView();
-//            }
-//        });
+        feedRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                TabsActivity tabsActivity=(TabsActivity) getActivity();
+
+                tabsActivity.hideCardView();
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
+
+
     }
 
-//    public void hideCardView() {
-//        if(mCardView != null) {
-//            mCardView.setVisibility(View.INVISIBLE);
-//            flag = true;
-//        }
-//    }
 }

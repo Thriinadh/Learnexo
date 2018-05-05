@@ -56,7 +56,7 @@ public class TabsActivity extends AppCompatActivity {
     private Button mShareInfoBtn;
     private Button mAskBtn;
     private Button mChallengeBtn;
-    private LinearLayout hideFABlayout;
+    private LinearLayout FAB_Layout;
 
     private ViewPager viewPager;
     private ViewPagerAdapter mAdapter;
@@ -74,12 +74,7 @@ public class TabsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
 
-        mFloatingBtn = findViewById(R.id.floatBtn);
-        mCardView = findViewById(R.id.cardView);
-        mShareInfoBtn = findViewById(R.id.shareBtn);
-        mAskBtn = findViewById(R.id.askBtn);
-        mChallengeBtn = findViewById(R.id.challengeBtn);
-        hideFABlayout = findViewById(R.id.hideFABlayout);
+        wireViews();
 
         setupToolbar();
         setupViewPager();
@@ -93,6 +88,16 @@ public class TabsActivity extends AppCompatActivity {
 
         gotoFeedtab();
 
+    }
+
+    private void wireViews() {
+        FAB_Layout = findViewById(R.id.FAB_Layout);
+        mCardView = findViewById(R.id.cardView);
+
+        mFloatingBtn = findViewById(R.id.floatBtn);
+        mShareInfoBtn = findViewById(R.id.shareBtn);
+        mAskBtn = findViewById(R.id.askBtn);
+        mChallengeBtn = findViewById(R.id.challengeBtn);
     }
 
     private void startPublishActivity(String publish_type) {
@@ -287,21 +292,20 @@ public class TabsActivity extends AppCompatActivity {
                     }
 
                     private void hideCardviewInFeedFragmentWhenUsergoesToOtherTabs() {
-                       // Fragment feedFragment = mAdapter.getItem(0);
                         int pos = viewPager.getCurrentItem();
                         if(pos == 1 || pos == 2 || pos == 3 || pos == 4)
-                           // ((FeedFragment)feedFragment).hideCardView();
                             hideCardAndFABView();
-                        else hideFABlayout.setVisibility(View.VISIBLE);
+                        else
+                            FAB_Layout.setVisibility(View.VISIBLE);
                     }
 
                 });
     }
 
         private void hideCardAndFABView() {
-        if(hideFABlayout != null && mCardView != null) {
+        if(FAB_Layout != null && mCardView != null) {
             mCardView.setVisibility(View.INVISIBLE);
-            hideFABlayout.setVisibility(View.INVISIBLE);
+            FAB_Layout.setVisibility(View.INVISIBLE);
             flag = true;
         }
     }
@@ -484,7 +488,7 @@ public class TabsActivity extends AppCompatActivity {
         mAdapter.addFragment(new ProfileFragment());
 
         viewPager.setAdapter(mAdapter);
-     //   viewPager.setOffscreenPageLimit(2);
+        // viewPager.setOffscreenPageLimit(2);
     }
 
 

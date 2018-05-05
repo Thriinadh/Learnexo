@@ -25,7 +25,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.util.FirebaseUtil;
 
-import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -53,17 +52,20 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
     @Override
     public void onBindViewHolder(@NonNull final FeedItemHolder holder, int position) {
+        FeedItem feedItem=mFeedItems.get(position);
 
-        final String user_id = mFeedItems.get(position).getUserId();
-        final String itemContent = mFeedItems.get(position).getContent();
-        final String imagePosted = mFeedItems.get(position).getImgUrl();
-        final String timeAgo = convertDateToAgo(mFeedItems.get(position).getPublishTime());
+        final String user_id = feedItem.getUserId();
+        final String itemContent = feedItem.getContent();
+        final String imagePosted = feedItem.getImgUrl();
+        final String timeAgo = convertDateToAgo(feedItem.getPublishTime());
 
         bind(holder, itemContent, imagePosted, timeAgo);
         bindUserData(holder, user_id);
 
         contentListener(holder, itemContent, imagePosted, timeAgo);
         overflowImgViewListener(holder, user_id);
+
+
     }
 
     private void contentListener(@NonNull FeedItemHolder holder, final String itemContent, final String imagePosted, final String timeAgo) {
