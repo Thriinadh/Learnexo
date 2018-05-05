@@ -1,5 +1,7 @@
 package com.learnexo.main;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -7,16 +9,22 @@ import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,10 +45,18 @@ import java.util.Objects;
 
 public class TabsActivity extends AppCompatActivity {
 
+    public static final String EXTRA_PUBLISH_TYPE ="com.learnexo.main.TabsActivity.EXTRA_PUBLISH_TYPE";
     public static final String EXTRA_TAB_NUM = "com.learnexo.main.EXTRA_TAB_NUM";
 
     private TextView mToolbarTitle;
     private TabLayout tabLayout;
+    private CardView mCardView;
+    boolean flag = true;
+    private FloatingActionButton mFloatingBtn;
+    private Button mShareInfoBtn;
+    private Button mAskBtn;
+    private Button mChallengeBtn;
+    private LinearLayout hideFABlayout;
 
     private ViewPager viewPager;
     private ViewPagerAdapter mAdapter;
@@ -58,13 +74,140 @@ public class TabsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
 
+        mFloatingBtn = findViewById(R.id.floatBtn);
+        mCardView = findViewById(R.id.cardView);
+        mShareInfoBtn = findViewById(R.id.shareBtn);
+        mAskBtn = findViewById(R.id.askBtn);
+        mChallengeBtn = findViewById(R.id.challengeBtn);
+        hideFABlayout = findViewById(R.id.hideFABlayout);
+
         setupToolbar();
         setupViewPager();
         setupTablayout();
         tabSelectListener();
 
+        floatingBtnListener();
+        shareInfoBtnListener();
+        askQuestionBtnListener();
+        postChallengeBtnListener();
+
         gotoFeedtab();
 
+    }
+
+    private void startPublishActivity(String publish_type) {
+        Intent shareIntent = new Intent(TabsActivity.this, PublishActivity.class);
+        shareIntent.putExtra(EXTRA_PUBLISH_TYPE, publish_type);
+        startActivity(shareIntent);
+    }
+
+    private void shareInfoBtnListener() {
+        mShareInfoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startPublishActivity(getString(R.string.share_info));
+            }
+        });
+    }
+
+    private void postChallengeBtnListener() {
+        mChallengeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startPublishActivity(getString(R.string.postChallenge));
+            }
+        });
+    }
+
+    private void askQuestionBtnListener() {
+        mAskBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startPublishActivity(getString(R.string.askYourQuestion));
+            }
+        });
+    }
+
+    private void floatingBtnListener() {
+        mFloatingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(flag) {
+
+                    // Check if the runtime version is at least Lollipop
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        // get the center for the clipping circle
+                        // int cx = mCardView.getWidth() / 2;
+                        // int cy = mCardView.getHeight() / 2;
+
+                        // get the center for the clipping circle
+                        int cx = (view.getLeft() + view.getRight()) / 2;
+                        int cy = (view.getTop() + view.getBottom()) / 2;
+
+                        int startRadius = 0;
+                        // get the final radius for the clipping circle
+                        int endRadius = Math.max(view.getWidth(), view.getHeight());
+
+                        // get the final radius for the clipping circle
+                        // float finalRadius = (float) Math.hypot(cx, cy);
+
+                        // create the animator for this view (the start radius is zero)
+                        Animator anim =
+                                ViewAnimationUtils.createCircularReveal(mCardView, cx, cy, startRadius, endRadius);
+
+                        // make the view visible and start the animation
+                        mCardView.setVisibility(View.VISIBLE);
+                        anim.start();
+                    } else {
+                        // set the view to visible without a circular reveal animation below Lollipop
+                        mCardView.setVisibility(View.VISIBLE);
+                    }
+
+                    flag = false;
+                } else {
+
+                    // Check if the runtime version is at least Lollipop
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        // get the center for the clipping circle
+                        // int cx = mCardView.getWidth() / 2;
+                        // int cy = mCardView.getHeight() / 2;
+
+                        // get the center for the clipping circle
+                        int cx = (view.getLeft() + view.getRight()) / 2;
+                        int cy = (view.getTop() + view.getBottom()) / 2;
+
+                        // get the initial radius for the clipping circle
+                        // float initialRadius = (float) Math.hypot(cx, cy);
+
+                        int endRadius = 0;
+                        // get the final radius for the clipping circle
+                        int startRadius = Math.max(view.getWidth(), view.getHeight());
+
+                        // create the animation (the final radius is zero)
+                        Animator anim =
+                                ViewAnimationUtils.createCircularReveal(mCardView, cx, cy, startRadius, endRadius);
+
+                        // make the view invisible when the animation is done
+                        anim.addListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                mCardView.setVisibility(View.INVISIBLE);
+                            }
+                        });
+
+                        // start the animation
+                        anim.start();
+                    } else {
+                        // set the view to visible without a circular reveal animation below Lollipop
+                        mCardView.setVisibility(View.INVISIBLE);
+                    }
+                    flag = true;
+                }
+
+            }
+        });
     }
 
     @Override
@@ -74,6 +217,14 @@ public class TabsActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Objects.requireNonNull(tab).select();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mCardView != null)
+            mCardView.setVisibility(View.INVISIBLE);
+            flag = true;
     }
 
     private void tabSelectListener() {
@@ -136,14 +287,29 @@ public class TabsActivity extends AppCompatActivity {
                     }
 
                     private void hideCardviewInFeedFragmentWhenUsergoesToOtherTabs() {
-                        Fragment feedFragment = mAdapter.getItem(0);
+                       // Fragment feedFragment = mAdapter.getItem(0);
                         int pos = viewPager.getCurrentItem();
                         if(pos == 1 || pos == 2 || pos == 3 || pos == 4)
-                            ((FeedFragment)feedFragment).hideCardView();
+                           // ((FeedFragment)feedFragment).hideCardView();
+                            hideCardAndFABView();
+                        else hideFABlayout.setVisibility(View.VISIBLE);
                     }
 
-
                 });
+    }
+
+        private void hideCardAndFABView() {
+        if(hideFABlayout != null && mCardView != null) {
+            mCardView.setVisibility(View.INVISIBLE);
+            hideFABlayout.setVisibility(View.INVISIBLE);
+            flag = true;
+        }
+    }
+
+    public void hideCardView() {
+        if(mCardView != null)
+            mCardView.setVisibility(View.INVISIBLE);
+        flag = true;
     }
 
     @Override
@@ -318,7 +484,7 @@ public class TabsActivity extends AppCompatActivity {
         mAdapter.addFragment(new ProfileFragment());
 
         viewPager.setAdapter(mAdapter);
-        viewPager.setOffscreenPageLimit(2);
+     //   viewPager.setOffscreenPageLimit(2);
     }
 
 

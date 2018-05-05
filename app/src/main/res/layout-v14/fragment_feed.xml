@@ -94,88 +94,89 @@
 
     </android.support.v4.widget.NestedScrollView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="vertical">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="bottom"-->
+            <!--android:orientation="vertical">-->
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/cardView"
-                android:layout_width="match_parent"
-                android:layout_height="196dp"
-                android:layout_gravity="bottom"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:visibility="gone"
-                app:cardCornerRadius="20dp">
+            <!--<android.support.v7.widget.CardView-->
+                <!--android:id="@+id/cardView"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="196dp"-->
+                <!--android:layout_gravity="bottom"-->
+                <!--android:layout_marginBottom="8dp"-->
+                <!--android:layout_marginEnd="16dp"-->
+                <!--android:layout_marginRight="16dp"-->
+                <!--android:layout_marginStart="16dp"-->
+                <!--android:visibility="gone"-->
+                <!--app:cardCornerRadius="20dp">-->
 
-                <LinearLayout
-                    android:id="@+id/linearReveal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                <!--<LinearLayout-->
+                    <!--android:id="@+id/linearReveal"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:background="@color/light_brinjal"-->
+                    <!--android:orientation="vertical">-->
 
-                    <Button
-                        android:id="@+id/shareBtn"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:background="@color/least_black"
-                        android:text="@string/share_info"
-                        android:textAllCaps="false"
-                        android:textColor="#00ccff"
-                        android:textSize="24sp" />
+                    <!--<Button-->
+                        <!--android:id="@+id/shareBtn"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="0dp"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:background="@color/least_black"-->
+                        <!--android:text="@string/share_info"-->
+                        <!--android:textAllCaps="false"-->
+                        <!--android:textColor="#00ccff"-->
+                        <!--android:textSize="24sp" />-->
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@android:color/darker_gray" />
+                    <!--<View-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="1dp"-->
+                        <!--android:background="@android:color/darker_gray" />-->
 
-                    <Button
-                        android:id="@+id/askBtn"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:background="@color/least_black"
-                        android:text="@string/ask_a_query"
-                        android:textAllCaps="false"
-                        android:textColor="#ff3300"
-                        android:textSize="24sp" />
+                    <!--<Button-->
+                        <!--android:id="@+id/askBtn"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="0dp"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:background="@color/least_black"-->
+                        <!--android:text="@string/ask_a_query"-->
+                        <!--android:textAllCaps="false"-->
+                        <!--android:textColor="#ff3300"-->
+                        <!--android:textSize="24sp" />-->
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@android:color/darker_gray" />
+                    <!--<View-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="1dp"-->
+                        <!--android:background="@android:color/darker_gray" />-->
 
-                    <Button
-                        android:id="@+id/challengeBtn"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:background="@color/least_black"
-                        android:text="@string/post_a_challenge"
-                        android:textAllCaps="false"
-                        android:textColor="#cc9900"
-                        android:textSize="24sp" />
+                    <!--<Button-->
+                        <!--android:id="@+id/challengeBtn"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="0dp"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:background="@color/least_black"-->
+                        <!--android:text="@string/post_a_challenge"-->
+                        <!--android:textAllCaps="false"-->
+                        <!--android:textColor="#cc9900"-->
+                        <!--android:textSize="24sp" />-->
 
-                </LinearLayout>
+                <!--</LinearLayout>-->
 
-            </android.support.v7.widget.CardView>
+            <!--</android.support.v7.widget.CardView>-->
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/floatBtn"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_gravity="end"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:src="@drawable/edit_nick_name"
-                app:backgroundTint="@color/colorPrimary" />
+            <!--<android.support.design.widget.FloatingActionButton-->
+                <!--android:id="@+id/floatBtn"-->
+                <!--android:layout_width="56dp"-->
+                <!--android:layout_height="56dp"-->
+                <!--android:layout_gravity="end"-->
+                <!--android:layout_marginBottom="16dp"-->
+                <!--android:layout_marginEnd="16dp"-->
+                <!--android:layout_marginRight="16dp"-->
+                <!--android:src="@drawable/edit_nick_name"-->
+                <!--app:backgroundTint="@color/colorPrimary" />-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
 </FrameLayout>

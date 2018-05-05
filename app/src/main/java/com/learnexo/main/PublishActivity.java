@@ -93,7 +93,7 @@ public class PublishActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publish);
-        publishType = getIntent().getStringExtra(FeedFragment.EXTRA_PUBLISH_TYPE);
+        publishType = getIntent().getStringExtra(TabsActivity.EXTRA_PUBLISH_TYPE);
 
         wiringViews();
         setupToolbar();
