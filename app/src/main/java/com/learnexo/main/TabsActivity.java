@@ -385,8 +385,7 @@ public class TabsActivity extends AppCompatActivity {
                                                      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                          if(task.isSuccessful()) {
                                                              Boolean isSkipped= (Boolean) task.getResult().get("IS_SKIPPED_PROFILE");
-                                                             if(isSkipped!=null)
-                                                                if(!isSkipped){
+                                                             if(isSkipped==null) {
                                                                     checkProfileCompletion(userId);
                                                                 }
 
