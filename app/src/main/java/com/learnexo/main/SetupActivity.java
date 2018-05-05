@@ -58,7 +58,7 @@ public class SetupActivity extends AppCompatActivity {
     private String user_id;
     private Button edit_name_button;
     private TextView skipTView;
-    private CardView pickImageCView;
+  //  private CardView pickImageCView;
 
     private boolean isChanged = false;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
@@ -160,28 +160,28 @@ public class SetupActivity extends AppCompatActivity {
             }
         });
 
-        pickImageCView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-                    if (ContextCompat.checkSelfPermission(SetupActivity.this,
-                            Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-                        ActivityCompat.requestPermissions(SetupActivity.this,
-                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-
-                    } else {
-                        BringImagePicker();
-                    }
-
-                } else {
-                    BringImagePicker();
-                }
-
-            }
-        });
+//        pickImageCView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//
+//                    if (ContextCompat.checkSelfPermission(SetupActivity.this,
+//                            Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//
+//                        ActivityCompat.requestPermissions(SetupActivity.this,
+//                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+//
+//                    } else {
+//                        BringImagePicker();
+//                    }
+//
+//                } else {
+//                    BringImagePicker();
+//                }
+//
+//            }
+//        });
     }
 
     private void setupBtnListener() {
@@ -274,7 +274,7 @@ public class SetupActivity extends AppCompatActivity {
         setup_nickName = findViewById(R.id.setup_nickName);
         skipTView = findViewById(R.id.skipTView);
         setupProgerss = findViewById(R.id.setup_progress);
-        pickImageCView = findViewById(R.id.pickImageCView);
+    //    pickImageCView = findViewById(R.id.pickImageCView);
 
         setupBtn = findViewById(R.id.setup_btn);
         setupBtn.setEnabled(false);

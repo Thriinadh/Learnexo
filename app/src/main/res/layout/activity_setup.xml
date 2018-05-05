@@ -54,31 +54,40 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/pickImageCView"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="3dp"
-        android:layout_marginEnd="72dp"
-        android:layout_marginRight="72dp"
-        android:backgroundTint="#00bfff"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:backgroundTint="@color/colorAccent"
         android:elevation="12dp"
         android:innerRadius="0dp"
         android:shape="ring"
         android:thicknessRatio="1.9"
-        app:cardCornerRadius="35dp"
+        app:cardCornerRadius="25dp"
         app:layout_constraintBottom_toBottomOf="@+id/setup_image"
         app:layout_constraintEnd_toEndOf="@+id/setup_image">
 
         <ImageView
             android:id="@+id/imageView1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:src="@drawable/edit_nick_name"
-            android:tint="@color/white" />
+            android:src="@drawable/gallery"
+            android:tint="@color/black" />
     </android.support.v7.widget.CardView>
+
+    <!--<ImageView-->
+        <!--android:layout_width="40dp"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--android:layout_marginEnd="28dp"-->
+        <!--android:layout_marginRight="28dp"-->
+        <!--android:background="@drawable/img"-->
+        <!--app:layout_constraintBottom_toBottomOf="@+id/setup_image"-->
+        <!--app:layout_constraintEnd_toEndOf="@+id/setup_image" />-->
 
     <android.support.v7.widget.CardView
         android:id="@+id/nameCardview"
@@ -152,7 +161,7 @@
         android:layout_marginTop="16dp"
         android:text="Skip"
         android:textSize="24sp"
-        android:textColor="@color/red"
+        android:textColor="#32CD32"
         app:fontFamily="sans-serif-medium"
         android:clickable="true"
         android:focusable="true"

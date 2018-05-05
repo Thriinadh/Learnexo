@@ -12,7 +12,5 @@
         android:button="@null"
         android:drawableRight="@drawable/checkbox_selector"
         android:gravity="center"
-        android:onClick="didTapBox"
-        android:text="@string/compiler_design"
         android:textSize="14sp" />
 </LinearLayout>
