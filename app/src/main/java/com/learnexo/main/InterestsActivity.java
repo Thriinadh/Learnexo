@@ -2,14 +2,12 @@ package com.learnexo.main;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +20,6 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.learnexo.model.video.SubBranch;
 import com.learnexo.model.video.Topic;
 import com.learnexo.util.FirebaseUtil;
@@ -34,10 +31,11 @@ import java.util.Map;
 
 public class InterestsActivity extends AppCompatActivity {
 
+    private static final String TAG = InterestsActivity.class.getSimpleName();
     private Toolbar setupToolbar;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     MenuItem nextBtn;
-    Map<String,Boolean> interestMap;
+    Map<String,Boolean> interestMap=new HashMap<>();;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +89,10 @@ public class InterestsActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_button) {
-            mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("interests").add(interestMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("interests")
+                    .document("doc1").set(interestMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
-                public void onSuccess(DocumentReference documentReference) {
+                public void onSuccess(Void aVoid) {
                     Intent setupIntent = new Intent(InterestsActivity.this, SetupActivity.class);
                     startActivity(setupIntent);
                     finish();
@@ -105,15 +104,11 @@ public class InterestsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        MenuItem item = menu.findItem(R.id.action_button);
-        item.setEnabled(true);
 
-        return true;
-    }
 
+
+
+    ////////////////
     public class SubBranchHolder extends RecyclerView.ViewHolder {
         protected TextView mSubBranchTView;
         protected RecyclerView mSubjectRecycler;
@@ -126,6 +121,7 @@ public class InterestsActivity extends AppCompatActivity {
         }
     }
 
+    ////////////////
     public class SubBranchAdapter extends RecyclerView.Adapter<SubBranchHolder>{
 
         private List<SubBranch> mSubBranches;
@@ -189,6 +185,10 @@ public class InterestsActivity extends AppCompatActivity {
         }
     }
 
+
+
+
+    ////////////////
     public  class SubjectHolder extends RecyclerView.ViewHolder{
 
         protected CheckBox mSubjectCheckbox;
@@ -199,33 +199,9 @@ public class InterestsActivity extends AppCompatActivity {
 
         }
 
-        public void bind(final Topic subject) {
-            Log.d("this","size");
-            interestMap=new HashMap<>();
-            mSubjectCheckbox.setText(subject.getSubjectName());
-            mSubjectCheckbox.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final Animation myAnim = AnimationUtils.loadAnimation(InterestsActivity.this, R.anim.bounce);
-
-                    // Use bounce interpolator with amplitude 0.2 and frequency 20
-                    MyBounceInterpolator interpolator = new MyBounceInterpolator(0.1, 20);
-                    myAnim.setInterpolator(interpolator);
-                    mSubjectCheckbox.startAnimation(myAnim);
-
-                    interestMap.put(subject.getSubjectName(),true);
-                    Log.d("this","size"+interestMap.size());
-                    if(interestMap.size()>=4) {
-                        InterestsActivity.this.invalidateOptionsMenu();
-                        Log.d(InterestsActivity.class.getSimpleName(), "size is >= 4");
-                    }
-
-                }
-            });
-        }
-
     }
 
+    ////////////////
     public class SubjectAdapter extends RecyclerView.Adapter<SubjectHolder> {
 
         private Context mContext;
@@ -244,9 +220,46 @@ public class InterestsActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull SubjectHolder holder, int position) {
-            Topic subject = mSubjects.get(position);
-            holder.bind(subject);
+        public void onBindViewHolder(@NonNull final SubjectHolder holder, int position) {
+
+            final Topic subject = mSubjects.get(position);
+            holder.mSubjectCheckbox.setText(subject.getSubjectName());
+            holder.mSubjectCheckbox.setChecked(subject.isChecked());
+
+            final Animation myAnim = AnimationUtils.loadAnimation(InterestsActivity.this, R.anim.bounce);
+            // Use bounce interpolator with amplitude 0.2 and frequency 20
+            MyBounceInterpolator interpolator = new MyBounceInterpolator(0.1, 20);
+            myAnim.setInterpolator(interpolator);
+
+
+            holder.mSubjectCheckbox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (holder.mSubjectCheckbox.isChecked())
+                        holder.mSubjectCheckbox.startAnimation(myAnim);
+
+                    subject.setChecked(holder.mSubjectCheckbox.isChecked());
+
+                    String subjectName = null;
+                    if (null != subject)
+                        subjectName = subject.getSubjectName();
+
+                    if (null != interestMap&&subjectName!=null) {
+                        if (interestMap.containsKey(subjectName))
+                            interestMap.remove(subjectName);
+                        else
+                            interestMap.put(subjectName, true);
+
+                        if (interestMap.size() >= 4) {
+                            nextBtn.setEnabled(true);
+                        }else{
+                            nextBtn.setEnabled(false);
+                        }
+
+                    }
+                }
+            });
         }
 
         @Override

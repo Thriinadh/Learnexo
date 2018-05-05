@@ -6,6 +6,15 @@ import java.util.Date;
 import java.util.List;
 
 public class Topic {
+    private boolean isChecked;
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
 
     private Branch branch;
     private SubBranch subBranch;
