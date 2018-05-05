@@ -43,9 +43,13 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static String photoUrl;
     private static final int GOOGLE_SIGN_IN_REQ_CODE = 1;
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    public static String photoUrl;
+    public static String displayName;
+    public static String googleEmail;
+    public static String googlePhNo;
 
     private EditText loginEmail;
     private EditText loginPass;
@@ -227,9 +231,10 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "GoogleSignInWithCredential:success");
 
                             if(FirebaseUtil.doesUserExist()) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                    photoUrl = Objects.requireNonNull(FirebaseUtil.getCurrentUser().getPhotoUrl()).toString();
-                                }
+                                    photoUrl = (FirebaseUtil.getCurrentUser().getPhotoUrl()).toString();
+                                    displayName = (FirebaseUtil.getCurrentUser().getDisplayName());
+                                    googleEmail = (FirebaseUtil.getCurrentUser().getEmail());
+                                    googlePhNo = (FirebaseUtil.getCurrentUser().getPhoneNumber());
                                 gotoFeed();
                             }
                         } else {
