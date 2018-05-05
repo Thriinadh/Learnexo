@@ -2,11 +2,9 @@ package com.learnexo.main;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,15 +18,15 @@ public class FullPostActivity extends AppCompatActivity {
 
     public static final String EXTRA_CONTENT = "com.learnexo.postdata";
     private static final String EXTRA_IMAGE = "com.learnexo.imageposted";
-    private static final String EXTRA_PROFILE_IMAGE = "com.learnexo.profileimage";
     private static final String EXTRA_TIME = "com.learnexo.postedtime";
+    private static final String EXTRA_PROFILE_IMAGE = "com.learnexo.profileimage";
 
     private TextView fullText;
     private ImageView postedImage;
-    private CircleImageView profileImage;
-    private TextView userName;
     private TextView timeOfPost;
     private Toolbar toolbar;
+    private CircleImageView profileImage;
+    private TextView userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,15 +35,16 @@ public class FullPostActivity extends AppCompatActivity {
 
         setupToolbar();
 
-        String postData = getIntent().getStringExtra(EXTRA_CONTENT);
+        Intent intent=getIntent();
+        String postData = intent.getStringExtra(EXTRA_CONTENT);
         fullText = findViewById(R.id.full_text);
         fullText.setText(postData);
 
-        String posTime = getIntent().getStringExtra(EXTRA_TIME);
+        String posTime = intent.getStringExtra(EXTRA_TIME);
         timeOfPost = findViewById(R.id.feed_time);
         timeOfPost.setText(posTime);
 
-        String imagePosted = getIntent().getStringExtra(EXTRA_IMAGE);
+        String imagePosted = intent.getStringExtra(EXTRA_IMAGE);
         postedImage = findViewById(R.id.postedImage);
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);

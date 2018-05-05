@@ -5,7 +5,7 @@ import com.learnexo.model.video.chapter.Chapter;
 import java.util.Date;
 import java.util.List;
 
-public class Topic {
+public class Subject {
     private boolean isChecked;
 
     public boolean isChecked() {
@@ -16,23 +16,23 @@ public class Topic {
         isChecked = checked;
     }
 
-    private Branch branch;
-    private SubBranch subBranch;
+    private Department mDepartment;
+    private Branch mBranch;
+
+    public Department getDepartment() {
+        return mDepartment;
+    }
+
+    public void setDepartment(Department department) {
+        this.mDepartment = department;
+    }
 
     public Branch getBranch() {
-        return branch;
+        return mBranch;
     }
 
     public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
-
-    public SubBranch getSubBranch() {
-        return subBranch;
-    }
-
-    public void setSubBranch(SubBranch subBranch) {
-        this.subBranch = subBranch;
+        this.mBranch = branch;
     }
 
     public Date getLastUpdated() {

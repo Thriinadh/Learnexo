@@ -18,11 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
-public class HotQFragment extends Fragment {
+public class TextFragment extends Fragment {
 
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
@@ -30,7 +26,7 @@ public class HotQFragment extends Fragment {
     HashMap<String, List<String>> listDataChild;
 
 
-    public HotQFragment() {
+    public TextFragment() {
         // Required empty public constructor
     }
 
@@ -42,8 +38,7 @@ public class HotQFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_hot_q, container, false);
 
         // get the listview

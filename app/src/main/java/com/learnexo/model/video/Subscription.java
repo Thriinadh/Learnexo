@@ -1,11 +1,9 @@
 package com.learnexo.model.video;
 
-import com.learnexo.model.video.Topic;
-
 import java.util.Date;
 
 public class Subscription {
-    private Topic topic;
+    private Subject mSubject;
     private Date mPaidDate;
     private Date mExprireDate;
     private boolean mIsExpired;
@@ -18,12 +16,12 @@ public class Subscription {
         this.mExprireDate = exprireDate;
     }
 
-    public Topic getTopic() {
-        return topic;
+    public Subject getSubject() {
+        return mSubject;
     }
 
-    public void setTopic(Topic topic) {
-        this.topic = topic;
+    public void setSubject(Subject subject) {
+        this.mSubject = subject;
     }
 
     public Date getPaidDate() {

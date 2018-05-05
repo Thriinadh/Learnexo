@@ -34,7 +34,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.fragments.ConnectFragment;
 import com.learnexo.fragments.FeedFragment;
-import com.learnexo.fragments.HotQFragment;
+import com.learnexo.fragments.TextFragment;
 import com.learnexo.fragments.ProfileFragment;
 import com.learnexo.fragments.VideoFragment;
 import com.learnexo.util.FirebaseUtil;
@@ -483,7 +483,7 @@ public class TabsActivity extends AppCompatActivity {
 
         mAdapter.addFragment(new FeedFragment());
         mAdapter.addFragment(new VideoFragment());
-        mAdapter.addFragment(new HotQFragment());
+        mAdapter.addFragment(new TextFragment());
         mAdapter.addFragment(new ConnectFragment());
         mAdapter.addFragment(new ProfileFragment());
 

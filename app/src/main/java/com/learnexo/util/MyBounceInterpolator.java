@@ -1,4 +1,4 @@
-package com.learnexo.main;
+package com.learnexo.util;
 
 public class MyBounceInterpolator implements android.view.animation.Interpolator {
     private double mAmplitude;

@@ -17,13 +17,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.learnexo.util.FirebaseUtil;
 
 public class PlayVideoActivity extends AppCompatActivity {
 
     private VideoView videoView;
     private MediaController mediaControls;
     private String url;
-    private FirebaseFirestore firebaseFirestore;
+    private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +33,8 @@ public class PlayVideoActivity extends AppCompatActivity {
 
         videoView = findViewById(R.id.videoView);
 
-        firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("Subjects").document("Compiler Design").collection("chap1")
+
+        mFirebaseUtil.mFirestore.collection("Subjects").document("Compiler Design").collection("chap1")
                 .document("Introduction").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

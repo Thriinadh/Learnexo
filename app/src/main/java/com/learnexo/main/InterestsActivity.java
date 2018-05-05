@@ -20,9 +20,10 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.learnexo.model.video.SubBranch;
-import com.learnexo.model.video.Topic;
+import com.learnexo.model.video.Branch;
+import com.learnexo.model.video.Subject;
 import com.learnexo.util.FirebaseUtil;
+import com.learnexo.util.MyBounceInterpolator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,27 +49,27 @@ public class InterestsActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Choose Interests");
         }
 
-        List<SubBranch> mSubBranches = new ArrayList<>();
-        SubBranch subBranch;
+        List<Branch> mBranches = new ArrayList<>();
+        Branch branch;
 
         for (int b = 0; b <= 5; b++) {
 
-            List<Topic> subjects = new ArrayList<>();
-            subBranch = new SubBranch();
-            subBranch.setName("Programming "+b);
+            List<Subject> subjects = new ArrayList<>();
+            branch = new Branch();
+            branch.setName("Programming "+b);
 
             for (int i = 0; i <= 7; i++) {
-                Topic topic = new Topic();
-                topic.setSubjectName("Branch"+b+" Java " + i);
-                subjects.add(topic);
+                Subject subject = new Subject();
+                subject.setSubjectName("Department"+b+" Java " + i);
+                subjects.add(subject);
             }
-            subBranch.setTopicList(subjects);
-            mSubBranches.add(subBranch);
+            branch.setSubjects(subjects);
+            mBranches.add(branch);
         }
 
         RecyclerView mSubBranchRecyclerview =  findViewById(R.id.sub_branch_recyclerview);
         mSubBranchRecyclerview.setHasFixedSize(true);
-        SubBranchAdapter mSubBranchAdapter = new SubBranchAdapter(this,mSubBranches);
+        SubBranchAdapter mSubBranchAdapter = new SubBranchAdapter(this, mBranches);
         mSubBranchRecyclerview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mSubBranchRecyclerview.setAdapter(mSubBranchAdapter);
 
@@ -124,12 +125,12 @@ public class InterestsActivity extends AppCompatActivity {
     ////////////////
     public class SubBranchAdapter extends RecyclerView.Adapter<SubBranchHolder>{
 
-        private List<SubBranch> mSubBranches;
+        private List<Branch> mBranches;
         private Context context;
 
-        public SubBranchAdapter(Context context, List<SubBranch> mSubBranches) {
+        public SubBranchAdapter(Context context, List<Branch> mBranches) {
             this.context = context;
-            this.mSubBranches = mSubBranches;
+            this.mBranches = mBranches;
         }
 
         @NonNull
@@ -142,12 +143,12 @@ public class InterestsActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull final SubBranchHolder holder, int position) {
 
-            SubBranch subBranch =  mSubBranches.get(position);
+            Branch branch =  mBranches.get(position);
 
-            List<Topic> topicList = subBranch.getTopicList();
-            SubjectAdapter subjectAdapter = new SubjectAdapter(context, topicList);
+            List<Subject> subjectList = branch.getSubjects();
+            SubjectAdapter subjectAdapter = new SubjectAdapter(context, subjectList);
 
-            holder.mSubBranchTView.setText(subBranch.getName());
+            holder.mSubBranchTView.setText(branch.getName());
 
             holder.mSubjectRecycler.setHasFixedSize(true);
             LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
@@ -181,7 +182,7 @@ public class InterestsActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return (null != mSubBranches ? mSubBranches.size() : 0);
+            return (null != mBranches ? mBranches.size() : 0);
         }
     }
 
@@ -205,9 +206,9 @@ public class InterestsActivity extends AppCompatActivity {
     public class SubjectAdapter extends RecyclerView.Adapter<SubjectHolder> {
 
         private Context mContext;
-        private List<Topic> mSubjects;
+        private List<Subject> mSubjects;
 
-        public SubjectAdapter(Context context, List<Topic> subjects) {
+        public SubjectAdapter(Context context, List<Subject> subjects) {
             mContext = context;
             mSubjects = subjects;
         }
@@ -222,7 +223,7 @@ public class InterestsActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull final SubjectHolder holder, int position) {
 
-            final Topic subject = mSubjects.get(position);
+            final Subject subject = mSubjects.get(position);
             holder.mSubjectCheckbox.setText(subject.getSubjectName());
             holder.mSubjectCheckbox.setChecked(subject.isChecked());
 

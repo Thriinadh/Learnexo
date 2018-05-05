@@ -9,16 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.learnexo.main.MyBounceInterpolator;
 import com.learnexo.main.R;
+import com.learnexo.util.MyBounceInterpolator;
 
 public class ConnectFragment extends Fragment implements View.OnClickListener {
-//    private Button learnersBtn;
-//    private Button mentorsBtn;
 
     private TextView learnersTView;
     private TextView mentorsTView;
@@ -34,17 +31,17 @@ public class ConnectFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_connect, container, false);
 
         learnersTView = view.findViewById(R.id.learnersTView);
+        learnersTView.setTextColor(Color.RED);
+
         mentorsTView = view.findViewById(R.id.mentorsTView);
         frameLayout = view.findViewById(R.id.fragment_container);
 
         learnersTView.setOnClickListener(this);
         mentorsTView.setOnClickListener(this);
-        learnersTView.setTextColor(Color.RED);
 
         if (savedInstanceState == null) {
             getChildFragmentManager()
@@ -76,6 +73,7 @@ public class ConnectFragment extends Fragment implements View.OnClickListener {
                 learnersTView.setTextColor(Color.RED);
                 mentorsTView.setTextColor(getResources().getColor(R.color.light_black));
                 break;
+
             case R.id.mentorsTView:
                 fragment = new MentorsFragment();
                 replaceFragment(fragment);
@@ -86,9 +84,9 @@ public class ConnectFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void replaceFragment(Fragment someFragment) {
+    public void replaceFragment(Fragment fragment) {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, someFragment);
+        transaction.replace(R.id.fragment_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }

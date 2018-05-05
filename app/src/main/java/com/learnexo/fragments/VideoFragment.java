@@ -17,15 +17,12 @@ import android.widget.Toast;
 
 import com.learnexo.main.PlayVideoActivity;
 import com.learnexo.main.R;
-import com.learnexo.model.video.SubBranch;
-import com.learnexo.model.video.Topic;
+import com.learnexo.model.video.Branch;
+import com.learnexo.model.video.Subject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class VideoFragment extends Fragment {
 
     public VideoFragment() {
@@ -38,75 +35,75 @@ public class VideoFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_video, container, false);
 
-        List<SubBranch> mSubBranches = new ArrayList<>();
-        SubBranch subBranch;
+        List<Branch> branches = new ArrayList<>();
+        Branch branch;
 
         for (int b = 0; b <= 5; b++) {
 
-            List<Topic> subjects = new ArrayList<>();
-            subBranch = new SubBranch();
-            subBranch.setName("Programming "+b);
+            List<Subject> subjects = new ArrayList<>();
+            branch = new Branch();
+            branch.setName("Programming "+b);
 
             for (int i = 0; i <= 10; i++) {
-                Topic topic = new Topic();
-                topic.setSubjectName("Java " + i);
-                subjects.add(topic);
+                Subject subject = new Subject();
+                subject.setSubjectName("Java " + i);
+                subjects.add(subject);
             }
-            subBranch.setTopicList(subjects);
-            mSubBranches.add(subBranch);
+            branch.setSubjects(subjects);
+            branches.add(branch);
         }
 
-        RecyclerView mSubBranchRecyclerview =  view.findViewById(R.id.sub_branch_recyclerview);
-        mSubBranchRecyclerview.setHasFixedSize(true);
-        SubBranchAdapter mSubBranchAdapter = new SubBranchAdapter(getActivity(),mSubBranches);
-        mSubBranchRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        mSubBranchRecyclerview.setAdapter(mSubBranchAdapter);
+        RecyclerView branchRecycler =  view.findViewById(R.id.sub_branch_recyclerview);
+        branchRecycler.setHasFixedSize(true);
+
+        BranchAdapter branchAdapter = new BranchAdapter(getActivity(), branches);
+        branchRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        branchRecycler.setAdapter(branchAdapter);
 
         return view;
     }
 
-    public class SubBranchHolder extends RecyclerView.ViewHolder {
-        protected TextView mSubBranchTView;
+    public class BranchHolder extends RecyclerView.ViewHolder {
+        protected TextView mBranchTView;
         protected RecyclerView mSubjectRecycler;
 
-        public SubBranchHolder(View view) {
+        public BranchHolder(View view) {
             super(view);
 
-           mSubBranchTView = view.findViewById(R.id.sub_branch_tview);
+           mBranchTView = view.findViewById(R.id.sub_branch_tview);
            mSubjectRecycler = view.findViewById(R.id.subjectsRecyclerView);
         }
     }
 
-    public class SubBranchAdapter extends RecyclerView.Adapter<SubBranchHolder>{
+    public class BranchAdapter extends RecyclerView.Adapter<BranchHolder>{
 
-        private List<SubBranch> mSubBranches;
+        private List<Branch> mBranches;
         private Context context;
 
-        public SubBranchAdapter(Context context, List<SubBranch> mSubBranches) {
+        public BranchAdapter(Context context, List<Branch> mBranches) {
             this.context = context;
-            this.mSubBranches = mSubBranches;
+            this.mBranches = mBranches;
         }
 
         @NonNull
         @Override
-        public SubBranchHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public BranchHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_sub_branch,parent, false);
-            return new SubBranchHolder(view);
+            return new BranchHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull final SubBranchHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final BranchHolder holder, int position) {
 
-            SubBranch subBranch =  mSubBranches.get(position);
+            Branch branch =  mBranches.get(position);
 
-            List<Topic> topicList = subBranch.getTopicList();
-            SubjectAdapter subjectAdapter = new SubjectAdapter(context, topicList);
+            List<Subject> subjects = branch.getSubjects();
+            SubjectAdapter subjectAdapter = new SubjectAdapter(subjects);
 
-            holder.mSubBranchTView.setText(subBranch.getName());
+            holder.mBranchTView.setText(branch.getName());
 
             holder.mSubjectRecycler.setHasFixedSize(true);
             LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
@@ -140,7 +137,7 @@ public class VideoFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return (null != mSubBranches ? mSubBranches.size() : 0);
+            return (null != mBranches ? mBranches.size() : 0);
         }
     }
 
@@ -154,7 +151,7 @@ public class VideoFragment extends Fragment {
 
         }
 
-        public void bind(Topic subject) {
+        public void bind(Subject subject) {
             mSubjectBtn.setText(subject.getSubjectName());
             mSubjectBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -169,12 +166,9 @@ public class VideoFragment extends Fragment {
     }
 
     public class SubjectAdapter extends RecyclerView.Adapter<SubjectHolder> {
+        private List<Subject> mSubjects;
 
-        private Context mContext;
-        private List<Topic> mSubjects;
-
-        public SubjectAdapter(Context context, List<Topic> subjects) {
-            mContext = context;
+        public SubjectAdapter(List<Subject> subjects) {
             mSubjects = subjects;
         }
         @NonNull
@@ -187,7 +181,7 @@ public class VideoFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull SubjectHolder holder, int position) {
-            Topic subject = mSubjects.get(position);
+            Subject subject = mSubjects.get(position);
             holder.bind(subject);
         }
 
