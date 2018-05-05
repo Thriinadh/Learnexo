@@ -1,5 +1,6 @@
 package com.learnexo.main;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -7,6 +8,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
@@ -103,6 +105,29 @@ public class PublishActivity extends AppCompatActivity {
         enablePublishBtn();
 
         postBtnListener();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (content.getText().toString().length() > 5) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setTitle("Save Or Not");
+            builder.setMessage("Do you want to save this? ");
+            builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // saveResult();
+                    Toast.makeText(PublishActivity.this, "+veClicked", Toast.LENGTH_SHORT).show();
+                    PublishActivity.super.onBackPressed();
+                }
+            });
+            builder.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    PublishActivity.super.onBackPressed();
+                }
+            });
+            builder.show();
+        } else PublishActivity.super.onBackPressed();
     }
 
     private void postBtnListener() {
