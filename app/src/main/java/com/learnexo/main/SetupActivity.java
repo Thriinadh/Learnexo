@@ -224,16 +224,16 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     private void getFromFirebaseAndSet() {
-        mFirebaseUtil.mFirestore.collection("Users").document(user_id).
-                collection("Setup Details").document("Setup Fields").get()
+        mFirebaseUtil.mFirestore.collection("users").document(user_id).
+                collection("setupDetails").document("setupFields").get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                 if (task.isSuccessful()) {
                     if (task.getResult().exists()) {
-                        String name = task.getResult().getString("Nick name");
-                        String image = task.getResult().getString("Image");
+                        String name = task.getResult().getString("nickName");
+                        String image = task.getResult().getString("image");
                         if (image != null)
                             mainImageURI = Uri.parse(image);
 
@@ -303,13 +303,13 @@ public class SetupActivity extends AppCompatActivity {
 
         Map<String, String> userMap = new HashMap<>();
 
-        userMap.put("Nick name", nick_name);
+        userMap.put("nickName", nick_name);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            userMap.put("Image", Objects.requireNonNull(download_uri).toString());
+            userMap.put("image", Objects.requireNonNull(download_uri).toString());
         }
 
-        mFirebaseUtil.mFirestore.collection("Users").document(user_id).collection("Setup Details")
-                .document("Setup Fields").set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mFirebaseUtil.mFirestore.collection("users").document(user_id).collection("setupDetails")
+                .document("setupFields").set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 

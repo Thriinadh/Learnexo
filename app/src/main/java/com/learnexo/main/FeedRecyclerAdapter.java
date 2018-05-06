@@ -79,15 +79,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     }
 
     private void bindUserData(@NonNull final FeedItemHolder holder, String user_id) {
-        mFirebaseUtil.mFirestore.collection("Users").document(user_id).
-                collection("Setup Details").document("Setup Fields").get()
+        mFirebaseUtil.mFirestore.collection("users").document(user_id).
+                collection("setupDetails").document("setupFields").get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                 if(task.isSuccessful()) {
-                        String name = task.getResult().getString("Nick name");
-                        String image = task.getResult().getString("Image");
+                        String name = task.getResult().getString("nickName");
+                        String image = task.getResult().getString("image");
                         holder.setUserData(name, image);
 
                 } else {
@@ -133,7 +133,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
                     @Override
                     public void onClick(View view) {
 
-                       mFirebaseUtil.mFirestore.collection("Posts").document(user_id).delete()
+                       mFirebaseUtil.mFirestore.collection("users").document(user_id).collection("posts").document().delete()
                                .addOnSuccessListener(new OnSuccessListener<Void>() {
                            @Override
                            public void onSuccess(Void aVoid) {

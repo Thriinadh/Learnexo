@@ -1,9 +1,14 @@
 package com.learnexo.main;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -31,6 +36,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
@@ -54,9 +60,13 @@ public class MainActivity extends AppCompatActivity {
     private EditText loginEmail;
     private EditText loginPass;
 
+    private ConstraintLayout mConstraintLayout;
+    private Snackbar snackbar;
+
     private Button mGoogleBtn;
     private Button mFacebookBtn;
     private TextView mRegisterBtn;
+    private TextView forgotPassTView;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -76,6 +86,65 @@ public class MainActivity extends AppCompatActivity {
         googleLoginListener();
 
         fbLoginListener();
+
+        forgotPassTView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                final String emailAddress = loginEmail.getText().toString();
+
+                if (!TextUtils.isEmpty(emailAddress)) {
+                    auth.sendPasswordResetEmail(emailAddress)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                                        builder.setTitle("Forgot Password");
+                                        builder.setMessage("We sent an email to " + emailAddress + " to reset your password");
+                                        builder.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                snackbar = Snackbar.make(mConstraintLayout, "Check your mail", Snackbar.LENGTH_SHORT);
+                                                snackbar.show();
+                                            }
+                                        });
+                                        builder.show();
+                                        Log.d(TAG, "Email sent.");
+                                    } else {
+
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                                        builder.setMessage("Could not send password reset email, please verify the email address");
+                                        builder.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                               snackbar = Snackbar.make(mConstraintLayout, "This mail not found in Database", Snackbar.LENGTH_SHORT);
+                                               snackbar.show();
+                                            }
+                                        });
+                                        builder.show();
+
+                                    }
+                                }
+                            });
+                }
+                else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                    builder.setMessage("Enter your email address");
+                    builder.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                           snackbar = Snackbar.make(mConstraintLayout, "Enter email and proceed", Snackbar.LENGTH_SHORT);
+                            View sbView = snackbar.getView();
+                            TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
+                            textView.setTextColor(Color.YELLOW);
+                           snackbar.show();
+                        }
+                    });
+                    builder.show();
+                }
+            }
+        });
 
         registrationListener();
 
@@ -205,6 +274,9 @@ public class MainActivity extends AppCompatActivity {
     private void wireViews() {
         loginEmail = findViewById(R.id.loginEmail);
         loginPass = findViewById(R.id.loginPass);
+        forgotPassTView = findViewById(R.id.forgotPassTView);
+
+        mConstraintLayout = findViewById(R.id.constraintLayout);
 
         mGoogleBtn = findViewById(R.id.googleBtn);
         mFacebookBtn = findViewById(R.id.facebook_login);
@@ -316,7 +388,7 @@ public class MainActivity extends AppCompatActivity {
     public void checkIfUserExists() {
 
         String user_id = FirebaseUtil.getCurrentUserId();
-        mFirebaseUtil.mFirestore.collection("Users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        mFirebaseUtil.mFirestore.collection("users").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 

@@ -66,11 +66,11 @@ public class RegistrationActivity extends AppCompatActivity {
                     String user_id = user.getUid();
 
                     Map<String, String> userMap = new HashMap<>();
-                    userMap.put("Name", name);
-                    userMap.put("Email Id", email);
+                    userMap.put("name", name);
+                    userMap.put("emailId", email);
 
-                    mFirestore.collection("Users").document(user_id).collection("Registration Details")
-                            .document("Register Fields").set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    mFirestore.collection("users").document(user_id).collection("registrationDetails")
+                            .document("registerFields").set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
 

@@ -219,9 +219,7 @@ public class TabsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         TabLayout.Tab tab = tabLayout.getTabAt(getIntent().getIntExtra(EXTRA_TAB_NUM, 0));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Objects.requireNonNull(tab).select();
-        }
+            tab.select();
     }
 
     @Override
@@ -401,8 +399,8 @@ public class TabsActivity extends AppCompatActivity {
                                          // - if skip is not available then check the below path if both are not available then he is first time user
                                          //so send him to setup activity
 
-                                         new FirebaseUtil().mFirestore.collection("Users").document(userId).
-                                                 collection("Setup Details").document("Setup Fields").get()
+                                         new FirebaseUtil().mFirestore.collection("users").document(userId).
+                                                 collection("setupDetails").document("setupFields").get()
                                                  .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                              @Override
                                              public void onComplete(@NonNull Task<DocumentSnapshot> task) {

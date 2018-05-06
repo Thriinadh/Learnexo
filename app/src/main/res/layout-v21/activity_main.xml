@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.learnexo.main.MainActivity">
@@ -16,9 +17,10 @@
         android:includeFontPadding="false"
         android:text="@string/learnexo_header"
         android:textAlignment="center"
-        android:textColor="@color/red"
-        android:textSize="48sp"
+        android:textColor="#b30000"
+        android:textSize="44sp"
         android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
@@ -111,12 +113,24 @@
                 android:layout_width="300dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="12dp"
                 android:background="@drawable/login_button"
                 android:onClick="loginButtonListener"
                 android:text="@string/login"
                 android:textColor="#ffffff"
                 android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/forgotPassTView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Forgot password..?"
+                android:layout_marginBottom="8dp"
+                android:textColor="@color/com_facebook_blue"
+                android:textAlignment="viewEnd"
+                android:textSize="16sp"
+                android:clickable="true"
+                android:focusable="true"/>
 
         </LinearLayout>
 

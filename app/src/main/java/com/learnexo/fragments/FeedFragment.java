@@ -1,5 +1,6 @@
 package com.learnexo.fragments;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -39,7 +40,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeedFragment extends Fragment {
 
-    public static final String EXTRA_PUBLISH_TYPE ="com.learnexo.fragment.FeedFragment.EXTRA_PUBLISH_TYPE";
+  //  public static final String EXTRA_PUBLISH_TYPE ="com.learnexo.fragment.FeedFragment.EXTRA_PUBLISH_TYPE";
 
     private CircleImageView mCircleImageView;
     private TextView mNameTView;
@@ -77,8 +78,6 @@ public class FeedFragment extends Fragment {
 
         return view;
     }
-
-
 
     private void generateFeedItemList() {
         mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("posts")
@@ -119,15 +118,15 @@ public class FeedFragment extends Fragment {
 
     private void getDPandUserNameandSet() {
         mUserId = FirebaseUtil.getCurrentUserId();
-        mFirebaseUtil.mFirestore.collection("Users").document(mUserId).
-                collection("Setup Details").document("Setup Fields").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        mFirebaseUtil.mFirestore.collection("users").document(mUserId).
+                collection("setupDetails").document("setupFields").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                 if(task.isSuccessful()) {
                     if(task.getResult().exists()) {
 
-                        String name = task.getResult().getString("Nick name");
+                        String name = task.getResult().getString("nickName");
                         mNameTView.setText(name);
 
                         RequestOptions placeholderRequest = new RequestOptions();
@@ -135,7 +134,7 @@ public class FeedFragment extends Fragment {
                                 .placeholder(R.drawable.default_photo);
 
                         String image = (null==MainActivity.photoUrl)?task.getResult()
-                                .getString("Image"):MainActivity.photoUrl;
+                                .getString("image"):MainActivity.photoUrl;
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && image!=null) {
                             Glide.with(Objects.requireNonNull(getActivity())).load(image)
