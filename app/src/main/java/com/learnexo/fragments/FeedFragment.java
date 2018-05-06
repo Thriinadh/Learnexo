@@ -24,12 +24,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.learnexo.main.FeedRecyclerAdapter;
 import com.learnexo.main.MainActivity;
 import com.learnexo.main.R;
 import com.learnexo.main.TabsActivity;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.post.Post;
+import com.learnexo.model.feed.question.Question;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
@@ -80,6 +80,42 @@ public class FeedFragment extends Fragment {
     }
 
     private void generateFeedItemList() {
+        //fetching posts, questions, challenges, news separately and mix them up in list of feed items
+        //show complete list of feed or
+        //generate another feed list after 10 min
+        //check if list size is <=20, if yes refill the feed list
+        //At any point in time ensure list does not exceed max size.
+
+        //get Posts tagged in interests, based on related topics
+        //posted by related people
+        //involved by related people in Like division
+        //with more likes, comments, shares, bookmarks and views (Like division)
+        //related to history, timing
+
+
+        //get Answers tagged in interests, based on related topics
+        //Answered by related people
+        //involved by related people in Like division
+        //with more likes, comments, shares, bookmarks and views (Like division)
+        //related to history, timing
+
+        //get Unanswered Questions/Challenges tagged in interests
+        //based on related topics
+        //requested to the logged in user
+        //asked by related people
+        //based on history, timing
+
+        //related people =
+        // (PriorityProfiles, Following, FollowingOfFollowing, nearby, visited profiles, topProfiles...)
+        //Interests, more likes, shares, comments, bookmarks
+        //Based on his history, check his timing of usage
+        //related topics to follow
+        //related people to follow
+        //related questions, posts and challenges
+        //his followers posts and friends posts
+        //news and girls
+        //priority profiles
+
         mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("posts")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -114,6 +150,40 @@ public class FeedFragment extends Fragment {
 
             }
         });
+
+
+        mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("questions")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+
+                        if(queryDocumentSnapshots != null)
+                            for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
+
+                                Question question;
+                                switch (doc.getType()) {
+
+                                    case ADDED:
+                                        question = doc.getDocument().toObject(Question.class);
+                                        mFeedItems.add(question);
+                                        mAdapter.notifyDataSetChanged();
+                                        break;
+
+                                    case REMOVED:
+                                        question = doc.getDocument().toObject(Question.class);
+                                        mFeedItems.remove(question);
+                                        mAdapter.notifyDataSetChanged();
+                                        break;
+
+                                    case MODIFIED:
+                                        question = doc.getDocument().toObject(Question.class);
+                                        mFeedItems.remove(question);
+                                        mAdapter.notifyDataSetChanged();
+                                        break;
+                                }
+                            }
+                    }
+                });
     }
 
     private void getDPandUserNameandSet() {

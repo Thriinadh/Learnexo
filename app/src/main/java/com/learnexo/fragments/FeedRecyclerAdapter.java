@@ -1,4 +1,4 @@
-package com.learnexo.main;
+package com.learnexo.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +22,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.learnexo.main.FullPostActivity;
+import com.learnexo.main.R;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.util.FirebaseUtil;
 
