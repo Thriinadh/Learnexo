@@ -47,11 +47,11 @@ public class SetupActivity extends AppCompatActivity {
     private Uri mainImageURI = null;
     public static final String EXTRA_IS_SKIPPED="com.learnexo.main.IS_SKIPPED_PROFILE";
 
-    private EditText setup_nickName;
+    private EditText description;
     private Button setupBtn;
     private ProgressBar setupProgerss;
     private String user_id;
-    private Button edit_name_button;
+    private Button edit_desc;
     private TextView skipTView;
     //  private CardView pickImageCView;
 
@@ -86,12 +86,12 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     private void enableNameField() {
-        edit_name_button.setOnClickListener(new View.OnClickListener() {
+        edit_desc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                setup_nickName.setEnabled(true);
-                setup_nickName.setSelection(setup_nickName.getText().length());
+                description.setEnabled(true);
+                description.setSelection(description.getText().length());
 
             }
         });
@@ -155,28 +155,6 @@ public class SetupActivity extends AppCompatActivity {
             }
         });
 
-//        pickImageCView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//
-//                    if (ContextCompat.checkSelfPermission(SetupActivity.this,
-//                            Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//
-//                        ActivityCompat.requestPermissions(SetupActivity.this,
-//                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-//
-//                    } else {
-//                        BringImagePicker();
-//                    }
-//
-//                } else {
-//                    BringImagePicker();
-//                }
-//
-//            }
-//        });
     }
 
     private void setupBtnListener() {
@@ -184,18 +162,18 @@ public class SetupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final String nick_name = setup_nickName.getText().toString();
+                final String description = SetupActivity.this.description.getText().toString();
 
-                if(TextUtils.isEmpty(nick_name) && mainImageURI == null) {
+                if(TextUtils.isEmpty(description) && mainImageURI == null) {
                     Toast.makeText(SetupActivity.this, "Fields can't be empty", Toast.LENGTH_LONG).show();
                 }
-                if(mainImageURI == null && !TextUtils.isEmpty(nick_name)) {
+                if(mainImageURI == null && !TextUtils.isEmpty(description)) {
                     Toast.makeText(SetupActivity.this, "Select DP", Toast.LENGTH_LONG).show();
                 }
-                if(TextUtils.isEmpty(nick_name) && mainImageURI != null) {
+                if(TextUtils.isEmpty(description) && mainImageURI != null) {
                     Toast.makeText(SetupActivity.this, "Describe yourself", Toast.LENGTH_LONG).show();
                 }
-                if (!TextUtils.isEmpty(nick_name) && mainImageURI != null) {
+                if (!TextUtils.isEmpty(description) && mainImageURI != null) {
                     setupProgerss.setVisibility(View.VISIBLE);
 
                     if (isChanged) {
@@ -205,7 +183,7 @@ public class SetupActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                                 if (task.isSuccessful()) {
-                                    storeFirestore(task, nick_name);
+                                    storeFirestore(task, description);
                                 } else {
                                     String error = null;
                                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
@@ -217,7 +195,7 @@ public class SetupActivity extends AppCompatActivity {
                             }
                         });
                     } else {
-                        storeFirestore(null, nick_name);
+                        storeFirestore(null, description);
                     }
                 }
             }
@@ -226,21 +204,21 @@ public class SetupActivity extends AppCompatActivity {
 
     private void getFromFirebaseAndSet() {
         mFirebaseUtil.mFirestore.collection("users").document(user_id).
-                collection("setupDetails").document("setupFields").get()
+                collection("reg_details").document("doc").get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                 if (task.isSuccessful()) {
                     if (task.getResult().exists()) {
-                        String name = task.getResult().getString("nickName");
-                        String image = task.getResult().getString("image");
+                        String name = task.getResult().getString("description");
+                        String image = task.getResult().getString("dpUrl");
                         if (image != null)
                             mainImageURI = Uri.parse(image);
 
-                        setup_nickName.setText(name);
-                        setup_nickName.setEnabled(false);
-                        setup_nickName.setTextColor(Color.BLACK);
+                        description.setText(name);
+                        description.setEnabled(false);
+                        description.setTextColor(Color.BLACK);
 
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.default_photo);
@@ -264,9 +242,9 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     private void wireViews() {
-        edit_name_button = findViewById(R.id.editNameBtn);
+        edit_desc = findViewById(R.id.editNameBtn);
         setupImage = findViewById(R.id.setup_image);
-        setup_nickName = findViewById(R.id.setup_nickName);
+        description = findViewById(R.id.setup_nickName);
         skipTView = findViewById(R.id.skipTView);
         setupProgerss = findViewById(R.id.setup_progress);
         //    pickImageCView = findViewById(R.id.pickImageCView);
@@ -289,7 +267,7 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
-    private void storeFirestore(Task<UploadTask.TaskSnapshot> task, String nick_name) {
+    private void storeFirestore(Task<UploadTask.TaskSnapshot> task, String description) {
 
         Uri download_uri;
 
@@ -302,15 +280,13 @@ public class SetupActivity extends AppCompatActivity {
 
         }
 
-        Map<String, String> userMap = new HashMap<>();
+        Map<String, Object> userMap = new HashMap<>();
 
-        userMap.put("nickName", nick_name);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            userMap.put("image", Objects.requireNonNull(download_uri).toString());
-        }
+        userMap.put("description", description);
+            userMap.put("dpUrl", download_uri.toString());
 
-        mFirebaseUtil.mFirestore.collection("users").document(user_id).collection("setupDetails")
-                .document("setupFields").set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mFirebaseUtil.mFirestore.collection("users").document(user_id).collection("reg_details")
+                .document("doc").update(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 

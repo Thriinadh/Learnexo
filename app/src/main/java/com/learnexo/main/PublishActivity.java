@@ -386,22 +386,7 @@ public class PublishActivity extends AppCompatActivity {
         });
     }
 
-//    users[0] = new User();
-//    users[0].setId(1);
-//    users[0].setName("Joaquin");
-//
-//    users[1] = new User();
-//    users[1].setId(2);
-//    users[1].setName("Alberto");
-
     private void setupDropDownSpinner() {
-
-//        List<Subject> subjectsList = new ArrayList<>();
-//        for (int i = 0; i <= 7; i++) {
-//            Subject subject = new Subject();
-//            subject.setSubjectName("Java " + i);
-//            subjectsList.add(subject);
-//        }
 
         // Create an ArrayAdapter using the string array and a default spinner
         ArrayAdapter<CharSequence> staticAdapter = ArrayAdapter

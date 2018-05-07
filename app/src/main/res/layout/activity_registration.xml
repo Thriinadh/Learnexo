@@ -22,6 +22,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:indeterminate="true"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/include" />
@@ -53,12 +54,29 @@
                 android:theme="@style/TextLabel">
 
                 <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/regName"
+                    android:id="@+id/regFirstName"
                     android:layout_width="300dp"
                     android:layout_height="50dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="10dp"
-                    android:hint="@string/name_hint"
+                    android:hint="@string/first_name"
+                    android:inputType="textPersonName" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_marginTop="8dp"
+                android:theme="@style/TextLabel">
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/regLastName"
+                    android:layout_width="300dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:hint="@string/last_name"
                     android:inputType="textPersonName" />
 
             </android.support.design.widget.TextInputLayout>

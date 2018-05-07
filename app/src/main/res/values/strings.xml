@@ -82,13 +82,13 @@
     <string name="textview">TextView</string>
     <string name="image_posted">Image posted</string>
     <string name="learnexo_header">Learnexo</string>
-    <string name="name_hint">Name</string>
+    <string name="first_name">First name</string>
     <string name="email_address_hint">Email Address</string>
     <string name="password_hint">Password</string>
     <string name="sign_up_reg">Sign up</string>
     <string name="undertaking">By Signing up, I agree to Learnexo\'s</string>
     <string name="t_amp_c"><![CDATA[T&C]]></string>
-    <string name="nick_name">Nick Name</string>
+    <string name="prof_description">Add description</string>
     <string name="save_account_settings">Save account settings</string>
     <string name="more">More</string>
 
@@ -123,5 +123,6 @@
     <string name="post_images">post_images</string>
     <string name="question_images">question_images</string>
     <string name="next_interests">NEXT</string>
+    <string name="last_name">Last name</string>
 
 </resources>

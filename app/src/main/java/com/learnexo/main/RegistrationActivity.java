@@ -23,7 +23,8 @@ import java.util.Map;
 
 public class RegistrationActivity extends AppCompatActivity {
 
-    private EditText mName;
+    private EditText mFirstName;
+    private EditText mLastName;
     private EditText mEmail;
     private EditText mPass;
     private ProgressBar progressBar;
@@ -45,16 +46,17 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     public void registerBtnListener(View view) {
-        final String name = mName.getText().toString();
+        final String first_name = mFirstName.getText().toString();
+        final String last_name = mLastName.getText().toString();
         final String email = mEmail.getText().toString();
         final String pass = mPass.getText().toString();
 
-        if(!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)&&!email.contains(" ")) {
-            createUserinFirestore(name, email, pass);
+        if((!TextUtils.isEmpty(first_name) || !TextUtils.isEmpty(last_name)) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)&&!email.contains(" ")) {
+            createUserinFirestore(first_name, last_name, email, pass);
         }
     }
 
-    private void createUserinFirestore(final String name, final String email, String pass) {
+    private void createUserinFirestore(final String first_name, final String last_name, final String email, String pass) {
         mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -66,11 +68,12 @@ public class RegistrationActivity extends AppCompatActivity {
                     String user_id = user.getUid();
 
                     Map<String, String> userMap = new HashMap<>();
-                    userMap.put("name", name);
+                    userMap.put("firstName", first_name);
+                    userMap.put("lastName", last_name);
                     userMap.put("emailId", email);
 
-                    mFirestore.collection("users").document(user_id).collection("registrationDetails")
-                            .document("registerFields").set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    mFirestore.collection("users").document(user_id).collection("reg_details")
+                            .document("doc").set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
 
@@ -112,14 +115,13 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void wireViews() {
-        mName = findViewById(R.id.regName);
+        mFirstName = findViewById(R.id.regFirstName);
+        mLastName = findViewById(R.id.regLastName);
         mEmail = findViewById(R.id.regEmail);
         mPass = findViewById(R.id.regPassword);
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.INVISIBLE);
     }
-
-
 
 }

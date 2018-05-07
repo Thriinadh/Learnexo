@@ -426,8 +426,6 @@ public class TabsActivity extends AppCompatActivity {
                                  });
     }
 
-
-
     private void setupTablayout() {
         tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
