@@ -273,7 +273,7 @@ public class TabsActivity extends AppCompatActivity {
                     public void onTabUnselected(TabLayout.Tab tab) {
                         super.onTabUnselected(tab);
 
-                            tab.getIcon().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
+                            tab.getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
 
                     }
 
@@ -492,10 +492,10 @@ public class TabsActivity extends AppCompatActivity {
             tabLayout.getTabAt(4).setIcon(tabIcons[4]);
 
         tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN);
-        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
-        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
-        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
-        tabLayout.getTabAt(4).getIcon().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(4).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
     }
 
     private void setupViewPager() {
