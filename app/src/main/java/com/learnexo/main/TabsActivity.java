@@ -2,7 +2,9 @@ package com.learnexo.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -15,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -90,6 +93,26 @@ public class TabsActivity extends AppCompatActivity {
 
         gotoFeedtab();
 
+    }
+    @Override
+    public void onBackPressed() {
+        int pos = viewPager.getCurrentItem();
+        if(pos == 1 || pos == 2 || pos == 3 || pos == 4){
+            viewPager.setCurrentItem(0);
+            mToolbarTitle.setText(R.string.feedTabTitle);
+        }
+        else
+            new AlertDialog.Builder(this)
+                .setMessage("Are you sure you want to exit?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     private void wireViews() {
