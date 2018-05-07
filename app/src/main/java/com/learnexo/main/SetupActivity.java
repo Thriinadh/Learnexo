@@ -45,6 +45,7 @@ public class SetupActivity extends AppCompatActivity {
 
     private CircleImageView setupImage;
     private Uri mainImageURI = null;
+    public static final String EXTRA_IS_SKIPPED="com.learnexo.main.IS_SKIPPED_PROFILE";
 
     private EditText setup_nickName;
     private Button setupBtn;
@@ -110,7 +111,7 @@ public class SetupActivity extends AppCompatActivity {
 
                         if (task.isSuccessful()) {
                             Intent tabIntent = new Intent(SetupActivity.this, TabsActivity.class);
-                            tabIntent.putExtra("com.learnexo.main.IS_SKIPPED_PROFILE",true);
+                            tabIntent.putExtra(EXTRA_IS_SKIPPED,true);
                             startActivity(tabIntent);
                             finish();
                         } else {

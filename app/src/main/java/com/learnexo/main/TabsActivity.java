@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.learnexo.main.SetupActivity.EXTRA_IS_SKIPPED;
+
 public class TabsActivity extends AppCompatActivity {
 
     public static final String EXTRA_PUBLISH_TYPE ="com.learnexo.main.TabsActivity.EXTRA_PUBLISH_TYPE";
@@ -404,10 +406,11 @@ public class TabsActivity extends AppCompatActivity {
                                              @Override
                                              public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                  if(task.isSuccessful()) {
-                                                     boolean is_skipped_profile_completion=getIntent().getBooleanExtra("com.learnexo.main.IS_SKIPPED_PROFILE",false);
+                                                     boolean is_skipped_profile_completion=getIntent().getBooleanExtra(EXTRA_IS_SKIPPED,false);
+                                                     DocumentSnapshot snapshot = task.getResult();
 
                                                      //intent can only be useful if he did not remove the app from memory.
-                                                     if(!task.getResult().exists()&&!is_skipped_profile_completion) {
+                                                     if(!snapshot.contains("dpUrl")&&!is_skipped_profile_completion) {
                                                          Intent intent = new Intent(TabsActivity.this, SetupActivity.class);
                                                          startActivity(intent);
                                                          finish();
