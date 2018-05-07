@@ -14,9 +14,8 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.learnexo.util.FirebaseUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,8 +30,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     Toolbar setupToolbar;
 
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore mFirestore;
+   FirebaseUtil mFirebaseUtil=new FirebaseUtil();
 
 
     @Override
@@ -42,7 +40,6 @@ public class RegistrationActivity extends AppCompatActivity {
 
         wireViews();
         setupToolbar();
-        setupFirebase();
     }
 
     public void registerBtnListener(View view) {
@@ -57,12 +54,12 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void createUserinFirestore(final String first_name, final String last_name, final String email, String pass) {
-        mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        FirebaseUtil.sAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 progressBar.setVisibility(View.VISIBLE);
-                FirebaseUser user = mAuth.getCurrentUser();
+                FirebaseUser user = mFirebaseUtil.getCurrentUser();
 
                 if(user != null) {
                     String user_id = user.getUid();
@@ -72,7 +69,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     userMap.put("lastName", last_name);
                     userMap.put("emailId", email);
 
-                    mFirestore.collection("users").document(user_id).collection("reg_details")
+                    mFirebaseUtil.mFirestore.collection("users").document(user_id).collection("reg_details")
                             .document("doc").set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -99,11 +96,6 @@ public class RegistrationActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void setupFirebase() {
-        mAuth = FirebaseAuth.getInstance();
-        mFirestore = FirebaseFirestore.getInstance();
     }
 
     private void setupToolbar() {

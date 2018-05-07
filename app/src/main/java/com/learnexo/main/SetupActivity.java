@@ -208,11 +208,11 @@ public class SetupActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
+                DocumentSnapshot snapshot = task.getResult();
                 if (task.isSuccessful()) {
-                    if (task.getResult().exists()) {
-                        String name = task.getResult().getString("description");
-                        String image = task.getResult().getString("dpUrl");
+                    if (snapshot.exists()) {
+                        String name = snapshot.getString("description");
+                        String image = snapshot.getString("dpUrl");
                         if (image != null)
                             mainImageURI = Uri.parse(image);
 
@@ -268,22 +268,17 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     private void storeFirestore(Task<UploadTask.TaskSnapshot> task, String description) {
-
         Uri download_uri;
 
         if (task != null) {
-
             download_uri = task.getResult().getDownloadUrl();
         } else {
-
             download_uri = mainImageURI;
-
         }
 
         Map<String, Object> userMap = new HashMap<>();
-
         userMap.put("description", description);
-            userMap.put("dpUrl", download_uri.toString());
+        userMap.put("dpUrl", download_uri.toString());
 
         mFirebaseUtil.mFirestore.collection("users").document(user_id).collection("reg_details")
                 .document("doc").update(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
