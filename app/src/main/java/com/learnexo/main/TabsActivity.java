@@ -237,9 +237,8 @@ public class TabsActivity extends AppCompatActivity {
                     public void onTabSelected(TabLayout.Tab tab) {
                         super.onTabSelected(tab);
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                            Objects.requireNonNull(tab.getIcon()).setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
-                        }
+                            tab.getIcon().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
+
                         hideCardviewInFeedFragmentWhenUsergoesToOtherTabs();
                         setToolbarTitle(tab);
                     }
@@ -248,9 +247,9 @@ public class TabsActivity extends AppCompatActivity {
                     @Override
                     public void onTabUnselected(TabLayout.Tab tab) {
                         super.onTabUnselected(tab);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                            Objects.requireNonNull(tab.getIcon()).setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
-                        }
+
+                            tab.getIcon().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
+
                     }
 
                     @Override
@@ -485,7 +484,9 @@ public class TabsActivity extends AppCompatActivity {
         mAdapter.addFragment(new ProfileFragment());
 
         viewPager.setAdapter(mAdapter);
-        // viewPager.setOffscreenPageLimit(2);
+
+        int limit = (mAdapter.getCount() > 1 ? mAdapter.getCount() - 1 : 1);
+        viewPager.setOffscreenPageLimit(limit);
     }
 
 

@@ -42,6 +42,7 @@ import com.learnexo.fragments.FeedFragment;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.feed.question.Question;
+import com.learnexo.model.video.Subject;
 import com.learnexo.util.FirebaseUtil;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -49,8 +50,10 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -99,6 +102,7 @@ public class PublishActivity extends AppCompatActivity {
         setupToolbar();
 
         getDPandNameAndSet();
+
         setupDropDownSpinner();
         spinnerOnselect();
         galleryBtnListener();
@@ -382,7 +386,23 @@ public class PublishActivity extends AppCompatActivity {
         });
     }
 
+//    users[0] = new User();
+//    users[0].setId(1);
+//    users[0].setName("Joaquin");
+//
+//    users[1] = new User();
+//    users[1].setId(2);
+//    users[1].setName("Alberto");
+
     private void setupDropDownSpinner() {
+
+//        List<Subject> subjectsList = new ArrayList<>();
+//        for (int i = 0; i <= 7; i++) {
+//            Subject subject = new Subject();
+//            subject.setSubjectName("Java " + i);
+//            subjectsList.add(subject);
+//        }
+
         // Create an ArrayAdapter using the string array and a default spinner
         ArrayAdapter<CharSequence> staticAdapter = ArrayAdapter
                 .createFromResource(this, R.array.subject_names,

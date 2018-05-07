@@ -7,6 +7,24 @@ import java.util.List;
 
 public class Subject {
     private boolean isChecked;
+    private Department mDepartment;
+    private Branch mBranch;
+    private Double mPrice;
+    private String subjectName;
+    private List<Chapter> chapterList;
+    private Date lastUpdated;
+
+    public Subject() {}
+
+    public Subject(boolean isChecked, Department department, Branch branch, Double price, String subjectName, List<Chapter> chapterList, Date lastUpdated) {
+        this.isChecked = isChecked;
+        mDepartment = department;
+        mBranch = branch;
+        mPrice = price;
+        this.subjectName = subjectName;
+        this.chapterList = chapterList;
+        this.lastUpdated = lastUpdated;
+    }
 
     public boolean isChecked() {
         return isChecked;
@@ -16,8 +34,13 @@ public class Subject {
         isChecked = checked;
     }
 
-    private Department mDepartment;
-    private Branch mBranch;
+    public Double getPrice() {
+        return mPrice;
+    }
+
+    public void setPrice(Double price) {
+        mPrice = price;
+    }
 
     public Department getDepartment() {
         return mDepartment;
@@ -42,10 +65,6 @@ public class Subject {
     public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
-
-    private String subjectName;
-    private List<Chapter> chapterList;
-    private Date lastUpdated;
 
     public String getSubjectName() {
         return subjectName;

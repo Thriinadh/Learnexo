@@ -151,39 +151,6 @@ public class FeedFragment extends Fragment {
             }
         });
 
-
-        mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("questions")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
-
-                        if(queryDocumentSnapshots != null)
-                            for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
-
-                                Question question;
-                                switch (doc.getType()) {
-
-                                    case ADDED:
-                                        question = doc.getDocument().toObject(Question.class);
-                                        mFeedItems.add(question);
-                                        mAdapter.notifyDataSetChanged();
-                                        break;
-
-                                    case REMOVED:
-                                        question = doc.getDocument().toObject(Question.class);
-                                        mFeedItems.remove(question);
-                                        mAdapter.notifyDataSetChanged();
-                                        break;
-
-                                    case MODIFIED:
-                                        question = doc.getDocument().toObject(Question.class);
-                                        mFeedItems.remove(question);
-                                        mAdapter.notifyDataSetChanged();
-                                        break;
-                                }
-                            }
-                    }
-                });
     }
 
     private void getDPandUserNameandSet() {
