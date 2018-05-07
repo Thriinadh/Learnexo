@@ -399,7 +399,7 @@ public class TabsActivity extends AppCompatActivity {
                                          //so send him to setup activity
 
                                          new FirebaseUtil().mFirestore.collection("users").document(userId).
-                                                 collection("setupDetails").document("setupFields").get()
+                                                 collection("reg_details").document("doc").get()
                                                  .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                              @Override
                                              public void onComplete(@NonNull Task<DocumentSnapshot> task) {

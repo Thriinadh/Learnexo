@@ -82,14 +82,16 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
     private void bindUserData(@NonNull final FeedItemHolder holder, String user_id) {
         mFirebaseUtil.mFirestore.collection("users").document(user_id).
-                collection("setupDetails").document("setupFields").get()
+                collection("reg_details").document("doc").get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                 if(task.isSuccessful()) {
-                        String name = task.getResult().getString("nickName");
-                        String image = task.getResult().getString("image");
+                    DocumentSnapshot snapshot = task.getResult();
+                    String name = snapshot.getString("firstName");
+                    name=name.concat(snapshot.getString("lastName"));
+                        String image = snapshot.getString("dpUrl");
                         holder.setUserData(name, image);
 
                 } else {

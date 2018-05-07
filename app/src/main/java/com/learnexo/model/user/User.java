@@ -6,21 +6,18 @@ public class User {
     private String userId;
     private String firstName;
     private String lastName;
-    private Gender gender;
-    public String dpUrl;
     public String email;
-    public String fullName;
-    public String sigin_provider;
+    public String dpUrl;
+    private Gender gender;
+
     public User() {}
 
-    public User(String userId, String firstName, String lastName, Gender gender, String dpUrl, String email, String fullName, String sigin_provider) {
-        this.userId = userId;
+    public User(String firstName, String lastName, Gender gender, String dpUrl, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
         this.dpUrl = dpUrl;
         this.email = email;
-        this.fullName = fullName;
     }
 
     public String getUserId() {
@@ -71,19 +68,5 @@ public class User {
         this.email = email;
     }
 
-    public String getFullName() {
-        return fullName;
-    }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getSigin_provider() {
-        return sigin_provider;
-    }
-
-    public void setSigin_provider(String sigin_provider) {
-        this.sigin_provider = sigin_provider;
-    }
 }

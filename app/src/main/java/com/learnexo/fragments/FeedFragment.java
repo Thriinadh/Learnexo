@@ -149,22 +149,23 @@ public class FeedFragment extends Fragment {
     private void getDPandUserNameandSet() {
         mUserId = FirebaseUtil.getCurrentUserId();
         mFirebaseUtil.mFirestore.collection("users").document(mUserId).
-                collection("setupDetails").document("setupFields").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                collection("reg_details").document("doc").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                 if(task.isSuccessful()) {
-                    if(task.getResult().exists()) {
-
-                        String name = task.getResult().getString("nickName");
-                        mNameTView.setText(name);
+                    DocumentSnapshot snapshot = task.getResult();
+                    if(snapshot.exists()) {
+                        String firstName = snapshot.getString("firstName");
+                        String lastName = snapshot.getString("lastName");
+                        mNameTView.setText(firstName.concat(lastName));
 
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL)
                                 .placeholder(R.drawable.default_photo);
 
-                        String image = (null==MainActivity.photoUrl)?task.getResult()
-                                .getString("image"):MainActivity.photoUrl;
+                        String image = (null==MainActivity.photoUrl)? snapshot
+                                .getString("dpUrl"):MainActivity.photoUrl;
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && image!=null) {
                             Glide.with(Objects.requireNonNull(getActivity())).load(image)

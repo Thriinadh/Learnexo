@@ -419,16 +419,19 @@ public class PublishActivity extends AppCompatActivity {
     }
 
     private void getDPandNameAndSet() {
-        mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("setupDetails")
-                .document("setupFields").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("reg_details")
+                .document("doc").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
-                    if(task.getResult().exists()) {
-                        name = task.getResult().getString("nickName");
+
+                    DocumentSnapshot snapshot = task.getResult();
+                    if(snapshot.exists()) {
+                        name = snapshot.getString("firstName");
+                        name=name.concat(snapshot.getString("lastName"));
                         username.setText(name);
 
-                        String imageUrl = task.getResult().getString("image");
+                        String imageUrl = snapshot.getString("dpUrl");
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.apply(placeholderRequest).placeholder(R.drawable.default_photo);
 
