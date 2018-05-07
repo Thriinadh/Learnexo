@@ -413,7 +413,7 @@ public class PublishActivity extends AppCompatActivity {
                     DocumentSnapshot snapshot = task.getResult();
                     if(snapshot.exists()) {
                         name = snapshot.getString("firstName");
-                        name=name.concat(snapshot.getString("lastName"));
+                        name=name.concat(" "+snapshot.getString("lastName"));
                         username.setText(name);
 
                         String imageUrl = snapshot.getString("dpUrl");

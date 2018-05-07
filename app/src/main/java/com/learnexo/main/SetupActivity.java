@@ -57,11 +57,13 @@ public class SetupActivity extends AppCompatActivity {
 
     private boolean isChanged = false;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
+    private  boolean is_profile_edit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
+        is_profile_edit=getIntent().getBooleanExtra("IS_PROFILE_EDIT",false);
 
         setupToolbar();
         setUserId();
@@ -70,7 +72,7 @@ public class SetupActivity extends AppCompatActivity {
 
         skipNgotoFeed();
 
-        if(getIntent().getBooleanExtra("IS_PROFILE_EDIT",false))
+        if(is_profile_edit)
             getFromFirebaseAndSet();
 
         profileImageListener();
@@ -101,32 +103,40 @@ public class SetupActivity extends AppCompatActivity {
         skipTView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Map<String, Object> is_skipped_profile = new HashMap<>();
-                is_skipped_profile.put("IS_SKIPPED_PROFILE", true);
 
-                mFirebaseUtil.mFirestore.collection("users").document(user_id).
-                        set(is_skipped_profile).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                if (is_profile_edit) {
 
-                        if (task.isSuccessful()) {
-                            Intent tabIntent = new Intent(SetupActivity.this, TabsActivity.class);
-                            tabIntent.putExtra(EXTRA_IS_SKIPPED,true);
-                            startActivity(tabIntent);
-                            finish();
-                        } else {
-                            String error = null;
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                                error = Objects.requireNonNull(task.getException()).getMessage();
+                    Map<String, Object> is_skipped_profile = new HashMap<>();
+                    is_skipped_profile.put("IS_SKIPPED_PROFILE", true);
+
+                    mFirebaseUtil.mFirestore.collection("users").document(user_id).
+                            set(is_skipped_profile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                            if (task.isSuccessful()) {
+                                Intent tabIntent = new Intent(SetupActivity.this, TabsActivity.class);
+                                tabIntent.putExtra(EXTRA_IS_SKIPPED, true);
+                                startActivity(tabIntent);
+                                finish();
+                            } else {
+                                String error = null;
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                                    error = Objects.requireNonNull(task.getException()).getMessage();
+                                }
+                                Toast.makeText(SetupActivity.this, "Firestore Error : " + error, Toast.LENGTH_LONG).show();
                             }
-                            Toast.makeText(SetupActivity.this, "Firestore Error : " + error, Toast.LENGTH_LONG).show();
+
+                            setupProgerss.setVisibility(View.INVISIBLE);
                         }
-
-                        setupProgerss.setVisibility(View.INVISIBLE);
-                    }
-                });
+                    });
 
 
+                }else {
+                    Intent tabIntent = new Intent(SetupActivity.this, TabsActivity.class);
+                    startActivity(tabIntent);
+                    finish();
+                }
             }
         });
     }

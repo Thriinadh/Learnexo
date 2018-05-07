@@ -90,7 +90,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
                 if(task.isSuccessful()) {
                     DocumentSnapshot snapshot = task.getResult();
                     String name = snapshot.getString("firstName");
-                    name=name.concat(snapshot.getString("lastName"));
+                    name=name.concat(" "+snapshot.getString("lastName"));
                         String image = snapshot.getString("dpUrl");
                         holder.setUserData(name, image);
 

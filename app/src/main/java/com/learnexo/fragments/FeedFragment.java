@@ -158,7 +158,7 @@ public class FeedFragment extends Fragment {
                     if(snapshot.exists()) {
                         String firstName = snapshot.getString("firstName");
                         String lastName = snapshot.getString("lastName");
-                        mNameTView.setText(firstName.concat(lastName));
+                        mNameTView.setText(firstName.concat(" "+lastName));
 
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL)
