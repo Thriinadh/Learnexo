@@ -35,7 +35,7 @@ public class ConnectFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_connect, container, false);
 
         learnersTView = view.findViewById(R.id.learnersTView);
-        learnersTView.setTextColor(Color.RED);
+        learnersTView.setTextColor(Color.parseColor("#1da1f2"));
 
         mentorsTView = view.findViewById(R.id.mentorsTView);
         frameLayout = view.findViewById(R.id.fragment_container);
@@ -70,7 +70,7 @@ public class ConnectFragment extends Fragment implements View.OnClickListener {
                 fragment = new LearnersFragment();
                 replaceFragment(fragment);
                 learnersTView.startAnimation(myAnim);
-                learnersTView.setTextColor(Color.RED);
+                learnersTView.setTextColor(Color.parseColor("#1da1f2"));
                 mentorsTView.setTextColor(getResources().getColor(R.color.light_black));
                 break;
 
@@ -78,7 +78,7 @@ public class ConnectFragment extends Fragment implements View.OnClickListener {
                 fragment = new MentorsFragment();
                 replaceFragment(fragment);
                 mentorsTView.startAnimation(myAnim);
-                mentorsTView.setTextColor(Color.RED);
+                mentorsTView.setTextColor(Color.parseColor("#1da1f2"));
                 learnersTView.setTextColor(getResources().getColor(R.color.light_black));
                 break;
         }
