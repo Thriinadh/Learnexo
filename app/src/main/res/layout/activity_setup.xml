@@ -36,8 +36,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="64dp"
         android:src="@drawable/empty_profilee"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
         app:civ_border_width="2dp"
         app:civ_border_color="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -75,39 +73,48 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="36dp"
+        app:cardCornerRadius="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/setup_image">
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="6dp"
+                android:text="About you"
+                android:textColor="#34af23"
+                android:textSize="16sp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/light_grey" />
 
         <EditText
             android:id="@+id/setup_nickName"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/prof_description"
-            android:inputType="text|textPersonName"
-            android:padding="15dp"
+            android:inputType="textCapSentences|textMultiLine"
+            android:background="@android:color/transparent"
+            android:scrollHorizontally="false"
+            android:maxLength="2000"
+            android:maxLines="4"
+            android:padding="12dp"
             android:textSize="18sp" />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@android:color/darker_gray"/>
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/editNameBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/edit_nick_name" />
-
-    </LinearLayout>
     </android.support.v7.widget.CardView>
 
     <Button
@@ -120,7 +127,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="40dp"
         android:background="@drawable/login_button"
-        android:text="@string/save_account_settings"
+        android:text="@string/save_profile"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textSize="18sp"

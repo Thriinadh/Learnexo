@@ -89,7 +89,7 @@
     <string name="undertaking">By Signing up, I agree to Learnexo\'s</string>
     <string name="t_amp_c"><![CDATA[T&C]]></string>
     <string name="prof_description">Add description</string>
-    <string name="save_account_settings">Save account settings</string>
+    <string name="save_profile">Save profile</string>
     <string name="more">More</string>
 
     <string-array name="subject_names">

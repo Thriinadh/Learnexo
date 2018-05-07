@@ -76,7 +76,6 @@ public class SetupActivity extends AppCompatActivity {
             getFromFirebaseAndSet();
 
         profileImageListener();
-        editDescriptionListener();
         setupBtnListener();
 
     }
@@ -88,23 +87,12 @@ public class SetupActivity extends AppCompatActivity {
         setupDPOnIView(requestCode, resultCode, data);
     }
 
-    private void editDescriptionListener() {
-        edit_desc_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                description.setEnabled(true);
-                description.setSelection(description.getText().length());
-
-            }
-        });
-    }
-
     private void skipNgotoFeed() {
         skipTView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if (is_profile_edit) {
+                if (!is_profile_edit) {
 
                     Map<String, Object> is_skipped_profile = new HashMap<>();
                     is_skipped_profile.put("IS_SKIPPED_PROFILE", true);
@@ -226,11 +214,11 @@ public class SetupActivity extends AppCompatActivity {
                             mainImageURI = Uri.parse(image);
 
                         SetupActivity.this.description.setText(description);
-                        SetupActivity.this.description.setEnabled(false);
+                       // SetupActivity.this.description.setEnabled(false);
                         SetupActivity.this.description.setTextColor(Color.BLACK);
 
                         RequestOptions placeholderRequest = new RequestOptions();
-                        placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.default_photo);
+                        placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
                       //  setupImage.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
 
                         Glide.with(SetupActivity.this)
@@ -249,7 +237,6 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     private void wireViews() {
-        edit_desc_Btn = findViewById(R.id.editNameBtn);
         setupImage = findViewById(R.id.setup_image);
         description = findViewById(R.id.setup_nickName);
         skipTView = findViewById(R.id.skipTView);
@@ -270,6 +257,7 @@ public class SetupActivity extends AppCompatActivity {
         setSupportActionBar(setupToolbar);
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
             supportActionBar.setTitle("Profile completion");
         }
     }

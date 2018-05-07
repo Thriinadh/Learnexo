@@ -34,8 +34,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.fragments.ConnectFragment;
 import com.learnexo.fragments.FeedFragment;
-import com.learnexo.fragments.TextFragment;
 import com.learnexo.fragments.ProfileFragment;
+import com.learnexo.fragments.TextFragment;
 import com.learnexo.fragments.VideoFragment;
 import com.learnexo.util.FirebaseUtil;
 
@@ -239,7 +239,7 @@ public class TabsActivity extends AppCompatActivity {
                     public void onTabSelected(TabLayout.Tab tab) {
                         super.onTabSelected(tab);
 
-                            tab.getIcon().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
+                            tab.getIcon().setColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN);
 
                         hideCardviewInFeedFragmentWhenUsergoesToOtherTabs();
                         setToolbarTitle(tab);
@@ -468,7 +468,7 @@ public class TabsActivity extends AppCompatActivity {
             tabLayout.getTabAt(3).setIcon(tabIcons[3]);
             tabLayout.getTabAt(4).setIcon(tabIcons[4]);
 
-        tabLayout.getTabAt(0).getIcon().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN);
         tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
         tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
         tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
