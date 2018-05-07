@@ -80,29 +80,22 @@ public class FeedFragment extends Fragment {
     }
 
     private void generateFeedItemList() {
-        //fetching posts, questions, challenges, news separately and mix them up in list of feed items
-        //show complete list of feed or
-        //generate another feed list after 10 min
-        //check if list size is <=20, if yes refill the feed list
-        //At any point in time ensure list does not exceed max size.
 
-        //get Posts tagged in interests, based on related topics
+        //fetching posts, answers questions, challenges, news separately and mix them up in feed items list
+        //check if feed items list size is <=20, if yes refill the feed list
+        //refill the feed item list for every 10 min
+
+
+        //get Posts, Answers tagged in interests, based on related topics
         //posted by related people
         //involved by related people in Like division
         //with more likes, comments, shares, bookmarks and views (Like division)
         //related to history, timing
 
-
-        //get Answers tagged in interests, based on related topics
-        //Answered by related people
-        //involved by related people in Like division
-        //with more likes, comments, shares, bookmarks and views (Like division)
-        //related to history, timing
-
         //get Unanswered Questions/Challenges tagged in interests
+        //asked by related people
         //based on related topics
         //requested to the logged in user
-        //asked by related people
         //based on history, timing
 
         //related people =
