@@ -102,7 +102,7 @@ public class TabsActivity extends AppCompatActivity {
         mChallengeBtn = findViewById(R.id.challengeBtn);
     }
 
-    private void startPublishActivity(String publish_type) {
+    public void startPublishActivity(String publish_type) {
         Intent shareIntent = new Intent(TabsActivity.this, PublishActivity.class);
         shareIntent.putExtra(EXTRA_PUBLISH_TYPE, publish_type);
         startActivity(shareIntent);

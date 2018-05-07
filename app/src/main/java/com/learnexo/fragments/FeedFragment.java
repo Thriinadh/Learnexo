@@ -1,6 +1,5 @@
 package com.learnexo.fragments;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,7 +28,6 @@ import com.learnexo.main.R;
 import com.learnexo.main.TabsActivity;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.post.Post;
-import com.learnexo.model.feed.question.Question;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
@@ -72,11 +70,22 @@ public class FeedFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
         setupFeedRecyclerAdapter(view);
         wireViews(view);
+        askQuestionListener();
 
         getDPandUserNameandSet();
         generateFeedItemList();
 
         return view;
+    }
+
+    private void askQuestionListener() {
+        askQuestionTView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TabsActivity tabsActivity=(TabsActivity)getActivity();
+                tabsActivity.startPublishActivity(getString(R.string.askYourQuestion));
+            }
+        });
     }
 
     private void generateFeedItemList() {
