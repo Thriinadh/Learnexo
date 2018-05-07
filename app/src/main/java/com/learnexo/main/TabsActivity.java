@@ -331,6 +331,7 @@ public class TabsActivity extends AppCompatActivity {
                 return true;
             case R.id.profile_setup:
                 Intent setupIntent = new Intent(TabsActivity.this, SetupActivity.class);
+                setupIntent.putExtra("IS_PROFILE_EDIT",true);
                 startActivity(setupIntent);
                 return  true;
             default:

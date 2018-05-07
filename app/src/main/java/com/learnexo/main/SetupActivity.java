@@ -51,7 +51,7 @@ public class SetupActivity extends AppCompatActivity {
     private Button setupBtn;
     private ProgressBar setupProgerss;
     private String user_id;
-    private Button edit_desc;
+    private Button edit_desc_Btn;
     private TextView skipTView;
     //  private CardView pickImageCView;
 
@@ -70,11 +70,12 @@ public class SetupActivity extends AppCompatActivity {
 
         skipNgotoFeed();
 
-        getFromFirebaseAndSet();
-        setupBtnListener();
+        if(getIntent().getBooleanExtra("IS_PROFILE_EDIT",false))
+            getFromFirebaseAndSet();
 
         profileImageListener();
-        enableNameField();
+        editDescriptionListener();
+        setupBtnListener();
 
     }
 
@@ -85,11 +86,10 @@ public class SetupActivity extends AppCompatActivity {
         setupDPOnIView(requestCode, resultCode, data);
     }
 
-    private void enableNameField() {
-        edit_desc.setOnClickListener(new View.OnClickListener() {
+    private void editDescriptionListener() {
+        edit_desc_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 description.setEnabled(true);
                 description.setSelection(description.getText().length());
 
@@ -135,7 +135,6 @@ public class SetupActivity extends AppCompatActivity {
         setupImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
                     if (ContextCompat.checkSelfPermission(SetupActivity.this,
@@ -143,7 +142,6 @@ public class SetupActivity extends AppCompatActivity {
 
                         ActivityCompat.requestPermissions(SetupActivity.this,
                                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-
                     } else {
                         BringImagePicker();
                     }
@@ -151,13 +149,14 @@ public class SetupActivity extends AppCompatActivity {
                 } else {
                     BringImagePicker();
                 }
-
             }
         });
 
     }
 
     private void setupBtnListener() {
+        setupProgerss.setVisibility(View.INVISIBLE);
+        setupBtn.setEnabled(true);
         setupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -211,14 +210,14 @@ public class SetupActivity extends AppCompatActivity {
                 DocumentSnapshot snapshot = task.getResult();
                 if (task.isSuccessful()) {
                     if (snapshot.exists()) {
-                        String name = snapshot.getString("description");
+                        String description = snapshot.getString("description");
                         String image = snapshot.getString("dpUrl");
                         if (image != null)
                             mainImageURI = Uri.parse(image);
 
-                        description.setText(name);
-                        description.setEnabled(false);
-                        description.setTextColor(Color.BLACK);
+                        SetupActivity.this.description.setText(description);
+                        SetupActivity.this.description.setEnabled(false);
+                        SetupActivity.this.description.setTextColor(Color.BLACK);
 
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.default_photo);
@@ -235,14 +234,12 @@ public class SetupActivity extends AppCompatActivity {
                     }
                     Toast.makeText(SetupActivity.this, "Firestore Retrieve Error : " + errorMsg, Toast.LENGTH_LONG).show();
                 }
-                setupProgerss.setVisibility(View.INVISIBLE);
-                setupBtn.setEnabled(true);
             }
         });
     }
 
     private void wireViews() {
-        edit_desc = findViewById(R.id.editNameBtn);
+        edit_desc_Btn = findViewById(R.id.editNameBtn);
         setupImage = findViewById(R.id.setup_image);
         description = findViewById(R.id.setup_nickName);
         skipTView = findViewById(R.id.skipTView);
