@@ -83,6 +83,7 @@ public class FeedFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 TabsActivity tabsActivity=(TabsActivity)getActivity();
+                if(tabsActivity!=null)
                 tabsActivity.startPublishActivity(getString(R.string.askYourQuestion));
             }
         });
@@ -147,12 +148,9 @@ public class FeedFragment extends Fragment {
                                 mAdapter.notifyDataSetChanged();
                                 break;
                         }
-
                     }
-
             }
         });
-
     }
 
     private void getDPandUserNameandSet() {
@@ -176,9 +174,8 @@ public class FeedFragment extends Fragment {
                         String image = (null==MainActivity.photoUrl)? snapshot
                                 .getString("dpUrl"):MainActivity.photoUrl;
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && image!=null) {
-                            Glide.with(Objects.requireNonNull(getActivity())).load(image)
-                                    .apply(placeholderRequest).into(mCircleImageView);
+                        if (image!=null&&null!=getActivity()) {
+                            Glide.with(getActivity().getApplicationContext()).load(image).apply(placeholderRequest).into(mCircleImageView);
                         }
                     }
                 } else {

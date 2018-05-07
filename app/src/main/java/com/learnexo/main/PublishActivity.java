@@ -420,7 +420,7 @@ public class PublishActivity extends AppCompatActivity {
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.apply(placeholderRequest).placeholder(R.drawable.default_photo);
 
-                        Glide.with(PublishActivity.this).load(imageUrl).apply(placeholderRequest).into(imageView);
+                        Glide.with(getApplicationContext()).load(imageUrl).apply(placeholderRequest).into(imageView);
                     }
                 } else {
                     String error = task.getException().getMessage();

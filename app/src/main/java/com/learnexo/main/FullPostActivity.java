@@ -48,7 +48,7 @@ public class FullPostActivity extends AppCompatActivity {
         postedImage = findViewById(R.id.postedImage);
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
-        Glide.with(FullPostActivity.this).load(imagePosted).apply(requestOptions).into(postedImage);
+        Glide.with(getApplicationContext()).load(imagePosted).apply(requestOptions).into(postedImage);
     }
 
     private void setupToolbar() {

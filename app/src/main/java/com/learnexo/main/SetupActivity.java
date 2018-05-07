@@ -221,7 +221,7 @@ public class SetupActivity extends AppCompatActivity {
                         placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
                       //  setupImage.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
 
-                        Glide.with(SetupActivity.this)
+                        Glide.with(getApplicationContext())
                                 .load(image).apply(placeholderRequest).into(setupImage);
                     }
 
@@ -241,7 +241,7 @@ public class SetupActivity extends AppCompatActivity {
         description = findViewById(R.id.setup_nickName);
         skipTView = findViewById(R.id.skipTView);
         setupProgerss = findViewById(R.id.setup_progress);
-        //    pickImageCView = findViewById(R.id.pickImageCView);
+        // pickImageCView = findViewById(R.id.pickImageCView);
 
         setupBtn = findViewById(R.id.setup_btn);
         setupBtn.setEnabled(false);
