@@ -31,8 +31,8 @@ public class PlayVideoActivity extends AppCompatActivity {
         videoView = findViewById(R.id.videoView);
 
 
-        mFirebaseUtil.mFirestore.collection("Subjects").document("Compiler Design").collection("chap1")
-                .document("Introduction").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        mFirebaseUtil.mFirestore.collection("subjects").document("compilerDesign").collection("chap1")
+                .document("introduction").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
