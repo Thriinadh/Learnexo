@@ -277,6 +277,7 @@ public class PublishActivity extends AppCompatActivity {
             private void gotoFeed() {
                 //postId = documentReferenceTask.getResult().getId();
                 Intent intent = TabsActivity.newIntent(PublishActivity.this, FEED_FRAG_NO);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
             }

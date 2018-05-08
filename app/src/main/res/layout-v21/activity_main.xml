@@ -5,6 +5,7 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/least_black"
     tools:context="com.learnexo.main.MainActivity">
 
     <TextView
@@ -73,17 +74,17 @@
                 android:textSize="25sp" />
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/userNameTView"
+                android:id="@+id/loginEmailTIL"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
-                android:theme="@style/TextLabel">
+                app:theme="@style/TextLabel">
 
                 <android.support.v7.widget.AppCompatEditText
                     android:id="@+id/loginEmail"
-                    android:layout_width="300dp"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="8dp"
                     android:hint="@string/email"
                     android:inputType="textEmailAddress"
                     android:textCursorDrawable="@drawable/edittext_cursor"
@@ -92,14 +93,14 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/password"
+                android:id="@+id/loginPassTIL"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
-                android:theme="@style/TextLabel">
+                app:theme="@style/TextLabel">
 
                 <android.support.v7.widget.AppCompatEditText
                     android:id="@+id/loginPass"
-                    android:layout_width="300dp"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_gravity="center_horizontal"
                     android:hint="@string/pass"

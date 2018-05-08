@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatEditText;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -59,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText loginEmail;
     private EditText loginPass;
+
+//    private TextInputLayout loginEmailTIL;
+//    private TextInputLayout loginPassTIL;
 
     private ConstraintLayout mConstraintLayout;
     private Snackbar snackbar;
@@ -276,6 +281,9 @@ public class MainActivity extends AppCompatActivity {
         loginPass = findViewById(R.id.loginPass);
         forgotPassTView = findViewById(R.id.forgotPassTView);
 
+//        loginEmailTIL = findViewById(R.id.loginEmailTIL);
+//        loginPassTIL = findViewById(R.id.loginPassTIL);
+
         mConstraintLayout = findViewById(R.id.constraintLayout);
 
         mGoogleBtn = findViewById(R.id.googleBtn);
@@ -358,31 +366,85 @@ public class MainActivity extends AppCompatActivity {
         String email = loginEmail.getText().toString().trim();
         String pass = loginPass.getText().toString().trim();
 
-        if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)) {
+        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass) && !email.contains(" ")) {
             FirebaseUtil.sAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-                    if(!task.isSuccessful()) {
-                       try {
-                           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                               throw Objects.requireNonNull(task.getException());
-                           }
-                       } catch(FirebaseAuthInvalidUserException wrongEmail) {
-                           Toast.makeText(MainActivity.this, "Invalid Email", Toast.LENGTH_LONG).show();
-                        } catch(FirebaseAuthInvalidCredentialsException wrongPassword) {
-                           Toast.makeText(MainActivity.this, "Wrong Password", Toast.LENGTH_LONG).show();
-                       } catch(Exception e) {
-                           Log.e(TAG, Arrays.toString(e.getStackTrace()));
-                       }
-                    } else {
+                    if (task.isSuccessful()) {
                         checkIfUserExists();
+                    } else {
+                        try {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                throw Objects.requireNonNull(task.getException());
+                            }
+                        } catch (FirebaseAuthInvalidUserException wrongEmail) {
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                            builder.setMessage("This email doesn't exist. Enter registered email");
+                            builder.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    snackbar = Snackbar.make(mConstraintLayout, "Email not found in database", Snackbar.LENGTH_SHORT);
+                                    View sbView = snackbar.getView();
+                                    TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
+                                    textView.setTextColor(Color.YELLOW);
+                                    snackbar.show();
+                                }
+                            });
+                            builder.show();
+
+                        } catch (FirebaseAuthInvalidCredentialsException wrongPassword) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                            builder.setMessage("Entered password is wrong. Give relevant password");
+                            builder.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    snackbar = Snackbar.make(mConstraintLayout, "Password doesn't match", Snackbar.LENGTH_SHORT);
+                                    View sbView = snackbar.getView();
+                                    TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
+                                    textView.setTextColor(Color.YELLOW);
+                                    snackbar.show();
+                                }
+                            });
+                            builder.show();
+
+                        } catch (Exception e) {
+                            Log.e(TAG, Arrays.toString(e.getStackTrace()));
+                        }
                     }
                 }
             });
-        } else {
-            Toast.makeText(MainActivity.this, "Fields can't be empty", Toast.LENGTH_LONG).show();
-        }
+        } else if(email.contains(" ") && !TextUtils.isEmpty(pass)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
+            builder.setMessage("The email you entered contains spaces. Give proper email");
+            builder.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    snackbar = Snackbar.make(mConstraintLayout, "No spaces in email", Snackbar.LENGTH_SHORT);
+                    View sbView = snackbar.getView();
+                    TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setTextColor(Color.YELLOW);
+                    snackbar.show();
+                }
+            });
+            builder.show();
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+            builder.setMessage("Enter email and password");
+            builder.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    snackbar = Snackbar.make(mConstraintLayout, "Fields can't be empty", Snackbar.LENGTH_SHORT);
+                    View sbView = snackbar.getView();
+                    TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setTextColor(Color.YELLOW);
+                    snackbar.show();
+                }
+            });
+            builder.show();
+
+        }
     }
 
     public void checkIfUserExists() {

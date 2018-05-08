@@ -1,14 +1,21 @@
 package com.learnexo.main;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,6 +35,9 @@ public class RegistrationActivity extends AppCompatActivity {
     private EditText mPass;
     private ProgressBar progressBar;
 
+    private ConstraintLayout mConstraintLayout;
+    private Snackbar snackbar;
+
     Toolbar setupToolbar;
 
    FirebaseUtil mFirebaseUtil=new FirebaseUtil();
@@ -42,14 +52,121 @@ public class RegistrationActivity extends AppCompatActivity {
         setupToolbar();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     public void registerBtnListener(View view) {
         final String first_name = mFirstName.getText().toString();
         final String last_name = mLastName.getText().toString();
         final String email = mEmail.getText().toString();
         final String pass = mPass.getText().toString();
 
-        if((!TextUtils.isEmpty(first_name) || !TextUtils.isEmpty(last_name)) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)&&!email.contains(" ")) {
+        if((!TextUtils.isEmpty(first_name) || !TextUtils.isEmpty(last_name)) && !TextUtils.isEmpty(email) && !email.contains(" ") && !TextUtils.isEmpty(pass)) {
             createUserinFirestore(first_name, last_name, email, pass);
+        }
+        else if((!TextUtils.isEmpty(first_name) || !TextUtils.isEmpty(last_name)) && email.contains(" ") && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass))
+        {
+           // Toast.makeText(RegistrationActivity.this, "Give proper email address", Toast.LENGTH_SHORT).show();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationActivity.this);
+
+            builder.setMessage("Entered email must not contain spaces");
+            builder.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    snackbar = Snackbar.make(mConstraintLayout, "No spaces in email", Snackbar.LENGTH_SHORT);
+                    View sbView = snackbar.getView();
+                    TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setTextColor(Color.YELLOW);
+                    snackbar.show();
+                }
+            });
+            builder.show();
+
+        }
+        else if((TextUtils.isEmpty(first_name) || TextUtils.isEmpty(last_name)) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass))
+        {
+           // Toast.makeText(RegistrationActivity.this, "Enter your name", Toast.LENGTH_SHORT).show();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationActivity.this);
+
+            builder.setMessage("Enter your First or Last name");
+            builder.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    snackbar = Snackbar.make(mConstraintLayout, "Give your name", Snackbar.LENGTH_SHORT);
+                    View sbView = snackbar.getView();
+                    TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setTextColor(Color.YELLOW);
+                    snackbar.show();
+                }
+            });
+            builder.show();
+
+        }
+        else if((!TextUtils.isEmpty(first_name) || !TextUtils.isEmpty(last_name)) && TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)) {
+            //Toast.makeText(RegistrationActivity.this, "Enter your email address", Toast.LENGTH_SHORT).show();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationActivity.this);
+
+            builder.setMessage("Enter your email address");
+            builder.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    snackbar = Snackbar.make(mConstraintLayout, "Give your email", Snackbar.LENGTH_SHORT);
+                    View sbView = snackbar.getView();
+                    TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setTextColor(Color.YELLOW);
+                    snackbar.show();
+                }
+            });
+            builder.show();
+
+        }
+        else if((!TextUtils.isEmpty(first_name) || !TextUtils.isEmpty(last_name)) && !TextUtils.isEmpty(email) && TextUtils.isEmpty(pass)) {
+           // Toast.makeText(RegistrationActivity.this, "Enter password", Toast.LENGTH_SHORT).show();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationActivity.this);
+
+            builder.setMessage("Set password to register");
+            builder.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    snackbar = Snackbar.make(mConstraintLayout, "Give any password", Snackbar.LENGTH_SHORT);
+                    View sbView = snackbar.getView();
+                    TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setTextColor(Color.YELLOW);
+                    snackbar.show();
+                }
+            });
+            builder.show();
+
+        }
+        else {
+           // Toast.makeText(RegistrationActivity.this, "Fields can't be empty", Toast.LENGTH_SHORT).show();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationActivity.this);
+
+            builder.setMessage("Must give Email and Password");
+            builder.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    snackbar = Snackbar.make(mConstraintLayout, "You can't skip them", Snackbar.LENGTH_SHORT);
+                    View sbView = snackbar.getView();
+                    TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setTextColor(Color.YELLOW);
+                    snackbar.show();
+                }
+            });
+            builder.show();
+
         }
     }
 
@@ -102,6 +219,8 @@ public class RegistrationActivity extends AppCompatActivity {
         setupToolbar = findViewById(R.id.include);
         setSupportActionBar(setupToolbar);
         if(getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setTitle("Sign up");
         }
     }
@@ -111,6 +230,8 @@ public class RegistrationActivity extends AppCompatActivity {
         mLastName = findViewById(R.id.regLastName);
         mEmail = findViewById(R.id.regEmail);
         mPass = findViewById(R.id.regPassword);
+
+        mConstraintLayout = findViewById(R.id.constraintLayout);
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.INVISIBLE);
