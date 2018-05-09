@@ -4,6 +4,15 @@ public class InterestFeed {
     private String interest;
     private String feedItemId;
     private String publisherId;
+    private String feedType;
+
+    public String getFeedType() {
+        return feedType;
+    }
+
+    public void setFeedType(String feedType) {
+        this.feedType = feedType;
+    }
 
     public String getInterest() {
         return interest;
@@ -35,6 +44,7 @@ public class InterestFeed {
                 "interest='" + interest + '\'' +
                 ", feedItemId='" + feedItemId + '\'' +
                 ", publisherId='" + publisherId + '\'' +
+                ", feedType='" + feedType + '\'' +
                 '}';
     }
 }

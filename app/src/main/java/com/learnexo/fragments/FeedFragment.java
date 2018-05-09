@@ -125,38 +125,48 @@ public class FeedFragment extends Fragment {
         List<InterestFeed> interestFeeds = getInterestFeeds();
         Log.d("interest feeds", interestFeeds.toString());
 
-        mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("posts")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+        for (InterestFeed interestFeed: interestFeeds) {
+            DocumentSnapshot documentSnapshot = mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
+                    .collection("posts").document(interestFeed.getFeedItemId()).get().getResult();
+            documentSnapshot.toObject(Post.class);
 
-                if(queryDocumentSnapshots != null)
-                    for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
 
-                        Post post;
-                        switch (doc.getType()) {
+//                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+//                        @Override
+//                        public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+//
+//                            if(queryDocumentSnapshots != null)
+//                                for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
+//
+//                                    Post post;
+//                                    switch (doc.getType()) {
+//
+//                                        case ADDED:
+//                                            post = doc.getDocument().toObject(Post.class);
+//                                            mFeedItems.add(post);
+//                                            mAdapter.notifyDataSetChanged();
+//                                            break;
+//
+//                                        case REMOVED:
+//                                            post = doc.getDocument().toObject(Post.class);
+//                                            mFeedItems.remove(post);
+//                                            mAdapter.notifyDataSetChanged();
+//                                            break;
+//
+//                                        case MODIFIED:
+//                                            post = doc.getDocument().toObject(Post.class);
+//                                            mFeedItems.remove(post);
+//                                            mAdapter.notifyDataSetChanged();
+//                                            break;
+//                                    }
+//                                }
+//                        }
+//                    });
 
-                            case ADDED:
-                                post = doc.getDocument().toObject(Post.class);
-                                mFeedItems.add(post);
-                                mAdapter.notifyDataSetChanged();
-                                break;
+        }
 
-                            case REMOVED:
-                                post = doc.getDocument().toObject(Post.class);
-                                mFeedItems.remove(post);
-                                mAdapter.notifyDataSetChanged();
-                                break;
 
-                            case MODIFIED:
-                                post = doc.getDocument().toObject(Post.class);
-                                mFeedItems.remove(post);
-                                mAdapter.notifyDataSetChanged();
-                                break;
-                        }
-                    }
-            }
-        });
+
     }
 
     private List<InterestFeed> getInterestFeeds() {

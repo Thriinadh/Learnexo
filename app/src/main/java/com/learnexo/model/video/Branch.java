@@ -1,11 +1,11 @@
 package com.learnexo.model.video;
 
-import java.util.Map;
+import java.util.List;
 
 public class Branch {
 
     private String name;
-    private Map<Subject, Boolean> mSubjects;
+    private List<Subject> mSubjects;
 
     public String getName() {
         return name;
@@ -15,4 +15,11 @@ public class Branch {
         this.name = name;
     }
 
+    public List<Subject> getSubjects() {
+        return mSubjects;
+    }
+
+    public void setSubjects(List<Subject> subjects) {
+        this.mSubjects = subjects;
+    }
 }

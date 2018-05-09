@@ -255,7 +255,7 @@ public class PublishActivity extends AppCompatActivity {
 
 
     public void saveFeedItem(final FeedItem mFeedItem) {
-        String path;
+        final String path;
         if(mFeedItem.getClass()==Post.class){
             path="posts";
         }else{
@@ -272,7 +272,7 @@ public class PublishActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     gotoFeed();
 
-                    saveInterestFeedItem(mFeedItem, documentReferenceTask, interestFeedPath);
+                    saveInterestFeedItem(mFeedItem, documentReferenceTask, interestFeedPath, path);
 
                 } else {
                     String error = task.getException().getMessage();
@@ -290,11 +290,14 @@ public class PublishActivity extends AppCompatActivity {
         });
     }
 
-    private void saveInterestFeedItem(FeedItem mFeedItem, Task<DocumentReference> documentReferenceTask, String interestFeedPath) {
+    private void saveInterestFeedItem(FeedItem mFeedItem, Task<DocumentReference> documentReferenceTask, String interestFeedPath, String path) {
         InterestFeed interestFeed=new InterestFeed();
+
         interestFeed.setInterest(mFeedItem.getTags().get(0));
         interestFeed.setPublisherId(mUserId);
+        interestFeed.setFeedType(path);
         interestFeed.setFeedItemId(documentReferenceTask.getResult().getId());
+
         mFirebaseUtil.mFirestore.collection(interestFeedPath).add(interestFeed);
     }
 
