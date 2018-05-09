@@ -152,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         registrationListener();
-        mFirebaseUtil.getDPandUserName();
 
     }
 

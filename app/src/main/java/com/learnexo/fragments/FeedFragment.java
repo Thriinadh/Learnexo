@@ -35,8 +35,6 @@ import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.learnexo.util.FirebaseUtil.sDpUrl;
-
 public class FeedFragment extends Fragment {
 
     private CircleImageView mCircleImageView;
@@ -47,8 +45,12 @@ public class FeedFragment extends Fragment {
 
     private TextView askQuestionTView;
 
-    private String mUserId = FirebaseUtil.getCurrentUserId();
-    private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
+    private String mUserId;
+    public static String sDpUrl;
+    public static String sName;
+
+
+    FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
 
     public FeedFragment() {
@@ -65,9 +67,9 @@ public class FeedFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
-
-        wireViews(view);
+        getDPandUserName();
         setupFeedRecyclerAdapter(view);
+        wireViews(view);
         askQuestionListener();
         generateFeedItemList();
 
@@ -80,7 +82,7 @@ public class FeedFragment extends Fragment {
             public void onClick(View view) {
                 TabsActivity tabsActivity=(TabsActivity)getActivity();
                 if(tabsActivity!=null)
-                    tabsActivity.startPublishActivity(getString(R.string.askYourQuestion));
+                tabsActivity.startPublishActivity(getString(R.string.askYourQuestion));
             }
         });
     }
@@ -195,21 +197,48 @@ public class FeedFragment extends Fragment {
     }
 
 
+    private void getDPandUserName() {
+        mUserId = FirebaseUtil.getCurrentUserId();
+        mFirebaseUtil.mFirestore.collection("users").document(mUserId).
+                collection("reg_details").document("doc").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
+                if(task.isSuccessful()) {
+                    DocumentSnapshot snapshot = task.getResult();
+                    if(snapshot.exists()) {
+                        String firstName = snapshot.getString("firstName");
+                        String lastName = snapshot.getString("lastName");
+
+                        sName =firstName.concat(" "+lastName);
+                        mNameTView.setText(sName);
+
+                        RequestOptions placeholderRequest = new RequestOptions();
+                        placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .placeholder(R.drawable.empty_profilee);
+
+                        sDpUrl = (null==MainActivity.photoUrl)? snapshot
+                                .getString("dpUrl"):MainActivity.photoUrl;
+
+                        if (sDpUrl !=null&&null!=getActivity()) {
+                            Glide.with(getActivity().getApplicationContext()).load(sDpUrl).apply(placeholderRequest).into(mCircleImageView);
+                        }
+                    }
+                } else {
+
+                    String error = task.getException().getMessage();
+                    Toast.makeText(getActivity(), "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
+
+                }
+
+            }
+        });
+    }
 
     private void wireViews(View view) {
-        askQuestionTView = view.findViewById(R.id.askQuestionTView);
-        mNameTView = view.findViewById(R.id.userNameTView);
-        mNameTView.setText(FirebaseUtil.sName);
-
-        RequestOptions placeholderRequest = new RequestOptions();
-        placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.empty_profilee);
-
         mCircleImageView = view.findViewById(R.id.userCircleIView);
-        if (FirebaseUtil.sDpUrl !=null&&null!=getActivity()) {
-            Glide.with(getActivity().getApplicationContext()).load(FirebaseUtil.sDpUrl).apply(placeholderRequest).into(mCircleImageView);
-        }
+        mNameTView = view.findViewById(R.id.userNameTView);
+        askQuestionTView = view.findViewById(R.id.askQuestionTView);
     }
 
     private void setupFeedRecyclerAdapter(View view) {

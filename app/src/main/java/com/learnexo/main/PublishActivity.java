@@ -419,12 +419,12 @@ public class PublishActivity extends AppCompatActivity {
 
     private void getDPandNameAndSet() {
 
-                        username.setText(FirebaseUtil.sName);
+                        username.setText(FeedFragment.sName);
 
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.apply(placeholderRequest).placeholder(R.drawable.empty_profilee);
 
-                        Glide.with(getApplicationContext()).load(FirebaseUtil.sDpUrl).apply(placeholderRequest).into(imageView);
+                        Glide.with(getApplicationContext()).load(FeedFragment.sDpUrl).apply(placeholderRequest).into(imageView);
 
     }
 
