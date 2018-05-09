@@ -62,6 +62,7 @@ public class TabsActivity extends AppCompatActivity {
     private Button mAskBtn;
     private Button mChallengeBtn;
     private LinearLayout FAB_Layout;
+    private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
 
     private ViewPager viewPager;
     private ViewPagerAdapter mAdapter;
@@ -372,7 +373,7 @@ public class TabsActivity extends AppCompatActivity {
     }
 
     private void checkInterestsAndProfile(final String userId) {
-        new FirebaseUtil().mFirestore.collection("users").document(userId).collection("interests").document("doc1").
+        mFirebaseUtil.mFirestore.collection("users").document(userId).collection("interests").document("doc1").
                 get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -402,7 +403,7 @@ public class TabsActivity extends AppCompatActivity {
             }
                                      private void checkifSkippedProfile(final String userId) {
                                         //check if skip is there - if skip he is second time user and do not want to complete his profile, then do not ckeck the below one
-                                         new FirebaseUtil().mFirestore.collection("users").document(userId).get()
+                                         mFirebaseUtil.mFirestore.collection("users").document(userId).get()
                                                  .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                      @Override
                                                      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -424,7 +425,7 @@ public class TabsActivity extends AppCompatActivity {
                                          // - if skip is not available then check the below path if both are not available then he is first time user
                                          //so send him to setup activity
 
-                                         new FirebaseUtil().mFirestore.collection("users").document(userId).
+                                         mFirebaseUtil.mFirestore.collection("users").document(userId).
                                                  collection("reg_details").document("doc").get()
                                                  .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                              @Override

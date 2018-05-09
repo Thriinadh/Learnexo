@@ -25,9 +25,6 @@ public class FirebaseUtil {
 
 
     public FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
-    {
-        getDPandUserName();
-    }
 
      static {
         sAuth = FirebaseAuth.getInstance();
@@ -73,7 +70,6 @@ public class FirebaseUtil {
                         String lastName = snapshot.getString("lastName");
 
                         sName =firstName.concat(" "+lastName);
-
                         sDpUrl = (null== MainActivity.photoUrl)? snapshot
                                 .getString("dpUrl"):MainActivity.photoUrl;
                     }

@@ -48,9 +48,7 @@ public class FeedFragment extends Fragment {
     private TextView askQuestionTView;
 
     private String mUserId = FirebaseUtil.getCurrentUserId();
-
-
-    FirebaseUtil mFirebaseUtil = new FirebaseUtil();
+    private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
 
     public FeedFragment() {
@@ -68,8 +66,8 @@ public class FeedFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
 
-        setupFeedRecyclerAdapter(view);
         wireViews(view);
+        setupFeedRecyclerAdapter(view);
         askQuestionListener();
         generateFeedItemList();
 
@@ -82,7 +80,7 @@ public class FeedFragment extends Fragment {
             public void onClick(View view) {
                 TabsActivity tabsActivity=(TabsActivity)getActivity();
                 if(tabsActivity!=null)
-                tabsActivity.startPublishActivity(getString(R.string.askYourQuestion));
+                    tabsActivity.startPublishActivity(getString(R.string.askYourQuestion));
             }
         });
     }
@@ -200,14 +198,15 @@ public class FeedFragment extends Fragment {
 
 
     private void wireViews(View view) {
-        mCircleImageView = view.findViewById(R.id.userCircleIView);
-        mNameTView = view.findViewById(R.id.userNameTView);
         askQuestionTView = view.findViewById(R.id.askQuestionTView);
+        mNameTView = view.findViewById(R.id.userNameTView);
         mNameTView.setText(FirebaseUtil.sName);
+
         RequestOptions placeholderRequest = new RequestOptions();
         placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.empty_profilee);
 
+        mCircleImageView = view.findViewById(R.id.userCircleIView);
         if (FirebaseUtil.sDpUrl !=null&&null!=getActivity()) {
             Glide.with(getActivity().getApplicationContext()).load(FirebaseUtil.sDpUrl).apply(placeholderRequest).into(mCircleImageView);
         }
