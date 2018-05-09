@@ -43,7 +43,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:src="@drawable/default_photo"
+                android:src="@drawable/empty_profilee"
                 app:civ_border_width="2dp"
                 app:civ_border_color="@color/colorAccent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -120,7 +120,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/full_text"
-                app:srcCompat="@drawable/default_photo" />
+                app:srcCompat="@drawable/empty_profilee" />
 
         </android.support.constraint.ConstraintLayout>
 

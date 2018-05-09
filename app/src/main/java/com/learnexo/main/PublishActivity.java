@@ -35,7 +35,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.learnexo.fragments.FeedFragment;
@@ -43,7 +42,6 @@ import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.InterestFeed;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.feed.question.Question;
-import com.learnexo.model.video.Subject;
 import com.learnexo.util.FirebaseUtil;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -51,10 +49,8 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -422,30 +418,14 @@ public class PublishActivity extends AppCompatActivity {
     }
 
     private void getDPandNameAndSet() {
-        mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("reg_details")
-                .document("doc").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
 
-                    DocumentSnapshot snapshot = task.getResult();
-                    if(snapshot.exists()) {
-                        name = snapshot.getString("firstName");
-                        name=name.concat(" "+snapshot.getString("lastName"));
-                        username.setText(name);
+                        username.setText(FeedFragment.sName);
 
-                        String imageUrl = snapshot.getString("dpUrl");
                         RequestOptions placeholderRequest = new RequestOptions();
-                        placeholderRequest.apply(placeholderRequest).placeholder(R.drawable.default_photo);
+                        placeholderRequest.apply(placeholderRequest).placeholder(R.drawable.empty_profilee);
 
-                        Glide.with(getApplicationContext()).load(imageUrl).apply(placeholderRequest).into(imageView);
-                    }
-                } else {
-                    String error = task.getException().getMessage();
-                    Toast.makeText(PublishActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+                        Glide.with(getApplicationContext()).load(FeedFragment.sDpUrl).apply(placeholderRequest).into(imageView);
+
     }
 
     private void setupToolbar() {

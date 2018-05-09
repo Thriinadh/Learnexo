@@ -18,11 +18,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.main.MainActivity;
 import com.learnexo.main.R;
@@ -41,8 +37,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeedFragment extends Fragment {
 
-  //  public static final String EXTRA_PUBLISH_TYPE ="com.learnexo.fragment.FeedFragment.EXTRA_PUBLISH_TYPE";
-
     private CircleImageView mCircleImageView;
     private TextView mNameTView;
 
@@ -52,6 +46,8 @@ public class FeedFragment extends Fragment {
     private TextView askQuestionTView;
 
     private String mUserId;
+    public static String sDpUrl;
+    public static String sName;
 
 
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
@@ -71,10 +67,10 @@ public class FeedFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
+        getDPandUserName();
         setupFeedRecyclerAdapter(view);
         wireViews(view);
         askQuestionListener();
-        getDPandUserNameandSet();
         generateFeedItemList();
 
         return view;
@@ -201,7 +197,7 @@ public class FeedFragment extends Fragment {
     }
 
 
-    private void getDPandUserNameandSet() {
+    private void getDPandUserName() {
         mUserId = FirebaseUtil.getCurrentUserId();
         mFirebaseUtil.mFirestore.collection("users").document(mUserId).
                 collection("reg_details").document("doc").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -213,17 +209,19 @@ public class FeedFragment extends Fragment {
                     if(snapshot.exists()) {
                         String firstName = snapshot.getString("firstName");
                         String lastName = snapshot.getString("lastName");
-                        mNameTView.setText(firstName.concat(" "+lastName));
+
+                        sName =firstName.concat(" "+lastName);
+                        mNameTView.setText(sName);
 
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .placeholder(R.drawable.default_photo);
+                                .placeholder(R.drawable.empty_profilee);
 
-                        String image = (null==MainActivity.photoUrl)? snapshot
+                        sDpUrl = (null==MainActivity.photoUrl)? snapshot
                                 .getString("dpUrl"):MainActivity.photoUrl;
 
-                        if (image!=null&&null!=getActivity()) {
-                            Glide.with(getActivity().getApplicationContext()).load(image).apply(placeholderRequest).into(mCircleImageView);
+                        if (sDpUrl !=null&&null!=getActivity()) {
+                            Glide.with(getActivity().getApplicationContext()).load(sDpUrl).apply(placeholderRequest).into(mCircleImageView);
                         }
                     }
                 } else {

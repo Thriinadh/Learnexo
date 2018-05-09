@@ -217,7 +217,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
             userImage = mView.findViewById(R.id.feed_user_image);
             RequestOptions placeholderOption = new RequestOptions();
-            placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.default_photo);
+            placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
             Glide.with(context).load(image).apply(placeholderOption).into(userImage);
 
         }
