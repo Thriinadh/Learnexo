@@ -40,6 +40,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.model.feed.FeedItem;
+import com.learnexo.model.feed.InterestFeed;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.video.Subject;
@@ -253,13 +254,15 @@ public class PublishActivity extends AppCompatActivity {
     }
 
 
-    public void saveFeedItem(FeedItem mFeedItem) {
+    public void saveFeedItem(final FeedItem mFeedItem) {
         String path;
         if(mFeedItem.getClass()==Post.class){
             path="posts";
         }else{
             path="questions";
         }
+        final String interestFeedPath="interest_feed";
+
 
         final Task<DocumentReference> documentReferenceTask = mFirebaseUtil.mFirestore.collection("users")
                 .document(mUserId).collection(path).add(mFeedItem);
@@ -268,6 +271,9 @@ public class PublishActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if (task.isSuccessful()) {
                     gotoFeed();
+
+                    saveInterestFeedItem(mFeedItem, documentReferenceTask, interestFeedPath);
+
                 } else {
                     String error = task.getException().getMessage();
                     Toast.makeText(PublishActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
@@ -282,6 +288,14 @@ public class PublishActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void saveInterestFeedItem(FeedItem mFeedItem, Task<DocumentReference> documentReferenceTask, String interestFeedPath) {
+        InterestFeed interestFeed=new InterestFeed();
+        interestFeed.setInterest(mFeedItem.getTags().get(0));
+        interestFeed.setPublisherId(mUserId);
+        interestFeed.setFeedItemId(documentReferenceTask.getResult().getId());
+        mFirebaseUtil.mFirestore.collection(interestFeedPath).add(interestFeed);
     }
 
     public boolean onTouch(View view, MotionEvent event) {

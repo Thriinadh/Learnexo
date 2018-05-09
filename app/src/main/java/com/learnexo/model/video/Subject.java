@@ -6,20 +6,16 @@ import java.util.Date;
 import java.util.List;
 
 public class Subject {
-    private boolean isChecked;
-    private Department mDepartment;
-    private Branch mBranch;
-    private Double mPrice;
     private String subjectName;
-    private List<Chapter> chapterList;
+    private Double mPrice;
     private Date lastUpdated;
+    private List<Chapter> chapterList;
+    private boolean isChecked;//placed for interests recycler view issue
 
     public Subject() {}
 
     public Subject(boolean isChecked, Department department, Branch branch, Double price, String subjectName, List<Chapter> chapterList, Date lastUpdated) {
         this.isChecked = isChecked;
-        mDepartment = department;
-        mBranch = branch;
         mPrice = price;
         this.subjectName = subjectName;
         this.chapterList = chapterList;
@@ -42,21 +38,6 @@ public class Subject {
         mPrice = price;
     }
 
-    public Department getDepartment() {
-        return mDepartment;
-    }
-
-    public void setDepartment(Department department) {
-        this.mDepartment = department;
-    }
-
-    public Branch getBranch() {
-        return mBranch;
-    }
-
-    public void setBranch(Branch branch) {
-        this.mBranch = branch;
-    }
 
     public Date getLastUpdated() {
         return lastUpdated;

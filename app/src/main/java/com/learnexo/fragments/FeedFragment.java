@@ -1,11 +1,11 @@
 package com.learnexo.fragments;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,12 +27,14 @@ import com.learnexo.main.MainActivity;
 import com.learnexo.main.R;
 import com.learnexo.main.TabsActivity;
 import com.learnexo.model.feed.FeedItem;
+import com.learnexo.model.feed.InterestFeed;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -119,6 +121,10 @@ public class FeedFragment extends Fragment {
         //news and girls
         //priority profiles
 
+
+        List<InterestFeed> interestFeeds = getInterestFeeds();
+        Log.d("interest feeds", interestFeeds.toString());
+
         mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("posts")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -151,6 +157,32 @@ public class FeedFragment extends Fragment {
                     }
             }
         });
+    }
+
+    private List<InterestFeed> getInterestFeeds() {
+        List<InterestFeed> interestFeeds=new ArrayList<>();
+        InterestFeed interestFeed;
+        Map<String, Object> intestMap = mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("interests").
+                document("doc1").get().getResult().getData();
+        Set<String> interests = intestMap.keySet();
+        for (String interest:interests){
+            List<DocumentSnapshot> interest_feed_docs = mFirebaseUtil.mFirestore.collection("interest_feed").get().getResult().getDocuments();
+            for (DocumentSnapshot documentSnap:interest_feed_docs) {
+                Map<String, Object> interestFeedMap = documentSnap.getData();
+
+                interestFeed=new InterestFeed();
+                String interest1 = (String) interestFeedMap.get("interest");
+                if(interest.equals(interest1)){
+                    interestFeed.setInterest(interest1);
+                    interestFeed.setFeedItemId((String) interestFeedMap.get("feedItemId"));
+                    interestFeed.setPublisherId((String) interestFeedMap.get("publisherId"));
+
+                    interestFeeds.add(interestFeed);
+                }
+            }
+        }
+
+        return interestFeeds;
     }
 
     private void getDPandUserNameandSet() {
