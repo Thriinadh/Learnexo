@@ -122,77 +122,104 @@ public class FeedFragment extends Fragment {
         //priority profiles
 
 
-        List<InterestFeed> interestFeeds = getInterestFeeds();
-        Log.d("interest feeds", interestFeeds.toString());
-
-        for (InterestFeed interestFeed: interestFeeds) {
-            DocumentSnapshot documentSnapshot = mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
-                    .collection("posts").document(interestFeed.getFeedItemId()).get().getResult();
-            documentSnapshot.toObject(Post.class);
+        getInterestFeeds();
 
 
-//                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
-//                        @Override
-//                        public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
-//
-//                            if(queryDocumentSnapshots != null)
-//                                for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
-//
-//                                    Post post;
-//                                    switch (doc.getType()) {
-//
-//                                        case ADDED:
-//                                            post = doc.getDocument().toObject(Post.class);
-//                                            mFeedItems.add(post);
-//                                            mAdapter.notifyDataSetChanged();
-//                                            break;
-//
-//                                        case REMOVED:
-//                                            post = doc.getDocument().toObject(Post.class);
-//                                            mFeedItems.remove(post);
-//                                            mAdapter.notifyDataSetChanged();
-//                                            break;
-//
-//                                        case MODIFIED:
-//                                            post = doc.getDocument().toObject(Post.class);
-//                                            mFeedItems.remove(post);
-//                                            mAdapter.notifyDataSetChanged();
-//                                            break;
-//                                    }
-//                                }
-//                        }
-//                    });
+
+
 
         }
 
 
 
-    }
 
-    private List<InterestFeed> getInterestFeeds() {
-        List<InterestFeed> interestFeeds=new ArrayList<>();
-        InterestFeed interestFeed;
-        Map<String, Object> intestMap = mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("interests").
-                document("doc1").get().getResult().getData();
-        Set<String> interests = intestMap.keySet();
-        for (String interest:interests){
-            List<DocumentSnapshot> interest_feed_docs = mFirebaseUtil.mFirestore.collection("interest_feed").get().getResult().getDocuments();
-            for (DocumentSnapshot documentSnap:interest_feed_docs) {
-                Map<String, Object> interestFeedMap = documentSnap.getData();
+    private void getInterestFeeds() {
 
-                interestFeed=new InterestFeed();
-                String interest1 = (String) interestFeedMap.get("interest");
-                if(interest.equals(interest1)){
-                    interestFeed.setInterest(interest1);
-                    interestFeed.setFeedItemId((String) interestFeedMap.get("feedItemId"));
-                    interestFeed.setPublisherId((String) interestFeedMap.get("publisherId"));
+        mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("interests").
+                document("doc1").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 
-                    interestFeeds.add(interestFeed);
+            List<InterestFeed> interestFeeds=new ArrayList<>();
+            InterestFeed interestFeed;
+            Map<String, Object> intestMap =null;
+
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                intestMap=task.getResult().getData();
+
+                Set<String> interests = intestMap.keySet();
+                for (final String interest:interests){
+
+                    mFirebaseUtil.mFirestore.collection("interest_feed").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        List<DocumentSnapshot> interest_feed_docs;
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            interest_feed_docs=task.getResult().getDocuments();
+                            for (DocumentSnapshot documentSnap:interest_feed_docs) {
+                                Map<String, Object> interestFeedMap = documentSnap.getData();
+
+                                interestFeed=new InterestFeed();
+                                String interest1 = (String) interestFeedMap.get("interest");
+                                if(interest.equals(interest1)){
+                                    interestFeed.setInterest(interest1);
+                                    interestFeed.setFeedItemId((String) interestFeedMap.get("feedItemId"));
+                                    interestFeed.setPublisherId((String) interestFeedMap.get("publisherId"));
+
+                                    interestFeeds.add(interestFeed);
+                                }
+                            }
+
+                        }
+                    });
+
+                }
+
+
+                Log.d("interest feeds", interestFeeds.toString());
+
+                for (InterestFeed interestFeed: interestFeeds) {
+                    if(interestFeed.getFeedType().equals("posts")) {
+                        mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
+                                .collection("posts").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+
+                            if(queryDocumentSnapshots != null)
+                                for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
+
+                                    Post post;
+                                    switch (doc.getType()) {
+
+                                        case ADDED:
+                                            post = doc.getDocument().toObject(Post.class);
+                                            mFeedItems.add(post);
+                                            mAdapter.notifyDataSetChanged();
+                                            break;
+
+                                        case REMOVED:
+                                            post = doc.getDocument().toObject(Post.class);
+                                            mFeedItems.remove(post);
+                                            mAdapter.notifyDataSetChanged();
+                                            break;
+
+                                        case MODIFIED:
+                                            post = doc.getDocument().toObject(Post.class);
+                                            mFeedItems.remove(post);
+                                            mAdapter.notifyDataSetChanged();
+                                            break;
+                                    }
+                                }
+                        }
+                    });
+
+                    }
                 }
             }
-        }
 
-        return interestFeeds;
+        });
+
+
+
+
     }
 
     private void getDPandUserNameandSet() {

@@ -243,8 +243,7 @@ public class InterestsActivity extends AppCompatActivity {
                     subject.setChecked(holder.mSubjectCheckbox.isChecked());
 
                     String subjectName = null;
-                    if (null != subject)
-                        subjectName = subject.getSubjectName();
+                    subjectName = subject.getSubjectName();
 
                     if (null != interestMap&&subjectName!=null) {
                         if (interestMap.containsKey(subjectName))
