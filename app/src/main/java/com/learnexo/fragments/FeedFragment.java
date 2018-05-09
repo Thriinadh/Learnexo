@@ -22,6 +22,7 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.main.MainActivity;
 import com.learnexo.main.R;
@@ -127,78 +128,71 @@ public class FeedFragment extends Fragment {
             Map<String, Object> intestMap =null;
             List<InterestFeed> interestFeeds=new ArrayList<>();
             InterestFeed interestFeed;
-
+            int i=0;
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 intestMap=task.getResult().getData();
 
                 Set<String> interests = intestMap.keySet();
-                for (final String interest:interests){
+
+                for (final String userInterest:interests){
+
 
                     mFirebaseUtil.mFirestore.collection("interest_feed").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         List<DocumentSnapshot> interest_feed_docs;
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             interest_feed_docs=task.getResult().getDocuments();
-                            for (DocumentSnapshot documentSnap:interest_feed_docs) {
-                                Map<String, Object> interestFeedMap = documentSnap.getData();
 
-                                interestFeed=new InterestFeed();
-                                String interest1 = (String) interestFeedMap.get("interest");
-                                if(interest.equals(interest1)){
-                                    interestFeed.setInterest(interest1);
-                                    interestFeed.setFeedItemId((String) interestFeedMap.get("feedItemId"));
-                                    interestFeed.setPublisherId((String) interestFeedMap.get("publisherId"));
+                            for (DocumentSnapshot documentSnap:interest_feed_docs) {
+                                Map<String, Object> interestFeedData = documentSnap.getData();
+
+                                String postInterest = (String) interestFeedData.get("interest");
+                                if(userInterest.equals(postInterest)){
+                                    interestFeed=new InterestFeed();
+                                    interestFeed.setFeedItemId((String) interestFeedData.get("feedItemId"));
+                                    interestFeed.setPublisherId((String) interestFeedData.get("publisherId"));
+                                    interestFeed.setFeedType((String) interestFeedData.get("feedType"));
 
                                     interestFeeds.add(interestFeed);
                                 }
                             }
 
-                        }
-                    });
 
-                }
+                            Log.d("interest feeds", interestFeeds.toString());
+                            if(i!=1)
 
+                            for (final InterestFeed interestFeed: interestFeeds) {
+                                i=1;
 
-                Log.d("interest feeds", interestFeeds.toString());
+                                if(interestFeed.getFeedType().equals("posts")) {
 
-                for (InterestFeed interestFeed: interestFeeds) {
-                    if(interestFeed.getFeedType().equals("posts")) {
-                        mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
-                                .collection("posts").addSnapshotListener(new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
-
-                            if(queryDocumentSnapshots != null)
-                                for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
-
-                                    Post post;
-                                    switch (doc.getType()) {
-
-                                        case ADDED:
-                                            post = doc.getDocument().toObject(Post.class);
+                                    mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
+                                            .collection("posts").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            DocumentSnapshot documentSnapshot = task.getResult();
+                                            Post post=documentSnapshot.toObject(Post.class);
                                             mFeedItems.add(post);
                                             mAdapter.notifyDataSetChanged();
-                                            break;
+                                        }
+                                    });
 
-                                        case REMOVED:
-                                            post = doc.getDocument().toObject(Post.class);
-                                            mFeedItems.remove(post);
-                                            mAdapter.notifyDataSetChanged();
-                                            break;
-
-                                        case MODIFIED:
-                                            post = doc.getDocument().toObject(Post.class);
-                                            mFeedItems.remove(post);
-                                            mAdapter.notifyDataSetChanged();
-                                            break;
-                                    }
+                                }else{
+                                    //questions
                                 }
-                        }
-                    });
+                            }
 
-                    }
+
+                        }
+
+
+                    });
                 }
+
+
+
+
             }
 
         });
@@ -281,3 +275,40 @@ public class FeedFragment extends Fragment {
     }
 
 }
+
+
+// addSnapshotListener(new EventListener<QuerySnapshot>() {
+//                            @Override
+//                            public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+//
+//                                if(queryDocumentSnapshots != null)
+//                                    for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
+//
+//                                        if (doc.getDocument().getId().equals(interestFeed.getFeedItemId())) {
+//                                            Post post;
+//                                            switch (doc.getType()) {
+//
+//                                                case ADDED:
+//                                                    post = doc.getDocument().toObject(Post.class);
+//                                                    mFeedItems.add(post);
+//                                                    mAdapter.notifyDataSetChanged();
+//                                                    break;
+//
+//                                                case REMOVED:
+//                                                    post = doc.getDocument().toObject(Post.class);
+//                                                    mFeedItems.remove(post);
+//                                                    mAdapter.notifyDataSetChanged();
+//                                                    break;
+//
+//                                                case MODIFIED:
+//                                                    post = doc.getDocument().toObject(Post.class);
+//                                                    mFeedItems.remove(post);
+//                                                    mAdapter.notifyDataSetChanged();
+//                                                    break;
+//                                            }
+//                                        }//
+//
+//
+//                                    }
+//                            }
+//                        });
