@@ -73,7 +73,6 @@ public class FeedFragment extends Fragment {
         setupFeedRecyclerAdapter(view);
         wireViews(view);
         askQuestionListener();
-
         getDPandUserNameandSet();
         generateFeedItemList();
 
@@ -122,25 +121,12 @@ public class FeedFragment extends Fragment {
         //priority profiles
 
 
-        getInterestFeeds();
-
-
-
-
-
-        }
-
-
-
-
-    private void getInterestFeeds() {
-
         mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("interests").
                 document("doc1").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 
+            Map<String, Object> intestMap =null;
             List<InterestFeed> interestFeeds=new ArrayList<>();
             InterestFeed interestFeed;
-            Map<String, Object> intestMap =null;
 
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -218,9 +204,8 @@ public class FeedFragment extends Fragment {
         });
 
 
-
-
     }
+
 
     private void getDPandUserNameandSet() {
         mUserId = FirebaseUtil.getCurrentUserId();
@@ -261,9 +246,7 @@ public class FeedFragment extends Fragment {
     private void wireViews(View view) {
         mCircleImageView = view.findViewById(R.id.userCircleIView);
         mNameTView = view.findViewById(R.id.userNameTView);
-
         askQuestionTView = view.findViewById(R.id.askQuestionTView);
-
     }
 
     private void setupFeedRecyclerAdapter(View view) {
