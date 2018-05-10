@@ -3,6 +3,7 @@ package com.learnexo.main;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -44,6 +45,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.util.FirebaseUtil;
 
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private String photoUrl;
+    private String photoUrlFb;
     private String displayName;
     private String googleEmail;
 
@@ -345,11 +348,32 @@ public class MainActivity extends AppCompatActivity {
 
                             FirebaseUser user = FirebaseUtil.getCurrentUser();
                             if(user != null) {
-                                if (!user.getProviderData().isEmpty() && user.getProviderData().size() > 1)
-                                    photoUrl = "https://graph.facebook.com/" + user.getProviderData()
-                                            .get(1).getUid() + "/picture?type=large";
+                                if (!user.getProviderData().isEmpty() && user.getProviderData().size() > 1) {
+                                    for (UserInfo profile : user.getProviderData()) {
+                                        photoUrl = "https://graph.facebook.com/" + user.getProviderData()
+                                                .get(1).getUid() + "/picture?type=large";
+
+                                        displayName = profile.getDisplayName();
+                                        googleEmail = profile.getEmail();
+                                        photoUrlFb = profile.getPhotoUrl().toString();
+                                    }
+                                }
                                     //photoUrl = "https://graph.facebook.com/" + facebookUserId + "/picture?height=500";
-                                gotoFeed();
+
+                                Map<String, String> userMap = new HashMap<>();
+                                userMap.put("firstName", displayName);
+                                userMap.put("lastName", "");
+                                userMap.put("emailId", googleEmail);
+                                userMap.put("fbDpUri", photoUrl);
+                                userMap.put("DpUriLow", photoUrlFb);
+
+                                mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("reg_details")
+                                        .document("doc").set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        gotoFeed();
+                                    }
+                                });
                             }
 
                         } else {

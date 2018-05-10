@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/questionTView"
@@ -65,11 +64,11 @@
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/tested_text"
-        android:textSize="18sp"
-        android:textColor="@color/black"
         android:lineSpacingExtra="4dp"
         android:maxLines="3"
+        android:text="@string/tested_text"
+        android:textColor="@color/black"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
@@ -78,13 +77,23 @@
         android:id="@+id/seeMore"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="See more"
-        android:textSize="18sp"
+        android:layout_gravity="end"
         android:background="@android:color/transparent"
+        android:text="See more"
         android:textAlignment="viewEnd"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/answerContent"
         app:layout_constraintEnd_toEndOf="@+id/answerContent"
-        app:layout_constraintStart_toStartOf="@+id/answerContent"
-        android:layout_gravity="end" />
+        app:layout_constraintStart_toStartOf="@+id/answerContent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/light_grey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/answerContent" />
 
 </android.support.constraint.ConstraintLayout>

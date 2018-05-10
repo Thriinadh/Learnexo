@@ -129,64 +129,67 @@ public class FeedFragment extends Fragment {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 intestMap=task.getResult().getData();
 
-                Set<String> interests = intestMap.keySet();
-
-                for (final String userInterest:interests){
-
-
-                    mFirebaseUtil.mFirestore.collection("interest_feed").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        List<DocumentSnapshot> interest_feed_docs;
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            interest_feed_docs=task.getResult().getDocuments();
-
-                            for (DocumentSnapshot documentSnap:interest_feed_docs) {
-                                Map<String, Object> interestFeedData = documentSnap.getData();
-
-                                String postInterest = (String) interestFeedData.get("interest");
-                                if(userInterest.equals(postInterest)){
-                                    interestFeed=new InterestFeed();
-                                    interestFeed.setFeedItemId((String) interestFeedData.get("feedItemId"));
-                                    interestFeed.setPublisherId((String) interestFeedData.get("publisherId"));
-                                    interestFeed.setFeedType((String) interestFeedData.get("feedType"));
-
-                                    interestFeeds.add(interestFeed);
-                                }
-                            }
-
-
-                            Log.d("interest feeds", interestFeeds.toString());
-                            if(i!=1)
-
-                            for (final InterestFeed interestFeed: interestFeeds) {
-                                i=1;
-
-                                if(interestFeed.getFeedType().equals("posts")) {
-
-                                    mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
-                                            .collection("posts").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                            DocumentSnapshot documentSnapshot = task.getResult();
-                                            Post post=documentSnapshot.toObject(Post.class);
-                                            mFeedItems.add(post);
-                                            mAdapter.notifyDataSetChanged();
-                                        }
-                                    });
-
-                                }else{
-                                    //questions
-                                }
-                            }
-
-
-                        }
-
-
-                    });
+                Set<String> interests = null;
+                if (intestMap != null) {
+                    interests = intestMap.keySet();
                 }
 
+                if (interests != null) {
+                    for (final String userInterest:interests){
 
+
+                        mFirebaseUtil.mFirestore.collection("interest_feed").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            List<DocumentSnapshot> interest_feed_docs;
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                interest_feed_docs=task.getResult().getDocuments();
+
+                                for (DocumentSnapshot documentSnap:interest_feed_docs) {
+                                    Map<String, Object> interestFeedData = documentSnap.getData();
+
+                                    String postInterest = (String) interestFeedData.get("interest");
+                                    if(userInterest.equals(postInterest)){
+                                        interestFeed=new InterestFeed();
+                                        interestFeed.setFeedItemId((String) interestFeedData.get("feedItemId"));
+                                        interestFeed.setPublisherId((String) interestFeedData.get("publisherId"));
+                                        interestFeed.setFeedType((String) interestFeedData.get("feedType"));
+
+                                        interestFeeds.add(interestFeed);
+                                    }
+                                }
+
+
+                                Log.d("interest feeds", interestFeeds.toString());
+                                if(i!=1)
+
+                                for (final InterestFeed interestFeed: interestFeeds) {
+                                    i=1;
+
+                                    if(interestFeed.getFeedType().equals("posts")) {
+
+                                        mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
+                                                .collection("posts").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                DocumentSnapshot documentSnapshot = task.getResult();
+                                                Post post=documentSnapshot.toObject(Post.class);
+                                                mFeedItems.add(post);
+                                                mAdapter.notifyDataSetChanged();
+                                            }
+                                        });
+
+                                    }else{
+                                        //questions
+                                    }
+                                }
+
+
+                            }
+
+
+                        });
+                    }
+                }
 
 
             }
