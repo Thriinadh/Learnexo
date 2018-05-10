@@ -51,12 +51,27 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
+        View view;
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_list_item, parent, false);
-        View view1 = LayoutInflater.from(parent.getContext()).inflate(R.layout.ques_with_no_ans, parent, false);
         switch (viewType) {
-            case 0: return new PostHolder(view);
-            case 1: return new QuesViewHolder(view1);
+            case FeedItem.POST:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_list_item, parent, false);
+                return new PostHolder(view);
+
+            case FeedItem.QUESTION:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ques_with_no_ans, parent, false);
+                return new QuesViewHolder(view);
+
+            case FeedItem.CHALLENGE:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ques_with_no_ans, parent, false);
+                return new QuesViewHolder(view);
+            case FeedItem.NO_ANS_QUES:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ques_with_no_ans, parent, false);
+                return new QuesViewHolder(view);
+
+            case FeedItem.NO_ANS_CHALLENGE:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ques_with_no_ans, parent, false);
+                return new QuesViewHolder(view);
 
         }
         return null;
@@ -75,8 +90,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             final String timeAgo = convertDateToAgo(feedItem.getPublishTime());
             publisher.setUserId(publisherId);
 
-            switch (holder.getItemViewType()) {
-                case 0:
+            switch (feedItem.getType()) {
+                case FeedItem.POST:
                     PostHolder postHolder = (PostHolder) holder;
 
                     bindPost(postHolder, itemContent, imagePosted, timeAgo);
@@ -87,7 +102,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                     break;
 
-                case 1:
+                case FeedItem.QUESTION:
                     QuesViewHolder quesViewHolder = (QuesViewHolder) holder;
 
                     bindQuestion(quesViewHolder, itemContent, timeAgo);
@@ -97,6 +112,37 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     questionOverflowListener(quesViewHolder, publisher, feedItem);
 
                     break;
+
+                case FeedItem.CHALLENGE:
+//                    QuesViewHolder quesViewHolder = (QuesViewHolder) holder;
+//
+//                    bindQuestion(quesViewHolder, itemContent, timeAgo);
+//                    bindQuestionUserData(quesViewHolder, publisher);
+//
+//                    questionContentListener(quesViewHolder, itemContent, imagePosted, timeAgo);
+//                    questionOverflowListener(quesViewHolder, publisher, feedItem);
+//
+//                    break;
+                case FeedItem.NO_ANS_QUES:
+//                    QuesViewHolder quesViewHolder = (QuesViewHolder) holder;
+//
+//                    bindQuestion(quesViewHolder, itemContent, timeAgo);
+//                    bindQuestionUserData(quesViewHolder, publisher);
+//
+//                    questionContentListener(quesViewHolder, itemContent, imagePosted, timeAgo);
+//                    questionOverflowListener(quesViewHolder, publisher, feedItem);
+//
+//                    break;
+                case FeedItem.NO_ANS_CHALLENGE:
+//                    QuesViewHolder quesViewHolder = (QuesViewHolder) holder;
+//
+//                    bindQuestion(quesViewHolder, itemContent, timeAgo);
+//                    bindQuestionUserData(quesViewHolder, publisher);
+//
+//                    questionContentListener(quesViewHolder, itemContent, imagePosted, timeAgo);
+//                    questionOverflowListener(quesViewHolder, publisher, feedItem);
+//
+//                    break;
             }
 
         }
