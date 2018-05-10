@@ -26,6 +26,7 @@ import com.learnexo.main.TabsActivity;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.InterestFeed;
 import com.learnexo.model.feed.post.Post;
+import com.learnexo.model.feed.question.Question;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
@@ -179,7 +180,16 @@ public class FeedFragment extends Fragment {
                                         });
 
                                     }else{
-                                        //questions
+                                        mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
+                                                .collection("questions").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                DocumentSnapshot documentSnapshot = task.getResult();
+                                                Question question=documentSnapshot.toObject(Question.class);
+                                                mFeedItems.add(question);
+                                                mAdapter.notifyDataSetChanged();
+                                            }
+                                        });
                                     }
                                 }
 

@@ -157,8 +157,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             String name = snapshot.getString("firstName");
                             name=name.concat(" "+snapshot.getString("lastName"));
                             String image = snapshot.getString("dpUrl");
-                            holder.setUserData(name, image);
-
                             user.setDpUrl(image);
                             user.setFirstName(name);
 
@@ -452,17 +450,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             overflowImgView = mView.findViewById(R.id.quesOverFlow);
         }
 
-        public void setUserData(String name, String image) {
-            userName = mView.findViewById(R.id.userNameTView);
-            userName.setText(name);
-
-            userImage = mView.findViewById(R.id.feed_user_image);
-            RequestOptions placeholderOption = new RequestOptions();
-            placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
-            if (image!=null&&null!=quesContent)
-                Glide.with(context).load(image).apply(placeholderOption).into(userImage);
-
-        }
 
     }
 

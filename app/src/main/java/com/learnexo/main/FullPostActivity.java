@@ -63,8 +63,9 @@ public class FullPostActivity extends AppCompatActivity {
 
         Intent intent = new Intent(context, FullPostActivity.class);
         intent.putExtra(EXTRA_CONTENT,content);
-        intent.putExtra(EXTRA_IMAGE, publishedImg);
         intent.putExtra(EXTRA_TIME, timeAgo);
+        if(publishedImg!=null)
+            intent.putExtra(EXTRA_IMAGE, publishedImg);
         return intent;
     }
 }

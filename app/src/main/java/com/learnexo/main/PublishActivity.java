@@ -78,7 +78,7 @@ public class PublishActivity extends AppCompatActivity {
     private Button galleryBtn;
     private AppCompatSpinner spinner;
     private String tag;
-    private String name;
+    private String mPublisherName =FeedFragment.sName;
 
     private Bitmap mBitmap;
 
@@ -163,7 +163,7 @@ public class PublishActivity extends AppCompatActivity {
             post.setContent(content);
             post.setTags(Collections.singletonList(tag));
             post.setUserId(mUserId);
-            post.setUserName(name);
+            post.setUserName(mPublisherName);
 
             if(mPublishedImageUri != null) {
                 saveImagetoStorage(getString(R.string.post_images));
@@ -175,7 +175,7 @@ public class PublishActivity extends AppCompatActivity {
             question.setContent(content);
             question.setTags(Collections.singletonList(tag));
             question.setUserId(mUserId);
-            question.setUserName(name);
+            question.setUserName(mPublisherName);
 
             if(mPublishedImageUri != null) {
                 saveImagetoStorage(getString(R.string.question_images));
