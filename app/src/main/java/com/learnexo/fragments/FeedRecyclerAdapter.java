@@ -28,7 +28,9 @@ import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -36,6 +38,7 @@ import static com.learnexo.util.DateUtil.convertDateToAgo;
 
 public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.FeedItemHolder> {
 
+    BottomSheetDialog mDialog;
     private List<FeedItem> mFeedItems;
     private Context context;
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
@@ -112,6 +115,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         holder.setOverflowImgView();
         holder.overflowImgView.setOnClickListener(new View.OnClickListener() {
 
+            private TextView followTView;
+            private LinearLayout followBtnLayout;
             private LinearLayout deleteBtnLayout;
             private LinearLayout editBtnLayout;
             private LinearLayout copyBtnLayout;
@@ -123,37 +128,64 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
                 View bottomSheetView = View.inflate(context, R.layout.bottom_sheet_dialog_for_sharedposts, null);
 
-                BottomSheetDialog dialog = new BottomSheetDialog(context);
-                dialog.setContentView(bottomSheetView);
-                dialog.show();
+
+                mDialog = new BottomSheetDialog(context);
+                mDialog.setContentView(bottomSheetView);
+                mDialog.show();
 
                 inflateBottomSheetButtons(bottomSheetView);
             }
 
             private void inflateBottomSheetButtons(View bottomSheetView) {
 
+                followTView = bottomSheetView.findViewById(R.id.followTView);
+                followBtnLayout = bottomSheetView.findViewById(R.id.followUser);
                 deleteBtnLayout = bottomSheetView.findViewById(R.id.deleteBtn);
                 editBtnLayout = bottomSheetView.findViewById(R.id.editNameBtn);
                 copyBtnLayout = bottomSheetView.findViewById(R.id.copyBtn);
                 notifBtnLayout =  bottomSheetView.findViewById(R.id.notifBtn);
                 connectBtnLayout =  bottomSheetView.findViewById(R.id.connectBtn);
 
-                deleteBtnLayout.setOnClickListener(new View.OnClickListener() {
+                followBtnLayout.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View view) {
 
-                       mFirebaseUtil.mFirestore.collection("users").document(publisher.getUserId()).collection("posts").document().delete()
+                        final Map<String, Object> followingUser = new HashMap<>();
+                        followingUser.put("name", publisher.getFirstName());
+                        followingUser.put("dpUrl", publisher.getDpUrl());
+
+                       mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+                               .collection("following").document(publisher.getUserId()).set(followingUser)
                                .addOnSuccessListener(new OnSuccessListener<Void>() {
                            @Override
                            public void onSuccess(Void aVoid) {
+                               followingUser.put("name", FeedFragment.sName);
+                               followingUser.put("dpUrl", FeedFragment.sDpUrl);
+                               mFirebaseUtil.mFirestore.collection("users").document(publisher.getUserId())
+                                       .collection("followers").document(FirebaseUtil.getCurrentUserId()).set(followingUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                   @Override
+                                   public void onSuccess(Void aVoid) {
 
-                               Toast.makeText(context, "deleted", Toast.LENGTH_LONG).show();
+                                       followTView.setText("Unfollow");
+                                       mDialog.dismiss();
+                                       Toast.makeText(context, "Now You are following "+publisher.getFirstName(), Toast.LENGTH_LONG).show();
+
+                                   }
+                               }).addOnFailureListener(new OnFailureListener() {
+                                   @Override
+                                   public void onFailure(@NonNull Exception e) {
+                                       Toast.makeText(context, "SomethingWentWrong", Toast.LENGTH_LONG).show();
+                                   }
+                               });
+
 
                            }
                        }).addOnFailureListener(new OnFailureListener() {
                            @Override
                            public void onFailure(@NonNull Exception e) {
+
+                               Toast.makeText(context, "SomethingWentWrong", Toast.LENGTH_LONG).show();
 
                                Log.d("FeedAdapter", "SomethingWentWrong "+e);
 

@@ -74,4 +74,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
 
+    <TextView
+        android:id="@+id/seeMore"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="See more"
+        android:textSize="18sp"
+        android:background="@android:color/transparent"
+        android:textAlignment="viewEnd"
+        app:layout_constraintBottom_toBottomOf="@+id/answerContent"
+        app:layout_constraintEnd_toEndOf="@+id/answerContent"
+        app:layout_constraintStart_toStartOf="@+id/answerContent"
+        android:layout_gravity="end" />
+
 </android.support.constraint.ConstraintLayout>

@@ -80,7 +80,7 @@
         app:layout_constraintTop_toBottomOf="@+id/postedTime" />
 
     <TextView
-        android:id="@+id/follow"
+        android:id="@+id/followQues"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
