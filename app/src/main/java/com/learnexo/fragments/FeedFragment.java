@@ -159,8 +159,6 @@ public class FeedFragment extends Fragment {
                                     }
                                 }
 
-
-                                Log.d("interest feeds", interestFeeds.toString());
                                 if(i!=1)
 
                                 for (final InterestFeed interestFeed: interestFeeds) {

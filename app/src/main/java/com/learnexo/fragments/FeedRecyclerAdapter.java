@@ -57,8 +57,9 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         switch (viewType) {
             case 0: return new PostHolder(view);
             case 1: return new QuesViewHolder(view1);
-            default: return new PostHolder(view);
+
         }
+        return null;
 
     }
 
@@ -66,38 +67,60 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
 
         FeedItem feedItem=mFeedItems.get(position);
-        User publisher=new User();
-        final String publisherId = feedItem.getUserId();
-        final String itemContent = feedItem.getContent();
-        final String imagePosted = feedItem.getImgUrl();
-        final String timeAgo = convertDateToAgo(feedItem.getPublishTime());
-        publisher.setUserId(publisherId);
+        if(feedItem!=null) {
+            User publisher = new User();
+            final String publisherId = feedItem.getUserId();
+            final String itemContent = feedItem.getContent();
+            final String imagePosted = feedItem.getImgUrl();
+            final String timeAgo = convertDateToAgo(feedItem.getPublishTime());
+            publisher.setUserId(publisherId);
 
-        switch (holder.getItemViewType()) {
-            case 0:
-                PostHolder postHolder = (PostHolder) holder;
+            switch (holder.getItemViewType()) {
+                case 0:
+                    PostHolder postHolder = (PostHolder) holder;
 
-                bindPost(postHolder, itemContent, imagePosted, timeAgo);
-                bindPostUserData(postHolder, publisher);
+                    bindPost(postHolder, itemContent, imagePosted, timeAgo);
+                    bindPostUserData(postHolder, publisher);
 
-                postContentListener(postHolder, itemContent, imagePosted, timeAgo);
-                postOverflowListener(postHolder,publisher, feedItem);
+                    postContentListener(postHolder, itemContent, imagePosted, timeAgo);
+                    postOverflowListener(postHolder, publisher, feedItem);
 
-                break;
+                    break;
 
-            case 1:
-                QuesViewHolder quesViewHolder = (QuesViewHolder) holder;
+                case 1:
+                    QuesViewHolder quesViewHolder = (QuesViewHolder) holder;
 
-                bindQuestion(quesViewHolder, itemContent, timeAgo);
-                bindQuestionUserData(quesViewHolder, publisher);
+                    bindQuestion(quesViewHolder, itemContent, timeAgo);
+                    bindQuestionUserData(quesViewHolder, publisher);
 
-                questionContentListener(quesViewHolder, itemContent, imagePosted, timeAgo);
-                questionOverflowListener(quesViewHolder,publisher, feedItem);
+                    questionContentListener(quesViewHolder, itemContent, imagePosted, timeAgo);
+                    questionOverflowListener(quesViewHolder, publisher, feedItem);
 
-                break;
+                    break;
+            }
+
         }
+    }
+    @Override
+    public int getItemViewType(int position) {
+        int type=0;
+        if(mFeedItems.get(position)!=null)
+           type = mFeedItems.get(position).getType();
 
-
+        switch (type) {
+            case 0:
+                return FeedItem.POST;
+            case 1:
+                return FeedItem.QUESTION;
+            case 2:
+                return FeedItem.CHALLENGE;
+            case 3:
+                return FeedItem.NO_ANS_QUES;
+            case 4:
+                return FeedItem.NO_ANS_CHALLENGE;
+            default:
+                return -1;
+        }
     }
 
     private void postContentListener(@NonNull PostHolder holder, final String itemContent, final String imagePosted, final String timeAgo) {
@@ -453,10 +476,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     }
 
-    @Override
-    public int getItemViewType(int position) {
 
-        return position % 2 ;
-    }
 
 }

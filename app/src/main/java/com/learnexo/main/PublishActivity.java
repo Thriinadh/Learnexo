@@ -164,6 +164,7 @@ public class PublishActivity extends AppCompatActivity {
             post.setTags(Collections.singletonList(tag));
             post.setUserId(mUserId);
             post.setUserName(mPublisherName);
+            post.setType(FeedItem.POST);
 
             if(mPublishedImageUri != null) {
                 saveImagetoStorage(getString(R.string.post_images));
@@ -176,6 +177,12 @@ public class PublishActivity extends AppCompatActivity {
             question.setTags(Collections.singletonList(tag));
             question.setUserId(mUserId);
             question.setUserName(mPublisherName);
+
+
+            if(publishType.equals(getString(R.string.askYourQuestion))){
+                question.setType(FeedItem.NO_ANS_QUES);
+            }else
+                question.setType(FeedItem.NO_ANS_CHALLENGE);
 
             if(mPublishedImageUri != null) {
                 saveImagetoStorage(getString(R.string.question_images));
