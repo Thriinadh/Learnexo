@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
@@ -47,6 +48,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -54,16 +57,13 @@ public class MainActivity extends AppCompatActivity {
     private static final int GOOGLE_SIGN_IN_REQ_CODE = 1;
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    public static String photoUrl;
-    public static String displayName;
-    public static String googleEmail;
-    public static String googlePhNo;
+    private String photoUrl;
+    private String displayName;
+    private String googleEmail;
+    private String googlePhNo;
 
     private EditText loginEmail;
     private EditText loginPass;
-
-//    private TextInputLayout loginEmailTIL;
-//    private TextInputLayout loginPassTIL;
 
     private ConstraintLayout mConstraintLayout;
     private Snackbar snackbar;
@@ -281,9 +281,6 @@ public class MainActivity extends AppCompatActivity {
         loginPass = findViewById(R.id.loginPass);
         forgotPassTView = findViewById(R.id.forgotPassTView);
 
-//        loginEmailTIL = findViewById(R.id.loginEmailTIL);
-//        loginPassTIL = findViewById(R.id.loginPassTIL);
-
         mConstraintLayout = findViewById(R.id.constraintLayout);
 
         mGoogleBtn = findViewById(R.id.googleBtn);
@@ -315,7 +312,20 @@ public class MainActivity extends AppCompatActivity {
                                     displayName = (FirebaseUtil.getCurrentUser().getDisplayName());
                                     googleEmail = (FirebaseUtil.getCurrentUser().getEmail());
                                     googlePhNo = (FirebaseUtil.getCurrentUser().getPhoneNumber());
-                                gotoFeed();
+
+                                Map<String, String> userMap = new HashMap<>();
+                                userMap.put("firstName", displayName);
+                                userMap.put("emailId", googleEmail);
+                                userMap.put("googleDpUri", photoUrl);
+                                userMap.put("googlePhNo", googlePhNo);
+
+                                mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("reg_details")
+                                        .document("doc").set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        gotoFeed();
+                                    }
+                                });
                             }
                         } else {
                             // If sign in fails, display a message to the user.

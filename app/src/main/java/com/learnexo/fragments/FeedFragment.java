@@ -217,8 +217,7 @@ public class FeedFragment extends Fragment {
                         placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL)
                                 .placeholder(R.drawable.empty_profilee);
 
-                        sDpUrl = (null==MainActivity.photoUrl)? snapshot
-                                .getString("dpUrl"):MainActivity.photoUrl;
+                        sDpUrl =  snapshot.getString("dpUrl");
 
                         if (sDpUrl !=null&&null!=getActivity()) {
                             Glide.with(getActivity().getApplicationContext()).load(sDpUrl).apply(placeholderRequest).into(mCircleImageView);

@@ -76,6 +76,7 @@ public class SetupActivity extends AppCompatActivity {
             getFromFirebaseAndSet();
 
         profileImageListener();
+
         setupBtnListener();
 
     }
