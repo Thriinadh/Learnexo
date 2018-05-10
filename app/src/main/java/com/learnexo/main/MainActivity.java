@@ -184,13 +184,6 @@ public class MainActivity extends AppCompatActivity {
             GoogleSignInAccount account = task.getResult(ApiException.class);
 
             if (account != null) {
-//                String personName = account.getDisplayName();
-//                String personGivenName = account.getGivenName();
-//                String personFamilyName = account.getFamilyName();
-//                String personEmail = account.getEmail();
-//                String personId = account.getId();
-//                Uri personPhoto = account.getPhotoUrl();
-
                 checkGoogleAccInFirebase(account);
             }
 
@@ -296,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void checkGoogleAccInFirebase(GoogleSignInAccount account) {
+    private void checkGoogleAccInFirebase(final GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
 
         FirebaseUtil.sAuth.signInWithCredential(credential)
@@ -308,16 +301,15 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "GoogleSignInWithCredential:success");
 
                             if(FirebaseUtil.doesUserExist()) {
-                                    photoUrl = (FirebaseUtil.getCurrentUser().getPhotoUrl()).toString();
-                                    displayName = (FirebaseUtil.getCurrentUser().getDisplayName());
-                                    googleEmail = (FirebaseUtil.getCurrentUser().getEmail());
-                                    googlePhNo = (FirebaseUtil.getCurrentUser().getPhoneNumber());
+                                    photoUrl = account.getPhotoUrl().toString();
+                                    displayName = account.getDisplayName();
+                                    googleEmail = account.getEmail();
 
                                 Map<String, String> userMap = new HashMap<>();
                                 userMap.put("firstName", displayName);
+                                userMap.put("lastName", "");
                                 userMap.put("emailId", googleEmail);
                                 userMap.put("googleDpUri", photoUrl);
-                                userMap.put("googlePhNo", googlePhNo);
 
                                 mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("reg_details")
                                         .document("doc").set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
