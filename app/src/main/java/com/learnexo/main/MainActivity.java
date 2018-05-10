@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
     private String photoUrl;
     private String displayName;
     private String googleEmail;
-    private String googlePhNo;
 
     private EditText loginEmail;
     private EditText loginPass;

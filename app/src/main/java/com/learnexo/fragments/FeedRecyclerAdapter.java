@@ -25,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.main.FullPostActivity;
 import com.learnexo.main.R;
 import com.learnexo.model.feed.FeedItem;
+import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.List;
@@ -55,17 +56,19 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     @Override
     public void onBindViewHolder(@NonNull final FeedItemHolder holder, int position) {
         FeedItem feedItem=mFeedItems.get(position);
-
-        final String user_id = feedItem.getUserId();
+        User publisher=new User();
+        final String publisherId = feedItem.getUserId();
         final String itemContent = feedItem.getContent();
         final String imagePosted = feedItem.getImgUrl();
         final String timeAgo = convertDateToAgo(feedItem.getPublishTime());
 
+        publisher.setUserId(publisherId);
+
         bind(holder, itemContent, imagePosted, timeAgo);
-        bindUserData(holder, user_id);
+        bindUserData(holder, publisher);
 
         contentListener(holder, itemContent, imagePosted, timeAgo);
-        overflowImgViewListener(holder, user_id);
+        overflowImgViewListener(holder,publisher, feedItem);
 
 
     }
@@ -80,8 +83,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         });
     }
 
-    private void bindUserData(@NonNull final FeedItemHolder holder, String user_id) {
-        mFirebaseUtil.mFirestore.collection("users").document(user_id).
+    private void bindUserData(@NonNull final FeedItemHolder holder, final User user) {
+        mFirebaseUtil.mFirestore.collection("users").document(user.getUserId()).
                 collection("reg_details").document("doc").get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -94,6 +97,9 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
                         String image = snapshot.getString("dpUrl");
                         holder.setUserData(name, image);
 
+                        user.setDpUrl(image);
+                        user.setFirstName(name);
+
                 } else {
                     // Error handling here
                 }
@@ -102,7 +108,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         });
     }
 
-    private void overflowImgViewListener(@NonNull FeedItemHolder holder, final String user_id) {
+    private void overflowImgViewListener(@NonNull FeedItemHolder holder, final User publisher, final FeedItem feedItem) {
         holder.setOverflowImgView();
         holder.overflowImgView.setOnClickListener(new View.OnClickListener() {
 
@@ -137,7 +143,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
                     @Override
                     public void onClick(View view) {
 
-                       mFirebaseUtil.mFirestore.collection("users").document(user_id).collection("posts").document().delete()
+                       mFirebaseUtil.mFirestore.collection("users").document(publisher.getUserId()).collection("posts").document().delete()
                                .addOnSuccessListener(new OnSuccessListener<Void>() {
                            @Override
                            public void onSuccess(Void aVoid) {
@@ -185,6 +191,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         private CircleImageView userImage;
         private ImageView overflowImgView;
         private ImageView postedImgView;
+
 
         // FeedItemHolder constructor
         public FeedItemHolder(View itemView) {
