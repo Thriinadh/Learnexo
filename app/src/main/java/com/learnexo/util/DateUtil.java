@@ -42,7 +42,7 @@ public class DateUtil {
                     else
                         return years + " year ago";
                 }
-                return days + " days ago";
+                return days + "d ago";
             }
         }
         return null;

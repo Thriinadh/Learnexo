@@ -70,6 +70,8 @@ public class SetupActivity extends AppCompatActivity {
 
         wireViews();
 
+        googleNfbDpSetup();
+
         skipNgotoFeed();
 
         if(is_profile_edit)
@@ -79,6 +81,38 @@ public class SetupActivity extends AppCompatActivity {
 
         setupBtnListener();
 
+    }
+
+    private void googleNfbDpSetup() {
+        mFirebaseUtil.mFirestore.collection("users").document(user_id).
+                collection("reg_details").document("doc").get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot snapshot = task.getResult();
+                        if (task.isSuccessful()) {
+                            if (snapshot.exists()) {
+                                String googleImage = snapshot.getString("googleDpUri");
+                                String fbImage = snapshot.getString("fbDpUri");
+                                if (googleImage != null)
+                                    mainImageURI = Uri.parse(googleImage);
+                                else if(fbImage != null)
+                                    mainImageURI = Uri.parse(fbImage);
+
+                                RequestOptions placeholderRequest = new RequestOptions();
+                                placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
+
+                                Glide.with(getApplicationContext())
+                                        .load(mainImageURI).apply(placeholderRequest).into(setupImage);
+                            }
+
+                        } else {
+                            String errorMsg;
+                                errorMsg = task.getException().getMessage();
+                            Toast.makeText(SetupActivity.this, "Firestore Retrieve Error : " + errorMsg, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 
     @Override
@@ -215,12 +249,10 @@ public class SetupActivity extends AppCompatActivity {
                             mainImageURI = Uri.parse(image);
 
                         SetupActivity.this.description.setText(description);
-                       // SetupActivity.this.description.setEnabled(false);
                         SetupActivity.this.description.setTextColor(Color.BLACK);
 
                         RequestOptions placeholderRequest = new RequestOptions();
                         placeholderRequest.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
-                      //  setupImage.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
 
                         Glide.with(getApplicationContext())
                                 .load(image).apply(placeholderRequest).into(setupImage);

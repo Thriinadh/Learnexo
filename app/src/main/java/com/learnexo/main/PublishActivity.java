@@ -153,7 +153,8 @@ public class PublishActivity extends AppCompatActivity {
                         saveFeedItem(content,publishType);
 
                     }
-                }
+                } else if(!TextUtils.isEmpty(content) && tag == null)
+                    Toast.makeText(PublishActivity.this, "Tag must not be empty", Toast.LENGTH_SHORT).show();
             }
         });
     }

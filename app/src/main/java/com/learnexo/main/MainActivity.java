@@ -356,9 +356,9 @@ public class MainActivity extends AppCompatActivity {
                                         displayName = profile.getDisplayName();
                                         googleEmail = profile.getEmail();
                                         photoUrlFb = profile.getPhotoUrl().toString();
+                                        //photoUrl = "https://graph.facebook.com/" + facebookUserId + "/picture?height=500";
                                     }
                                 }
-                                    //photoUrl = "https://graph.facebook.com/" + facebookUserId + "/picture?height=500";
 
                                 Map<String, String> userMap = new HashMap<>();
                                 userMap.put("firstName", displayName);
