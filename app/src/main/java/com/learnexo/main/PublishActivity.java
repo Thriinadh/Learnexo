@@ -179,11 +179,10 @@ public class PublishActivity extends AppCompatActivity {
             question.setUserId(mUserId);
             question.setUserName(mPublisherName);
 
-
             if(publishType.equals(getString(R.string.askYourQuestion))){
                 question.setType(FeedItem.NO_ANS_QUES);
             }else
-                question.setType(FeedItem.NO_ANS_CHALLENGE);
+                question.setType(FeedItem.NO_CRACK_CHALLENGE);
 
             if(mPublishedImageUri != null) {
                 saveImagetoStorage(getString(R.string.question_images));
@@ -276,7 +275,7 @@ public class PublishActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     gotoFeed();
 
-                    saveInterestFeedItem(mFeedItem, documentReferenceTask, interestFeedPath, path);
+                    saveInterestFeedItem(mFeedItem, documentReferenceTask, interestFeedPath, mFeedItem.getType());
 
                 } else {
                     String error = task.getException().getMessage();
@@ -294,12 +293,12 @@ public class PublishActivity extends AppCompatActivity {
         });
     }
 
-    private void saveInterestFeedItem(FeedItem mFeedItem, Task<DocumentReference> documentReferenceTask, String interestFeedPath, String path) {
+    private void saveInterestFeedItem(FeedItem mFeedItem, Task<DocumentReference> documentReferenceTask, String interestFeedPath, int type) {
         InterestFeed interestFeed=new InterestFeed();
 
         interestFeed.setInterest(mFeedItem.getTags().get(0));
         interestFeed.setPublisherId(mUserId);
-        interestFeed.setFeedType(path);
+        interestFeed.setFeedType(type);
         interestFeed.setFeedItemId(documentReferenceTask.getResult().getId());
 
         mFirebaseUtil.mFirestore.collection(interestFeedPath).add(interestFeed);

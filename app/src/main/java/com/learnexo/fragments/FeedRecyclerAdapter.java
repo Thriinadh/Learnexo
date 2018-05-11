@@ -63,7 +63,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case 3:
                 return FeedItem.NO_ANS_QUES;
             case 4:
-                return FeedItem.NO_ANS_CHALLENGE;
+                return FeedItem.NO_CRACK_CHALLENGE;
             default:
                 return -1;
         }
@@ -84,15 +84,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 return new AnswerHolder(view);
 
             case FeedItem.CRACK:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ans_list_item, parent, false);//change this
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.crack_list_item, parent, false);//change this
                 return new AnswerHolder(view);
 
             case FeedItem.NO_ANS_QUES:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ans_list_item, parent, false);//change this
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.no_ans_ques_item, parent, false);//change this
                 return new AnswerHolder(view);
 
-            case FeedItem.NO_ANS_CHALLENGE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ans_list_item, parent, false);//change this
+            case FeedItem.NO_CRACK_CHALLENGE:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.no_crack_challenge_item, parent, false);//change this
                 return new AnswerHolder(view);
 
         }
@@ -106,6 +106,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         FeedItem feedItem = mFeedItems.get(position);
 
         if(feedItem!=null) {
+//            Department0 Java 0
+//            Department0 Java 0
 
             User publisher = new User();
             final String publisherId = feedItem.getUserId();
@@ -157,7 +159,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 //                    questionOverflowListener(quesViewHolder, publisher, feedItem);
 //
                     break;
-                case FeedItem.NO_ANS_CHALLENGE:
+                case FeedItem.NO_CRACK_CHALLENGE:
 //                    AnswerHolder quesViewHolder = (AnswerHolder) holder;
 //
 //                    bindQuestion(quesViewHolder, itemContent, timeAgo);

@@ -4,13 +4,13 @@ public class InterestFeed {
     private String interest;
     private String feedItemId;
     private String publisherId;
-    private String feedType;
+    private int feedType;
 
-    public String getFeedType() {
+    public int getFeedType() {
         return feedType;
     }
 
-    public void setFeedType(String feedType) {
+    public void setFeedType(int feedType) {
         this.feedType = feedType;
     }
 

@@ -25,6 +25,7 @@ import com.learnexo.main.R;
 import com.learnexo.main.TabsActivity;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.InterestFeed;
+import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.util.FirebaseUtil;
@@ -153,7 +154,8 @@ public class FeedFragment extends Fragment {
                                         interestFeed=new InterestFeed();
                                         interestFeed.setFeedItemId((String) interestFeedData.get("feedItemId"));
                                         interestFeed.setPublisherId((String) interestFeedData.get("publisherId"));
-                                        interestFeed.setFeedType((String) interestFeedData.get("feedType"));
+//
+                                        interestFeed.setFeedType(((Long)interestFeedData.get("feedType")).intValue());
 
                                         interestFeeds.add(interestFeed);
                                     }
@@ -164,31 +166,91 @@ public class FeedFragment extends Fragment {
                                 for (final InterestFeed interestFeed: interestFeeds) {
                                     i=1;
 
-                                    if(interestFeed.getFeedType().equals("posts")) {
-
+                                    switch (interestFeed.getFeedType()){
+                                        case FeedItem.POST:
                                         mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
                                                 .collection("posts").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                 DocumentSnapshot documentSnapshot = task.getResult();
                                                 Post post=documentSnapshot.toObject(Post.class);
-                                                mFeedItems.add(post);
+                                                if(post!=null)
+                                                    mFeedItems.add(post);
                                                 mAdapter.notifyDataSetChanged();
                                             }
                                         });
+                                        break;
 
-                                    }else{
-                                        mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
-                                                .collection("questions").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                DocumentSnapshot documentSnapshot = task.getResult();
-                                                Question question=documentSnapshot.toObject(Question.class);
-                                                mFeedItems.add(question);
-                                                mAdapter.notifyDataSetChanged();
-                                            }
-                                        });
+                                        case FeedItem.ANSWER:
+
+                                            mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
+                                                    .collection("answers").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    DocumentSnapshot documentSnapshot = task.getResult();
+
+                                                    Answer answer=documentSnapshot.toObject(Answer.class);
+                                                    if(answer!=null)
+                                                        mFeedItems.add(answer);
+                                                    mAdapter.notifyDataSetChanged();
+                                                }
+                                            });
+                                            break;
+
+
+                                        case FeedItem.CRACK:
+
+                                            mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
+                                                    .collection("answers").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    DocumentSnapshot documentSnapshot = task.getResult();
+
+                                                    Answer crack=documentSnapshot.toObject(Answer.class);
+                                                    if(crack!=null)
+                                                        mFeedItems.add(crack);
+                                                    mAdapter.notifyDataSetChanged();
+                                                }
+                                            });
+                                            break;
+
+                                        case FeedItem.NO_ANS_QUES:
+
+                                            mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
+                                                    .collection("questions").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    DocumentSnapshot documentSnapshot = task.getResult();
+
+                                                    Question noAnsQuestion=documentSnapshot.toObject(Question.class);
+                                                    if(noAnsQuestion!=null)
+                                                        mFeedItems.add(noAnsQuestion);
+                                                    mAdapter.notifyDataSetChanged();
+                                                }
+                                            });
+                                            break;
+
+                                        case FeedItem.NO_CRACK_CHALLENGE:
+
+                                            mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
+                                                    .collection("questions").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    DocumentSnapshot documentSnapshot = task.getResult();
+
+                                                    Question noCrackChallenge=documentSnapshot.toObject(Question.class);
+                                                    if(noCrackChallenge!=null)
+                                                        mFeedItems.add(noCrackChallenge);
+                                                    mAdapter.notifyDataSetChanged();
+                                                }
+                                            });
+                                            break;
+
+
                                     }
+
+
+
                                 }
 
 
