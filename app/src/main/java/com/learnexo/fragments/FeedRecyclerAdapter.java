@@ -704,6 +704,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private View mView;
         private TextView challenge;
         private TextView timeAgo;
+        private TextView noCracksYet;
         private ImageView challengeIcon;
         private TextView answer;
 
@@ -718,6 +719,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         public void wireViews(){
+            noCracksYet = mView.findViewById(R.id.noAnswerYet);
+            noCracksYet.setText("No Cracks Yet");
             challenge = mView.findViewById(R.id.questionTView);
             timeAgo = mView.findViewById(R.id.postedTime);
             challengeIcon = mView.findViewById(R.id.imageView2);
