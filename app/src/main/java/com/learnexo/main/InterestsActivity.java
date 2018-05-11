@@ -2,12 +2,14 @@ package com.learnexo.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -232,7 +234,6 @@ public class InterestsActivity extends AppCompatActivity {
             MyBounceInterpolator interpolator = new MyBounceInterpolator(0.1, 20);
             myAnim.setInterpolator(interpolator);
 
-
             holder.mSubjectCheckbox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -253,8 +254,20 @@ public class InterestsActivity extends AppCompatActivity {
 
                         if (interestMap.size() >= 4) {
                             nextBtn.setEnabled(true);
-                        }else{
-                            nextBtn.setEnabled(false);
+                           View view1 = findViewById(R.id.action_button);
+                            if (view1 != null && view1 instanceof TextView) {
+                                 view1.setBackgroundColor( Color.parseColor("#6699ff") );
+                                 ((TextView) view1).setTextColor(Color.parseColor("#ffffff"));// Make text colour blue
+                               // ((TextView) view1).setTextSize(TypedValue.COMPLEX_UNIT_SP, 24); // Increase font size
+                            }
+                        }else {
+                            View view1 = findViewById(R.id.action_button);
+                            if (view1 != null && view1 instanceof TextView) {
+                                view1.setBackgroundColor(Color.WHITE);
+                                ((TextView) view1).setTextColor(Color.LTGRAY);// Make text colour blue
+                                // ((TextView) view1).setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
+                                nextBtn.setEnabled(false);
+                            }
                         }
 
                     }

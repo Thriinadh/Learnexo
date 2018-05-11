@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="@color/white"
+        android:elevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -34,8 +35,6 @@
         android:id="@+id/constraintLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:civ_border_width="2dp"
-        app:civ_border_color="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -45,12 +44,14 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/smallCircleImageView"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:src="@drawable/empty_profilee"
+            app:civ_border_width="1dp"
+            app:civ_border_color="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -62,6 +63,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:text="Username"
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/smallCircleImageView"
@@ -101,46 +103,47 @@
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintKeyboard"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="40dp"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/background_border"
+            android:background="@color/light_grey"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <Button
+            <ImageView
                 android:id="@+id/gallery_btn"
-                android:layout_width="42dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
-                android:background="@drawable/gallery"
+                android:background="@drawable/ic_camera"
+                android:backgroundTint="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.v7.widget.AppCompatSpinner
+            <Spinner
                 android:id="@+id/spinner"
                 android:layout_width="128dp"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="8dp"
                 android:layout_marginLeft="24dp"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp"
-                android:entries="@array/subject_names"
-                android:prompt="@string/subject_tag"
+                style="@style/spinner_style"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/gallery_btn"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0" />
 
-            <Button
+            <TextView
                 android:id="@+id/post_button"
-                android:layout_width="wrap_content"
-                android:layout_height="42dp"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
                 android:text="Post"
+                android:textSize="18sp"
                 android:textColor="@color/black"
+                android:background="#bfbfbf"
+                android:gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -150,9 +153,9 @@
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintKeyboardIn"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="40dp"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/background_border"
+            android:background="@color/light_grey"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

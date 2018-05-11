@@ -68,7 +68,7 @@ public class TabsActivity extends AppCompatActivity {
     private ViewPagerAdapter mAdapter;
 
     private int[] tabIcons = {
-            R.drawable.home_icon,
+            R.drawable.hhome_icon,
             R.drawable.video_icon,
             R.drawable.hot_icon,
             R.drawable.connect_icon,
@@ -263,12 +263,11 @@ public class TabsActivity extends AppCompatActivity {
                     public void onTabSelected(TabLayout.Tab tab) {
                         super.onTabSelected(tab);
 
-                            tab.getIcon().setColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN);
+                            tab.getIcon().setColorFilter(Color.parseColor("#0a6ca9"), PorterDuff.Mode.SRC_IN);
 
                         hideCardviewInFeedFragmentWhenUsergoesToOtherTabs();
                         setToolbarTitle(tab);
                     }
-
 
                     @Override
                     public void onTabUnselected(TabLayout.Tab tab) {
@@ -492,11 +491,11 @@ public class TabsActivity extends AppCompatActivity {
             tabLayout.getTabAt(3).setIcon(tabIcons[3]);
             tabLayout.getTabAt(4).setIcon(tabIcons[4]);
 
-        tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN);
-        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
-        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
-        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
-        tabLayout.getTabAt(4).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#0a6ca9"), PorterDuff.Mode.SRC_IN);
+//        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
+//        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
+//        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
+//        tabLayout.getTabAt(4).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
     }
 
     private void setupViewPager() {

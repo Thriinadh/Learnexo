@@ -93,7 +93,7 @@
     <string name="more">More</string>
 
     <string-array name="subject_names">
-        <item>Department0 Java 0</item>
+        <item><font color="#000000">Department0 Java 0</font></item>
         <item>Java</item>
         <item>Algorithms</item>
         <item>Data structures</item>

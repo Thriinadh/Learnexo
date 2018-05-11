@@ -705,8 +705,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private TextView challenge;
         private TextView timeAgo;
         private ImageView challengeIcon;
-
         private TextView answer;
+
         private TextView followQues;
         private TextView pass;
         private ImageView overflowImgView;
@@ -723,6 +723,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             challengeIcon = mView.findViewById(R.id.imageView2);
 
             answer=mView.findViewById(R.id.answer);
+            answer.setText("Crack");
             pass=mView.findViewById(R.id.pass);
             followQues=mView.findViewById(R.id.followQues);
             overflowImgView = mView.findViewById(R.id.quesOverFlow);

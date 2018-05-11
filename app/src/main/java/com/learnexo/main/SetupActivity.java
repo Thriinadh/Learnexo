@@ -291,6 +291,7 @@ public class SetupActivity extends AppCompatActivity {
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setDisplayShowHomeEnabled(true);
             supportActionBar.setTitle("Profile");
         }
     }

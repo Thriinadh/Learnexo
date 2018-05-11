@@ -139,7 +139,6 @@ public class FeedFragment extends Fragment {
                 if (interests != null) {
                     for (final String userInterest:interests){
 
-
                         mFirebaseUtil.mFirestore.collection("interest_feed").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             List<DocumentSnapshot> interest_feed_docs;
                             @Override

@@ -11,20 +11,20 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,13 +70,13 @@ public class PublishActivity extends AppCompatActivity {
     private EditText content;
     private ImageView loadImage;
 
-    private Button postBtn;
+    private TextView postBtn;
     private CircleImageView imageView;
     private TextView username;
     private TextView timeofPost;
 
-    private Button galleryBtn;
-    private AppCompatSpinner spinner;
+    private ImageView galleryBtn;
+    private Spinner spinner;
     private String tag;
     private String mPublisherName =FeedFragment.sName;
 
@@ -106,6 +106,21 @@ public class PublishActivity extends AppCompatActivity {
         enablePublishBtn();
 
         postBtnListener();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = TabsActivity.newIntent(PublishActivity.this, FEED_FRAG_NO);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -372,7 +387,7 @@ public class PublishActivity extends AppCompatActivity {
                     postBtn.setBackgroundColor(Color.parseColor("#32CD32"));
                     postBtn.setTextColor(Color.parseColor("#ffffff"));
                 } else  {
-                    postBtn.setBackgroundColor(Color.parseColor("#D3D3D3"));
+                    postBtn.setBackgroundColor(Color.parseColor("#bfbfbf"));
                     postBtn.setTextColor(Color.parseColor("#000000"));
                 }
             }
@@ -409,19 +424,29 @@ public class PublishActivity extends AppCompatActivity {
 
     private void setupDropDownSpinner() {
 
-        // Create an ArrayAdapter using the string array and a default spinner
-        ArrayAdapter<CharSequence> staticAdapter = ArrayAdapter
-                .createFromResource(this, R.array.subject_names,
-                        android.R.layout.simple_spinner_item);
+//        // Create an ArrayAdapter using the string array and a default spinner
+//        ArrayAdapter<CharSequence> staticAdapter = ArrayAdapter
+//                .createFromResource(this, R.array.subject_names,
+//                        android.R.layout.simple_spinner_item);
+//
+//        // Specify the layout to use when the list of choices appears
+//        staticAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//        // Apply the adapter to the spinner
+//        spinner.setAdapter(new NothingSelectedSpinnerAdapter(staticAdapter,
+//                        R.layout.contact_spinner_row_nothing_selected,
+//                        // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
+//                        this));
 
-        // Specify the layout to use when the list of choices appears
-        staticAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        String subjects[] = {"Tag Subject","Java","Mongo DB","Scala","Python","Ruby", "C sharp","Android"};
 
-        // Apply the adapter to the spinner
-        spinner.setAdapter(new NothingSelectedSpinnerAdapter(staticAdapter,
-                        R.layout.contact_spinner_row_nothing_selected,
-                        // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
-                        this));
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>
+                (this, android.R.layout.simple_spinner_item,
+                        subjects); //selected item will look like a spinner set from XML
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerArrayAdapter);
+
     }
 
     private void getDPandNameAndSet() {
@@ -439,6 +464,8 @@ public class PublishActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null){
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(publishType);
         }
     }
@@ -458,7 +485,6 @@ public class PublishActivity extends AppCompatActivity {
         loadImage = findViewById(R.id.loadImage);
         constraintKeyboardIn = findViewById(R.id.constraintKeyboardIn);
         constraintKeyboard = findViewById(R.id.constraintKeyboard);
-        spinner = findViewById(R.id.spinner);
 
         postBtn = findViewById(R.id.post_button);
         postBtn.setEnabled(false);
