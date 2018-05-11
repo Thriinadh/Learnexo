@@ -25,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.main.FullPostActivity;
 import com.learnexo.main.R;
 import com.learnexo.model.feed.FeedItem;
+import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
@@ -85,15 +86,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             case FeedItem.CRACK:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.crack_list_item, parent, false);//change this
-                return new AnswerHolder(view);
+                return new CrackHolder(view);
 
             case FeedItem.NO_ANS_QUES:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.no_ans_ques_item, parent, false);//change this
-                return new AnswerHolder(view);
+                return new QuestionHolder(view);
 
             case FeedItem.NO_CRACK_CHALLENGE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.no_crack_challenge_item, parent, false);//change this
-                return new AnswerHolder(view);
+                return new ChallengeHolder(view);
 
         }
         return null;
@@ -103,11 +104,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
 
-        FeedItem feedItem = mFeedItems.get(position);
+        FeedItem feedItem= mFeedItems.get(position);
+
 
         if(feedItem!=null) {
-//            Department0 Java 0
-//            Department0 Java 0
 
             User publisher = new User();
             final String publisherId = feedItem.getUserId();
@@ -129,44 +129,36 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     break;
 
                 case FeedItem.ANSWER:
+                    Answer answer= (Answer) feedItem;
                     AnswerHolder answerHolder = (AnswerHolder) holder;
-
-                    bindQuestion(answerHolder, itemContent, imagePosted, timeAgo);
-                    bindQuestionUserData(answerHolder, publisher);
-
-                    questionContentListener(answerHolder, itemContent, imagePosted, timeAgo);
+                    bindAnswer(answerHolder, itemContent, answer.getQuesName(), imagePosted, timeAgo);
+                    bindAnswererData(answerHolder, publisher);
+                    answerContentListener(answerHolder, itemContent, imagePosted, timeAgo);
 //                    questionOverflowListener(answerHolder, publisher, feedItem);
 
                     break;
 
                 case FeedItem.CRACK:
-//                    AnswerHolder quesViewHolder = (AnswerHolder) holder;
-//
-//                    bindQuestion(quesViewHolder, itemContent, timeAgo);
-//                    bindQuestionUserData(quesViewHolder, publisher);
-//
-//                    questionContentListener(quesViewHolder, itemContent, imagePosted, timeAgo);
+                    Answer crack= (Answer) feedItem;
+                    CrackHolder crackHolder = (CrackHolder) holder;
+                    bindCrack(crackHolder, itemContent, crack.getQuesName(), imagePosted, timeAgo);
+                    bindCrackerData(crackHolder, publisher);
+                    crackContentListener(crackHolder, itemContent, imagePosted, timeAgo);
 //                    questionOverflowListener(quesViewHolder, publisher, feedItem);
 //
                     break;
+
                 case FeedItem.NO_ANS_QUES:
-//                    AnswerHolder quesViewHolder = (AnswerHolder) holder;
-//
-//                    bindQuestion(quesViewHolder, itemContent, timeAgo);
-//                    bindQuestionUserData(quesViewHolder, publisher);
-//
-//                    questionContentListener(quesViewHolder, itemContent, imagePosted, timeAgo);
-//                    questionOverflowListener(quesViewHolder, publisher, feedItem);
-//
+                    QuestionHolder quesViewHolder = (QuestionHolder) holder;
+                    quesViewHolder.wireViews();
+                    bindQuestion(quesViewHolder, itemContent, timeAgo);
+
                     break;
+
                 case FeedItem.NO_CRACK_CHALLENGE:
-//                    AnswerHolder quesViewHolder = (AnswerHolder) holder;
-//
-//                    bindQuestion(quesViewHolder, itemContent, timeAgo);
-//                    bindQuestionUserData(quesViewHolder, publisher);
-//
-//                    questionContentListener(quesViewHolder, itemContent, imagePosted, timeAgo);
-//                    questionOverflowListener(quesViewHolder, publisher, feedItem);
+                    ChallengeHolder challengeHolder = (ChallengeHolder) holder;
+                    challengeHolder.wireViews();
+                    bindChallenge(challengeHolder, itemContent, timeAgo);
 //
                     break;
             }
@@ -185,8 +177,18 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
     }
 
-    private void questionContentListener(@NonNull AnswerHolder holder, final String itemContent, final String imagePosted, final String timeAgo) {
+    private void answerContentListener(@NonNull AnswerHolder holder, final String itemContent, final String imagePosted, final String timeAgo) {
         holder.quesContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, timeAgo);
+                mContext.startActivity(intent);
+            }
+        });
+    }
+
+    private void crackContentListener(@NonNull CrackHolder holder, final String itemContent, final String imagePosted, final String timeAgo) {
+        holder.crackContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, timeAgo);
@@ -220,7 +222,31 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
     }
 
-    private void bindQuestionUserData(@NonNull final AnswerHolder holder, final User user) {
+    private void bindAnswererData(@NonNull final AnswerHolder holder, final User user) {
+        mFirebaseUtil.mFirestore.collection("users").document(user.getUserId()).
+                collection("reg_details").document("doc").get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot snapshot = task.getResult();
+                            String name = snapshot.getString("firstName");
+                            name=name.concat(" "+snapshot.getString("lastName"));
+                            String image = snapshot.getString("dpUrl");
+                            holder.setUserData(name, image);
+                            user.setDpUrl(image);
+                            user.setFirstName(name);
+
+                        } else {
+                            // Error handling here
+                        }
+
+                    }
+                });
+    }
+
+    private void bindCrackerData(@NonNull final CrackHolder holder, final User user) {
         mFirebaseUtil.mFirestore.collection("users").document(user.getUserId()).
                 collection("reg_details").document("doc").get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -334,7 +360,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void questionOverflowListener(@NonNull AnswerHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.setOverflowImgView();
         holder.overflowImgView.setOnClickListener(new View.OnClickListener() {
 
             private TextView followTView;
@@ -428,9 +453,25 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.setTime(timeAgo);
     }
 
-    private void bindQuestion(@NonNull AnswerHolder holder, final String content, final String publishedImg, String timeAgo) {
+    private void bindAnswer(@NonNull AnswerHolder holder, final String content, final String answer, final String publishedImg, String timeAgo) {
+        holder.setContent(content, answer);
+        holder.setAnsImgView(publishedImg);
+        holder.setTime(timeAgo);
+    }
+
+    private void bindQuestion(@NonNull QuestionHolder holder, final String content, String timeAgo) {
         holder.setContent(content);
-        holder.setPostedImgView(publishedImg);
+        holder.setTime(timeAgo);
+    }
+
+    private void bindChallenge(@NonNull ChallengeHolder holder, final String content, String timeAgo) {
+        holder.setContent(content);
+        holder.setTime(timeAgo);
+    }
+
+    private void bindCrack(@NonNull CrackHolder holder, final String content, final String answer, final String publishedImg, String timeAgo) {
+        holder.setContent(content, answer);
+        holder.setCrackImgView(publishedImg);
         holder.setTime(timeAgo);
     }
 
@@ -466,7 +507,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         public void setPostedImgView(String imageUrl) {
             // if(imageUrl != null)
-            // postedImgView.setImageURI(Uri.parse(imageUrl));
+            // crackImgView.setImageURI(Uri.parse(imageUrl));
 
             postedImgView = mView.findViewById(R.id.postedImagee);
             if(imageUrl != null)
@@ -504,52 +545,201 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private View mView;
 
         private TextView quesContent;
+        private TextView answerContent;
         private TextView userName;
         private CircleImageView userImage;
         private TextView timeAgo;
         private ImageView overflowImgView;
-        private ImageView postedImgView;
+        private ImageView ansImgView;
 
         public AnswerHolder(View itemView) {
             super(itemView);
             mView = itemView;
         }
 
-        public void setContent(String postedQues) {
+        public void wireViews(){
             quesContent = mView.findViewById(R.id.questionTView);
-            quesContent.setText(postedQues);
-        }
-        public void setPostedImgView(String imageUrl) {
-            // if(imageUrl != null)
-            // postedImgView.setImageURI(Uri.parse(imageUrl));
+            userImage = mView.findViewById(R.id.circleImageView);
+            userName = mView.findViewById(R.id.userName);
 
-            postedImgView = mView.findViewById(R.id.postedImagee);
-            if(imageUrl != null)
-                Glide.with(mContext).load(imageUrl).into(postedImgView);
+            timeAgo = mView.findViewById(R.id.answeredTime);
+            overflowImgView = mView.findViewById(R.id.overflow);
+
+            answerContent = mView.findViewById(R.id.answerContent);
+            ansImgView = mView.findViewById(R.id.postedImagee);
+        }
+
+        public void setContent(String question, String answer) {
+            quesContent.setText(question);
+            answerContent.setText(answer);
+        }
+        public void setAnsImgView(String imageUrl) {
+            if(imageUrl != null&&mContext!=null)
+                Glide.with(mContext).load(imageUrl).into(ansImgView);
         }
 
         public void setTime(String timeAgo) {
-            this.timeAgo = mView.findViewById(R.id.answeredTime);
             this.timeAgo.setText(timeAgo);
         }
 
-        public void setOverflowImgView() {
-//            overflowImgView = mView.findViewById(R.id.quesOverFlow);
-        }
         public void setUserData(String name, String image) {
-            userName = mView.findViewById(R.id.userName);
             userName.setText(name);
 
-            userImage = mView.findViewById(R.id.circleImageView);
             RequestOptions placeholderOption = new RequestOptions();
             placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
-            if (image!=null&&null!=quesContent)
+            if (image!=null&&null!=mContext)
                 Glide.with(mContext).load(image).apply(placeholderOption).into(userImage);
 
         }
 
 
     }
+
+
+    public class CrackHolder extends RecyclerView.ViewHolder {
+
+        private View mView;
+
+        private TextView challenge;
+        private TextView crackContent;
+        private TextView userName;
+        private CircleImageView userImage;
+        private TextView timeAgo;
+        private ImageView overflowImgView;
+        private ImageView challengeIcon;
+        private ImageView crackImgView;
+
+        public CrackHolder(View itemView) {
+            super(itemView);
+            mView = itemView;
+        }
+
+        public void wireViews(){
+            challenge = mView.findViewById(R.id.questionTView);
+            challengeIcon = mView.findViewById(R.id.imageView4);
+
+            userImage = mView.findViewById(R.id.circleImageView);
+            userName = mView.findViewById(R.id.userName);
+
+            timeAgo = mView.findViewById(R.id.answeredTime);
+            overflowImgView = mView.findViewById(R.id.overflow);
+
+            crackContent = mView.findViewById(R.id.answerContent);
+            crackImgView = mView.findViewById(R.id.postedImagee);
+        }
+
+        public void setContent(String question, String answer) {
+            challenge.setText(question);
+            crackContent.setText(answer);
+        }
+        public void setCrackImgView(String imageUrl) {
+            if(imageUrl != null&&mContext!=null)
+                Glide.with(mContext).load(imageUrl).into(crackImgView);
+        }
+
+        public void setTime(String timeAgo) {
+            this.timeAgo.setText(timeAgo);
+        }
+
+        public void setUserData(String name, String image) {
+            userName.setText(name);
+
+            RequestOptions placeholderOption = new RequestOptions();
+            placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
+            if (image!=null&&null!=mContext)
+                Glide.with(mContext).load(image).apply(placeholderOption).into(userImage);
+
+        }
+
+
+    }
+
+
+
+    public class QuestionHolder extends RecyclerView.ViewHolder {
+
+        private View mView;
+        private TextView quesContent;
+        private TextView timeAgo;
+
+
+        private TextView answer;
+        private TextView followQues;
+        private TextView pass;
+        private ImageView overflowImgView;
+
+
+        public QuestionHolder(View itemView) {
+            super(itemView);
+            mView = itemView;
+        }
+
+        public void wireViews(){
+            quesContent = mView.findViewById(R.id.questionTView);
+            timeAgo = mView.findViewById(R.id.postedTime);
+
+            answer=mView.findViewById(R.id.answer);
+            pass=mView.findViewById(R.id.pass);
+            followQues=mView.findViewById(R.id.followQues);
+            overflowImgView = mView.findViewById(R.id.quesOverFlow);
+        }
+
+        public void setContent(String question) {
+            if(question!=null)
+            quesContent.setText(question);
+        }
+
+
+        public void setTime(String timeAgo) {
+            this.timeAgo.setText(timeAgo);
+        }
+
+
+
+    }
+
+
+    public class ChallengeHolder extends RecyclerView.ViewHolder {
+
+        private View mView;
+        private TextView challenge;
+        private TextView timeAgo;
+        private ImageView challengeIcon;
+
+        private TextView answer;
+        private TextView followQues;
+        private TextView pass;
+        private ImageView overflowImgView;
+
+
+        public ChallengeHolder(View itemView) {
+            super(itemView);
+            mView = itemView;
+        }
+
+        public void wireViews(){
+            challenge = mView.findViewById(R.id.questionTView);
+            timeAgo = mView.findViewById(R.id.postedTime);
+            challengeIcon = mView.findViewById(R.id.imageView2);
+
+            answer=mView.findViewById(R.id.answer);
+            pass=mView.findViewById(R.id.pass);
+            followQues=mView.findViewById(R.id.followQues);
+            overflowImgView = mView.findViewById(R.id.quesOverFlow);
+        }
+
+        public void setContent(String challenge) {
+            this.challenge.setText(challenge);
+        }
+
+
+        public void setTime(String timeAgo) {
+            this.timeAgo.setText(timeAgo);
+        }
+
+
+    }
+
 
 
 
