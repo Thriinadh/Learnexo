@@ -1,5 +1,6 @@
 package com.learnexo.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.main.FullPostActivity;
+import com.learnexo.main.QuestionAnswerActivity;
 import com.learnexo.main.R;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
@@ -151,7 +153,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 case FeedItem.NO_ANS_QUES:
                     QuestionHolder quesViewHolder = (QuestionHolder) holder;
                     quesViewHolder.wireViews();
-                    bindQuestion(quesViewHolder, itemContent, timeAgo);
+                    bindQuestion(quesViewHolder, itemContent);
+                    noAnswerAnsListener(quesViewHolder, itemContent);
 
                     break;
 
@@ -195,6 +198,19 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 mContext.startActivity(intent);
             }
         });
+    }
+
+    private void noAnswerAnsListener(@NonNull QuestionHolder holder, final String itemContent) {
+
+        holder.answer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = QuestionAnswerActivity.newIntent(mContext, itemContent);
+                mContext.startActivity(intent);
+                ((Activity) mContext).overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
+            }
+        });
+
     }
 
     private void bindPostUserData(@NonNull final PostHolder holder, final User user) {
@@ -459,9 +475,9 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.setTime(timeAgo);
     }
 
-    private void bindQuestion(@NonNull QuestionHolder holder, final String content, String timeAgo) {
+    private void bindQuestion(@NonNull QuestionHolder holder, final String content) {
         holder.setContent(content);
-        holder.setTime(timeAgo);
+       // holder.setTime(timeAgo);
     }
 
     private void bindChallenge(@NonNull ChallengeHolder holder, final String content, String timeAgo) {
@@ -536,8 +552,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
     }
-
-
 
 
     public class AnswerHolder extends RecyclerView.ViewHolder {

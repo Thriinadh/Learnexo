@@ -19,7 +19,6 @@ public class FullPostActivity extends AppCompatActivity {
     public static final String EXTRA_CONTENT = "com.learnexo.postdata";
     private static final String EXTRA_IMAGE = "com.learnexo.imageposted";
     private static final String EXTRA_TIME = "com.learnexo.postedtime";
-    private static final String EXTRA_PROFILE_IMAGE = "com.learnexo.profileimage";
 
     private TextView fullText;
     private ImageView postedImage;
