@@ -451,7 +451,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private ImageView overflowImgView;
         private ImageView postedImgView;
 
-
         // PostHolder constructor
         public PostHolder(View itemView) {
             super(itemView);

@@ -5,45 +5,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/feed_user_image"
+        android:id="@+id/circleImageView"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:src="@drawable/default_photo"
+        android:src="@drawable/empty_profilee"
         app:civ_border_width="1dp"
         app:civ_border_color="@color/colorAccent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/userNameTView"
+        android:id="@+id/userName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/username"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@+id/feed_user_image"
+        android:text="Thiyyagura Gopi"
+        android:textColor="#1a1a1a"
+        app:layout_constraintStart_toEndOf="@+id/circleImageView"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/feed_date"
+        android:id="@+id/answeredTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/posted_time"
-        android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/feed_user_image"
-        app:layout_constraintTop_toBottomOf="@+id/userNameTView" />
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:text="Cracked Feb 19"
+        app:layout_constraintStart_toEndOf="@+id/circleImageView"
+        app:layout_constraintTop_toBottomOf="@+id/userName" />
 
     <TextView
-        android:id="@+id/feed_content"
+        android:id="@+id/answerContent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -51,7 +48,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:gravity="start"
         android:lineSpacingExtra="4dp"
         android:maxLines="3"
@@ -62,7 +58,7 @@
         app:layout_constraintBottom_toTopOf="@+id/postedImagee"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/feed_date" />
+        app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
 
     <ImageView
         android:id="@+id/overflow"
@@ -90,7 +86,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/feed_content" />
+        app:layout_constraintTop_toBottomOf="@+id/answerContent" />
+
+    <TextView
+        android:id="@+id/seeMore"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:background="@android:color/transparent"
+        android:text="See more"
+        android:textAlignment="viewEnd"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/answerContent"
+        app:layout_constraintEnd_toEndOf="@+id/answerContent"
+        app:layout_constraintStart_toStartOf="@+id/answerContent" />
 
     <View
         android:layout_width="match_parent"
@@ -100,6 +109,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/feed_content" />
+        app:layout_constraintTop_toBottomOf="@+id/answerContent" />
 
 </android.support.constraint.ConstraintLayout>
