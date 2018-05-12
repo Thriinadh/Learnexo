@@ -269,7 +269,8 @@ public class AnswerActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<DocumentReference> task) {
                             if(task.isSuccessful()){
 
-                                Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("questions")
+                                Task<DocumentSnapshot> documentSnapshotTask =  mFirebaseUtil.mFirestore.collection("users")
+                                        .document(questionerId).collection("questions")
                                         .document(answer.getQuesId()).get();
 
 
@@ -282,7 +283,7 @@ public class AnswerActivity extends AppCompatActivity {
                                             int noOfAnsw=0;
                                             if(noOfAns!=null)
                                                 noOfAnsw = ((Long) noOfAns).intValue()+1;
-                                            Map<String, Object> map= new HashMap<String, Object>();
+                                            Map<String, Object> map= new HashMap();
                                                     map.put("noOfAns",noOfAnsw);
                                             mFirebaseUtil.mFirestore.collection("questions")
                                                     .document(answer.getQuesId()).update(map);

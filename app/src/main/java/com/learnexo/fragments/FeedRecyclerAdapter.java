@@ -156,15 +156,16 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 case FeedItem.NO_ANS_QUES:
                     Question question = (Question) feedItem;
                     QuestionHolder quesViewHolder = (QuestionHolder) holder;
-                    quesViewHolder.wireViews();
+                    quesViewHolder.wireViews(question);
                     bindQuestion(quesViewHolder, itemContent);
                     answerListener(quesViewHolder, question);
 
                     break;
 
                 case FeedItem.NO_CRACK_CHALLENGE:
+                    Question challenge = (Question) feedItem;
                     ChallengeHolder challengeHolder = (ChallengeHolder) holder;
-                    challengeHolder.wireViews();
+                    challengeHolder.wireViews(challenge);
                     bindChallenge(challengeHolder, itemContent, timeAgo);
 //
                     break;
@@ -679,6 +680,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private View mView;
         private TextView quesContent;
         private TextView timeAgo;
+        private TextView noCracksYet;
 
 
         private TextView answer;
@@ -692,9 +694,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mView = itemView;
         }
 
-        public void wireViews(){
+        public void wireViews(Question question){
             quesContent = mView.findViewById(R.id.questionTView);
             timeAgo = mView.findViewById(R.id.postedTime);
+            noCracksYet = mView.findViewById(R.id.noAnswerYet);
+
+            if(question.getNoOfAns()>0)
+                noCracksYet.setText(question.getNoOfAns()+ " Answers");
 
             answer=mView.findViewById(R.id.answer);
             pass=mView.findViewById(R.id.pass);
@@ -720,7 +726,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public class ChallengeHolder extends RecyclerView.ViewHolder {
 
         private View mView;
-        private TextView challenge;
+        private TextView challengeContent;
         private TextView timeAgo;
         private TextView noCracksYet;
         private ImageView challengeIcon;
@@ -736,10 +742,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mView = itemView;
         }
 
-        public void wireViews(){
+        public void wireViews(Question challenge){
             noCracksYet = mView.findViewById(R.id.noAnswerYet);
-            noCracksYet.setText("No Cracks Yet");
-            challenge = mView.findViewById(R.id.questionTView);
+
+            if(challenge.getNoOfAns()==0)
+                noCracksYet.setText("No Cracks Yet");
+            else
+                noCracksYet.setText(challenge.getNoOfAns()+ " Cracks");
+
+            challengeContent = mView.findViewById(R.id.questionTView);
             timeAgo = mView.findViewById(R.id.postedTime);
             challengeIcon = mView.findViewById(R.id.imageView2);
 
@@ -751,7 +762,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         public void setContent(String challenge) {
-            this.challenge.setText(challenge);
+            this.challengeContent.setText(challenge);
         }
 
 
