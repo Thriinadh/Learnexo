@@ -8,6 +8,15 @@ import com.learnexo.model.feed.FeedItem;
 public class Question extends FeedItem{
     private boolean isChallenge;
     private String answerForChallenge;
+    private int noOfAns;
+
+    public int getNoOfAns() {
+        return noOfAns;
+    }
+
+    public void setNoOfAns(int noOfAns) {
+        this.noOfAns = noOfAns;
+    }
 
     public String getAnswerForChallenge() {
         return answerForChallenge;
