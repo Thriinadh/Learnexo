@@ -154,10 +154,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 case FeedItem.NO_ANS_QUES:
                     Question question = (Question) feedItem;
-                    QuestionHolder quesViewHolder = (QuestionHolder) holder;
-                    quesViewHolder.wireViews(question);
-                    bindQuestion(quesViewHolder, itemContent, timeAgo);
-                    answerBtnListener(quesViewHolder, question);
+                    QuestionHolder questionHolder = (QuestionHolder) holder;
+                    questionHolder.wireViews(question);
+                    bindQuestion(questionHolder, itemContent, timeAgo);
+                    answerBtnListener(questionHolder, question);
+                    questionOverflowListener(questionHolder, publisher, feedItem);
 
                     break;
 
@@ -167,6 +168,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     challengeHolder.wireViews(challenge);
                     bindChallenge(challengeHolder, itemContent, timeAgo);
                     crackBtnListener(challengeHolder, challenge);
+                    challengeOverflowListener(challengeHolder, publisher, feedItem);
 
                     break;
             }
@@ -311,6 +313,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.overflowImgView.setOnClickListener(posAnsCrackItemOverFlowListener(publisher));
     }
 
+    private void questionOverflowListener(@NonNull QuestionHolder holder, final User publisher, final FeedItem feedItem) {
+        holder.overflowImgView.setOnClickListener(questChallengeItemOverFlowListener(publisher));
+    }
+    private void challengeOverflowListener(@NonNull ChallengeHolder holder, final User publisher, final FeedItem feedItem) {
+        holder.overflowImgView.setOnClickListener(questChallengeItemOverFlowListener(publisher));
+    }
+
 
 
 
@@ -395,6 +404,94 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                            }
                        });
+
+                    }
+                });
+
+            }
+        };
+    }
+
+    private View.OnClickListener questChallengeItemOverFlowListener(final User publisher) {
+        return new View.OnClickListener() {
+
+            private TextView followTView;
+            private LinearLayout followBtnLayout;
+            private LinearLayout deleteBtnLayout;
+            private LinearLayout editBtnLayout;
+            private LinearLayout copyBtnLayout;
+            private LinearLayout notifBtnLayout;
+            private LinearLayout connectBtnLayout;
+
+            @Override
+            public void onClick(View view) {
+
+                View bottomSheetView = View.inflate(mContext, R.layout.bottom_sheet_dialog_for_sharedposts, null);
+
+
+                mDialog = new BottomSheetDialog(mContext);
+                mDialog.setContentView(bottomSheetView);
+                mDialog.show();
+
+                inflateBottomSheetButtons(bottomSheetView);
+            }
+
+            private void inflateBottomSheetButtons(final View bottomSheetView) {
+
+                followTView = bottomSheetView.findViewById(R.id.followTView);
+                followBtnLayout = bottomSheetView.findViewById(R.id.followUser);
+                deleteBtnLayout = bottomSheetView.findViewById(R.id.deleteBtn);
+                editBtnLayout = bottomSheetView.findViewById(R.id.editNameBtn);
+                copyBtnLayout = bottomSheetView.findViewById(R.id.copyBtn);
+                notifBtnLayout =  bottomSheetView.findViewById(R.id.notifBtn);
+                connectBtnLayout =  bottomSheetView.findViewById(R.id.connectBtn);
+
+                followBtnLayout.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        mDialog.dismiss();
+
+                        final Map<String, Object> followingUser = new HashMap<>();
+                        followingUser.put("name", publisher.getFirstName());
+                        followingUser.put("dpUrl", publisher.getDpUrl());
+
+                        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+                                .collection("following").document(publisher.getUserId()).set(followingUser)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        followingUser.put("name", FeedFragment.sName);
+                                        followingUser.put("dpUrl", FeedFragment.sDpUrl);
+                                        mFirebaseUtil.mFirestore.collection("users").document(publisher.getUserId())
+                                                .collection("followers").document(FirebaseUtil.getCurrentUserId()).set(followingUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+
+                                                followTView.setText("Unfollow");
+
+                                                Toast.makeText(mContext, "Now You are following "+publisher.getFirstName(), Toast.LENGTH_LONG).show();
+
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Toast.makeText(mContext, "SomethingWentWrong", Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+
+
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                                Toast.makeText(mContext, "SomethingWentWrong", Toast.LENGTH_LONG).show();
+
+                                Log.d("FeedAdapter", "SomethingWentWrong "+e);
+
+                            }
+                        });
 
                     }
                 });
