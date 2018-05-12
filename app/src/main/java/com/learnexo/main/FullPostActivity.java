@@ -11,12 +11,16 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.learnexo.fragments.FeedFragment;
+import com.learnexo.model.user.User;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FullPostActivity extends AppCompatActivity {
 
     public static final String EXTRA_CONTENT = "com.learnexo.postdata";
+    public static final String EXTRA_PUBLISHER_NAME = "com.learnexo.publisher_name";
+    public static final String EXTRA_PUBLISHER_DP = "com.learnexo.publisher_dp";
     private static final String EXTRA_IMAGE = "com.learnexo.imageposted";
     private static final String EXTRA_TIME = "com.learnexo.postedtime";
 
@@ -39,13 +43,20 @@ public class FullPostActivity extends AppCompatActivity {
         fullText = findViewById(R.id.full_text);
         fullText.setText(postData);
 
+        profileImage = findViewById(R.id.profile_image);
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+        Glide.with(getApplicationContext()).load(intent.getStringExtra(EXTRA_PUBLISHER_DP)).apply(requestOptions).into(profileImage);
+
+        userName = findViewById(R.id.userNameTView);
+        userName.setText(intent.getStringExtra(EXTRA_PUBLISHER_NAME));
+
         String posTime = intent.getStringExtra(EXTRA_TIME);
         timeOfPost = findViewById(R.id.feed_time);
         timeOfPost.setText(posTime);
 
         String imagePosted = intent.getStringExtra(EXTRA_IMAGE);
         postedImage = findViewById(R.id.postedImage);
-        RequestOptions requestOptions = new RequestOptions();
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(getApplicationContext()).load(imagePosted).apply(requestOptions).into(postedImage);
     }
@@ -58,11 +69,13 @@ public class FullPostActivity extends AppCompatActivity {
         }
     }
 
-    public static Intent newIntent(Context context, String content, String publishedImg, String timeAgo) {
+    public static Intent newIntent(Context context, String content, String publishedImg, String timeAgo, User publisher) {
 
         Intent intent = new Intent(context, FullPostActivity.class);
         intent.putExtra(EXTRA_CONTENT,content);
         intent.putExtra(EXTRA_TIME, timeAgo);
+        intent.putExtra(EXTRA_PUBLISHER_NAME, publisher.getFirstName());
+        intent.putExtra(EXTRA_PUBLISHER_DP, publisher.getDpUrl());
         if(publishedImg!=null)
             intent.putExtra(EXTRA_IMAGE, publishedImg);
         return intent;

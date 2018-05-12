@@ -117,15 +117,19 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             final String itemContent = feedItem.getContent();
             final String imagePosted = feedItem.getImgUrl();
             final String timeAgo = convertDateToAgo(feedItem.getPublishTime());
+
             publisher.setUserId(publisherId);
 
             switch (feedItem.getType()) {
+
+
                 case FeedItem.POST:
+
                     PostHolder postHolder = (PostHolder) holder;
                     postHolder.wireViews();
                     bindPost(postHolder, itemContent, imagePosted, timeAgo);
                     bindPostUserData(postHolder, publisher);
-                    postContentListener(postHolder, itemContent, imagePosted, timeAgo);
+                    postContentListener(postHolder, itemContent, imagePosted, timeAgo, publisher);
                     postOverflowListener(postHolder, publisher, feedItem);
 
                     break;
@@ -136,7 +140,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     answerHolder.wireViews();
                     bindAnswer(answerHolder, itemContent, answer.getQuesContent(), imagePosted, timeAgo);
                     bindAnswererData(answerHolder, publisher);
-                    answerContentListener(answerHolder, itemContent, imagePosted, timeAgo);
+                    answerContentListener(answerHolder, itemContent, imagePosted, timeAgo, publisher);
                     answerOverflowListener(answerHolder, publisher, feedItem);
 
                     break;
@@ -147,7 +151,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     crackHolder.wireViews();
                     bindCrack(crackHolder, itemContent, crack.getQuesContent(), imagePosted, timeAgo);
                     bindCrackerData(crackHolder, publisher);
-                    crackContentListener(crackHolder, itemContent, imagePosted, timeAgo);
+                    crackContentListener(crackHolder, itemContent, imagePosted, timeAgo,publisher);
                     crackOverflowListener(crackHolder, publisher, feedItem);
 
                     break;
@@ -177,31 +181,31 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
 
-    private void postContentListener(@NonNull PostHolder holder, final String itemContent, final String imagePosted, final String timeAgo) {
+    private void postContentListener(@NonNull PostHolder holder, final String itemContent, final String imagePosted, final String timeAgo, final User publisher) {
         holder.content.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, timeAgo);
+                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, timeAgo, publisher);
                 mContext.startActivity(intent);
             }
         });
     }
 
-    private void answerContentListener(@NonNull AnswerHolder holder, final String itemContent, final String imagePosted, final String timeAgo) {
+    private void answerContentListener(@NonNull AnswerHolder holder, final String itemContent, final String imagePosted, final String timeAgo, final User publisher) {
         holder.quesContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, timeAgo);
+                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, timeAgo, publisher);
                 mContext.startActivity(intent);
             }
         });
     }
 
-    private void crackContentListener(@NonNull CrackHolder holder, final String itemContent, final String imagePosted, final String timeAgo) {
+    private void crackContentListener(@NonNull CrackHolder holder, final String itemContent, final String imagePosted, final String timeAgo, final User publisher) {
         holder.crackContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, timeAgo);
+                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, timeAgo, publisher);
                 mContext.startActivity(intent);
             }
         });
@@ -242,6 +246,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     String name = snapshot.getString("firstName");
                     name=name.concat(" "+snapshot.getString("lastName"));
                         String image = snapshot.getString("dpUrl");
+
                         holder.setUserData(name, image);
 
                         user.setDpUrl(image);
