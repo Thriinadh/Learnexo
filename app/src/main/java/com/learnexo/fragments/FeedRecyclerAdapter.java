@@ -122,10 +122,9 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             switch (feedItem.getType()) {
                 case FeedItem.POST:
                     PostHolder postHolder = (PostHolder) holder;
-
+                    postHolder.wireViews();
                     bindPost(postHolder, itemContent, imagePosted, timeAgo);
                     bindPostUserData(postHolder, publisher);
-
                     postContentListener(postHolder, itemContent, imagePosted, timeAgo);
                     postOverflowListener(postHolder, publisher, feedItem);
 
@@ -138,7 +137,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     bindAnswer(answerHolder, itemContent, answer.getQuesContent(), imagePosted, timeAgo);
                     bindAnswererData(answerHolder, publisher);
                     answerContentListener(answerHolder, itemContent, imagePosted, timeAgo);
-//                    questionOverflowListener(answerHolder, publisher, feedItem);
+                    answerOverflowListener(answerHolder, publisher, feedItem);
 
                     break;
 
@@ -149,8 +148,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     bindCrack(crackHolder, itemContent, crack.getQuesContent(), imagePosted, timeAgo);
                     bindCrackerData(crackHolder, publisher);
                     crackContentListener(crackHolder, itemContent, imagePosted, timeAgo);
-//                    questionOverflowListener(quesViewHolder, publisher, feedItem);
-//
+                    crackOverflowListener(crackHolder, publisher, feedItem);
+
                     break;
 
                 case FeedItem.NO_ANS_QUES:
@@ -158,7 +157,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     QuestionHolder quesViewHolder = (QuestionHolder) holder;
                     quesViewHolder.wireViews(question);
                     bindQuestion(quesViewHolder, itemContent, timeAgo);
-                    answerListener(quesViewHolder, question);
+                    answerBtnListener(quesViewHolder, question);
 
                     break;
 
@@ -167,7 +166,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     ChallengeHolder challengeHolder = (ChallengeHolder) holder;
                     challengeHolder.wireViews(challenge);
                     bindChallenge(challengeHolder, itemContent, timeAgo);
-//
+                    crackBtnListener(challengeHolder, challenge);
+
                     break;
             }
 
@@ -205,17 +205,27 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
     }
 
-    private void answerListener(@NonNull QuestionHolder holder, final Question question) {
+    private void answerBtnListener(@NonNull QuestionHolder holder, final Question question) {
+        holder.answer.setOnClickListener(
+                answerCrackListener(question));
 
-        holder.answer.setOnClickListener(new View.OnClickListener() {
+    }
+    private void crackBtnListener(@NonNull ChallengeHolder holder, final Question question) {
+        holder.answer.setOnClickListener(
+                answerCrackListener(question));
+
+    }
+
+    @NonNull
+    private View.OnClickListener answerCrackListener(final Question question) {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = AnswerActivity.newIntent(mContext, question);
                 mContext.startActivity(intent);
                 ((Activity) mContext).overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
             }
-        });
-
+        };
     }
 
     private void bindPostUserData(@NonNull final PostHolder holder, final User user) {
@@ -292,8 +302,21 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void postOverflowListener(@NonNull PostHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.setOverflowImgView();
-        holder.overflowImgView.setOnClickListener(new View.OnClickListener() {
+        holder.overflowImgView.setOnClickListener(posAnsCrackItemOverFlowListener(publisher));
+    }
+    private void answerOverflowListener(@NonNull AnswerHolder holder, final User publisher, final FeedItem feedItem) {
+        holder.overflowImgView.setOnClickListener(posAnsCrackItemOverFlowListener(publisher));
+    }
+    private void crackOverflowListener(@NonNull CrackHolder holder, final User publisher, final FeedItem feedItem) {
+        holder.overflowImgView.setOnClickListener(posAnsCrackItemOverFlowListener(publisher));
+    }
+
+
+
+
+
+    private View.OnClickListener posAnsCrackItemOverFlowListener(final User publisher) {
+        return new View.OnClickListener() {
 
             private TextView followTView;
             private LinearLayout followBtnLayout;
@@ -377,96 +400,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 });
 
             }
-        });
+        };
     }
 
-    private void questionOverflowListener(@NonNull AnswerHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(new View.OnClickListener() {
 
-            private TextView followTView;
-            private LinearLayout followBtnLayout;
-            private LinearLayout deleteBtnLayout;
-            private LinearLayout editBtnLayout;
-            private LinearLayout copyBtnLayout;
-            private LinearLayout notifBtnLayout;
-            private LinearLayout connectBtnLayout;
-
-            @Override
-            public void onClick(View view) {
-
-                View bottomSheetView = View.inflate(mContext, R.layout.bottom_sheet_dialog_for_sharedposts, null);
-
-
-                mDialog = new BottomSheetDialog(mContext);
-                mDialog.setContentView(bottomSheetView);
-                mDialog.show();
-
-                inflateBottomSheetButtons(bottomSheetView);
-            }
-
-            private void inflateBottomSheetButtons(final View bottomSheetView) {
-
-                followTView = bottomSheetView.findViewById(R.id.followTView);
-                followBtnLayout = bottomSheetView.findViewById(R.id.followUser);
-                deleteBtnLayout = bottomSheetView.findViewById(R.id.deleteBtn);
-                editBtnLayout = bottomSheetView.findViewById(R.id.editNameBtn);
-                copyBtnLayout = bottomSheetView.findViewById(R.id.copyBtn);
-                notifBtnLayout =  bottomSheetView.findViewById(R.id.notifBtn);
-                connectBtnLayout =  bottomSheetView.findViewById(R.id.connectBtn);
-
-                followBtnLayout.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-                        mDialog.dismiss();
-
-                        final Map<String, Object> followingUser = new HashMap<>();
-                        followingUser.put("name", publisher.getFirstName());
-                        followingUser.put("dpUrl", publisher.getDpUrl());
-
-                        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
-                                .collection("following").document(publisher.getUserId()).set(followingUser)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        followingUser.put("name", FeedFragment.sName);
-                                        followingUser.put("dpUrl", FeedFragment.sDpUrl);
-                                        mFirebaseUtil.mFirestore.collection("users").document(publisher.getUserId())
-                                                .collection("followers").document(FirebaseUtil.getCurrentUserId()).set(followingUser).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-
-                                                followTView.setText("Unfollow");
-
-                                                Toast.makeText(mContext, "Now You are following "+publisher.getFirstName(), Toast.LENGTH_LONG).show();
-
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Toast.makeText(mContext, "SomethingWentWrong", Toast.LENGTH_LONG).show();
-                                            }
-                                        });
-
-
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                                Toast.makeText(mContext, "SomethingWentWrong", Toast.LENGTH_LONG).show();
-
-                                Log.d("FeedAdapter", "SomethingWentWrong "+e);
-
-                            }
-                        });
-
-                    }
-                });
-
-            }
-        });
-    }
 
     private void bindPost(@NonNull PostHolder holder, final String content, final String publishedImg, String timeAgo) {
         holder.setContent(content);
@@ -521,30 +458,30 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mView = itemView;
         }
 
-        public void setContent(String postedText) {
+        private void wireViews(){
+            overflowImgView = mView.findViewById(R.id.overflow);
+            userName = mView.findViewById(R.id.userNameTView);
+            userImage = mView.findViewById(R.id.feed_user_image);
+            timeAgo = mView.findViewById(R.id.feed_date);
+            postedImgView = mView.findViewById(R.id.postedImagee);
             content = mView.findViewById(R.id.feed_content);
+        }
+
+        public void setContent(String postedText) {
             content.setText(postedText);
         }
 
         public void setPostedImgView(String imageUrl) {
-            // if(imageUrl != null)
-            // crackImgView.setImageURI(Uri.parse(imageUrl));
-
-            postedImgView = mView.findViewById(R.id.postedImagee);
             if(imageUrl != null)
             Glide.with(mContext).load(imageUrl).into(postedImgView);
         }
 
         public void setTime(String timeAgo) {
-            this.timeAgo = mView.findViewById(R.id.feed_date);
             this.timeAgo.setText(timeAgo);
         }
 
         public void setUserData(String name, String image) {
-            userName = mView.findViewById(R.id.userNameTView);
             userName.setText(name);
-
-            userImage = mView.findViewById(R.id.feed_user_image);
             RequestOptions placeholderOption = new RequestOptions();
             placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
             if (image!=null&&null!=content)
@@ -552,9 +489,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         }
 
-        public void setOverflowImgView() {
-            overflowImgView = mView.findViewById(R.id.overflow);
-        }
+
 
     }
 
