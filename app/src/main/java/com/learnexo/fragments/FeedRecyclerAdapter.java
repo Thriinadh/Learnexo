@@ -157,7 +157,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     Question question = (Question) feedItem;
                     QuestionHolder quesViewHolder = (QuestionHolder) holder;
                     quesViewHolder.wireViews(question);
-                    bindQuestion(quesViewHolder, itemContent);
+                    bindQuestion(quesViewHolder, itemContent, timeAgo);
                     answerListener(quesViewHolder, question);
 
                     break;
@@ -480,9 +480,9 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.setTime(timeAgo);
     }
 
-    private void bindQuestion(@NonNull QuestionHolder holder, final String content) {
+    private void bindQuestion(@NonNull QuestionHolder holder, final String content, String timeAgo) {
         holder.setContent(content);
-       // holder.setTime(timeAgo);
+        holder.setTime(timeAgo);
     }
 
     private void bindChallenge(@NonNull ChallengeHolder holder, final String content, String timeAgo) {
