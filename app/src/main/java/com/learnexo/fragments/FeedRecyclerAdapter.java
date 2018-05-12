@@ -702,6 +702,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if(question.getNoOfAns()>0)
                 noCracksYet.setText(question.getNoOfAns()+ " Answers");
 
+            int n=question.getNoOfAns();
+            // No Answers Yet - will come from layout file, if n=0
+            if(n==1)
+                noCracksYet.setText(n+ " Answer");
+            else if(n>1)
+                noCracksYet.setText(n+ " Answers");
+
             answer=mView.findViewById(R.id.answer);
             pass=mView.findViewById(R.id.pass);
             followQues=mView.findViewById(R.id.followQues);
@@ -744,11 +751,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         public void wireViews(Question challenge){
             noCracksYet = mView.findViewById(R.id.noAnswerYet);
-
-            if(challenge.getNoOfAns()==0)
+            int n=challenge.getNoOfAns();
+            if(n==0)
                 noCracksYet.setText("No Cracks Yet");
+            else if(n==1)
+                noCracksYet.setText(n+ " Crack");
             else
-                noCracksYet.setText(challenge.getNoOfAns()+ " Cracks");
+                noCracksYet.setText(n+ " Cracks");
 
             challengeContent = mView.findViewById(R.id.questionTView);
             timeAgo = mView.findViewById(R.id.postedTime);

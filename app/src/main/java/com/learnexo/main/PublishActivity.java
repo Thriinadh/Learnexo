@@ -288,6 +288,10 @@ public class PublishActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if (task.isSuccessful()) {
+
+                    mFirebaseUtil.mFirestore.collection("questions")
+                            .document(task.getResult().getId()).set(mFeedItem);
+
                     saveInterestFeedItem(mFeedItem, documentReferenceTask, interestFeedPath, mFeedItem.getType());
 
                     gotoFeed();
