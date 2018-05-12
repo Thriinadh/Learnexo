@@ -1,14 +1,25 @@
 package com.learnexo.main;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,13 +34,20 @@ public class PlayVideoActivity extends AppCompatActivity {
     private String url;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
 
+    private LinearLayout layoutBottomSheet;
+    private RelativeLayout btmSheetHideRelative;
+    BottomSheetBehavior sheetBehavior;
+    private CoordinatorLayout coordinatorLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_video);
 
         videoView = findViewById(R.id.videoView);
-
+        layoutBottomSheet = findViewById(R.id.bottom_sheet);
+        sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
+        btmSheetHideRelative = findViewById(R.id.btmSheetHideRelative);
 
         mFirebaseUtil.mFirestore.collection("subjects").document("compilerDesign").collection("chap1")
                 .document("introduction").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -53,6 +71,25 @@ public class PlayVideoActivity extends AppCompatActivity {
             }
         });
 
+        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        Display display = null;
+        if (wm != null) {
+            display = wm.getDefaultDisplay();
+        }
+        DisplayMetrics metrics = new DisplayMetrics();
+        if (display != null) {
+            display.getMetrics(metrics);
+        }
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+
+//        coordinatorLayout = findViewById(R.id.coordinator_layout);
+//
+//        int videoVieww = videoView.getHeight();
+//
+//        layoutBottomSheet.getLayoutParams().height = layoutBottomSheet.getHeight() - videoVieww;
+//        layoutBottomSheet.requestLayout();
+//        sheetBehavior.onLayoutChild(coordinatorLayout, layoutBottomSheet, ViewCompat.LAYOUT_DIRECTION_LTR);
 
 
 //        if (mediaControls == null) {
@@ -83,18 +120,80 @@ public class PlayVideoActivity extends AppCompatActivity {
 //            }
 //        });
 
+
+        sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED: {
+                       // btnBottomSheet.setText("Close Sheet");
+                    }
+                    break;
+                    case BottomSheetBehavior.STATE_COLLAPSED: {
+                      //  btnBottomSheet.setText("Expand Sheet");
+                    }
+                    break;
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        break;
+                    case BottomSheetBehavior.STATE_SETTLING:
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+
+        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        }, 2000);
+
+        btmSheetHideRelative.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+                    sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+                } else {
+                    sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+                }
+            }
+        });
+
     }
+
+//    private static String getScreenResolution(Context context)
+//    {
+//        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+//        Display display = wm.getDefaultDisplay();
+//        DisplayMetrics metrics = new DisplayMetrics();
+//        display.getMetrics(metrics);
+//        int width = metrics.widthPixels;
+//        int height = metrics.heightPixels;
+//
+//        return "{" + width + "," + height + "}";
+//    }
 
     public class BackgroundAsyncTask extends AsyncTask<String, Uri, Void> {
         Integer track = 0;
         ProgressDialog dialog;
 
-        protected void onPreExecute() {
-            dialog = new ProgressDialog(PlayVideoActivity.this);
-            dialog.setMessage("Loading, Please Wait...");
-            dialog.setCancelable(true);
-            dialog.show();
-        }
+//        protected void onPreExecute() {
+//            dialog = new ProgressDialog(PlayVideoActivity.this);
+//            dialog.setMessage("Loading, Please Wait...");
+//            dialog.setCancelable(true);
+//            dialog.show();
+//        }
 
         protected void onProgressUpdate(final Uri... uri) {
 
@@ -124,7 +223,7 @@ public class PlayVideoActivity extends AppCompatActivity {
                     @Override
                     public void onPrepared(MediaPlayer mediaPlayer) {
                         videoView.start();
-                        dialog.dismiss();
+                      //  dialog.dismiss();
 
                         mediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
                             @Override
