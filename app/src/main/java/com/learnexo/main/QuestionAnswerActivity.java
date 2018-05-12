@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +53,9 @@ public class QuestionAnswerActivity extends AppCompatActivity {
     private EditText quesAns;
     private TextView submitTView;
     private ImageView galleryView;
+    private RelativeLayout relativeLayoutHide;
+    private RelativeLayout relativeLayout;
+    private ImageView loadImage;
 
     private String mPublisherName = FeedFragment.sName;
 
@@ -69,6 +74,9 @@ public class QuestionAnswerActivity extends AppCompatActivity {
         quesAns = findViewById(R.id.quesAns);
         submitTView = findViewById(R.id.submitTView);
         galleryView = findViewById(R.id.galleryView);
+        relativeLayoutHide = findViewById(R.id.relativeLayoutHide);
+        relativeLayout = findViewById(R.id.relativeLayout);
+        loadImage = findViewById(R.id.loadImage);
 
         Intent intent = getIntent();
         String quesData = intent.getStringExtra(EXTRA_QUESTION);
@@ -253,6 +261,39 @@ public class QuestionAnswerActivity extends AppCompatActivity {
         interestFeed.setFeedItemId(documentReferenceTask.getResult().getId());
 
         mFirebaseUtil.mFirestore.collection(interestFeedPath).add(interestFeed);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        setImageToIview(requestCode, resultCode, data);
+    }
+
+    private void setImageToIview(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+            if (resultCode == RESULT_OK) {
+                relativeLayout.setVisibility(View.INVISIBLE);
+                relativeLayoutHide.setVisibility(View.VISIBLE);
+                mPublishedImageUri = result.getUri();
+                loadImage.setImageURI(mPublishedImageUri);
+
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(QuestionAnswerActivity.this, "Uploaded", Toast.LENGTH_LONG).show();
+                        relativeLayoutHide.setVisibility(View.INVISIBLE);
+                        relativeLayout.setVisibility(View.VISIBLE);
+                    }
+                }, 1000);
+
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+                Toast.makeText(QuestionAnswerActivity.this, "ImagePicker " +error, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
 }
