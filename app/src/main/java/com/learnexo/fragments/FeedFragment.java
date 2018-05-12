@@ -91,35 +91,6 @@ public class FeedFragment extends Fragment {
 
     private void generateFeedItemList() {
 
-        //fetching posts, answers questions, challenges, news separately and mix them up in feed items list
-        //check if feed items list size is <=20, if yes refill the feed list
-        //refill the feed item list for every 10 min
-
-
-        //get Posts, Answers tagged in interests, based on related topics
-        //posted by related people
-        //involved by related people in Like division
-        //with more likes, comments, shares, bookmarks and views (Like division)
-        //related to history, timing
-
-        //get Unanswered Questions/Challenges tagged in interests
-        //asked by related people
-        //based on related topics
-        //requested to the logged in user
-        //based on history, timing
-
-        //related people =
-        // (PriorityProfiles, Following, FollowingOfFollowing, nearby, visited profiles, topProfiles...)
-        //Interests, more likes, shares, comments, bookmarks
-        //Based on his history, check his timing of usage
-        //related topics to follow
-        //related people to follow
-        //related questions, posts and challenges
-        //his followers posts and friends posts
-        //news and girls
-        //priority profiles
-
-
         mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("interests").
                 document("doc1").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 
@@ -222,6 +193,7 @@ public class FeedFragment extends Fragment {
                                                     DocumentSnapshot documentSnapshot = task.getResult();
 
                                                     Question noAnsQuestion=documentSnapshot.toObject(Question.class);
+                                                    noAnsQuestion.setQuestionId(documentSnapshot.getId());
                                                     if(noAnsQuestion!=null)
                                                         mFeedItems.add(noAnsQuestion);
                                                     mAdapter.notifyDataSetChanged();
@@ -238,6 +210,7 @@ public class FeedFragment extends Fragment {
                                                     DocumentSnapshot documentSnapshot = task.getResult();
 
                                                     Question noCrackChallenge=documentSnapshot.toObject(Question.class);
+                                                    noCrackChallenge.setQuestionId(documentSnapshot.getId());
                                                     if(noCrackChallenge!=null)
                                                         mFeedItems.add(noCrackChallenge);
                                                     mAdapter.notifyDataSetChanged();

@@ -6,6 +6,16 @@ import com.learnexo.model.feed.FeedItem;
 //only used for unanswered questions
 @IgnoreExtraProperties
 public class Question extends FeedItem{
+    private String questionId;
+
+    public String getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(String questionId) {
+        this.questionId = questionId;
+    }
+
     private boolean isChallenge;
     private String answerForChallenge;
     private int noOfAns;

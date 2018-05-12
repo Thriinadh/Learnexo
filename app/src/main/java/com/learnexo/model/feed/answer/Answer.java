@@ -4,7 +4,17 @@ import com.learnexo.model.feed.FeedItem;
 
 public class Answer extends FeedItem {
     private String quesId;
-    private String quesName;
+    private String questionerId;
+
+    public String getQuestionerId() {
+        return questionerId;
+    }
+
+    public void setQuestionerId(String questionerId) {
+        this.questionerId = questionerId;
+    }
+
+    private String quesContent;
 
     private boolean isCrack;
 
@@ -21,12 +31,12 @@ public class Answer extends FeedItem {
         this.quesId = quesId;
     }
 
-    public String getQuesName() {
-        return quesName;
+    public String getQuesContent() {
+        return quesContent;
     }
 
-    public void setQuesName(String quesName) {
-        this.quesName = quesName;
+    public void setQuesContent(String quesContent) {
+        this.quesContent = quesContent;
     }
 
     public boolean isCrack() {

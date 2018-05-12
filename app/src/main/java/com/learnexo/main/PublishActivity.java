@@ -288,9 +288,9 @@ public class PublishActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if (task.isSuccessful()) {
-                    gotoFeed();
-
                     saveInterestFeedItem(mFeedItem, documentReferenceTask, interestFeedPath, mFeedItem.getType());
+
+                    gotoFeed();
 
                 } else {
                     String error = task.getException().getMessage();
@@ -308,7 +308,7 @@ public class PublishActivity extends AppCompatActivity {
         });
     }
 
-    private void saveInterestFeedItem(FeedItem mFeedItem, Task<DocumentReference> documentReferenceTask, String interestFeedPath, int type) {
+    public void saveInterestFeedItem(FeedItem mFeedItem, Task<DocumentReference> documentReferenceTask, String interestFeedPath, int type) {
         InterestFeed interestFeed=new InterestFeed();
 
         interestFeed.setInterest(mFeedItem.getTags().get(0));

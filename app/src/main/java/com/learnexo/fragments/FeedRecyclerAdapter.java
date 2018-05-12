@@ -24,7 +24,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.main.FullPostActivity;
-import com.learnexo.main.QuestionAnswerActivity;
+import com.learnexo.main.AnswerActivity;
 import com.learnexo.main.R;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
@@ -134,7 +134,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 case FeedItem.ANSWER:
                     Answer answer= (Answer) feedItem;
                     AnswerHolder answerHolder = (AnswerHolder) holder;
-                    bindAnswer(answerHolder, itemContent, answer.getQuesName(), imagePosted, timeAgo);
+                    answerHolder.wireViews();
+                    bindAnswer(answerHolder, itemContent, answer.getQuesContent(), imagePosted, timeAgo);
                     bindAnswererData(answerHolder, publisher);
                     answerContentListener(answerHolder, itemContent, imagePosted, timeAgo);
 //                    questionOverflowListener(answerHolder, publisher, feedItem);
@@ -144,7 +145,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 case FeedItem.CRACK:
                     Answer crack= (Answer) feedItem;
                     CrackHolder crackHolder = (CrackHolder) holder;
-                    bindCrack(crackHolder, itemContent, crack.getQuesName(), imagePosted, timeAgo);
+                    crackHolder.wireViews();
+                    bindCrack(crackHolder, itemContent, crack.getQuesContent(), imagePosted, timeAgo);
                     bindCrackerData(crackHolder, publisher);
                     crackContentListener(crackHolder, itemContent, imagePosted, timeAgo);
 //                    questionOverflowListener(quesViewHolder, publisher, feedItem);
@@ -156,7 +158,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     QuestionHolder quesViewHolder = (QuestionHolder) holder;
                     quesViewHolder.wireViews();
                     bindQuestion(quesViewHolder, itemContent);
-                    noAnswerAnsListener(quesViewHolder, itemContent);
+                    answerListener(quesViewHolder, question);
 
                     break;
 
@@ -202,12 +204,12 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
     }
 
-    private void noAnswerAnsListener(@NonNull QuestionHolder holder, final String itemContent) {
+    private void answerListener(@NonNull QuestionHolder holder, final Question question) {
 
         holder.answer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = QuestionAnswerActivity.newIntent(mContext, itemContent);
+                Intent intent = AnswerActivity.newIntent(mContext, question);
                 mContext.startActivity(intent);
                 ((Activity) mContext).overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
             }
