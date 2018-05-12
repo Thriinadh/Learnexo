@@ -28,6 +28,7 @@ import com.learnexo.main.QuestionAnswerActivity;
 import com.learnexo.main.R;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
+import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
@@ -151,6 +152,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     break;
 
                 case FeedItem.NO_ANS_QUES:
+                    Question question = (Question) feedItem;
                     QuestionHolder quesViewHolder = (QuestionHolder) holder;
                     quesViewHolder.wireViews();
                     bindQuestion(quesViewHolder, itemContent);

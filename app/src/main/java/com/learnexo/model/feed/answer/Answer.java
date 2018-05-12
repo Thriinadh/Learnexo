@@ -11,6 +11,8 @@ public class Answer extends FeedItem {
     private int bookMarks;
     private long views;
 
+    public Answer() {}
+
     public String getQuesId() {
         return quesId;
     }
