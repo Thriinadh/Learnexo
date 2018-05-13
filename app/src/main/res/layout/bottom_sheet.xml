@@ -57,69 +57,70 @@
         android:layout_height="1dp"
         android:background="@color/light_grey"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:textSize="20sp"
-        android:padding="8dp"
-        android:text="1. Introduction"
-        android:textColor="@color/black"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:padding="8dp"
+            android:text="1. Introduction"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="36dp"
-        android:textSize="18sp"
-        android:padding="8dp"
-        android:text="1. What is an Operating System..?" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="36dp"
+            android:padding="8dp"
+            android:text="1. What is an Operating System..?"
+            android:textSize="18sp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="36dp"
-        android:textSize="18sp"
-        android:padding="8dp"
-        android:text="2. Explain Operating System" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="36dp"
+            android:padding="8dp"
+            android:text="2. Explain Operating System"
+            android:textSize="18sp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:textSize="20sp"
-        android:padding="8dp"
-        android:text="2. Examples of OS"
-        android:textColor="@color/black"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:padding="8dp"
+            android:text="2. Examples of OS"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="36dp"
-        android:textSize="18sp"
-        android:padding="8dp"
-        android:text="3. How is that Operation" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="36dp"
+            android:padding="8dp"
+            android:text="3. How is that Operation"
+            android:textSize="18sp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="36dp"
-        android:textSize="18sp"
-        android:padding="8dp"
-        android:text="4. How to eat Operating System" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="36dp"
+            android:padding="8dp"
+            android:text="4. How to eat Operating System"
+            android:textSize="18sp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="36dp"
-        android:textSize="18sp"
-        android:padding="8dp"
-        android:text="5. Any way to swallow System" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="36dp"
-        android:textSize="18sp"
-        android:padding="8dp"
-        android:text="6. It is not a subject Bro" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="36dp"
+            android:padding="8dp"
+            android:text="5. Any way to swallow System"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="36dp"
+            android:padding="8dp"
+            android:text="6. It is not a subject Bro"
+            android:textSize="18sp" />
 
 </LinearLayout>
