@@ -18,50 +18,185 @@
         android:id="@+id/collapsingToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
         android:fitsSystemWindows="true"
-        app:contentScrim="?attr/colorPrimary"
-        app:expandedTitleMarginStart="48dp"
-        app:expandedTitleMarginEnd="64dp">
+        app:contentScrim="@android:color/transparent">
 
         <VideoView
             android:id="@+id/videoView"
             android:layout_width="wrap_content"
-            android:layout_height="216dp" />
+            android:layout_height="216dp"
+            app:layout_collapseMode="parallax"
+            android:fitsSystemWindows="true"
+            android:layout_gravity="center"/>
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/video_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:layout_collapseMode="pin" />
+             />
 
     </android.support.design.widget.CollapsingToolbarLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <LinearLayout
+                android:id="@+id/likeLinear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="12dp">
+
+            <ImageView
+                android:id="@+id/likeImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_likes"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2.1k"
+                android:textColor="@color/light_black" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/commentLinear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="24dp"
+                android:layout_toRightOf="@+id/likeLinear">
+
+            <ImageView
+                android:id="@+id/commentImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_comments"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2.1k"
+                    android:textColor="@color/light_black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/shareLinear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:orientation="vertical"
+                android:layout_marginLeft="24dp"
+                android:layout_toRightOf="@+id/commentLinear">
+
+            <ImageView
+                android:id="@+id/shareImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_shares"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2.1k"
+                    android:textColor="@color/light_black" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/viewsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="48dp"
+                android:textSize="16sp"
+                android:textColor="@color/light_black"
+                android:layout_toRightOf="@+id/shareLinear"
+                android:text="2.1k views"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="12dp"
+                android:layout_alignParentRight="true">
+
+            <ImageView
+                android:id="@+id/bookmarkImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_bookmarks"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2.1k"
+                    android:textColor="@color/light_black" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_grey"/>
+
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:layout_marginTop="8dp">
+
+        <TextView
+            android:id="@+id/overviewText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:textColor="@color/black"
+            android:text="This is the foundation of Computer science and nobody is here are there though perfectly aligned and another feather in the hat is very common for Roger Federer. This kind of fellow is called worst of the kind"
+            android:layout_toLeftOf="@+id/expandText"
+            android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/expandText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/drop_down"/>
+            </RelativeLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:lineSpacingExtra="8dp"
-            android:text="post with see more is over...
-post with likes division has to be done.............
-ques with see more has to be... overflow
-ques with likes division has to be...............
-challenge with see more...
-challenge with likes division................
-no answer ques....
-no cracked challenge...
-
-if question are challenge is answred then update its type to question and challenge
-
-change Post(Share info) layout(Remove cardview)."
+            android:lineSpacingExtra="4dp"
+            android:text="@string/long_string"
             android:padding="@dimen/activity_horizontal_margin" />
+
+        </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
 </android.support.design.widget.CoordinatorLayout>

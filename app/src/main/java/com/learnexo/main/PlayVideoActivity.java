@@ -1,6 +1,7 @@
 package com.learnexo.main;
 
 import android.app.ProgressDialog;
+import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -12,7 +13,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,6 +30,8 @@ public class PlayVideoActivity extends AppCompatActivity {
     private String url;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     private Toolbar mToolbar;
+    private ImageView expandText;
+    private TextView overviewText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +39,7 @@ public class PlayVideoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_play_video);
 
         videoView = findViewById(R.id.videoView);
-        mToolbar = findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.video_toolbar);
         setSupportActionBar(mToolbar);
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
@@ -42,77 +47,49 @@ public class PlayVideoActivity extends AppCompatActivity {
             supportActionBar.setDisplayShowHomeEnabled(true);
         }
 
-        mFirebaseUtil.mFirestore.collection("subjects").document("compilerDesign").collection("chap1")
-                .document("introduction").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        overviewText = findViewById(R.id.overviewText);
 
-                if(task.isSuccessful()) {
+        expandText = findViewById(R.id.expandText);
 
-                    if(task.getResult().exists()) {
+//        mFirebaseUtil.mFirestore.collection("subjects").document("compilerDesign").collection("chap1")
+//                .document("introduction").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//
+//                if(task.isSuccessful()) {
+//
+//                    if(task.getResult().exists()) {
+//
+//                          url = task.getResult().getString("url");
+////                        videoView.setVideoURI(Uri.parse(url));
+////                        videoView.start();
+//
+//                        new BackgroundAsyncTask().execute(url);
+//
+//                    }
+//
+//                }
+//
+//            }
+//        });
 
-                          url = task.getResult().getString("url");
-//                        videoView.setVideoURI(Uri.parse(url));
-//                        videoView.start();
+    }
 
-                        new BackgroundAsyncTask().execute(url);
-
-                    }
-
-                }
-
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            View decorView = getWindow().getDecorView();
+            int uiOptions = 0;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
             }
-        });
-
-//        Display display = getWindowManager().getDefaultDisplay();
-//        Point size = new Point();
-//        display.getSize(size);
-//        int width = size.x;
-//        int heightt = size.y;
-//
-//        int videoVieww = videoView.getLayoutParams().height;
-//        final int sheetHeight = heightt-videoVieww;
-
-      //  Toast.makeText(PlayVideoActivity.this, "Height "+sheetHeight, Toast.LENGTH_LONG).show();
-
-
-//        coordinatorLayout = findViewById(R.id.coordinator_layout);
-//
-//        int videoVieww = videoView.getHeight();
-//
-//        layoutBottomSheet.getLayoutParams().height = layoutBottomSheet.getHeight() - videoVieww;
-//        layoutBottomSheet.requestLayout();
-//        sheetBehavior.onLayoutChild(coordinatorLayout, layoutBottomSheet, ViewCompat.LAYOUT_DIRECTION_LTR);
-
-
-//        if (mediaControls == null) {
-//            // create an object of media controller class
-//            mediaControls = new MediaController(PlayVideoActivity.this);
-//            mediaControls.setAnchorView(videoView);
-//        }
-//
-//        // set the media controller for video view
-//        videoView.setMediaController(mediaControls);
-
-        //Firebase is here
-
-//        // implement on completion listener on video view
-//        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(MediaPlayer mp) {
-//                Toast.makeText(getApplicationContext(), "Thank You...!!!", Toast.LENGTH_LONG).show();
-//                // display a toast when an video is completed
-//            }
-//        });
-//        videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-//            @Override
-//            public boolean onError(MediaPlayer mp, int what, int extra) {
-//                Toast.makeText(getApplicationContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_LONG).show();
-//                // display a toast when an error is occured while playing an video
-//                return false;
-//            }
-//        });
-
+            decorView.setSystemUiVisibility(uiOptions);
+        } else {
+            View decorView = getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
     }
 
     @Override
@@ -121,18 +98,6 @@ public class PlayVideoActivity extends AppCompatActivity {
         inflater.inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
-//    private static String getScreenResolution(Context context)
-//    {
-//        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-//        Display display = wm.getDefaultDisplay();
-//        DisplayMetrics metrics = new DisplayMetrics();
-//        display.getMetrics(metrics);
-//        int width = metrics.widthPixels;
-//        int height = metrics.heightPixels;
-//
-//        return "{" + width + "," + height + "}";
-//    }
 
     public class BackgroundAsyncTask extends AsyncTask<String, Uri, Void> {
         Integer track = 0;
@@ -211,7 +176,6 @@ public class PlayVideoActivity extends AppCompatActivity {
 
             return null;
         }
-
 
     }
 

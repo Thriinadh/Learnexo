@@ -86,7 +86,7 @@ public class LearnersFragment extends Fragment {
                         ((LearnersViewHolder) holder).imageView.setImageDrawable(res);
                         break;
                     case LINE_TYPE:
-                        ((LineViewHolder) holder).mLineView.setBackgroundColor(Color.RED);
+                        ((LineViewHolder) holder).mLineView.setBackgroundColor(Color.parseColor("#1da1f2"));
                         break;
                 }
             }

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Computer Science"
-        android:textColor="@color/green"
+        android:textColor="#1da1f2"
         android:textSize="24sp"
         android:textStyle="bold"
         android:padding="12dp"/>
