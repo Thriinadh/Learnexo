@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
+import com.learnexo.main.NonScrollExpandableListView;
 import com.learnexo.main.R;
 
 import java.util.ArrayList;
@@ -24,7 +25,6 @@ public class TextFragment extends Fragment {
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
-
 
     public TextFragment() {
         // Required empty public constructor
@@ -51,16 +51,6 @@ public class TextFragment extends Fragment {
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
-
-//        expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-//
-//            @Override
-//            public boolean onGroupClick(ExpandableListView parent, View v,
-//                                        int groupPosition, long id) {
-//                setListViewHeight(parent, groupPosition);
-//                return false;
-//            }
-//        });
 
         Display newDisplay = Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay();
         int width = newDisplay.getWidth();
@@ -130,40 +120,5 @@ public class TextFragment extends Fragment {
         listDataChild.put(listDataHeader.get(3), networking);
         listDataChild.put(listDataHeader.get(4), artificial);
     }
-
-//    private void setListViewHeight(ExpandableListView listView,
-//                                   int group) {
-//        ExpandableListAdapter listAdapter = (ExpandableListAdapter) listView.getExpandableListAdapter();
-//        int totalHeight = 0;
-//        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(),
-//                View.MeasureSpec.EXACTLY);
-//        for (int i = 0; i < listAdapter.getGroupCount(); i++) {
-//            View groupItem = listAdapter.getGroupView(i, false, null, listView);
-//            groupItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-//
-//            totalHeight += groupItem.getMeasuredHeight();
-//
-//            if (((listView.isGroupExpanded(i)) && (i != group))
-//                    || ((!listView.isGroupExpanded(i)) && (i == group))) {
-//                for (int j = 0; j < listAdapter.getChildrenCount(i); j++) {
-//                    View listItem = listAdapter.getChildView(i, j, false, null,
-//                            listView);
-//                    listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-//
-//                    totalHeight += listItem.getMeasuredHeight();
-//
-//                }
-//            }
-//        }
-//
-//        ViewGroup.LayoutParams params = listView.getLayoutParams();
-//        int height = totalHeight
-//                + (listView.getDividerHeight() * (listAdapter.getGroupCount() - 1));
-//        if (height < 10)
-//            height = 200;
-//        params.height = height;
-//        listView.setLayoutParams(params);
-//        listView.requestLayout();
-//    }
 
 }

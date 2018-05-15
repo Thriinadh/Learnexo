@@ -80,7 +80,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         switch (viewType) {
             case FeedItem.POST:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_list_item, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_with_likes, parent, false);
+
                 return new PostHolder(view);
 
             case FeedItem.ANSWER:
@@ -179,7 +180,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         }
     }
-
 
     private void postContentListener(@NonNull PostHolder holder, final String itemContent, final String imagePosted, final String timeAgo, final User publisher) {
         holder.content.setOnClickListener(new View.OnClickListener() {
@@ -553,6 +553,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private CircleImageView userImage;
         private ImageView overflowImgView;
         private ImageView postedImgView;
+        private TextView seeMore;
 
         // PostHolder constructor
         public PostHolder(View itemView) {
@@ -562,15 +563,25 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         private void wireViews(){
             overflowImgView = mView.findViewById(R.id.overflow);
-            userName = mView.findViewById(R.id.userNameTView);
-            userImage = mView.findViewById(R.id.feed_user_image);
-            timeAgo = mView.findViewById(R.id.feed_date);
+            userName = mView.findViewById(R.id.userName);
+            userImage = mView.findViewById(R.id.circleImageView);
+            timeAgo = mView.findViewById(R.id.answeredTime);
             postedImgView = mView.findViewById(R.id.postedImagee);
-            content = mView.findViewById(R.id.feed_content);
+            content = mView.findViewById(R.id.answerContent);
+            seeMore = mView.findViewById(R.id.seeMore);
+
         }
 
         public void setContent(String postedText) {
             content.setText(postedText);
+            content.post(new Runnable() {
+                @Override
+                public void run() {
+                    int lineCount = content.getLineCount();
+                    if(lineCount<=3)
+                        seeMore.setVisibility(View.INVISIBLE);
+                }
+            });
         }
 
         public void setPostedImgView(String imageUrl) {
@@ -592,7 +603,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
 
-
     }
 
 
@@ -607,6 +617,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private TextView timeAgo;
         private ImageView overflowImgView;
         private ImageView ansImgView;
+        private TextView seeMore;
 
         public AnswerHolder(View itemView) {
             super(itemView);
@@ -623,11 +634,22 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             answerContent = mView.findViewById(R.id.answerContent);
             ansImgView = mView.findViewById(R.id.postedImagee);
+            seeMore = mView.findViewById(R.id.seeMore);
         }
 
         public void setContent(String question, String answer) {
             quesContent.setText(question);
             answerContent.setText(answer);
+
+            answerContent.post(new Runnable() {
+                @Override
+                public void run() {
+                    int lineCount = answerContent.getLineCount();
+                    if(lineCount<=3)
+                        seeMore.setVisibility(View.INVISIBLE);
+                }
+            });
+
         }
         public void setAnsImgView(String imageUrl) {
             if(imageUrl != null&&mContext!=null)
@@ -664,6 +686,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private ImageView overflowImgView;
         private ImageView challengeIcon;
         private ImageView crackImgView;
+        private TextView seeMore;
 
         public CrackHolder(View itemView) {
             super(itemView);
@@ -682,11 +705,20 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             crackContent = mView.findViewById(R.id.answerContent);
             crackImgView = mView.findViewById(R.id.postedImagee);
+            seeMore = mView.findViewById(R.id.seeMore);
         }
 
         public void setContent(String question, String answer) {
             challenge.setText(question);
             crackContent.setText(answer);
+            crackContent.post(new Runnable() {
+                @Override
+                public void run() {
+                    int lineCount = crackContent.getLineCount();
+                    if(lineCount<=3)
+                        seeMore.setVisibility(View.INVISIBLE);
+                }
+            });
         }
         public void setCrackImgView(String imageUrl) {
             if(imageUrl != null&&mContext!=null)
@@ -719,12 +751,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private TextView timeAgo;
         private TextView noCracksYet;
 
-
         private TextView answer;
         private TextView followQues;
         private TextView pass;
         private ImageView overflowImgView;
-
 
         public QuestionHolder(View itemView) {
             super(itemView);
@@ -779,7 +809,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private TextView followQues;
         private TextView pass;
         private ImageView overflowImgView;
-
 
         public ChallengeHolder(View itemView) {
             super(itemView);

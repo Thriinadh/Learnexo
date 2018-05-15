@@ -90,16 +90,18 @@
 
     <TextView
         android:id="@+id/seeMore"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginRight="2dp"
         android:layout_gravity="end"
-        android:background="@android:color/transparent"
+        android:background="@color/white"
         android:text="See more"
         android:textAlignment="viewEnd"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/answerContent"
-        app:layout_constraintEnd_toEndOf="@+id/answerContent"
-        app:layout_constraintStart_toStartOf="@+id/answerContent" />
+        app:layout_constraintEnd_toEndOf="@+id/answerContent" />
 
     <View
         android:layout_width="match_parent"
