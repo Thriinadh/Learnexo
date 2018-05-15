@@ -75,7 +75,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        mContext = parent.getContext().getApplicationContext();
+        mContext = parent.getContext();
         View view;
 
         switch (viewType) {
@@ -586,7 +586,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         public void setPostedImgView(String imageUrl) {
             if(imageUrl != null)
-            Glide.with(mContext).load(imageUrl).into(postedImgView);
+            Glide.with(mContext.getApplicationContext()).load(imageUrl).into(postedImgView);
         }
 
         public void setTime(String timeAgo) {
@@ -598,7 +598,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             RequestOptions placeholderOption = new RequestOptions();
             placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
             if (image!=null&&null!=content)
-            Glide.with(mContext).load(image).apply(placeholderOption).into(userImage);
+            Glide.with(mContext.getApplicationContext()).load(image).apply(placeholderOption).into(userImage);
 
         }
 
@@ -653,7 +653,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         public void setAnsImgView(String imageUrl) {
             if(imageUrl != null&&mContext!=null)
-                Glide.with(mContext).load(imageUrl).into(ansImgView);
+                Glide.with(mContext.getApplicationContext()).load(imageUrl).into(ansImgView);
         }
 
         public void setTime(String timeAgo) {
@@ -666,7 +666,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             RequestOptions placeholderOption = new RequestOptions();
             placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
             if (image!=null&&null!=mContext)
-                Glide.with(mContext).load(image).apply(placeholderOption).into(userImage);
+                Glide.with(mContext.getApplicationContext()).load(image).apply(placeholderOption).into(userImage);
 
         }
 
@@ -722,7 +722,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         public void setCrackImgView(String imageUrl) {
             if(imageUrl != null&&mContext!=null)
-                Glide.with(mContext).load(imageUrl).into(crackImgView);
+                Glide.with(mContext.getApplicationContext()).load(imageUrl).into(crackImgView);
         }
 
         public void setTime(String timeAgo) {
@@ -735,7 +735,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             RequestOptions placeholderOption = new RequestOptions();
             placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
             if (image!=null&&null!=mContext)
-                Glide.with(mContext).load(image).apply(placeholderOption).into(userImage);
+                Glide.with(mContext.getApplicationContext()).load(image).apply(placeholderOption).into(userImage);
 
         }
 
