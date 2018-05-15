@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
-import com.learnexo.main.NonScrollExpandableListView;
 import com.learnexo.main.R;
 
 import java.util.ArrayList;
@@ -39,7 +38,7 @@ public class TextFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_hot_q, container, false);
+        View view = inflater.inflate(R.layout.fragment_text, container, false);
 
         // get the listview
         expListView = view.findViewById(R.id.lvExp);

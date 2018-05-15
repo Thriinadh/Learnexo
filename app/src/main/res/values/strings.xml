@@ -115,7 +115,7 @@
     <string name="post_challenge_hint"><font size="20">Post your challenge and </font>\nimpact the community...</string>
     <string name="feedTabTitle">Feed</string>
     <string name="videosTabTitle">Videos</string>
-    <string name="ivqsTabTitle">InterviewQs</string>
+    <string name="ivqsTabTitle">Text</string>
     <string name="connectTabTitle">Connect</string>
     <string name="profileTabTitle">Profile</string>
     <string name="shareInfo">Share Info</string>

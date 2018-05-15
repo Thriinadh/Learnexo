@@ -2,7 +2,6 @@ package com.learnexo.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -63,9 +62,10 @@ public class TabsActivity extends AppCompatActivity {
     private Button mChallengeBtn;
     private LinearLayout FAB_Layout;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
+    int currentTab;
 
     private ViewPager viewPager;
-    private ViewPagerAdapter mAdapter;
+    private TabPagerAdapter mAdapter;
 
     private int[] tabIcons = {
             R.drawable.hhome_icon,
@@ -83,7 +83,7 @@ public class TabsActivity extends AppCompatActivity {
         wireViews();
 
         setupToolbar();
-        setupViewPager();
+        setupTabPagerAdapter();
         setupTablayout();
         tabSelectListener();
 
@@ -244,8 +244,11 @@ public class TabsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        TabLayout.Tab tab = tabLayout.getTabAt(getIntent().getIntExtra(EXTRA_TAB_NUM, 0));
-            tab.select();
+        int i=getIntent().getIntExtra(EXTRA_TAB_NUM, 10);
+        if(i!=10)
+            currentTab=i;
+        TabLayout.Tab tab = tabLayout.getTabAt(currentTab);
+        tab.select();
     }
 
     @Override
@@ -288,26 +291,31 @@ public class TabsActivity extends AppCompatActivity {
                             case 0:
                                 viewPager.setCurrentItem(0);
                                 mToolbarTitle.setText(R.string.feedTabTitle);
+                                currentTab=0;
                                 break;
 
                             case 1:
                                 viewPager.setCurrentItem(1);
                                 mToolbarTitle.setText(R.string.videosTabTitle);
+                                currentTab=1;
                                 break;
 
                             case 2:
                                 viewPager.setCurrentItem(2);
                                 mToolbarTitle.setText(R.string.ivqsTabTitle);
+                                currentTab=2;
                                 break;
 
                             case 3:
                                 viewPager.setCurrentItem(3);
                                 mToolbarTitle.setText(R.string.connectTabTitle);
+                                currentTab=3;
                                 break;
 
                             case 4:
                                 viewPager.setCurrentItem(4);
                                 mToolbarTitle.setText(R.string.profileTabTitle);
+                                currentTab=4;
                                 break;
 
                         }
@@ -498,9 +506,9 @@ public class TabsActivity extends AppCompatActivity {
 //        tabLayout.getTabAt(4).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
     }
 
-    private void setupViewPager() {
+    private void setupTabPagerAdapter() {
         viewPager = findViewById(R.id.viewpager);
-        mAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        mAdapter = new TabPagerAdapter(getSupportFragmentManager());
 
         mAdapter.addFragment(new FeedFragment());
         mAdapter.addFragment(new VideoFragment());
@@ -516,10 +524,10 @@ public class TabsActivity extends AppCompatActivity {
 
 
     //inner custom class
-    class ViewPagerAdapter extends FragmentPagerAdapter {
+    class TabPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
 
-        ViewPagerAdapter(FragmentManager manager) {
+        TabPagerAdapter(FragmentManager manager) {
             super(manager);
         }
 
