@@ -184,10 +184,10 @@
                     android:textColor="@color/black"
                     android:textSize="16sp" />
 
-            <ExpandableListView
+            <com.learnexo.main.NonScrollExpandableListView
                 android:id="@+id/ExpListView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:childDivider="@android:color/transparent"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="12dp"/>

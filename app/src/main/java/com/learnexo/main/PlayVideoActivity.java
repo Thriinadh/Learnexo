@@ -46,7 +46,7 @@ public class PlayVideoActivity extends AppCompatActivity {
     private TextView overviewText;
 
     ExpandableListAdapter listAdapter;
-    ExpandableListView expListView;
+    NonScrollExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
@@ -84,15 +84,15 @@ public class PlayVideoActivity extends AppCompatActivity {
         for(int i=0; i < listAdapter.getGroupCount(); i++)
             expListView.expandGroup(i);
 
-        expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v,
-                                        int groupPosition, long id) {
-                setListViewHeight(parent, groupPosition);
-                return false;
-            }
-        });
+//        expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+//
+//            @Override
+//            public boolean onGroupClick(ExpandableListView parent, View v,
+//                                        int groupPosition, long id) {
+//                setListViewHeight(parent, groupPosition);
+//                return false;
+//            }
+//        });
 
 //
 //        ViewCompat.setNestedScrollingEnabled(expListView, true);
@@ -154,7 +154,6 @@ public class PlayVideoActivity extends AppCompatActivity {
         params.height = height;
         listView.setLayoutParams(params);
         listView.requestLayout();
-
     }
 
     @Override
@@ -277,21 +276,14 @@ public class PlayVideoActivity extends AppCompatActivity {
         fundamentals.add("How does a computer work..?");
         fundamentals.add("What do you want");
         fundamentals.add("Current is wrong");
-        fundamentals.add("It is wrong to do");
-        fundamentals.add("Don't follow this path");
-        fundamentals.add("Computer Basics");
+
 
         List<String> programming = new ArrayList<>();
-        programming.add("Java");
-        programming.add("Python");
-        programming.add("Android");
         programming.add("Ruby on Rails");
         programming.add("Design Patterns");
         programming.add("Scala");
 
         List<String> databases = new ArrayList<>();
-        databases.add("Firebase");
-        databases.add("NoSQL");
         databases.add("Relational Databases");
         databases.add("Oracle Database");
         databases.add("Microsoft Azure");
@@ -300,8 +292,6 @@ public class PlayVideoActivity extends AppCompatActivity {
         networking.add("Wireless Networking");
         networking.add("CCNA Networking");
         networking.add("Firewalls protection");
-        networking.add("Ethical Hacking");
-        networking.add("Safe Networks");
 
         List<String> artificial = new ArrayList<>();
         artificial.add("Machine Learning");
