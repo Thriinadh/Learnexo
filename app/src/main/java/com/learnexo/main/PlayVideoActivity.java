@@ -7,12 +7,17 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.TextView;
@@ -21,7 +26,13 @@ import android.widget.VideoView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.learnexo.fragments.ExpandableListAdapter;
 import com.learnexo.util.FirebaseUtil;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 public class PlayVideoActivity extends AppCompatActivity {
 
@@ -32,6 +43,13 @@ public class PlayVideoActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private ImageView expandText;
     private TextView overviewText;
+
+    ExpandableListAdapter listAdapter;
+    ExpandableListView expListView;
+    List<String> listDataHeader;
+    HashMap<String, List<String>> listDataChild;
+
+    private NestedScrollView nestedScroll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +65,34 @@ public class PlayVideoActivity extends AppCompatActivity {
             supportActionBar.setDisplayShowHomeEnabled(true);
         }
 
-        overviewText = findViewById(R.id.overviewText);
+        nestedScroll = findViewById(R.id.nestedScroll);
+        nestedScroll.setNestedScrollingEnabled(true);
 
-        expandText = findViewById(R.id.expandText);
+        // get the listview
+        expListView = findViewById(R.id.ExpListView);
+
+        // preparing list data
+        prepareListData();
+
+        listAdapter = new ExpandableListAdapter(PlayVideoActivity.this, listDataHeader, listDataChild);
+
+        // setting list adapter
+        expListView.setAdapter(listAdapter);
+
+        for(int i=0; i < listAdapter.getGroupCount(); i++)
+            expListView.expandGroup(i);
+
+        expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v,
+                                        int groupPosition, long id) {
+                setListViewHeight(parent, groupPosition);
+                return false;
+            }
+        });
+//
+//        ViewCompat.setNestedScrollingEnabled(expListView, true);
 
 //        mFirebaseUtil.mFirestore.collection("subjects").document("compilerDesign").collection("chap1")
 //                .document("introduction").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -72,6 +115,42 @@ public class PlayVideoActivity extends AppCompatActivity {
 //
 //            }
 //        });
+
+    }
+
+    private void setListViewHeight(ExpandableListView listView,
+                                   int group) {
+        ExpandableListAdapter listAdapter = (ExpandableListAdapter) listView.getExpandableListAdapter();
+        int totalHeight = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(),
+                View.MeasureSpec.EXACTLY);
+        for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+            View groupItem = listAdapter.getGroupView(i, false, null, listView);
+            groupItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+
+            totalHeight += groupItem.getMeasuredHeight();
+
+            if (((listView.isGroupExpanded(i)) && (i != group))
+                    || ((!listView.isGroupExpanded(i)) && (i == group))) {
+                for (int j = 0; j < listAdapter.getChildrenCount(i); j++) {
+                    View listItem = listAdapter.getChildView(i, j, false, null,
+                            listView);
+                    listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+
+                    totalHeight += listItem.getMeasuredHeight();
+
+                }
+            }
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        int height = totalHeight
+                + (listView.getDividerHeight() * (listAdapter.getGroupCount() - 1));
+        if (height < 10)
+            height = 200;
+        params.height = height;
+        listView.setLayoutParams(params);
+        listView.requestLayout();
 
     }
 
@@ -177,6 +256,63 @@ public class PlayVideoActivity extends AppCompatActivity {
             return null;
         }
 
+    }
+
+    private void prepareListData() {
+        listDataHeader = new ArrayList<>();
+        listDataChild = new HashMap<>();
+
+        // Adding child data
+        listDataHeader.add("1. Introduction");
+        listDataHeader.add("2. Logic Gates");
+        listDataHeader.add("3. Computer Circuits");
+        listDataHeader.add("4. Random Access Memory");
+        listDataHeader.add("5. Decoders");
+
+        // Adding child data
+        List<String> fundamentals = new ArrayList<>();
+        fundamentals.add("How does a computer work..?");
+        fundamentals.add("What do you want");
+        fundamentals.add("Current is wrong");
+        fundamentals.add("It is wrong to do");
+        fundamentals.add("Don't follow this path");
+        fundamentals.add("Computer Basics");
+
+        List<String> programming = new ArrayList<>();
+        programming.add("Java");
+        programming.add("Python");
+        programming.add("Android");
+        programming.add("Ruby on Rails");
+        programming.add("Design Patterns");
+        programming.add("Scala");
+
+        List<String> databases = new ArrayList<>();
+        databases.add("Firebase");
+        databases.add("NoSQL");
+        databases.add("Relational Databases");
+        databases.add("Oracle Database");
+        databases.add("Microsoft Azure");
+
+        List<String> networking = new ArrayList<>();
+        networking.add("Wireless Networking");
+        networking.add("CCNA Networking");
+        networking.add("Firewalls protection");
+        networking.add("Ethical Hacking");
+        networking.add("Safe Networks");
+
+        List<String> artificial = new ArrayList<>();
+        artificial.add("Machine Learning");
+        artificial.add("Game Theory");
+        artificial.add("Speech Recognition");
+        artificial.add("Robotics");
+        artificial.add("Machine Algorithms");
+
+        // Header, Child data
+        listDataChild.put(listDataHeader.get(0), fundamentals);
+        listDataChild.put(listDataHeader.get(1), programming);
+        listDataChild.put(listDataHeader.get(2), databases);
+        listDataChild.put(listDataHeader.get(3), networking);
+        listDataChild.put(listDataHeader.get(4), artificial);
     }
 
 }

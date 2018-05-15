@@ -152,9 +152,11 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nestedScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
+        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -162,41 +164,27 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
-                android:layout_marginTop="8dp">
-
-        <TextView
-            android:id="@+id/overviewText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="3"
-            android:textColor="@color/black"
-            android:text="This is the foundation of Computer science and nobody is here are there though perfectly aligned and another feather in the hat is very common for Roger Federer. This kind of fellow is called worst of the kind"
-            android:layout_toLeftOf="@+id/expandText"
-            android:textSize="16sp" />
-
-                <ImageView
-                    android:id="@+id/expandText"
-                    android:layout_width="wrap_content"
+                <com.learnexo.main.ExpandableTextView
+                    android:id="@+id/overviewText"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="12dp"
+                    android:layout_marginTop="12dp"
                     android:layout_marginLeft="12dp"
-                    android:layout_alignParentRight="true"
-                    android:background="@drawable/drop_down"/>
-            </RelativeLayout>
+                    android:layout_marginRight="12dp"
+                    android:text="@string/longg_text"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:lineSpacingExtra="4dp"
-            android:text="@string/long_string"
-            android:padding="@dimen/activity_horizontal_margin" />
+            <ExpandableListView
+                android:id="@+id/ExpListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:childDivider="@android:color/transparent"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"/>
 
         </LinearLayout>
+
     </android.support.v4.widget.NestedScrollView>
 
 </android.support.design.widget.CoordinatorLayout>
