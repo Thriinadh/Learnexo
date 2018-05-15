@@ -54,7 +54,6 @@ import id.zelory.compressor.Compressor;
 
 public class AnswerActivity extends AppCompatActivity {
 
-    private static final int FEED_FRAG_NO = 0;
     public static final String EXTRA_QUESTION_CONTENT = "com.learnexo.question_content";
     public static final String EXTRA_QUESTION_ID = "com.learnexo.question_id";
     public static final String EXTRA_QUESTION_TAG = "com.learnexo.question_tag";
@@ -332,7 +331,7 @@ public class AnswerActivity extends AppCompatActivity {
                // mProgressBar.setVisibility(View.INVISIBLE);
             }
             private void gotoFeed() {
-                Intent intent = TabsActivity.newIntent(AnswerActivity.this, FEED_FRAG_NO);
+                Intent intent = TabsActivity.newIntent(AnswerActivity.this);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();

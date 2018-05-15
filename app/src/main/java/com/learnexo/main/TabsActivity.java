@@ -50,7 +50,7 @@ import static com.learnexo.main.SetupActivity.EXTRA_IS_SKIPPED;
 public class TabsActivity extends AppCompatActivity {
 
     public static final String EXTRA_PUBLISH_TYPE ="com.learnexo.main.TabsActivity.EXTRA_PUBLISH_TYPE";
-    public static final String EXTRA_TAB_NUM = "com.learnexo.main.EXTRA_TAB_NUM";
+
 
     private TextView mToolbarTitle;
     private TabLayout tabLayout;
@@ -244,9 +244,7 @@ public class TabsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        int i=getIntent().getIntExtra(EXTRA_TAB_NUM, 10);
-        if(i!=10)
-            currentTab=i;
+
         TabLayout.Tab tab = tabLayout.getTabAt(currentTab);
         tab.select();
     }
@@ -474,9 +472,8 @@ public class TabsActivity extends AppCompatActivity {
         mToolbarTitle.setText(R.string.feed);
     }
 
-    public static Intent newIntent(Context context, int tabNo) {
+    public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, TabsActivity.class);
-        intent.putExtra(EXTRA_TAB_NUM, tabNo);
         return intent;
     }
 

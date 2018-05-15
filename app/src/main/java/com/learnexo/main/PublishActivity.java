@@ -58,7 +58,6 @@ import id.zelory.compressor.Compressor;
 
 public class PublishActivity extends AppCompatActivity {
 
-    private static final int FEED_FRAG_NO = 0;
     private static final String TAG = PublishActivity.class.getSimpleName();
 
     private Uri mPublishedImageUri;
@@ -112,7 +111,7 @@ public class PublishActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent = TabsActivity.newIntent(PublishActivity.this, FEED_FRAG_NO);
+                Intent intent = TabsActivity.newIntent(PublishActivity.this);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
@@ -304,7 +303,7 @@ public class PublishActivity extends AppCompatActivity {
             }
             private void gotoFeed() {
                 //postId = documentReferenceTask.getResult().getId();
-                Intent intent = TabsActivity.newIntent(PublishActivity.this, FEED_FRAG_NO);
+                Intent intent = TabsActivity.newIntent(PublishActivity.this);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
