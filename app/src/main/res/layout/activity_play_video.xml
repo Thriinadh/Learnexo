@@ -20,7 +20,8 @@
         android:layout_height="wrap_content"
         app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
         android:fitsSystemWindows="true"
-        app:contentScrim="@android:color/transparent">
+        app:contentScrim="@android:color/transparent"
+        app:titleEnabled="false">
 
         <VideoView
             android:id="@+id/videoView"
@@ -34,8 +35,7 @@
             android:id="@+id/video_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-             />
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     </android.support.design.widget.CollapsingToolbarLayout>
 
@@ -163,6 +163,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Overview"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="12dp" />
 
                 <com.learnexo.main.ExpandableTextView
                     android:id="@+id/overviewText"

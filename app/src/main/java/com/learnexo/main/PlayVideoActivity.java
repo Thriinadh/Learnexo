@@ -12,6 +12,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -63,6 +64,7 @@ public class PlayVideoActivity extends AppCompatActivity {
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
             supportActionBar.setDisplayShowHomeEnabled(true);
+            supportActionBar.setTitle("");
         }
 
         nestedScroll = findViewById(R.id.nestedScroll);
@@ -91,6 +93,7 @@ public class PlayVideoActivity extends AppCompatActivity {
                 return false;
             }
         });
+
 //
 //        ViewCompat.setNestedScrollingEnabled(expListView, true);
 

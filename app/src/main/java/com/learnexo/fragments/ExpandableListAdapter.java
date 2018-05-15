@@ -80,6 +80,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         lblListHeader.setTypeface(null, Typeface.BOLD);
         lblListHeader.setText(headerTitle);
 
+//        if (isExpanded) {
+//            groupHolder.img.setImageResource(R.drawable.group_down);
+//        } else {
+//            groupHolder.img.setImageResource(R.drawable.group_up);
+//        }
+
         // if(getChildrenCount(groupPosition) == 0){}
 
         return convertView;
@@ -106,4 +112,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
     }
+
+    private static class GroupHolder {
+
+    }
+
 }

@@ -69,7 +69,7 @@ public class ExpandableTextView extends android.support.v7.widget.AppCompatTextV
         }
         else {
             setMaxLines(Integer.MAX_VALUE);
-            setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_delete_black);
+            setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.drop_down);
         }
     }
 
