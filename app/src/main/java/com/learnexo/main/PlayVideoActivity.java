@@ -20,6 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
@@ -68,7 +70,8 @@ public class PlayVideoActivity extends AppCompatActivity {
         }
 
         nestedScroll = findViewById(R.id.nestedScroll);
-        nestedScroll.setNestedScrollingEnabled(true);
+        if(nestedScroll!=null)
+            nestedScroll.setNestedScrollingEnabled(true);
 
         // get the listview
         expListView = findViewById(R.id.ExpListView);
