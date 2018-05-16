@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.learnexo.main.FullAnswerActivity;
 import com.learnexo.main.FullPostActivity;
 import com.learnexo.main.AnswerActivity;
 import com.learnexo.main.R;
@@ -141,7 +142,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     answerHolder.wireViews();
                     bindAnswer(answerHolder, itemContent, answer.getQuesContent(), imagePosted, timeAgo);
                     bindAnswererData(answerHolder, publisher);
-                    answerContentListener(answerHolder, itemContent, imagePosted, timeAgo, publisher);
+                    answerContentListener(answerHolder, itemContent, answer.getQuesContent(), imagePosted, timeAgo, publisher);
                     answerOverflowListener(answerHolder, publisher, feedItem);
 
                     break;
@@ -191,11 +192,18 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
     }
 
-    private void answerContentListener(@NonNull AnswerHolder holder, final String itemContent, final String imagePosted, final String timeAgo, final User publisher) {
+    private void answerContentListener(@NonNull AnswerHolder holder, final String questionAsked, final String itemContent, final String imagePosted, final String timeAgo, final User publisher) {
         holder.quesContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, timeAgo, publisher);
+                Intent intent = FullAnswerActivity.newIntent(mContext, questionAsked, itemContent, imagePosted, timeAgo, publisher);
+                mContext.startActivity(intent);
+            }
+        });
+        holder.answerContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = FullAnswerActivity.newIntent(mContext, questionAsked, itemContent, imagePosted, timeAgo, publisher);
                 mContext.startActivity(intent);
             }
         });
@@ -345,7 +353,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 View bottomSheetView = View.inflate(mContext, R.layout.bottom_sheet_dialog_for_sharedposts, null);
 
-
                 mDialog = new BottomSheetDialog(mContext);
                 mDialog.setContentView(bottomSheetView);
                 mDialog.show();
@@ -362,6 +369,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 copyBtnLayout = bottomSheetView.findViewById(R.id.copyBtn);
                 notifBtnLayout =  bottomSheetView.findViewById(R.id.notifBtn);
                 connectBtnLayout =  bottomSheetView.findViewById(R.id.connectBtn);
+
 
                 followBtnLayout.setOnClickListener(new View.OnClickListener() {
 
@@ -385,8 +393,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                    @Override
                                    public void onSuccess(Void aVoid) {
 
-                                       followTView.setText("Unfollow");
-
+//                                           followTView.setText("Unfollow");
                                        Toast.makeText(mContext, "Now You are following "+publisher.getFirstName(), Toast.LENGTH_LONG).show();
 
                                    }
@@ -473,7 +480,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                             @Override
                                             public void onSuccess(Void aVoid) {
 
-                                                followTView.setText("Unfollow");
+                                                followTView.setVisibility(View.INVISIBLE);
 
                                                 Toast.makeText(mContext, "Now You are following "+publisher.getFirstName(), Toast.LENGTH_LONG).show();
 

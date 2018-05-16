@@ -51,6 +51,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -122,26 +124,43 @@ public class PublishActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     public void onBackPressed() {
-        if (content.getText().toString().length() > 5) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if(publishType.equals(getString(R.string.shareInfo))) {
+            final String contentt = content.getText().toString();
+            final String tagg = tag;
+            final String imageUri = mPublishedImageUri.toString();
 
-            builder.setTitle("Save Or Not");
-            builder.setMessage("Do you want to save this? ");
-            builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // saveResult();
-                    Toast.makeText(PublishActivity.this, "+veClicked", Toast.LENGTH_SHORT).show();
-                    PublishActivity.super.onBackPressed();
-                }
-            });
-            builder.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    PublishActivity.super.onBackPressed();
-                }
-            });
-            builder.show();
+            if (content.getText().toString().length() > 5) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Save Or Not");
+                builder.setMessage("Do you want to save this? ");
+                builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        Map<String, Object> userMap = new HashMap<>();
+                        userMap.put("content", contentt);
+                        userMap.put("tag", tagg);
+                        userMap.put("imageUri", imageUri);
+                        // saveResult();
+                        mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("drafts").add(userMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentReference> task) {
+                                Toast.makeText(PublishActivity.this, "+veClicked", Toast.LENGTH_SHORT).show();
+                                PublishActivity.super.onBackPressed();
+                            }
+                        });
+
+                    }
+                });
+                builder.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        PublishActivity.super.onBackPressed();
+                    }
+                });
+                builder.show();
+            } else PublishActivity.super.onBackPressed();
         } else PublishActivity.super.onBackPressed();
     }
 
@@ -427,28 +446,35 @@ public class PublishActivity extends AppCompatActivity {
 
     private void setupDropDownSpinner() {
 
-//        // Create an ArrayAdapter using the string array and a default spinner
+        String subjects[] = {"Relational Database", "Java","Mongo DB","Scala","Python","Ruby", "C sharp","Android", "others"};
+
+        ArrayAdapter<String> staticAdapter = new ArrayAdapter<>
+                (this, android.R.layout.simple_spinner_item,
+                        subjects);
+
+        // Create an ArrayAdapter using the string array and a default spinner
 //        ArrayAdapter<CharSequence> staticAdapter = ArrayAdapter
 //                .createFromResource(this, R.array.subject_names,
 //                        android.R.layout.simple_spinner_item);
-//
-//        // Specify the layout to use when the list of choices appears
-//        staticAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//
-//        // Apply the adapter to the spinner
-//        spinner.setAdapter(new NothingSelectedSpinnerAdapter(staticAdapter,
-//                        R.layout.contact_spinner_row_nothing_selected,
-//                        // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
-//                        this));
 
-        String subjects[] = {"Tag Subject","Java","Mongo DB","Scala","Python","Ruby", "C sharp","Android"};
+        // Specify the layout to use when the list of choices appears
+        staticAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setPrompt("Select any subject");
 
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>
-                (this, android.R.layout.simple_spinner_item,
-                        subjects); //selected item will look like a spinner set from XML
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerArrayAdapter);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(new NothingSelectedSpinnerAdapter(staticAdapter,
+                        R.layout.contact_spinner_row_nothing_selected,
+                        // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
+                        this));
+
+//        String subjects[] = {"Tag Subject","Java","Mongo DB","Scala","Python","Ruby", "C sharp","Android"};
+//
+//        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>
+//                (this, android.R.layout.simple_spinner_item,
+//                        subjects); //selected item will look like a spinner set from XML
+//        spinnerArrayAdapter.setDropDownViewResource(android.R.layout
+//                .simple_spinner_dropdown_item);
+//        spinner.setAdapter(spinnerArrayAdapter);
 
     }
 

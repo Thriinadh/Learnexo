@@ -66,6 +66,7 @@ public class NothingSelectedSpinnerAdapter implements SpinnerAdapter, ListAdapte
         }
         return adapter.getView(position - EXTRA, null, parent); // Could re-use
         // the convertView if possible.
+
     }
 
     /**

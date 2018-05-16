@@ -81,12 +81,13 @@ public class PlayVideoActivity extends AppCompatActivity {
 
         listAdapter = new ExpandableListAdapter(PlayVideoActivity.this, listDataHeader, listDataChild);
 
-        // setting list adapter
-        expListView.setAdapter(listAdapter);
+        if(expListView != null) {
+            // setting list adapter
+            expListView.setAdapter(listAdapter);
 
-        for(int i=0; i < listAdapter.getGroupCount(); i++)
-            expListView.expandGroup(i);
-
+            for (int i = 0; i < listAdapter.getGroupCount(); i++)
+                expListView.expandGroup(i);
+        }
 
 
 //        ViewCompat.setNestedScrollingEnabled(expListView, true);

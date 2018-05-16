@@ -8,6 +8,6 @@
     android:ellipsize="marquee"
     android:textSize="12sp"
     android:textAlignment="textStart"
-    android:textColor="#808080"
+    android:textColor="@color/black"
     android:text="TAG SUBJECT"
     android:gravity="start" />
