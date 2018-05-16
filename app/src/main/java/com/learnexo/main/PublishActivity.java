@@ -90,6 +90,8 @@ public class PublishActivity extends AppCompatActivity {
     Question question;
     String publishType;
 
+    String coontent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,18 +109,15 @@ public class PublishActivity extends AppCompatActivity {
         enablePublishBtn();
 
         postBtnListener();
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent = TabsActivity.newIntent(PublishActivity.this);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
                 finish();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -130,7 +129,6 @@ public class PublishActivity extends AppCompatActivity {
         if(publishType.equals(getString(R.string.shareInfo))) {
             final String contentt = content.getText().toString();
             final String tagg = tag;
-            final String imageUri = mPublishedImageUri.toString();
 
             if (content.getText().toString().length() > 5) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -142,12 +140,11 @@ public class PublishActivity extends AppCompatActivity {
                         Map<String, Object> userMap = new HashMap<>();
                         userMap.put("content", contentt);
                         userMap.put("tag", tagg);
-                        userMap.put("imageUri", imageUri);
                         // saveResult();
                         mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("drafts").add(userMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentReference> task) {
-                                Toast.makeText(PublishActivity.this, "+veClicked", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PublishActivity.this, "Images won't be saved", Toast.LENGTH_SHORT).show();
                                 PublishActivity.super.onBackPressed();
                             }
                         });

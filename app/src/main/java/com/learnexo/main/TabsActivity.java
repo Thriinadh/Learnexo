@@ -68,11 +68,11 @@ public class TabsActivity extends AppCompatActivity {
     private TabPagerAdapter mAdapter;
 
     private int[] tabIcons = {
-            R.drawable.hhome_icon,
-            R.drawable.video_icon,
-            R.drawable.hot_icon,
-            R.drawable.connect_icon,
-            R.drawable.profile_icon
+            R.drawable.ic_tab_home,
+            R.drawable.ic_tab_video,
+            R.drawable.ic_tab_text,
+            R.drawable.ic_tab_connect,
+            R.drawable.ic_tab_profile
     };
 
     @Override
@@ -264,7 +264,7 @@ public class TabsActivity extends AppCompatActivity {
                     public void onTabSelected(TabLayout.Tab tab) {
                         super.onTabSelected(tab);
 
-                            tab.getIcon().setColorFilter(Color.parseColor("#0a6ca9"), PorterDuff.Mode.SRC_IN);
+                            tab.getIcon().setColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN);
 
                         hideCardviewInFeedFragmentWhenUsergoesToOtherTabs();
                         setToolbarTitle(tab);
@@ -496,7 +496,7 @@ public class TabsActivity extends AppCompatActivity {
             tabLayout.getTabAt(3).setIcon(tabIcons[3]);
             tabLayout.getTabAt(4).setIcon(tabIcons[4]);
 
-        tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#0a6ca9"), PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN);
 //        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
 //        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);
 //        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#595959"), PorterDuff.Mode.SRC_IN);

@@ -394,7 +394,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                    public void onSuccess(Void aVoid) {
 
 //                                           followTView.setText("Unfollow");
-                                       Toast.makeText(mContext, "Now You are following "+publisher.getFirstName(), Toast.LENGTH_LONG).show();
+                                       Toast.makeText(mContext, "Now You are following "+publisher.getFirstName(), Toast.LENGTH_SHORT).show();
 
                                    }
                                }).addOnFailureListener(new OnFailureListener() {
