@@ -89,15 +89,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 return new AnswerHolder(view);
 
             case FeedItem.CRACK:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.crack_list_item, parent, false);//change this
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.crack_list_item, parent, false);
                 return new CrackHolder(view);
 
             case FeedItem.QUESTION:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_list_item, parent, false);//change this
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_list_item, parent, false);
                 return new QuestionHolder(view);
 
             case FeedItem.CHALLENGE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.challenge_list_item, parent, false);//change this
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.challenge_list_item, parent, false);
                 return new ChallengeHolder(view);
 
         }

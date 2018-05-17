@@ -15,7 +15,7 @@ import java.util.List;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
-    private Context _context;
+    protected Context _context;
     private List<String> _listDataHeader;
 
     // header titles

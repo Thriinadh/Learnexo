@@ -20,7 +20,7 @@ import java.util.Objects;
 
 public class TextFragment extends Fragment {
 
-    ExpandableListAdapter listAdapter;
+    ListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
@@ -46,7 +46,7 @@ public class TextFragment extends Fragment {
         // preparing list data
         prepareListData();
 
-        listAdapter = new ExpandableListAdapter(getActivity(), listDataHeader, listDataChild);
+        listAdapter = new ListAdapter(getActivity(), listDataHeader, listDataChild);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
