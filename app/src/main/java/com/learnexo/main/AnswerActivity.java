@@ -90,6 +90,17 @@ public class AnswerActivity extends AppCompatActivity {
 
         wireViews();
 
+        //changeStatusbarColor();
+
+        initQuesFromIntent();
+
+        galleryBtnListener();
+        enablePublishBtn();
+        submitBtnListener();
+
+    }
+
+    private void changeStatusbarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             View decor = getWindow().getDecorView();
                 decor.setSystemUiVisibility(0);
@@ -100,13 +111,6 @@ public class AnswerActivity extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getResources().getColor(R.color.colorPrimary));
         }
-
-        initQuesFromIntent();
-
-        galleryBtnListener();
-        enablePublishBtn();
-        submitBtnListener();
-
     }
 
     private void wireViews() {

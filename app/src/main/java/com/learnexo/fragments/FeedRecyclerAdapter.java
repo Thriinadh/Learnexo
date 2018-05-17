@@ -81,7 +81,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         switch (viewType) {
             case FeedItem.POST:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_with_likes, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_list_item, parent, false);
                 return new PostHolder(view);
 
             case FeedItem.ANSWER:
@@ -636,6 +636,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private CircleImageView userImage;
         private TextView timeAgo;
         private ImageView overflowImgView;
+        private ImageView postedImgView;
         private ImageView ansImgView;
         private TextView seeMore;
 
@@ -648,7 +649,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             quesContent = mView.findViewById(R.id.questionTView);
             userImage = mView.findViewById(R.id.circleImageView);
             userName = mView.findViewById(R.id.userName);
-
+            postedImgView = mView.findViewById(R.id.postedImagee);
             timeAgo = mView.findViewById(R.id.answeredTime);
             overflowImgView = mView.findViewById(R.id.overflow);
 
@@ -672,8 +673,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         }
         public void setAnsImgView(String imageUrl) {
-            if(imageUrl != null&&mContext!=null)
+            if(imageUrl != null&&mContext!=null) {
+                postedImgView.setVisibility(View.VISIBLE);
                 Glide.with(mContext.getApplicationContext()).load(imageUrl).into(ansImgView);
+            }
         }
 
         public void setTime(String timeAgo) {
@@ -704,6 +707,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private CircleImageView userImage;
         private TextView timeAgo;
         private ImageView overflowImgView;
+        private ImageView postedImgView;
         private ImageView challengeIcon;
         private ImageView crackImgView;
         private TextView seeMore;
@@ -719,6 +723,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             userImage = mView.findViewById(R.id.circleImageView);
             userName = mView.findViewById(R.id.userName);
+            postedImgView = mView.findViewById(R.id.postedImagee);
 
             timeAgo = mView.findViewById(R.id.answeredTime);
             overflowImgView = mView.findViewById(R.id.overflow);
@@ -741,8 +746,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             });
         }
         public void setCrackImgView(String imageUrl) {
-            if(imageUrl != null&&mContext!=null)
+            if(imageUrl != null&&mContext!=null) {
+                postedImgView.setVisibility(View.VISIBLE);
                 Glide.with(mContext.getApplicationContext()).load(imageUrl).into(crackImgView);
+            }
         }
 
         public void setTime(String timeAgo) {
