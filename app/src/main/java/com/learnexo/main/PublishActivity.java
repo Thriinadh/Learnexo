@@ -123,7 +123,6 @@ public class PublishActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     public void onBackPressed() {
         if(publishType.equals(getString(R.string.shareInfo))) {
@@ -144,6 +143,7 @@ public class PublishActivity extends AppCompatActivity {
                         mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("drafts").add(userMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentReference> task) {
+                               if(mPublishedImageUri != null)
                                 Toast.makeText(PublishActivity.this, "Images won't be saved", Toast.LENGTH_SHORT).show();
                                 PublishActivity.super.onBackPressed();
                             }
