@@ -34,6 +34,10 @@ public class FullAnswerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_answer);
+        boolean is_crack=getIntent().getBooleanExtra("IS_CRACK", false);
+        if(is_crack){
+
+        }
 
         Intent intent=getIntent();
 

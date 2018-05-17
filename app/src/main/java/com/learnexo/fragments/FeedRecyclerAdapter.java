@@ -153,7 +153,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     crackHolder.wireViews();
                     bindCrack(crackHolder, itemContent, crack.getQuesContent(), imagePosted, timeAgo);
                     bindCrackerData(crackHolder, publisher);
-                    crackContentListener(crackHolder, itemContent, imagePosted, timeAgo,publisher);
+                    crackContentListener(crackHolder, itemContent, crack.getQuesContent(),imagePosted, timeAgo,publisher);
                     crackOverflowListener(crackHolder, publisher, feedItem);
 
                     break;
@@ -209,11 +209,20 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
     }
 
-    private void crackContentListener(@NonNull CrackHolder holder, final String itemContent, final String imagePosted, final String timeAgo, final User publisher) {
+    private void crackContentListener(@NonNull CrackHolder holder, final String challenge, final String itemContent, final String imagePosted, final String timeAgo, final User publisher) {
+        holder.challenge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = FullAnswerActivity.newIntent(mContext, challenge, itemContent, imagePosted, timeAgo, publisher);
+                intent.putExtra("IS_CRACK",true);
+                mContext.startActivity(intent);
+            }
+        });
+
         holder.crackContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, timeAgo, publisher);
+                Intent intent = FullAnswerActivity.newIntent(mContext, challenge, itemContent, imagePosted, timeAgo, publisher);
                 mContext.startActivity(intent);
             }
         });
@@ -221,21 +230,22 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void answerBtnListener(@NonNull QuestionHolder holder, final Question question) {
         holder.answer.setOnClickListener(
-                answerCrackListener(question));
+                answerCrackListener(question, FeedItem.ANSWER));
 
     }
     private void crackBtnListener(@NonNull ChallengeHolder holder, final Question question) {
         holder.answer.setOnClickListener(
-                answerCrackListener(question));
+                answerCrackListener(question, FeedItem.CRACK));
 
     }
 
     @NonNull
-    private View.OnClickListener answerCrackListener(final Question question) {
+    private View.OnClickListener answerCrackListener(final Question question, final int answerType) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = AnswerActivity.newIntent(mContext, question);
+                intent.putExtra("ANSWER_TYPE", answerType);
                 mContext.startActivity(intent);
                 ((Activity) mContext).overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
             }

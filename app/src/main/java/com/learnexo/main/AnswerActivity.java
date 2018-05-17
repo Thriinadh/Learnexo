@@ -191,13 +191,13 @@ public class AnswerActivity extends AppCompatActivity {
     }
 
     private void saveAnswer(String content) {
+            answer.setType(getIntent().getIntExtra("ANSWER_TYPE",-1));
             answer.setContent(quesContent);
             answer.setUserId(mUserId);
             answer.setUserName(mPublisherName);
             answer.setQuesId(questionId);
             answer.setQuesContent(content);
             answer.setTags(Collections.singletonList(questionTag));
-            answer.setType(FeedItem.ANSWER);
 
             if(mPublishedImageUri != null) {
                 saveImagetoStorage();
@@ -299,13 +299,10 @@ public class AnswerActivity extends AppCompatActivity {
                                             if(noOfAns!=null)
                                                 noOfAnsw = ((Long) noOfAns).intValue()+1;
                                             Map<String, Object> map= new HashMap();
-                                                    map.put("noOfAns",noOfAnsw);
-                                            mFirebaseUtil.mFirestore.collection("questions")
-                                                    .document(answer.getQuesId()).update(map);
-
-                                            mFirebaseUtil.mFirestore.collection("users")
-                                                    .document(questionerId).collection("questions").document(answer.getQuesId())
-                                                    .update(map);
+                                            map.put("noOfAns",noOfAnsw);
+                                            mFirebaseUtil.mFirestore.collection("questions").document(answer.getQuesId()).update(map);
+                                            mFirebaseUtil.mFirestore.collection("users").document(questionerId).collection("questions").
+                                                    document(answer.getQuesId()).update(map);
 
                                             saveInterestFeedItem(answer, documentReferenceTask, interestFeedPath, answer.getType());
                                             gotoFeed();
