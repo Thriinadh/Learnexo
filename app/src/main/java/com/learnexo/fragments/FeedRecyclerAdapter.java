@@ -195,15 +195,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.quesContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = FullAnswerActivity.newIntent(mContext, questionAsked, itemContent, imagePosted, timeAgo, publisher);
-                mContext.startActivity(intent);
+                gotoFullAnswerActivity(questionAsked, itemContent, imagePosted, timeAgo, publisher, false);
             }
         });
         holder.answerContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = FullAnswerActivity.newIntent(mContext, questionAsked, itemContent, imagePosted, timeAgo, publisher);
-                mContext.startActivity(intent);
+                gotoFullAnswerActivity(questionAsked, itemContent, imagePosted, timeAgo, publisher, false);
             }
         });
     }
@@ -212,19 +210,23 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.challenge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = FullAnswerActivity.newIntent(mContext, challenge, itemContent, imagePosted, timeAgo, publisher);
-                intent.putExtra("IS_CRACK",true);
-                mContext.startActivity(intent);
+                gotoFullAnswerActivity(challenge, itemContent, imagePosted, timeAgo, publisher, true);
             }
         });
 
         holder.crackContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = FullAnswerActivity.newIntent(mContext, challenge, itemContent, imagePosted, timeAgo, publisher);
-                mContext.startActivity(intent);
+                gotoFullAnswerActivity(challenge, itemContent, imagePosted, timeAgo, publisher, true);
             }
         });
+    }
+
+    private void gotoFullAnswerActivity(String challenge, String itemContent, String imagePosted, String timeAgo, User publisher, boolean is_crack) {
+        Intent intent = FullAnswerActivity.newIntent(mContext, challenge, itemContent, imagePosted, timeAgo, publisher);
+        if(is_crack)
+            intent.putExtra("IS_CRACK",true);
+        mContext.startActivity(intent);
     }
 
     private void answerBtnListener(@NonNull QuestionHolder holder, final Question question) {
@@ -601,8 +603,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         public void setPostedImgView(String imageUrl) {
-            if(imageUrl != null)
-            Glide.with(mContext.getApplicationContext()).load(imageUrl).into(postedImgView);
+            if(imageUrl != null) {
+                postedImgView.setVisibility(View.VISIBLE);
+                Glide.with(mContext.getApplicationContext()).load(imageUrl).into(postedImgView);
+            }
         }
 
         public void setTime(String timeAgo) {
@@ -844,6 +848,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             challengeContent = mView.findViewById(R.id.questionTView);
             timeAgo = mView.findViewById(R.id.postedTime);
             challengeIcon = mView.findViewById(R.id.imageView2);
+            challengeIcon.setVisibility(View.VISIBLE);
 
             answer=mView.findViewById(R.id.answer);
             answer.setText("Crack");
