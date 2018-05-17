@@ -5,12 +5,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
+import com.learnexo.main.NonScrollExpandableListView;
 import com.learnexo.main.R;
 
 import java.util.ArrayList;
@@ -21,9 +23,10 @@ import java.util.Objects;
 public class TextFragment extends Fragment {
 
     ListAdapter listAdapter;
-    ExpandableListView expListView;
+    NonScrollExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
+    private NestedScrollView nestedScroll;
 
     public TextFragment() {
         // Required empty public constructor
@@ -40,6 +43,9 @@ public class TextFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_text, container, false);
 
+        nestedScroll = view.findViewById(R.id.nestedScroll);
+        if(nestedScroll!=null)
+            nestedScroll.setNestedScrollingEnabled(true);
         // get the listview
         expListView = view.findViewById(R.id.lvExp);
 

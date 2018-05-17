@@ -13,8 +13,10 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +28,8 @@ import com.learnexo.util.FirebaseUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.learnexo.main.MainActivity.dpToPx;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -40,8 +44,9 @@ public class RegistrationActivity extends AppCompatActivity {
 
     Toolbar setupToolbar;
 
-   FirebaseUtil mFirebaseUtil=new FirebaseUtil();
+    private ScrollView scrollView;
 
+   FirebaseUtil mFirebaseUtil=new FirebaseUtil();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +55,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         wireViews();
         setupToolbar();
+
     }
 
     @Override
@@ -224,6 +230,7 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void wireViews() {
+        scrollView = findViewById(R.id.scrollView);
         mFirstName = findViewById(R.id.regFirstName);
         mLastName = findViewById(R.id.regLastName);
         mEmail = findViewById(R.id.regEmail);
