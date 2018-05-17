@@ -126,6 +126,6 @@
     <string name="next_interests">NEXT</string>
     <string name="last_name">Last name</string>
     <string name="long_string">post with see more is over... post with likes division has to be done............. ques with see more has to be... overflow ques with likes division has to be............... challenge with see more... challenge with likes division................ no answer ques.... no cracked challenge... if question are challenge is answred then update its type to question and challenge change Post(Share info) layout(Remove cardview).</string>
-    <string name="longg_text">This can be a question or a challenge!!</string>
+    <string name="longg_text">This can be a question or a challenge!! This can be a question or a challenge!!</string>
 
 </resources>
