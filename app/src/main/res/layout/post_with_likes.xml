@@ -100,6 +100,7 @@
         android:textAlignment="viewEnd"
         android:textColor="@android:color/darker_gray"
         android:textSize="18sp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/answerContent"
         app:layout_constraintEnd_toEndOf="@+id/answerContent" />
 
@@ -111,6 +112,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/answerContent" />F
+        app:layout_constraintTop_toBottomOf="@+id/answerContent" />
 
 </android.support.constraint.ConstraintLayout>

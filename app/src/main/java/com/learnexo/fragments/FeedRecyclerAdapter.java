@@ -596,8 +596,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 @Override
                 public void run() {
                     int lineCount = content.getLineCount();
-                    if(lineCount<=3)
-                        seeMore.setVisibility(View.INVISIBLE);
+                    if(lineCount>=3)
+                        seeMore.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -665,8 +665,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 @Override
                 public void run() {
                     int lineCount = answerContent.getLineCount();
-                    if(lineCount<=3)
-                        seeMore.setVisibility(View.INVISIBLE);
+                    if(lineCount>=3)
+                        seeMore.setVisibility(View.VISIBLE);
                 }
             });
 
@@ -735,8 +735,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 @Override
                 public void run() {
                     int lineCount = crackContent.getLineCount();
-                    if(lineCount<=3)
-                        seeMore.setVisibility(View.INVISIBLE);
+                    if(lineCount>=3)
+                        seeMore.setVisibility(View.VISIBLE);
                 }
             });
         }
