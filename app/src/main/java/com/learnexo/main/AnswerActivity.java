@@ -22,6 +22,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +63,7 @@ public class AnswerActivity extends AppCompatActivity {
     public static final String EXTRA_QUESTIONER_ID = "com.learnexo.questioner_id";
 
 
+    private ProgressBar mProgressBar;
     private Uri mPublishedImageUri;
     private TextView askedQuestion;
     private EditText mAnswerContent;
@@ -150,6 +152,7 @@ public class AnswerActivity extends AppCompatActivity {
     }
 
     private void wireViews() {
+        mProgressBar = findViewById(R.id.progressbaar);
         mAnswerContent = findViewById(R.id.quesAns);
         submitTView = findViewById(R.id.submitTView);
         galleryView = findViewById(R.id.galleryView);
@@ -223,7 +226,7 @@ public class AnswerActivity extends AppCompatActivity {
                 final String answerContent = mAnswerContent.getText().toString();
 
                 if(!TextUtils.isEmpty(answerContent)) {
-                   // mProgressBar.setVisibility(View.VISIBLE);
+                    mProgressBar.setVisibility(View.VISIBLE);
                         saveAnswer(answerContent);
                 }
         }
@@ -299,7 +302,7 @@ public class AnswerActivity extends AppCompatActivity {
                     });
 
                 } else {
-                   // mProgressBar.setVisibility(View.INVISIBLE);
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -364,7 +367,7 @@ public class AnswerActivity extends AppCompatActivity {
                     String error = task.getException().getMessage();
                     Toast.makeText(AnswerActivity.this, "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
                 }
-               // mProgressBar.setVisibility(View.INVISIBLE);
+                mProgressBar.setVisibility(View.INVISIBLE);
             }
             private void gotoFeed() {
                 Intent intent = TabsActivity.newIntent(AnswerActivity.this);
