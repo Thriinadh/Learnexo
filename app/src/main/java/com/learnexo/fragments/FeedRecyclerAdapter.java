@@ -81,8 +81,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         switch (viewType) {
             case FeedItem.POST:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_with_likes, parent, false);
-
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item_include, parent, false);
                 return new PostHolder(view);
 
             case FeedItem.ANSWER:
