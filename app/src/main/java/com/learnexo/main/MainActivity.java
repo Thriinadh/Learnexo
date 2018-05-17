@@ -1,5 +1,6 @@
 package com.learnexo.main;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,10 +16,15 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mRegisterBtn;
     private TextView forgotPassTView;
 
+    private ScrollView scrollView;
+
     private GoogleApiClient mGoogleApiClient;
 
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
@@ -88,6 +96,16 @@ public class MainActivity extends AppCompatActivity {
 
         wireViews();
 
+        final View activityRootView = findViewById(R.id.constraintLayout);
+        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
+                if (heightDiff > dpToPx(MainActivity.this, 200)) {
+                    scrollView.scrollTo(0, 120);
+                }
+            }
+        });
 
         setupGoogleApiClient();
         googleLoginListener();
@@ -155,6 +173,11 @@ public class MainActivity extends AppCompatActivity {
 
         registrationListener();
 
+    }
+
+    public static float dpToPx(Context context, float valueInDp) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
     }
 
     @Override
@@ -272,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void wireViews() {
+        scrollView = findViewById(R.id.scrollView);
         loginEmail = findViewById(R.id.loginEmail);
         loginPass = findViewById(R.id.loginPass);
         forgotPassTView = findViewById(R.id.forgotPassTView);
