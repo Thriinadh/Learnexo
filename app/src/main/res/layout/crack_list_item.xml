@@ -29,6 +29,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
+        android:backgroundTint="@color/light_black"
         android:background="@drawable/ic_baseline_flash_on_24px"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/questionTView"

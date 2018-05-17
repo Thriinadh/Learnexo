@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <include
-        layout="@layout/no_ans_ques_item"
+        layout="@layout/question_list_item"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -13,8 +13,8 @@ public class FeedItem {
     public static final int POST=0;
     public static final int ANSWER =1;
     public static final int CRACK =2;
-    public static final int NO_ANS_QUES=3;
-    public static final int NO_CRACK_CHALLENGE =4;
+    public static final int QUESTION =3;
+    public static final int CHALLENGE =4;
     public int type;
 
     public int getType() {

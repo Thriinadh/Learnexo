@@ -66,9 +66,9 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case 2:
                 return FeedItem.CRACK;
             case 3:
-                return FeedItem.NO_ANS_QUES;
+                return FeedItem.QUESTION;
             case 4:
-                return FeedItem.NO_CRACK_CHALLENGE;
+                return FeedItem.CHALLENGE;
             default:
                 return -1;
         }
@@ -92,12 +92,12 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.crack_list_item, parent, false);//change this
                 return new CrackHolder(view);
 
-            case FeedItem.NO_ANS_QUES:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.no_ans_ques_item, parent, false);//change this
+            case FeedItem.QUESTION:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_list_item, parent, false);//change this
                 return new QuestionHolder(view);
 
-            case FeedItem.NO_CRACK_CHALLENGE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.no_crack_challenge_item, parent, false);//change this
+            case FeedItem.CHALLENGE:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.challenge_list_item, parent, false);//change this
                 return new ChallengeHolder(view);
 
         }
@@ -157,7 +157,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                     break;
 
-                case FeedItem.NO_ANS_QUES:
+                case FeedItem.QUESTION:
                     Question question = (Question) feedItem;
                     QuestionHolder questionHolder = (QuestionHolder) holder;
                     questionHolder.wireViews(question);
@@ -167,7 +167,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                     break;
 
-                case FeedItem.NO_CRACK_CHALLENGE:
+                case FeedItem.CHALLENGE:
                     Question challenge = (Question) feedItem;
                     ChallengeHolder challengeHolder = (ChallengeHolder) holder;
                     challengeHolder.wireViews(challenge);

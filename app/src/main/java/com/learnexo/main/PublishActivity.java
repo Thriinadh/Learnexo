@@ -210,9 +210,9 @@ public class PublishActivity extends AppCompatActivity {
             question.setUserName(mPublisherName);
 
             if(publishType.equals(getString(R.string.askYourQuestion))){
-                question.setType(FeedItem.NO_ANS_QUES);
+                question.setType(FeedItem.QUESTION);
             }else
-                question.setType(FeedItem.NO_CRACK_CHALLENGE);
+                question.setType(FeedItem.CHALLENGE);
 
             if(mPublishedImageUri != null) {
                 saveImagetoStorage(getString(R.string.question_images));
