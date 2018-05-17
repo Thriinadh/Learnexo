@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     private TextView questionAsked;
     private TextView fullText;
     private ImageView postedImage;
+    private ImageView challengeIcon;
     private TextView timeOfPost;
     private CircleImageView profileImage;
     private TextView userName;
@@ -34,12 +36,15 @@ public class FullAnswerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_answer);
-        boolean is_crack=getIntent().getBooleanExtra("IS_CRACK", false);
-        if(is_crack){
 
-        }
 
         Intent intent=getIntent();
+        boolean is_crack=intent.getBooleanExtra("IS_CRACK", false);
+        if(is_crack){
+            challengeIcon = findViewById(R.id.imageView5);
+            challengeIcon.setVisibility(View.VISIBLE);
+        }
+
 
         String questionData = intent.getStringExtra(EXTRA_QUESTION_CONTENT);
         questionAsked = findViewById(R.id.questionAsked);
