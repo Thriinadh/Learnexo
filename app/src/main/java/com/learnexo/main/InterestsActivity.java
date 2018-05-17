@@ -21,6 +21,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.learnexo.model.video.Branch;
 import com.learnexo.model.video.Subject;
@@ -92,13 +93,20 @@ public class InterestsActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_button) {
+            nextBtn.setEnabled(false);
             mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("interests")
                     .document("doc1").set(interestMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
+                    nextBtn.setEnabled(true);
                     Intent setupIntent = new Intent(InterestsActivity.this, SetupActivity.class);
                     startActivity(setupIntent);
                     finish();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    nextBtn.setEnabled(true);
                 }
             });
             return true;
@@ -106,9 +114,6 @@ public class InterestsActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
-
 
 
     ////////////////

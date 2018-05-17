@@ -189,7 +189,6 @@ public class SetupActivity extends AppCompatActivity {
 
     private void setupBtnListener() {
         setupProgerss.setVisibility(View.INVISIBLE);
-        setupBtn.setEnabled(true);
         setupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -277,7 +276,6 @@ public class SetupActivity extends AppCompatActivity {
         // pickImageCView = findViewById(R.id.pickImageCView);
 
         setupBtn = findViewById(R.id.setup_btn);
-        setupBtn.setEnabled(false);
     }
 
 

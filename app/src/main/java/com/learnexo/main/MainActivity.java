@@ -412,6 +412,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loginButtonListener(View view) {
+
         String email = loginEmail.getText().toString().trim();
         String pass = loginPass.getText().toString().trim();
 
@@ -420,6 +421,11 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
+
+//                        WindowManager.LayoutParams lp = getWindow().getAttributes();
+//                        lp.screenBrightness = 0.009f;
+//                        getWindow().setAttributes(lp);
+
                         checkIfUserExists();
                     } else {
                         try {

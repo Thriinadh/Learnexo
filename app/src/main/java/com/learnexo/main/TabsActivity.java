@@ -97,8 +97,13 @@ public class TabsActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
+
         int pos = viewPager.getCurrentItem();
-        if(pos == 1 || pos == 2 || pos == 3 || pos == 4){
+        if(mCardView != null) {
+            mCardView.setVisibility(View.INVISIBLE);
+            flag = true;
+        } else
+           if(pos == 1 || pos == 2 || pos == 3 || pos == 4){
             viewPager.setCurrentItem(0);
             mToolbarTitle.setText(R.string.feedTabTitle);
         }

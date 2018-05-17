@@ -1,6 +1,7 @@
 package com.learnexo.main;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -9,6 +10,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -98,6 +100,40 @@ public class AnswerActivity extends AppCompatActivity {
         enablePublishBtn();
         submitBtnListener();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+            final String contentt = mAnswerContent.getText().toString();
+
+            if (mAnswerContent.getText().toString().length() > 3) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Save Or Not");
+                builder.setMessage("Do you want to save this? ");
+                builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        Map<String, Object> userMap = new HashMap<>();
+                        userMap.put("Answer", contentt);
+                        // saveResult();
+                        mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("drafts").add(userMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentReference> task) {
+                                if(mPublishedImageUri != null)
+                                    Toast.makeText(AnswerActivity.this, "Images won't be saved", Toast.LENGTH_SHORT).show();
+                                AnswerActivity.super.onBackPressed();
+                            }
+                        });
+
+                    }
+                });
+                builder.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        AnswerActivity.super.onBackPressed();
+                    }
+                });
+                builder.show();
+            } else AnswerActivity.super.onBackPressed();
     }
 
     private void changeStatusbarColor() {
@@ -322,7 +358,6 @@ public class AnswerActivity extends AppCompatActivity {
                             }
                         }
                     });
-
 
 
                 } else {

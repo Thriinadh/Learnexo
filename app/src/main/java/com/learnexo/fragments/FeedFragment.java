@@ -18,6 +18,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.main.R;
 import com.learnexo.main.TabsActivity;
@@ -70,6 +71,13 @@ public class FeedFragment extends Fragment {
         getDPandUserName();
         setupFeedRecyclerAdapter(view);
         wireViews(view);
+
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(true)
+                .build();
+        mFirebaseUtil.mFirestore.setFirestoreSettings(settings);
+
+
         askQuestionListener();
         generateFeedItemList();
 
