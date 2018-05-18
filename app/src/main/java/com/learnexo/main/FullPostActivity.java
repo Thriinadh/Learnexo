@@ -47,7 +47,9 @@ public class FullPostActivity extends AppCompatActivity {
         setupToolbar();
 
         Intent intent=getIntent();
+        final String postId=intent.getStringExtra("POST_ID");
         String postData = intent.getStringExtra(EXTRA_CONTENT);
+
         fullText = findViewById(R.id.full_text);
         fullText.setText(postData);
 
@@ -74,7 +76,7 @@ public class FullPostActivity extends AppCompatActivity {
         fullPostLikeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("posts").document();
+                mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("posts").document(postId);
             }
         });
 
@@ -88,13 +90,14 @@ public class FullPostActivity extends AppCompatActivity {
         }
     }
 
-    public static Intent newIntent(Context context, String content, String publishedImg, String imageThumb, String timeAgo, User publisher) {
+    public static Intent newIntent(Context context, String content, String publishedImg, String imageThumb, String timeAgo, User publisher, String postId) {
 
         Intent intent = new Intent(context, FullPostActivity.class);
         intent.putExtra(EXTRA_CONTENT,content);
         intent.putExtra(EXTRA_TIME, timeAgo);
         intent.putExtra(EXTRA_PUBLISHER_NAME, publisher.getFirstName());
         intent.putExtra(EXTRA_PUBLISHER_DP, publisher.getDpUrl());
+        intent.putExtra("POST_ID", postId);
         if(publishedImg!=null) {
             intent.putExtra(EXTRA_IMAGE, publishedImg);
             intent.putExtra(EXTRA_THUMB, imageThumb);

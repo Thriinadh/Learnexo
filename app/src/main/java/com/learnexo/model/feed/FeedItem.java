@@ -37,8 +37,6 @@ public class FeedItem {
     private boolean is_notifiable;
     private List<String> tags;
 
-    private String postId;
-
     public FeedItem() {}
 
     public FeedItem(String content, Date mPublishTime, String userId, String userName, String imgUrl, String imgThmb, boolean is_notifiable, List<String> tags, String postId) {
@@ -51,7 +49,6 @@ public class FeedItem {
 
         this.is_notifiable = is_notifiable;
         this.tags = tags;
-        this.postId = postId;
     }
 
     public String getContent() {
@@ -118,13 +115,5 @@ public class FeedItem {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
-    }
-
-    public String getPostId() {
-        return postId;
-    }
-
-    public void setPostId(String postId) {
-        this.postId = postId;
     }
 }

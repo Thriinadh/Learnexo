@@ -29,6 +29,7 @@ import com.learnexo.main.AnswerActivity;
 import com.learnexo.main.R;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
+import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
@@ -126,11 +127,12 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 case FeedItem.POST:
 
+                    Post post=(Post)feedItem;
                     PostHolder postHolder = (PostHolder) holder;
                     postHolder.wireViews();
                     bindPost(postHolder, itemContent, imagePosted, imageThumb, timeAgo);
                     bindPostUserData(postHolder, publisher);
-                    postContentListener(postHolder, itemContent, imagePosted, imageThumb, timeAgo, publisher);
+                    postContentListener(postHolder, itemContent, imagePosted, imageThumb, timeAgo, publisher, post.getPostId());
                     postOverflowListener(postHolder, publisher, feedItem);
 
                     break;
@@ -181,11 +183,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    private void postContentListener(@NonNull PostHolder holder, final String itemContent, final String imagePosted, final String imageThumb, final String timeAgo, final User publisher) {
+    private void postContentListener(@NonNull PostHolder holder, final String itemContent, final String imagePosted, final String imageThumb, final String timeAgo, final User publisher, final String postId) {
         holder.content.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, imageThumb, timeAgo, publisher);
+                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, imageThumb, timeAgo, publisher, postId);
                 mContext.startActivity(intent);
             }
         });
