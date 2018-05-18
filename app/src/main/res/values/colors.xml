@@ -16,4 +16,6 @@
     <color name="windowBackground">#FFFFFF</color>
     <color name="navigationBarColor">#000000</color>
     <color name="red">#FF0000</color>
+    <color name="likeicongrey">#747474</color>
+    <color name="likeiconblue">#1da1f2</color>
 </resources>

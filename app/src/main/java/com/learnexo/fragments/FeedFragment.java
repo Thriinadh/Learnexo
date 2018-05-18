@@ -149,6 +149,7 @@ public class FeedFragment extends Fragment {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                 DocumentSnapshot documentSnapshot = task.getResult();
+                                                String postId = documentSnapshot.getId();
                                                 Post post=documentSnapshot.toObject(Post.class);
                                                 if(post!=null)
                                                     mFeedItems.add(post);

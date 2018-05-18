@@ -127,4 +127,63 @@
 
     </ScrollView>
 
+    <RelativeLayout
+        android:id="@+id/likesLayout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_grey"/>
+
+        <ImageView
+            android:id="@+id/full_post_like"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="12dp"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/post_like_icn" />
+
+        <TextView
+            android:id="@+id/likesCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/full_post_like"
+            android:layout_marginLeft="4dp"
+            android:layout_centerVertical="true"
+            android:text="2.1k likes"/>
+
+        <ImageView
+            android:id="@+id/full_post_comment"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/likesCount"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/post_comment_icon" />
+
+        <ImageView
+            android:id="@+id/full_post_share"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/full_post_comment"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/post_share_icon" />
+
+        <ImageView
+            android:id="@+id/full_post_bookmark"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginRight="12dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/post_bookmark_icon" />
+
+    </RelativeLayout>
+
 </android.support.constraint.ConstraintLayout>

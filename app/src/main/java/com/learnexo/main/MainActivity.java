@@ -24,6 +24,7 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int GOOGLE_SIGN_IN_REQ_CODE = 1;
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private ProgressBar progresbar;
     private String photoUrl;
     private String photoUrlFb;
     private String displayName;
@@ -295,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void wireViews() {
+        progresbar = findViewById(R.id.progresbar);
         scrollView = findViewById(R.id.scrollView);
         loginEmail = findViewById(R.id.loginEmail);
         loginPass = findViewById(R.id.loginPass);
@@ -413,6 +416,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void loginButtonListener(View view) {
 
+        progresbar.setVisibility(View.VISIBLE);
         String email = loginEmail.getText().toString().trim();
         String pass = loginPass.getText().toString().trim();
 
@@ -434,6 +438,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         } catch (FirebaseAuthInvalidUserException wrongEmail) {
 
+                            progresbar.setVisibility(View.INVISIBLE);
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
                             builder.setMessage("This email doesn't exist. Enter registered email");
@@ -449,6 +454,7 @@ public class MainActivity extends AppCompatActivity {
                             builder.show();
 
                         } catch (FirebaseAuthInvalidCredentialsException wrongPassword) {
+                            progresbar.setVisibility(View.INVISIBLE);
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
                             builder.setMessage("Entered password is wrong. Give relevant password");
@@ -470,6 +476,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         } else if(email.contains(" ") && !TextUtils.isEmpty(pass)) {
+            progresbar.setVisibility(View.INVISIBLE);
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
             builder.setMessage("The email you entered contains spaces. Give proper email");
@@ -485,6 +492,7 @@ public class MainActivity extends AppCompatActivity {
             builder.show();
         }
         else {
+            progresbar.setVisibility(View.INVISIBLE);
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
             builder.setMessage("Enter email and password");
@@ -512,6 +520,7 @@ public class MainActivity extends AppCompatActivity {
                 if(task.isSuccessful()) {
                     gotoFeed();
                 }else {
+                    progresbar.setVisibility(View.INVISIBLE);
                     String errorMessage = null;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
                         errorMessage = Objects.requireNonNull(task.getException()).getMessage();

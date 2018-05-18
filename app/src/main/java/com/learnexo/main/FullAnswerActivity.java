@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.learnexo.model.user.User;
+import com.learnexo.util.ImageHelper;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -22,6 +23,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     public static final String EXTRA_PUBLISHER_NAME = "com.learnexo.publisher_name";
     public static final String EXTRA_PUBLISHER_DP = "com.learnexo.publisher_dp";
     private static final String EXTRA_IMAGE = "com.learnexo.imageposted";
+    private static final String EXTRA_THUMBNAIL = "com.learnexo.imagepostedthumbnail";
     private static final String EXTRA_TIME = "com.learnexo.postedtime";
 
     private TextView questionAsked;
@@ -67,13 +69,16 @@ public class FullAnswerActivity extends AppCompatActivity {
         timeOfPost.setText(posTime);
 
         String imagePosted = intent.getStringExtra(EXTRA_IMAGE);
+        String imageThumb = intent.getStringExtra(EXTRA_THUMBNAIL);
         postedImage = findViewById(R.id.postedImage);
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
-        Glide.with(getApplicationContext()).load(imagePosted).apply(requestOptions).into(postedImage);
+        Glide.with(getApplicationContext()).load(imagePosted)
+                .thumbnail(Glide.with(getApplicationContext()).load(imageThumb))
+                .apply(requestOptions).into(postedImage);
 
     }
 
-    public static Intent newIntent(Context context, String questionAsked, String content, String publishedImg, String timeAgo, User publisher) {
+    public static Intent newIntent(Context context, String questionAsked, String content, String publishedImg, String imageThumb, String timeAgo, User publisher) {
 
         Intent intent = new Intent(context, FullAnswerActivity.class);
         intent.putExtra(EXTRA_QUESTION_CONTENT, questionAsked);
@@ -81,8 +86,10 @@ public class FullAnswerActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_TIME, timeAgo);
         intent.putExtra(EXTRA_PUBLISHER_NAME, publisher.getFirstName());
         intent.putExtra(EXTRA_PUBLISHER_DP, publisher.getDpUrl());
-        if(publishedImg!=null)
+        if(publishedImg!=null) {
             intent.putExtra(EXTRA_IMAGE, publishedImg);
+            intent.putExtra(EXTRA_THUMBNAIL, imageThumb);
+        }
         return intent;
     }
 }
