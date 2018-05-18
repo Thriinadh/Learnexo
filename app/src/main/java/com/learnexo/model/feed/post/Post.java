@@ -5,15 +5,6 @@ import com.learnexo.model.feed.FeedItem;
 
 @IgnoreExtraProperties
 public class Post extends FeedItem {
-    private String postId;
-
-    public String getPostId() {
-        return postId;
-    }
-
-    public void setPostId(String postId) {
-        this.postId = postId;
-    }
 
     private long views;
     private int upvotes;

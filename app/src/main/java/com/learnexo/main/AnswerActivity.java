@@ -176,7 +176,7 @@ public class AnswerActivity extends AppCompatActivity {
 
         Intent intent = new Intent(context, AnswerActivity.class);
         intent.putExtra(EXTRA_QUESTION_CONTENT, question.getContent());
-        intent.putExtra(EXTRA_QUESTION_ID,question.getQuestionId());
+        intent.putExtra(EXTRA_QUESTION_ID,question.getFeedItemId());
         intent.putExtra(EXTRA_QUESTION_TAG,question.getTags().get(0));
         intent.putExtra(EXTRA_QUESTIONER_ID,question.getUserId());
         return intent;

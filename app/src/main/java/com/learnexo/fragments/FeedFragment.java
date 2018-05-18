@@ -151,7 +151,7 @@ public class FeedFragment extends Fragment {
                                                 DocumentSnapshot documentSnapshot = task.getResult();
                                                 Post post=documentSnapshot.toObject(Post.class);
                                                 if(post!=null) {
-                                                    post.setPostId(documentSnapshot.getId());
+                                                    post.setFeedItemId(documentSnapshot.getId());
                                                     mFeedItems.add(post);
                                                 }
                                                 mAdapter.notifyDataSetChanged();
@@ -168,8 +168,10 @@ public class FeedFragment extends Fragment {
                                                     DocumentSnapshot documentSnapshot = task.getResult();
 
                                                     Answer answer=documentSnapshot.toObject(Answer.class);
-                                                    if(answer!=null)
+                                                    if(answer!=null) {
+                                                        answer.setFeedItemId(documentSnapshot.getId());
                                                         mFeedItems.add(answer);
+                                                    }
                                                     mAdapter.notifyDataSetChanged();
                                                 }
                                             });
@@ -185,8 +187,10 @@ public class FeedFragment extends Fragment {
                                                     DocumentSnapshot documentSnapshot = task.getResult();
 
                                                     Answer crack=documentSnapshot.toObject(Answer.class);
-                                                    if(crack!=null)
+                                                    if(crack!=null) {
+                                                        crack.setFeedItemId(documentSnapshot.getId());
                                                         mFeedItems.add(crack);
+                                                    }
                                                     mAdapter.notifyDataSetChanged();
                                                 }
                                             });
@@ -202,7 +206,7 @@ public class FeedFragment extends Fragment {
 
                                                     Question noAnsQuestion=documentSnapshot.toObject(Question.class);
                                                     if(noAnsQuestion!=null) {
-                                                        noAnsQuestion.setQuestionId(documentSnapshot.getId());
+                                                        noAnsQuestion.setFeedItemId(documentSnapshot.getId());
                                                         mFeedItems.add(noAnsQuestion);
                                                     }
                                                     mAdapter.notifyDataSetChanged();
@@ -220,7 +224,7 @@ public class FeedFragment extends Fragment {
 
                                                     Question noCrackChallenge=documentSnapshot.toObject(Question.class);
                                                     if(noCrackChallenge!=null) {
-                                                        noCrackChallenge.setQuestionId(documentSnapshot.getId());
+                                                        noCrackChallenge.setFeedItemId(documentSnapshot.getId());
                                                         mFeedItems.add(noCrackChallenge);
                                                     }
                                                     mAdapter.notifyDataSetChanged();

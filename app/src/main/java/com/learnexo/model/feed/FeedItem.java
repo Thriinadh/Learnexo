@@ -9,6 +9,16 @@ import java.util.List;
 @IgnoreExtraProperties
 public class FeedItem {
 
+private String feedItemId;
+
+    public String getFeedItemId() {
+        return feedItemId;
+    }
+
+    public void setFeedItemId(String feedItemId) {
+        this.feedItemId = feedItemId;
+    }
+
     private String content;
     public static final int POST=0;
     public static final int ANSWER =1;

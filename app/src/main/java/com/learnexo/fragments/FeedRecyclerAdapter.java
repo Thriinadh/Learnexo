@@ -132,7 +132,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     postHolder.wireViews();
                     bindPost(postHolder, itemContent, imagePosted, imageThumb, timeAgo);
                     bindPostUserData(postHolder, publisher);
-                    postContentListener(postHolder, itemContent, imagePosted, imageThumb, timeAgo, publisher, post.getPostId());
+                    postContentListener(postHolder, itemContent, imagePosted, imageThumb, timeAgo, publisher, post.getFeedItemId());
                     postOverflowListener(postHolder, publisher, feedItem);
 
                     break;
