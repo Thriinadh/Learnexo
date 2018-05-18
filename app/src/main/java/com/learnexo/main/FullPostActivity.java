@@ -16,6 +16,9 @@ import com.learnexo.fragments.FeedFragment;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FullPostActivity extends AppCompatActivity {
@@ -76,6 +79,7 @@ public class FullPostActivity extends AppCompatActivity {
         fullPostLikeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Map<String, Object> likesMap = new HashMap<>();
                 mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("posts").document(postId);
             }
         });
