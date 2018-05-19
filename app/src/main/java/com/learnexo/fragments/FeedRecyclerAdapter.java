@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.learnexo.main.AllAnswersActivity;
 import com.learnexo.main.FullAnswerActivity;
 import com.learnexo.main.FullPostActivity;
 import com.learnexo.main.AnswerActivity;
@@ -164,6 +165,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     QuestionHolder questionHolder = (QuestionHolder) holder;
                     questionHolder.wireViews(question);
                     bindQuestion(questionHolder, itemContent, timeAgo);
+                    questionListener(questionHolder, question);
                     answerBtnListener(questionHolder, question);
                     questionOverflowListener(questionHolder, publisher, feedItem);
 
@@ -254,6 +256,25 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         };
     }
+
+    private void questionListener(@NonNull QuestionHolder holder, final Question question) {
+        holder.quesContent.setOnClickListener(
+                questionCrackListener(question, FeedItem.ANSWER));
+    }
+
+    @NonNull
+    private View.OnClickListener questionCrackListener(final Question question, final int answerType) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = AllAnswersActivity.newIntent(mContext, question);
+                intent.putExtra("ANSWER_TYPE", answerType);
+                mContext.startActivity(intent);
+               // ((Activity) mContext).overridePendingTransition(R.anim.slide_out_up, R.anim.slide_in_up);
+            }
+        };
+    }
+
 
     private void bindPostUserData(@NonNull final PostHolder holder, final User user) {
         mFirebaseUtil.mFirestore.collection("users").document(user.getUserId()).
@@ -658,7 +679,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             overflowImgView = mView.findViewById(R.id.overflow);
 
             answerContent = mView.findViewById(R.id.answerContent);
-            ansImgView = mView.findViewById(R.id.postedImagee);
+           // ansImgView = mView.findViewById(R.id.postedImagee);
             seeMore = mView.findViewById(R.id.seeMore);
         }
 
@@ -681,7 +702,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 postedImgView.setVisibility(View.VISIBLE);
                 Glide.with(mContext.getApplicationContext()).load(imageUrl)
                         .thumbnail(Glide.with(mContext.getApplicationContext()).load(imageThumb))
-                        .into(ansImgView);
+                        .into(postedImgView);
             }
         }
 

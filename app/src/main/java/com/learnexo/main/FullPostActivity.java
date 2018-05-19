@@ -3,6 +3,7 @@ package com.learnexo.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.learnexo.fragments.FeedFragment;
+import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
@@ -30,6 +32,7 @@ public class FullPostActivity extends AppCompatActivity {
     private static final String EXTRA_THUMB = "com.learnexo.imagepostedthumb";
     private static final String EXTRA_TIME = "com.learnexo.postedtime";
 
+    Boolean flag = true;
     private TextView fullText;
     private ImageView postedImage;
     private TextView timeOfPost;
@@ -79,7 +82,14 @@ public class FullPostActivity extends AppCompatActivity {
         fullPostLikeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Map<String, Object> likesMap = new HashMap<>();
+                if(flag) {
+                    fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_likeblue_icon));
+                flag = false;
+                }
+                else {
+                    fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_like_icn));
+                    flag = true;
+                }
                 mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("posts").document(postId);
             }
         });

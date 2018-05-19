@@ -45,8 +45,8 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:src="@drawable/empty_profilee"
-                app:civ_border_width="2dp"
                 app:civ_border_color="@color/colorAccent"
+                app:civ_border_width="2dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -111,16 +111,89 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
+                android:layout_marginStart="32dp"
                 android:contentDescription="@string/image_posted"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/viewsText"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/full_text"
                 app:srcCompat="@drawable/empty_profilee" />
+
+            <TextView
+                android:id="@+id/viewsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2.1k views"
+                app:layout_constraintBottom_toTopOf="@+id/likesLayoutt"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="12dp"/>
+
+            <RelativeLayout
+                android:id="@+id/likesLayoutt"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:visibility="gone"
+                android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/light_grey"/>
+
+                <ImageView
+                    android:id="@+id/full_post_likee"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_centerVertical="true"
+                    app:srcCompat="@drawable/post_like_icn" />
+
+                <TextView
+                    android:id="@+id/likesCountt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/full_post_likee"
+                    android:layout_marginLeft="4dp"
+                    android:layout_centerVertical="true"
+                    android:text="2.1k likes"/>
+
+                <ImageView
+                    android:id="@+id/full_post_commentt"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@+id/likesCountt"
+                    android:layout_centerVertical="true"
+                    app:srcCompat="@drawable/post_comment_icon" />
+
+                <ImageView
+                    android:id="@+id/full_post_sharee"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@+id/full_post_commentt"
+                    android:layout_centerVertical="true"
+                    app:srcCompat="@drawable/post_share_icon" />
+
+                <ImageView
+                    android:id="@+id/full_post_bookmarkk"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    app:srcCompat="@drawable/post_bookmark_icon" />
+
+            </RelativeLayout>
+
 
         </android.support.constraint.ConstraintLayout>
 

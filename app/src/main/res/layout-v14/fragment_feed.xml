@@ -79,14 +79,6 @@
             android:nestedScrollingEnabled="false"
             app:layout_constraintTop_toTopOf="parent" />
 
-            <!--<ProgressBar-->
-                <!--android:id="@+id/progressBar"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:scaleX="0.10"-->
-                <!--android:scaleY="0.10" />-->
-
         </FrameLayout>
 
     </RelativeLayout>

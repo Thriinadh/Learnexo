@@ -1,23 +1,31 @@
 package com.learnexo.main;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +33,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.storage.StorageReference;
@@ -33,19 +43,29 @@ import com.learnexo.util.FirebaseUtil;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import id.zelory.compressor.Compressor;
 
 import static com.learnexo.util.FirebaseUtil.sStorageReference;
 
 public class SetupActivity extends AppCompatActivity {
 
+    private static final String TAG = SetupActivity.class.getSimpleName();
+    public static final String EXTRA_IS_SKIPPED="com.learnexo.main.IS_SKIPPED_PROFILE";
+
+    private ConstraintLayout constaintLayout;
+    private ScrollView scrollView;
     private CircleImageView setupImage;
     private Uri mainImageURI = null;
-    public static final String EXTRA_IS_SKIPPED="com.learnexo.main.IS_SKIPPED_PROFILE";
 
     private EditText description;
     private Button setupBtn;
@@ -53,11 +73,13 @@ public class SetupActivity extends AppCompatActivity {
     private String user_id;
     private Button edit_desc_Btn;
     private TextView skipTView;
-    //  private CardView pickImageCView;
 
     private boolean isChanged = false;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     private  boolean is_profile_edit;
+
+    private Bitmap mBitmap;
+    Uri downloadUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +92,17 @@ public class SetupActivity extends AppCompatActivity {
 
         wireViews();
 
+        final View activityRootView = findViewById(R.id.constraintLayout);
+        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
+                if (heightDiff > dpToPx(SetupActivity.this, 200)) {
+                    scrollView.scrollTo(0, 120);
+                }
+            }
+        });
+
         googleNfbDpSetup();
 
         skipNgotoFeed();
@@ -81,6 +114,11 @@ public class SetupActivity extends AppCompatActivity {
 
         setupBtnListener();
 
+    }
+
+    public static float dpToPx(Context context, float valueInDp) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
     }
 
     private void googleNfbDpSetup() {
@@ -209,12 +247,55 @@ public class SetupActivity extends AppCompatActivity {
 
                     if (isChanged) {
                         user_id = FirebaseUtil.getCurrentUserId();
+                        final String randomName = UUID.randomUUID().toString();
                         StorageReference image_path = sStorageReference.child("Profile_images").child(user_id + ".jpg");
                         image_path.putFile(mainImageURI).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
+
                                 if (task.isSuccessful()) {
-                                    storeFirestore(task, description);
+                                  //  storeFirestore(task, description);
+                                    if (task != null) {
+                                        downloadUri = task.getResult().getDownloadUrl();
+                                    } else {
+                                        downloadUri = mainImageURI;
+                                    }
+
+                                    File newImageFile = new File(mainImageURI.getPath());
+                                    try {
+                                        mBitmap = new Compressor(SetupActivity.this)
+                                                .setMaxHeight(100)
+                                                .setMaxWidth(100)
+                                                .setQuality(2)
+                                                .compressToBitmap(newImageFile);
+                                    } catch (IOException e) {
+                                        Log.e(TAG, Arrays.toString(e.getStackTrace()));
+                                    }
+
+                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                    mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                                    byte[] thumbData = baos.toByteArray();
+
+                                    String thumbs= "Profile_images".concat("/thumbs");
+                                    UploadTask uploadTask = FirebaseUtil.sStorageReference.child(thumbs)
+                                            .child(randomName + ".jpg").putBytes(thumbData);
+
+                                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                            storeFirestore(taskSnapshot, description);
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            String error = task.getException().getMessage();
+                                            Toast.makeText(SetupActivity.this,
+                                                    "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+
                                 } else {
                                     String error = null;
                                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
@@ -269,6 +350,8 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     private void wireViews() {
+        constaintLayout = findViewById(R.id.constraintLayout);
+        scrollView = findViewById(R.id.scrollView);
         setupImage = findViewById(R.id.setup_image);
         description = findViewById(R.id.setup_nickName);
         skipTView = findViewById(R.id.skipTView);
@@ -294,18 +377,18 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
-    private void storeFirestore(Task<UploadTask.TaskSnapshot> task, String description) {
-        Uri download_uri;
+    private void storeFirestore(UploadTask.TaskSnapshot taskSnapshot, String description) {
 
-        if (task != null) {
-            download_uri = task.getResult().getDownloadUrl();
-        } else {
-            download_uri = mainImageURI;
-        }
+        Uri downloadthumbUri;
+
+        downloadthumbUri = taskSnapshot.getDownloadUrl();
+
+
 
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("description", description);
-        userMap.put("dpUrl", download_uri.toString());
+        userMap.put("dpUrl", downloadUri.toString());
+        userMap.put("dpThumb", downloadthumbUri.toString());
 
         mFirebaseUtil.mFirestore.collection("users").document(user_id).collection("reg_details")
                 .document("doc").update(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {

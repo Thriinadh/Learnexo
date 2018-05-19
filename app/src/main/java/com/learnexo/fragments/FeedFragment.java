@@ -130,7 +130,7 @@ public class FeedFragment extends Fragment {
                                         interestFeed=new InterestFeed();
                                         interestFeed.setFeedItemId((String) interestFeedData.get("feedItemId"));
                                         interestFeed.setPublisherId((String) interestFeedData.get("publisherId"));
-//
+
                                         interestFeed.setFeedType(((Long)interestFeedData.get("feedType")).intValue());
 
                                         interestFeeds.add(interestFeed);
