@@ -235,11 +235,11 @@ public class AnswerActivity extends AppCompatActivity {
 
     private void saveAnswer(String content) {
             answer.setType(getIntent().getIntExtra("ANSWER_TYPE",-1));
-            answer.setContent(quesContent);
+            answer.setContent(content);
             answer.setUserId(mUserId);
             answer.setUserName(mPublisherName);
             answer.setQuesId(questionId);
-            answer.setQuesContent(content);
+            answer.setQuesContent(quesContent);
             answer.setTags(Collections.singletonList(questionTag));
 
             if(mPublishedImageUri != null) {

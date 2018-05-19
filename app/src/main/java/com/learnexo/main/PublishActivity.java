@@ -443,7 +443,7 @@ public class PublishActivity extends AppCompatActivity {
 
     private void setupDropDownSpinner() {
 
-        String subjects[] = {"Relational Database", "Java","Mongo DB","Scala","Python","Ruby", "C sharp","Android", "others"};
+        String subjects[] = {"Department0 Java 0","Relational Database", "Java","Mongo DB","Scala","Python","Ruby", "C sharp","Android", "others"};
 
         ArrayAdapter<String> staticAdapter = new ArrayAdapter<>
                 (this, android.R.layout.simple_spinner_item,

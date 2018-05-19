@@ -554,8 +554,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.setTime(timeAgo);
     }
 
-    private void bindAnswer(@NonNull AnswerHolder holder, final String content, final String answer, final String publishedImg, final String publishedThumb, String timeAgo) {
-        holder.setContent(content, answer);
+    private void bindAnswer(@NonNull AnswerHolder holder, final String answer, final String question, final String publishedImg, final String publishedThumb, String timeAgo) {
+        holder.setContent(question, answer);
         holder.setAnsImgView(publishedImg, publishedThumb);
         holder.setTime(timeAgo);
     }
@@ -570,8 +570,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.setTime(timeAgo);
     }
 
-    private void bindCrack(@NonNull CrackHolder holder, final String content, final String answer, final String publishedImg, final String imageThumb, String timeAgo) {
-        holder.setContent(content, answer);
+    private void bindCrack(@NonNull CrackHolder holder, final String crack, final String challenge, final String publishedImg, final String imageThumb, String timeAgo) {
+        holder.setContent(challenge, crack);
         holder.setCrackImgView(publishedImg, imageThumb);
         holder.setTime(timeAgo);
     }

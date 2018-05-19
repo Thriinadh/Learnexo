@@ -24,18 +24,15 @@ import java.util.List;
 public class AllAnswersActivity extends AppCompatActivity {
 
     public static final String EXTRA_QUESTION_CONTENT = "com.learnexo.question_content";
-    public static final String EXTRA_QUESTION_ID = "com.learnexo.question_id";
     public static final String EXTRA_QUESTION_TAG = "com.learnexo.question_tag";
     public static final String EXTRA_QUESTIONER_ID = "com.learnexo.questioner_id";
     public static final String EXTRA_ITEM_ID = "com.learnexo.questioner_item_id";
 
     private TextView questionTView;
-
     private List<Answer> mAnswers;
     private AllAnsRecyclerAdapter mAdapter;
 
     String quesContent;
-    String questionId;
     String questionTag;
     String questionerId;
     String feedItemId;
@@ -47,7 +44,6 @@ public class AllAnswersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_answers);
 
-        questionTView = findViewById(R.id.questionTView);
 
         mAnswers = new ArrayList<>();
         mAdapter = new AllAnsRecyclerAdapter(mAnswers);
@@ -58,8 +54,9 @@ public class AllAnswersActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         quesContent = intent.getStringExtra(EXTRA_QUESTION_CONTENT);
+        questionTView = findViewById(R.id.questionTView);
         questionTView.setText(quesContent);
-      //  questionId = intent.getStringExtra(EXTRA_QUESTION_ID);
+
         questionTag = intent.getStringExtra(EXTRA_QUESTION_TAG);
         questionerId = intent.getStringExtra(EXTRA_QUESTIONER_ID);
         feedItemId = intent.getStringExtra(EXTRA_ITEM_ID);
@@ -72,21 +69,9 @@ public class AllAnswersActivity extends AppCompatActivity {
                 for(DocumentSnapshot documentSnapshot:documents){
                     mAnswers.add(documentSnapshot.toObject(Answer.class));
                 }
+                mAdapter.notifyDataSetChanged();
             }
         });
-                //.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                DocumentSnapshot documentSnapshot = task.getResult();
-//
-//                Answer answer=documentSnapshot.toObject(Answer.class);
-//                if(answer!=null) {
-//                    answer.setFeedItemId(documentSnapshot.getId());
-//                    mAnswers.add(answer);
-//                }
-//                mAdapter.notifyDataSetChanged();
-//            }
-        //});
 
     }
 
@@ -94,7 +79,6 @@ public class AllAnswersActivity extends AppCompatActivity {
 
         Intent intent = new Intent(context, AllAnswersActivity.class);
         intent.putExtra(EXTRA_QUESTION_CONTENT, question.getContent());
-     //   intent.putExtra(EXTRA_QUESTION_ID,question.getFeedItemId());
         intent.putExtra(EXTRA_QUESTION_TAG,question.getTags().get(0));
         intent.putExtra(EXTRA_QUESTIONER_ID,question.getUserId());
         intent.putExtra(EXTRA_ITEM_ID, question.getFeedItemId());
