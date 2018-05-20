@@ -347,7 +347,7 @@ public class AnswerActivity extends AppCompatActivity {
                                             mFirebaseUtil.mFirestore.collection("users").document(questionerId).collection("questions").
                                                     document(answer.getQuesId()).update(map);
 
-                                            saveInterestFeedItem(answer, documentReferenceTask, interestFeedPath, answer.getType());
+                                            mFirebaseUtil.saveInterestFeedItem(answer, documentReferenceTask, interestFeedPath, answer.getType(),mUserId);
                                             gotoFeed();
                                         }
                                     }
@@ -378,16 +378,6 @@ public class AnswerActivity extends AppCompatActivity {
         });
     }
 
-    private void saveInterestFeedItem(FeedItem mFeedItem, Task<DocumentReference> documentReferenceTask, String interestFeedPath, int type) {
-        InterestFeed interestFeed=new InterestFeed();
-
-        interestFeed.setInterest(mFeedItem.getTags().get(0));
-        interestFeed.setPublisherId(mUserId);
-        interestFeed.setFeedType(type);
-        interestFeed.setFeedItemId(documentReferenceTask.getResult().getId());
-
-        mFirebaseUtil.mFirestore.collection(interestFeedPath).add(interestFeed);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

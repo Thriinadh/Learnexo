@@ -307,7 +307,7 @@ public class PublishActivity extends AppCompatActivity {
                     mFirebaseUtil.mFirestore.collection("questions")
                             .document(task.getResult().getId()).set(mFeedItem);
 
-                    saveInterestFeedItem(mFeedItem, documentReferenceTask, interestFeedPath, mFeedItem.getType());
+                    mFirebaseUtil.saveInterestFeedItem(mFeedItem, documentReferenceTask, interestFeedPath, mFeedItem.getType(),mUserId);
 
                     gotoFeed();
 
@@ -327,16 +327,7 @@ public class PublishActivity extends AppCompatActivity {
         });
     }
 
-    public void saveInterestFeedItem(FeedItem mFeedItem, Task<DocumentReference> documentReferenceTask, String interestFeedPath, int type) {
-        InterestFeed interestFeed=new InterestFeed();
 
-        interestFeed.setInterest(mFeedItem.getTags().get(0));
-        interestFeed.setPublisherId(mUserId);
-        interestFeed.setFeedType(type);
-        interestFeed.setFeedItemId(documentReferenceTask.getResult().getId());
-
-        mFirebaseUtil.mFirestore.collection(interestFeedPath).add(interestFeed);
-    }
 
     public boolean onTouch(View view, MotionEvent event) {
 

@@ -3,9 +3,12 @@ package com.learnexo.util;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -13,16 +16,21 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.learnexo.model.feed.FeedItem;
+import com.learnexo.model.feed.InterestFeed;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import id.zelory.compressor.Compressor;
 
@@ -30,6 +38,7 @@ public class FirebaseUtil {
 
     public static FirebaseAuth sAuth;
     public static StorageReference sStorageReference;
+    private  static final String TAG=FirebaseUtil.class.getSimpleName();
 
 
     public FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
@@ -63,22 +72,38 @@ public class FirebaseUtil {
 
 
 
+    public void saveInterestFeedItem(FeedItem mFeedItem, Task<DocumentReference> documentReferenceTask, String interestFeedPath, int type, String publisherId) {
+        InterestFeed interestFeed=new InterestFeed();
 
-    private void saveImagetoStorage(final Uri uri, String path, final Activity activity) {
+        interestFeed.setInterest(mFeedItem.getTags().get(0));
+        interestFeed.setPublisherId(publisherId);
+        interestFeed.setFeedType(type);
+        interestFeed.setFeedItemId(documentReferenceTask.getResult().getId());
+
+        mFirestore.collection(interestFeedPath).add(interestFeed);
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public ImageUtil saveImagetoStorage(final Uri mPublishedImageUri, final String path, final Activity activity, final ProgressBar mProgressBar) {
+
+        final CompletableFuture<ImageUtil> futureImageUtil = new CompletableFuture<>();;
+
+        final ImageUtil imageUtil = new ImageUtil();
+
         final String randomName = UUID.randomUUID().toString();
+        StorageReference filepath = sStorageReference.child(path).child(randomName + ".jpg");
 
-        StorageReference filepath = FirebaseUtil.sStorageReference.child("answer_images").child(randomName + ".jpg");
-
-        filepath.putFile(uri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+        filepath.putFile(mPublishedImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
 
                 final String downloadUri = task.getResult().getDownloadUrl().toString();
-                Bitmap mBitmap=null;
-                if (task.isSuccessful()) {
-                    File newImageFile = new File(uri.getPath());
-                    try {
 
+                if (task.isSuccessful()) {
+                    File newImageFile = new File(mPublishedImageUri.getPath());
+                    Bitmap mBitmap=null;
+                    try {
                         mBitmap = new Compressor(activity)
                                 .setMaxHeight(100)
                                 .setMaxWidth(100)
@@ -92,7 +117,7 @@ public class FirebaseUtil {
                     mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                     byte[] thumbData = baos.toByteArray();
 
-                    String thumbs= "answer_images".concat("/thumbs");
+                    String thumbs= path.concat("/thumbs");
                     UploadTask uploadTask = FirebaseUtil.sStorageReference.child(thumbs)
                             .child(randomName + ".jpg").putBytes(thumbData);
 
@@ -101,25 +126,34 @@ public class FirebaseUtil {
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                             String downloadthumbUri = taskSnapshot.getDownloadUrl().toString();
-//                            answer.setImgUrl(downloadUri);
-//                            answer.setImgThmb(downloadthumbUri);
-//                            saveAnswer(answer);
-
+                            imageUtil.setImgUrl(downloadUri);
+                            imageUtil.setImgThumb(downloadthumbUri);
+                            futureImageUtil.complete(imageUtil);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             String error = task.getException().getMessage();
-                            Toast.makeText(activity,
-                                    "Firestore Retrieve Error : " + error, Toast.LENGTH_LONG).show();
+                            futureImageUtil.complete(null);
+                            Log.e(TAG,"Firestore Retrieve Error : " + error);
                         }
                     });
 
+
                 } else {
-                    // mProgressBar.setVisibility(View.INVISIBLE);
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 }
             }
         });
-    }
+
+        try {
+            return futureImageUtil.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+     }
 
 }
