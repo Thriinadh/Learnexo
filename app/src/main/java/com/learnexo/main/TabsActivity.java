@@ -394,10 +394,7 @@ public class TabsActivity extends AppCompatActivity {
             }
 
             private void toastErrorMsg(@NonNull Task<DocumentSnapshot> task) {
-                String errorMessage = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                    errorMessage = Objects.requireNonNull(task.getException()).getMessage();
-                }
+                String errorMessage = task.getException().getMessage();
                 Toast.makeText(TabsActivity.this, "Error : " + errorMessage, Toast.LENGTH_LONG).show();
             }
 

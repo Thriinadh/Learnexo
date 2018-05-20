@@ -181,11 +181,8 @@ public class SetupActivity extends AppCompatActivity {
                                 startActivity(tabIntent);
                                 finish();
                             } else {
-                                String error = null;
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                                    error = Objects.requireNonNull(task.getException()).getMessage();
-                                }
-                                Toast.makeText(SetupActivity.this, "Firestore Error : " + error, Toast.LENGTH_LONG).show();
+                                String errorMessage = task.getException().getMessage();
+                                Toast.makeText(SetupActivity.this, "Firestore Error : " + errorMessage, Toast.LENGTH_LONG).show();
                             }
 
                             setupProgerss.setVisibility(View.INVISIBLE);
@@ -297,11 +294,8 @@ public class SetupActivity extends AppCompatActivity {
                                     });
 
                                 } else {
-                                    String error = null;
-                                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                                        error = Objects.requireNonNull(task.getException()).getMessage();
-                                    }
-                                    Toast.makeText(SetupActivity.this, "Image Error : " + error, Toast.LENGTH_LONG).show();
+                                    String errorMessage = task.getException().getMessage();
+                                    Toast.makeText(SetupActivity.this, "Image Error : " + errorMessage, Toast.LENGTH_LONG).show();
                                     setupProgerss.setVisibility(View.INVISIBLE);
                                 }
                             }
@@ -339,11 +333,8 @@ public class SetupActivity extends AppCompatActivity {
                     }
 
                 } else {
-                    String errorMsg = null;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                        errorMsg = Objects.requireNonNull(task.getException()).getMessage();
-                    }
-                    Toast.makeText(SetupActivity.this, "Firestore Retrieve Error : " + errorMsg, Toast.LENGTH_LONG).show();
+                    String errorMessage = task.getException().getMessage();
+                    Toast.makeText(SetupActivity.this, "Firestore Retrieve Error : " + errorMessage, Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -400,11 +391,8 @@ public class SetupActivity extends AppCompatActivity {
                     startActivity(tabIntent);
                     finish();
                 } else {
-                    String error = null;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                        error = Objects.requireNonNull(task.getException()).getMessage();
-                    }
-                    Toast.makeText(SetupActivity.this, "Firestore Error : " + error, Toast.LENGTH_LONG).show();
+                    String errorMessage = task.getException().getMessage();
+                    Toast.makeText(SetupActivity.this, "Firestore Error : " + errorMessage, Toast.LENGTH_LONG).show();
                 }
 
                 setupProgerss.setVisibility(View.INVISIBLE);

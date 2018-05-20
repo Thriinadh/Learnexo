@@ -433,9 +433,8 @@ public class MainActivity extends AppCompatActivity {
                         checkIfUserExists();
                     } else {
                         try {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                throw Objects.requireNonNull(task.getException());
-                            }
+                                throw task.getException();
+
                         } catch (FirebaseAuthInvalidUserException wrongEmail) {
 
                             progresbar.setVisibility(View.INVISIBLE);
@@ -521,10 +520,7 @@ public class MainActivity extends AppCompatActivity {
                     gotoFeed();
                 }else {
                     progresbar.setVisibility(View.INVISIBLE);
-                    String errorMessage = null;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                        errorMessage = Objects.requireNonNull(task.getException()).getMessage();
-                    }
+                    String errorMessage = task.getException().getMessage();
                     Toast.makeText(MainActivity.this, "Error : " + errorMessage, Toast.LENGTH_LONG).show();
                 }
             }
