@@ -66,6 +66,7 @@ public class AnswerActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private Uri mPublishedImageUri;
     private TextView askedQuestion;
+    private TextView title;
     private EditText mAnswerContent;
     private TextView submitTView;
     private ImageView galleryView;
@@ -78,6 +79,7 @@ public class AnswerActivity extends AppCompatActivity {
     String questionId;
     String questionTag;
     String questionerId;
+    int ansType;
 
 
     private String mUserId = FirebaseUtil.getCurrentUserId();
@@ -92,11 +94,11 @@ public class AnswerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_answer);
 
+        initQuesFromIntent();
         wireViews();
 
         //changeStatusbarColor();
 
-        initQuesFromIntent();
 
         galleryBtnListener();
         enablePublishBtn();
@@ -152,6 +154,10 @@ public class AnswerActivity extends AppCompatActivity {
     }
 
     private void wireViews() {
+        title=findViewById(R.id.textView6);
+        if(ansType==FeedItem.CRACK)
+            title.setText("Crack");
+
         mProgressBar = findViewById(R.id.progressbaar);
         mAnswerContent = findViewById(R.id.quesAns);
         submitTView = findViewById(R.id.submitTView);
@@ -160,12 +166,13 @@ public class AnswerActivity extends AppCompatActivity {
         relativeLayout = findViewById(R.id.relativeLayout);
         loadImage = findViewById(R.id.loadImage);
         askedQuestion = findViewById(R.id.questionView);
+        askedQuestion.setText(quesContent);
     }
 
     private void initQuesFromIntent() {
         Intent intent = getIntent();
+        ansType=intent.getIntExtra("ANSWER_TYPE",-1);
         quesContent = intent.getStringExtra(EXTRA_QUESTION_CONTENT);
-        askedQuestion.setText(quesContent);
         questionId = intent.getStringExtra(EXTRA_QUESTION_ID);
         questionTag = intent.getStringExtra(EXTRA_QUESTION_TAG);
         questionerId = intent.getStringExtra(EXTRA_QUESTIONER_ID);
@@ -234,7 +241,7 @@ public class AnswerActivity extends AppCompatActivity {
     }
 
     private void saveAnswer(String content) {
-            answer.setType(getIntent().getIntExtra("ANSWER_TYPE",-1));
+            answer.setType(ansType);
             answer.setContent(content);
             answer.setUserId(mUserId);
             answer.setUserName(mPublisherName);
