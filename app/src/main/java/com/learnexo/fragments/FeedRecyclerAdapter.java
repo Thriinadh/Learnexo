@@ -176,6 +176,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     ChallengeHolder challengeHolder = (ChallengeHolder) holder;
                     challengeHolder.wireViews(challenge);
                     bindChallenge(challengeHolder, itemContent, timeAgo);
+                    challengeListener(challengeHolder, challenge);
                     crackBtnListener(challengeHolder, challenge);
                     challengeOverflowListener(challengeHolder, publisher, feedItem);
 
@@ -260,6 +261,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private void questionListener(@NonNull QuestionHolder holder, final Question question) {
         holder.quesContent.setOnClickListener(
                 questionCrackListener(question, FeedItem.ANSWER));
+    }
+    private void challengeListener(@NonNull ChallengeHolder holder, final Question question) {
+        holder.challengeContent.setOnClickListener(
+                questionCrackListener(question, FeedItem.CRACK));
     }
 
     @NonNull

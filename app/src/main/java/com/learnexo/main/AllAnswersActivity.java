@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.util.FirebaseUtil;
@@ -29,13 +30,17 @@ public class AllAnswersActivity extends AppCompatActivity {
     public static final String EXTRA_ITEM_ID = "com.learnexo.questioner_item_id";
 
     private TextView questionTView;
+    private TextView answerBtn;
+    private int noOfAns;
+    private TextView noOfAnswersView;
     private List<Answer> mAnswers;
     private AllAnsRecyclerAdapter mAdapter;
 
-    String quesContent;
-    String questionTag;
-    String questionerId;
-    String feedItemId;
+    private String quesContent;
+    private String questionTag;
+    private String questionerId;
+    private String feedItemId;
+    private int is_Challenge;
 
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
@@ -45,35 +50,80 @@ public class AllAnswersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_all_answers);
 
 
-        mAnswers = new ArrayList<>();
-        mAdapter = new AllAnsRecyclerAdapter(mAnswers);
+        setupRecyclerView();
 
-        RecyclerView feedRecyclerView = findViewById(R.id.allAnsRecycler);
-        feedRecyclerView.setLayoutManager(new LinearLayoutManager(AllAnswersActivity.this));
-        feedRecyclerView.setAdapter(mAdapter);
+        getIntentDetails();
 
-        Intent intent = getIntent();
-        quesContent = intent.getStringExtra(EXTRA_QUESTION_CONTENT);
-        questionTView = findViewById(R.id.questionTView);
-        questionTView.setText(quesContent);
+        wireViews();
 
-        questionTag = intent.getStringExtra(EXTRA_QUESTION_TAG);
-        questionerId = intent.getStringExtra(EXTRA_QUESTIONER_ID);
-        feedItemId = intent.getStringExtra(EXTRA_ITEM_ID);
 
+        getAnswers();
+
+
+        bindData();
+    }
+
+    private void getAnswers() {
         mFirebaseUtil.mFirestore.collection("questions").document(feedItemId)
                 .collection("answers").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                noOfAns=documents.size();
+                bindNoOfAns();
                 for(DocumentSnapshot documentSnapshot:documents){
                     mAnswers.add(documentSnapshot.toObject(Answer.class));
                 }
                 mAdapter.notifyDataSetChanged();
             }
         });
-
     }
+
+    private void bindNoOfAns() {
+        if(is_Challenge== FeedItem.CRACK) {
+            if(noOfAns!=1)
+                noOfAnswersView.setText(noOfAns+" Cracks");
+            else
+                noOfAnswersView.setText(noOfAns+" Crack");
+        }else
+            if(noOfAns!=1)
+                noOfAnswersView.setText(noOfAns+" Answers");
+            else
+                noOfAnswersView.setText(noOfAns+" Answer");
+    }
+
+    private void bindData() {
+        if(is_Challenge== FeedItem.CRACK) {
+            answerBtn.setText("Crack");
+        }
+    }
+
+    private void wireViews() {
+        questionTView = findViewById(R.id.questionTView);
+        questionTView.setText(quesContent);
+        answerBtn = findViewById(R.id.answer);
+        noOfAnswersView = findViewById(R.id.totalAnsTView);
+    }
+
+    private void setupRecyclerView() {
+        mAnswers = new ArrayList<>();
+        mAdapter = new AllAnsRecyclerAdapter(mAnswers);
+
+        RecyclerView feedRecyclerView = findViewById(R.id.allAnsRecycler);
+        feedRecyclerView.setLayoutManager(new LinearLayoutManager(AllAnswersActivity.this));
+        feedRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void getIntentDetails() {
+        Intent intent = getIntent();
+        quesContent = intent.getStringExtra(EXTRA_QUESTION_CONTENT);
+        questionTag = intent.getStringExtra(EXTRA_QUESTION_TAG);
+        questionerId = intent.getStringExtra(EXTRA_QUESTIONER_ID);
+        feedItemId = intent.getStringExtra(EXTRA_ITEM_ID);
+        is_Challenge=intent.getIntExtra("ANSWER_TYPE",10);
+    }
+
+
 
     public static Intent newIntent(Context context, Question question) {
 

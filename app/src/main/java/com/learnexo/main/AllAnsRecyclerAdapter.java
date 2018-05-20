@@ -59,12 +59,10 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             publisher.setUserId(publisherId);
 
-          //  Answer answer = (Answer) feedItem;
             AllAnsHolder allAnsHolder = (AllAnsHolder) holder;
             allAnsHolder.wireViews();
             bindAnswer(allAnsHolder, itemContent, imagePosted, imageThumb, timeAgo);
             bindAnswererData(allAnsHolder, publisher);
-           // answerOverflowListener(allAnsHolder, publisher, feedItem);
 
         }
     }
@@ -104,19 +102,19 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 });
     }
 
+
+
+
     public class AllAnsHolder extends RecyclerView.ViewHolder {
 
         private View mView;
 
-        private TextView quesContent;
         private TextView answerContent;
         private TextView userName;
         private CircleImageView userImage;
         private TextView timeAgo;
         private ImageView overflowImgView;
         private ImageView postedImgView;
-        private ImageView ansImgView;
-        private TextView seeMore;
 
         public AllAnsHolder(View itemView) {
             super(itemView);
@@ -124,20 +122,15 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
 
         public void wireViews(){
-           // quesContent = mView.findViewById(R.id.questionTView);
             userImage = mView.findViewById(R.id.profile_image);
             userName = mView.findViewById(R.id.userNameTView);
             postedImgView = mView.findViewById(R.id.postedImage);
             timeAgo = mView.findViewById(R.id.feed_time);
             overflowImgView = mView.findViewById(R.id.overflow);
-
             answerContent = mView.findViewById(R.id.full_text);
-          //  ansImgView = mView.findViewById(R.id.postedImagee);
-          //  seeMore = mView.findViewById(R.id.seeMore);
         }
 
         public void setContent(String answer) {
-           // quesContent.setText(question);
             answerContent.setText(answer);
 
         }
