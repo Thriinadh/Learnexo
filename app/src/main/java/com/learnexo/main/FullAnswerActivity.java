@@ -15,6 +15,8 @@ import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.user.User;
 
+import java.util.Collections;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FullAnswerActivity extends AppCompatActivity {
@@ -39,6 +41,8 @@ public class FullAnswerActivity extends AppCompatActivity {
     private String questionId;
     String questionData;
     boolean is_crack;
+    String tag;
+    String questionerId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,9 @@ public class FullAnswerActivity extends AppCompatActivity {
         String postData = intent.getStringExtra(EXTRA_CONTENT);
         String imagePosted = intent.getStringExtra(EXTRA_IMAGE);
         String imageThumb = intent.getStringExtra(EXTRA_THUMBNAIL);
+
+        tag = intent.getStringExtra("TAG");
+        questionerId = intent.getStringExtra("QUESTIONER_ID");
 
 
         bindData(intent, posTime, postData, imagePosted, imageThumb);
@@ -75,9 +82,12 @@ public class FullAnswerActivity extends AppCompatActivity {
         viewAllAns.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Question question=new Question();
                 question.setFeedItemId(questionId);
                 question.setContent(questionData);
+                question.setUserId(questionerId);
+                question.setTags(Collections.singletonList(tag));
                 Intent intent11 = AllAnswersActivity.newIntent(FullAnswerActivity.this, question);
                 if(is_crack)
                     intent11.putExtra("ANSWER_TYPE", FeedItem.CRACK);
@@ -109,7 +119,7 @@ public class FullAnswerActivity extends AppCompatActivity {
         postedImage = findViewById(R.id.postedImage);
     }
 
-    public static Intent newIntent(Context context, String questionAsked, String content, String publishedImg, String imageThumb, String timeAgo, User publisher, String questionId) {
+    public static Intent newIntent(Context context, String questionAsked, String content, String publishedImg, String imageThumb, String timeAgo, User publisher, String questionId, String tag) {
 
         Intent intent = new Intent(context, FullAnswerActivity.class);
         intent.putExtra(EXTRA_QUESTION_CONTENT, questionAsked);
@@ -118,6 +128,8 @@ public class FullAnswerActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_PUBLISHER_NAME, publisher.getFirstName());
         intent.putExtra(EXTRA_PUBLISHER_DP, publisher.getDpUrl());
         intent.putExtra(EXTRA_QUESTION_ID, questionId);
+        intent.putExtra("TAG", tag);
+        intent.putExtra("QUESTIONER_ID", publisher.getUserId());
         if(publishedImg!=null) {
             intent.putExtra(EXTRA_IMAGE, publishedImg);
             intent.putExtra(EXTRA_THUMBNAIL, imageThumb);

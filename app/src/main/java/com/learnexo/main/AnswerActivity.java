@@ -192,11 +192,6 @@ public class AnswerActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_QUESTIONER_ID,question.getUserId());
         return intent;
     }
-    public static Intent newIntent(Context packageContext,String question) {
-        Intent intent = new Intent(packageContext, AnswerActivity.class);
-        intent.putExtra(EXTRA_QUESTION_FROM_ALL, question);
-        return intent;
-    }
 
     private void enablePublishBtn() {
         mAnswerContent.addTextChangedListener(new TextWatcher() {

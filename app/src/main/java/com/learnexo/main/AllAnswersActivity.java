@@ -1,5 +1,6 @@
 package com.learnexo.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -22,6 +23,7 @@ import com.learnexo.model.feed.question.Question;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AllAnswersActivity extends AppCompatActivity {
@@ -46,7 +48,6 @@ public class AllAnswersActivity extends AppCompatActivity {
     private String questionerId;
     private String feedItemId;
     private int is_Challenge;
-    private String questionId;
 
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
@@ -68,9 +69,17 @@ public class AllAnswersActivity extends AppCompatActivity {
         answerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = AnswerActivity.newIntent(AllAnswersActivity.this, quesContent);
+                Question question=new Question();
+                question.setContent(quesContent);
+                question.setFeedItemId(feedItemId);
+                question.setTags(Collections.singletonList(questionTag));
+                question.setUserId(questionerId);
+
+
+                Intent intent = AnswerActivity.newIntent(AllAnswersActivity.this, question);
                 intent.putExtra("ANSWER_TYPE", is_Challenge);
                 startActivity(intent);
+                overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
             }
         });
     }
@@ -135,7 +144,6 @@ public class AllAnswersActivity extends AppCompatActivity {
         questionerId = intent.getStringExtra(EXTRA_QUESTIONER_ID);
         feedItemId = intent.getStringExtra(EXTRA_ITEM_ID);
         is_Challenge=intent.getIntExtra("ANSWER_TYPE",10);
-        questionId = intent.getStringExtra(EXTRA_QUESTION_IDD);
     }
 
 
@@ -143,16 +151,12 @@ public class AllAnswersActivity extends AppCompatActivity {
 
         Intent intent = new Intent(context, AllAnswersActivity.class);
         intent.putExtra(EXTRA_QUESTION_CONTENT, question.getContent());
-        //intent.putExtra(EXTRA_QUESTION_TAG,question.getTags().get(0));
-        //intent.putExtra(EXTRA_QUESTIONER_ID,question.getUserId());
+        intent.putExtra(EXTRA_QUESTION_TAG,question.getTags().get(0));
+        intent.putExtra(EXTRA_QUESTIONER_ID,question.getUserId());
         intent.putExtra(EXTRA_ITEM_ID, question.getFeedItemId());
         return intent;
     }
 
-    public static Intent newIntent(Context packageContext,String questionIdd) {
-        Intent intent = new Intent(packageContext, FullAnswerActivity.class);
-        intent.putExtra(EXTRA_QUESTION_IDD, questionIdd);
-        return intent;
-    }
+
 
 }
