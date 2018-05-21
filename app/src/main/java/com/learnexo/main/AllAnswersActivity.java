@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,6 +30,8 @@ public class AllAnswersActivity extends AppCompatActivity {
     public static final String EXTRA_QUESTION_TAG = "com.learnexo.question_tag";
     public static final String EXTRA_QUESTIONER_ID = "com.learnexo.questioner_id";
     public static final String EXTRA_ITEM_ID = "com.learnexo.questioner_item_id";
+    public static final String EXTRA_QUESTION_IDD = "com.learnexo.question_idd";
+
 
     private TextView questionTView;
     private TextView answerBtn;
@@ -35,12 +39,14 @@ public class AllAnswersActivity extends AppCompatActivity {
     private TextView noOfAnswersView;
     private List<Answer> mAnswers;
     private AllAnsRecyclerAdapter mAdapter;
+    private ImageView challengeIcon;
 
     private String quesContent;
     private String questionTag;
     private String questionerId;
     private String feedItemId;
     private int is_Challenge;
+    private String questionId;
 
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
@@ -49,18 +55,24 @@ public class AllAnswersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_answers);
 
-
         setupRecyclerView();
 
         getIntentDetails();
 
         wireViews();
 
-
         getAnswers();
 
-
         bindData();
+
+        answerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = AnswerActivity.newIntent(AllAnswersActivity.this, quesContent);
+                intent.putExtra("ANSWER_TYPE", is_Challenge);
+                startActivity(intent);
+            }
+        });
     }
 
     private void getAnswers() {
@@ -95,6 +107,7 @@ public class AllAnswersActivity extends AppCompatActivity {
     private void bindData() {
         if(is_Challenge== FeedItem.CRACK) {
             answerBtn.setText("Crack");
+            challengeIcon.setVisibility(View.VISIBLE);
         }
     }
 
@@ -103,6 +116,7 @@ public class AllAnswersActivity extends AppCompatActivity {
         questionTView.setText(quesContent);
         answerBtn = findViewById(R.id.answer);
         noOfAnswersView = findViewById(R.id.totalAnsTView);
+        challengeIcon = findViewById(R.id.challengeIcon);
     }
 
     private void setupRecyclerView() {
@@ -121,8 +135,8 @@ public class AllAnswersActivity extends AppCompatActivity {
         questionerId = intent.getStringExtra(EXTRA_QUESTIONER_ID);
         feedItemId = intent.getStringExtra(EXTRA_ITEM_ID);
         is_Challenge=intent.getIntExtra("ANSWER_TYPE",10);
+        questionId = intent.getStringExtra(EXTRA_QUESTION_IDD);
     }
-
 
 
     public static Intent newIntent(Context context, Question question) {
@@ -134,4 +148,11 @@ public class AllAnswersActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_ITEM_ID, question.getFeedItemId());
         return intent;
     }
+
+    public static Intent newIntent(Context packageContext,String questionIdd) {
+        Intent intent = new Intent(packageContext, FullAnswerActivity.class);
+        intent.putExtra(EXTRA_QUESTION_IDD, questionIdd);
+        return intent;
+    }
+
 }

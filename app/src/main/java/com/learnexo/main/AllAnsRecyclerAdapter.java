@@ -40,7 +40,7 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         mContext = parent.getContext();
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_ans_list_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.all_ans_list_item, parent, false);
         return new AllAnsHolder(view);
     }
 

@@ -73,9 +73,9 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     public void registerBtnListener(View view) {
-        final String first_name = mFirstName.getText().toString();
-        final String last_name = mLastName.getText().toString();
-        final String email = mEmail.getText().toString();
+        final String first_name = mFirstName.getText().toString().trim();
+        final String last_name = mLastName.getText().toString().trim();
+        final String email = mEmail.getText().toString().trim();
         final String pass = mPass.getText().toString();
 
         if((!TextUtils.isEmpty(first_name) || !TextUtils.isEmpty(last_name)) && !TextUtils.isEmpty(email) && !email.contains(" ") && !TextUtils.isEmpty(pass)) {

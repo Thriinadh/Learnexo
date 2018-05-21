@@ -61,6 +61,7 @@ public class AnswerActivity extends AppCompatActivity {
     public static final String EXTRA_QUESTION_ID = "com.learnexo.question_id";
     public static final String EXTRA_QUESTION_TAG = "com.learnexo.question_tag";
     public static final String EXTRA_QUESTIONER_ID = "com.learnexo.questioner_id";
+    public static final String EXTRA_QUESTION_FROM_ALL= "com.learnexo.question_from_all";
 
 
     private ProgressBar mProgressBar;
@@ -79,6 +80,7 @@ public class AnswerActivity extends AppCompatActivity {
     String questionId;
     String questionTag;
     String questionerId;
+    String question;
     int ansType;
 
 
@@ -167,6 +169,8 @@ public class AnswerActivity extends AppCompatActivity {
         loadImage = findViewById(R.id.loadImage);
         askedQuestion = findViewById(R.id.questionView);
         askedQuestion.setText(quesContent);
+        if(question != null)
+        askedQuestion.setText(question);
     }
 
     private void initQuesFromIntent() {
@@ -176,7 +180,7 @@ public class AnswerActivity extends AppCompatActivity {
         questionId = intent.getStringExtra(EXTRA_QUESTION_ID);
         questionTag = intent.getStringExtra(EXTRA_QUESTION_TAG);
         questionerId = intent.getStringExtra(EXTRA_QUESTIONER_ID);
-
+        question = intent.getStringExtra(EXTRA_QUESTION_FROM_ALL);
     }
 
     public static Intent newIntent(Context context, Question question) {
@@ -186,6 +190,11 @@ public class AnswerActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_QUESTION_ID,question.getFeedItemId());
         intent.putExtra(EXTRA_QUESTION_TAG,question.getTags().get(0));
         intent.putExtra(EXTRA_QUESTIONER_ID,question.getUserId());
+        return intent;
+    }
+    public static Intent newIntent(Context packageContext,String question) {
+        Intent intent = new Intent(packageContext, AnswerActivity.class);
+        intent.putExtra(EXTRA_QUESTION_FROM_ALL, question);
         return intent;
     }
 

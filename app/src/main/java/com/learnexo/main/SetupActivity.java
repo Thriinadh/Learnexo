@@ -252,11 +252,7 @@ public class SetupActivity extends AppCompatActivity {
 
                                 if (task.isSuccessful()) {
                                   //  storeFirestore(task, description);
-                                    if (task != null) {
                                         downloadUri = task.getResult().getDownloadUrl();
-                                    } else {
-                                        downloadUri = mainImageURI;
-                                    }
 
                                     File newImageFile = new File(mainImageURI.getPath());
                                     try {
@@ -370,16 +366,18 @@ public class SetupActivity extends AppCompatActivity {
 
     private void storeFirestore(UploadTask.TaskSnapshot taskSnapshot, String description) {
 
-        Uri downloadthumbUri;
-
-        downloadthumbUri = taskSnapshot.getDownloadUrl();
-
-
-
         Map<String, Object> userMap = new HashMap<>();
+        Uri downloadthumbUri;
+        if(taskSnapshot != null) {
+            downloadthumbUri = taskSnapshot.getDownloadUrl();
+            userMap.put("dpThumb", downloadthumbUri.toString());
+        }
+        else {
+            downloadUri = mainImageURI;
+        }
+
         userMap.put("description", description);
         userMap.put("dpUrl", downloadUri.toString());
-        userMap.put("dpThumb", downloadthumbUri.toString());
 
         mFirebaseUtil.mFirestore.collection("users").document(user_id).collection("reg_details")
                 .document("doc").update(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {

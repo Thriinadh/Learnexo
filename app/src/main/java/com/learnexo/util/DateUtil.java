@@ -29,11 +29,11 @@ public class DateUtil {
             long days = TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime());
 
             if (seconds < 60) {
-                return seconds + " sec ago";
+                return seconds + "sec ago";
             } else if (minutes < 60) {
-                return minutes + " min ago";
+                return minutes + "min ago";
             } else if (hours < 24) {
-                return hours + " hr ago";
+                return hours + "hr ago";
             } else {
                 if (days > 365) {
                     long years = days / 365;

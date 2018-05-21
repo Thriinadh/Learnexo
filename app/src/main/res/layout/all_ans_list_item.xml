@@ -83,6 +83,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
         android:contentDescription="@string/image_posted"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/viewsText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -103,21 +104,26 @@
 
     <TextView
         android:id="@+id/viewsText"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
         android:text="2.1k views"
+        android:textAlignment="viewStart"
         app:layout_constraintBottom_toTopOf="@+id/likesLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginBottom="12dp"/>
+        android:layout_gravity="start" />
 
 <RelativeLayout
 android:id="@+id/likesLayout"
 android:layout_width="match_parent"
 android:layout_height="48dp"
 android:background="@color/white"
-app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintBottom_toTopOf="@id/viewSeparator"
 app:layout_constraintEnd_toEndOf="parent"
 app:layout_constraintStart_toStartOf="parent">
 
@@ -171,5 +177,14 @@ app:layout_constraintStart_toStartOf="parent">
     app:srcCompat="@drawable/post_bookmark_icon" />
 
 </RelativeLayout>
+
+    <View
+        android:id="@+id/viewSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@color/light_grey"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>
