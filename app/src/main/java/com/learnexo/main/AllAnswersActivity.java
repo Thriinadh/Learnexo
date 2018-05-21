@@ -143,8 +143,8 @@ public class AllAnswersActivity extends AppCompatActivity {
 
         Intent intent = new Intent(context, AllAnswersActivity.class);
         intent.putExtra(EXTRA_QUESTION_CONTENT, question.getContent());
-        intent.putExtra(EXTRA_QUESTION_TAG,question.getTags().get(0));
-        intent.putExtra(EXTRA_QUESTIONER_ID,question.getUserId());
+        //intent.putExtra(EXTRA_QUESTION_TAG,question.getTags().get(0));
+        //intent.putExtra(EXTRA_QUESTIONER_ID,question.getUserId());
         intent.putExtra(EXTRA_ITEM_ID, question.getFeedItemId());
         return intent;
     }

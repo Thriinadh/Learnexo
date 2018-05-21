@@ -11,8 +11,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.learnexo.model.feed.FeedItem;
+import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.user.User;
-import com.learnexo.util.ImageHelper;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -25,7 +26,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     private static final String EXTRA_IMAGE = "com.learnexo.imageposted";
     private static final String EXTRA_THUMBNAIL = "com.learnexo.imagepostedthumbnail";
     private static final String EXTRA_TIME = "com.learnexo.postedtime";
-    private static final String EXTRA_QUESTION_ID = "com.learnexo.postedtime";
+    private static final String EXTRA_QUESTION_ID = "com.learnexo.questionId";
 
     private TextView viewAllAns;
     private TextView questionAsked;
@@ -36,60 +37,76 @@ public class FullAnswerActivity extends AppCompatActivity {
     private CircleImageView profileImage;
     private TextView userName;
     private String questionId;
+    String questionData;
+    boolean is_crack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_answer);
 
-        viewAllAns = findViewById(R.id.viewAllAns);
+
+        wireViews();
 
         Intent intent=getIntent();
-        boolean is_crack=intent.getBooleanExtra("IS_CRACK", false);
+        is_crack = intent.getBooleanExtra("IS_CRACK", false);
+        questionData = intent.getStringExtra(EXTRA_QUESTION_CONTENT);
+        questionId = intent.getStringExtra(EXTRA_QUESTION_ID);
+        String posTime = intent.getStringExtra(EXTRA_TIME);
+        String postData = intent.getStringExtra(EXTRA_CONTENT);
+        String imagePosted = intent.getStringExtra(EXTRA_IMAGE);
+        String imageThumb = intent.getStringExtra(EXTRA_THUMBNAIL);
+
+
+        bindData(intent, posTime, postData, imagePosted, imageThumb);
+
+    }
+
+    private void bindData(Intent intent, String posTime, String postData, String imagePosted, String imageThumb) {
+        questionAsked.setText(questionData);
+        fullText.setText(postData);
+        userName.setText(intent.getStringExtra(EXTRA_PUBLISHER_NAME));
+        timeOfPost.setText(posTime);
         if(is_crack){
             challengeIcon = findViewById(R.id.imageView5);
             challengeIcon.setVisibility(View.VISIBLE);
             viewAllAns.setText("View all cracks");
         }
-
-        questionId = intent.getStringExtra(EXTRA_QUESTION_ID);
-
         viewAllAns.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = AllAnswersActivity.newIntent(FullAnswerActivity.this, questionId);
-                startActivity(intent);
+                Question question=new Question();
+                question.setFeedItemId(questionId);
+                question.setContent(questionData);
+                Intent intent11 = AllAnswersActivity.newIntent(FullAnswerActivity.this, question);
+                if(is_crack)
+                    intent11.putExtra("ANSWER_TYPE", FeedItem.CRACK);
+                else
+                    intent11.putExtra("ANSWER_TYPE", FeedItem.ANSWER);
+                startActivity(intent11);
+
             }
         });
 
-        String questionData = intent.getStringExtra(EXTRA_QUESTION_CONTENT);
-        questionAsked = findViewById(R.id.questionAsked);
-        questionAsked.setText(questionData);
-
-        String postData = intent.getStringExtra(EXTRA_CONTENT);
-        fullText = findViewById(R.id.full_text);
-        fullText.setText(postData);
-
-        profileImage = findViewById(R.id.profile_image);
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(getApplicationContext()).load(intent.getStringExtra(EXTRA_PUBLISHER_DP)).apply(requestOptions).into(profileImage);
 
-        userName = findViewById(R.id.userNameTView);
-        userName.setText(intent.getStringExtra(EXTRA_PUBLISHER_NAME));
 
-        String posTime = intent.getStringExtra(EXTRA_TIME);
-        timeOfPost = findViewById(R.id.feed_time);
-        timeOfPost.setText(posTime);
-
-        String imagePosted = intent.getStringExtra(EXTRA_IMAGE);
-        String imageThumb = intent.getStringExtra(EXTRA_THUMBNAIL);
-        postedImage = findViewById(R.id.postedImage);
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(getApplicationContext()).load(imagePosted)
                 .thumbnail(Glide.with(getApplicationContext()).load(imageThumb))
                 .apply(requestOptions).into(postedImage);
+    }
 
+    private void wireViews() {
+        viewAllAns = findViewById(R.id.viewAllAns);
+        questionAsked = findViewById(R.id.questionAsked);
+        fullText = findViewById(R.id.full_text);
+        profileImage = findViewById(R.id.profile_image);
+        userName = findViewById(R.id.userNameTView);
+        timeOfPost = findViewById(R.id.feed_time);
+        postedImage = findViewById(R.id.postedImage);
     }
 
     public static Intent newIntent(Context context, String questionAsked, String content, String publishedImg, String imageThumb, String timeAgo, User publisher, String questionId) {

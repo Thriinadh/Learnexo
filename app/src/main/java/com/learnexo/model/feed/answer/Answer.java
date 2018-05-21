@@ -5,21 +5,15 @@ import com.learnexo.model.feed.FeedItem;
 public class Answer extends FeedItem {
     private String quesId;
     private String questionerId;
-
-    public String getQuestionerId() {
-        return questionerId;
-    }
-
-    public void setQuestionerId(String questionerId) {
-        this.questionerId = questionerId;
-    }
-
     private String quesContent;
-
     private boolean isCrack;
 
-    private int bookMarks;
+    private long bookMarks;
     private long views;
+    private long upVotes;
+    private long shares;
+    private long comments;
+    private long downVotes;
 
     public Answer() {}
 
@@ -39,6 +33,13 @@ public class Answer extends FeedItem {
         this.quesContent = quesContent;
     }
 
+    public String getQuestionerId() {
+        return questionerId;
+    }
+    public void setQuestionerId(String questionerId) {
+        this.questionerId = questionerId;
+    }
+
     public boolean isCrack() {
         return isCrack;
     }
@@ -47,13 +48,7 @@ public class Answer extends FeedItem {
         isCrack = crack;
     }
 
-    public int getBookMarks() {
-        return bookMarks;
-    }
 
-    public void setBookMarks(int bookMarks) {
-        this.bookMarks = bookMarks;
-    }
 
     public long getViews() {
         return views;
@@ -63,42 +58,43 @@ public class Answer extends FeedItem {
         this.views = views;
     }
 
-    public int getUpvotes() {
-        return upvotes;
+    public long getBookMarks() {
+        return bookMarks;
     }
 
-    public void setUpvotes(int upvotes) {
-        this.upvotes = upvotes;
+    public void setBookMarks(long bookMarks) {
+        this.bookMarks = bookMarks;
     }
 
-    public int getShares() {
+    public long getUpVotes() {
+        return upVotes;
+    }
+
+    public void setUpVotes(long upVotes) {
+        this.upVotes = upVotes;
+    }
+
+    public long getShares() {
         return shares;
     }
 
-    public void setShares(int shares) {
+    public void setShares(long shares) {
         this.shares = shares;
     }
 
-    public int getComments() {
+    public long getComments() {
         return comments;
     }
 
-    public void setComments(int comments) {
+    public void setComments(long comments) {
         this.comments = comments;
     }
 
-    public int getDownVotes() {
+    public long getDownVotes() {
         return downVotes;
     }
 
-    public void setDownVotes(int downVotes) {
+    public void setDownVotes(long downVotes) {
         this.downVotes = downVotes;
     }
-
-    private int upvotes;
-    private int shares;
-    private int comments;
-    private int downVotes;
-
-
 }
