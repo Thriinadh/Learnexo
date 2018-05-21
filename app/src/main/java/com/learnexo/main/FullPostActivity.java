@@ -50,15 +50,15 @@ public class FullPostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_full_post);
 
         viewsText = findViewById(R.id.viewsText);
-        Post post = new Post();
 
-            viewsText.setText(post.getViews()+ " Views");
 
         fullPostLikeBtn = findViewById(R.id.full_post_like);
 
         setupToolbar();
 
         Intent intent=getIntent();
+        long views=intent.getLongExtra("VIEWS",0);
+        viewsText.setText(views+ " Views");
         final String postId=intent.getStringExtra("POST_ID");
         String postData = intent.getStringExtra(EXTRA_CONTENT);
 
@@ -110,7 +110,7 @@ public class FullPostActivity extends AppCompatActivity {
         }
     }
 
-    public static Intent newIntent(Context context, String content, String publishedImg, String imageThumb, String timeAgo, User publisher, String postId) {
+    public static Intent newIntent(Context context, String content, String publishedImg, String imageThumb, String timeAgo, User publisher, String postId, long viewss) {
 
         Intent intent = new Intent(context, FullPostActivity.class);
         intent.putExtra(EXTRA_CONTENT,content);
@@ -118,6 +118,7 @@ public class FullPostActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_PUBLISHER_NAME, publisher.getFirstName());
         intent.putExtra(EXTRA_PUBLISHER_DP, publisher.getDpUrl());
         intent.putExtra("POST_ID", postId);
+        intent.putExtra("VIEWS",viewss);
         if(publishedImg!=null) {
             intent.putExtra(EXTRA_IMAGE, publishedImg);
             intent.putExtra(EXTRA_THUMB, imageThumb);

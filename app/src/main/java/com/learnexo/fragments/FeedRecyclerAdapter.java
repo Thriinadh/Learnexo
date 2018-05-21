@@ -49,7 +49,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<FeedItem> mFeedItems;
     private Context mContext;
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
-    int count = 0;
 
     public FeedRecyclerAdapter(List<FeedItem> mFeedItems) {
         this.mFeedItems = mFeedItems;
@@ -191,7 +190,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.content.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                     Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").document(publisher.getUserId()).collection("posts").document(postId).get();
 
                                 documentSnapshotTask.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -200,11 +198,14 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             if(task.isSuccessful()){
                                 DocumentSnapshot documentSnapshot = task.getResult();
                                 Object views = documentSnapshot.get("views");
-                                int viewss=0;
+                                long viewss=0;
                                 if(views!=null)
-                                    viewss = ((Long) views).intValue()+1;
+                                    viewss = ((Long) views).longValue()+1;
                                 Map<String, Object> map= new HashMap();
                                 map.put("views",viewss);
+
+                                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, imageThumb, timeAgo, publisher, postId, viewss);
+                                mContext.startActivity(intent);
 
                                 mFirebaseUtil.mFirestore.collection("users").document(publisher.getUserId()).collection("posts").
                                         document(postId).update(map);
@@ -212,8 +213,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             }
                         }
                     });
-                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, imageThumb, timeAgo, publisher, postId);
-                mContext.startActivity(intent);
+
             }
         });
     }
