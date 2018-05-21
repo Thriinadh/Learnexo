@@ -39,6 +39,7 @@ public class FullPostActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private CircleImageView profileImage;
     private TextView userName;
+    private TextView viewsText;
 
     private ImageView fullPostLikeBtn;
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
@@ -47,6 +48,11 @@ public class FullPostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_post);
+
+        viewsText = findViewById(R.id.viewsText);
+        Post post = new Post();
+
+            viewsText.setText(post.getViews()+ " Views");
 
         fullPostLikeBtn = findViewById(R.id.full_post_like);
 
