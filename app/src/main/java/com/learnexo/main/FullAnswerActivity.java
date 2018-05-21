@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.user.User;
@@ -43,6 +44,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     boolean is_crack;
     String tag;
     String questionerId;
+    private ImageView overFlowBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,10 @@ public class FullAnswerActivity extends AppCompatActivity {
 
 
         wireViews();
+
+        User publisher =new User();
+        overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
+
 
         Intent intent=getIntent();
         is_crack = intent.getBooleanExtra("IS_CRACK", false);
@@ -117,6 +123,7 @@ public class FullAnswerActivity extends AppCompatActivity {
         userName = findViewById(R.id.userNameTView);
         timeOfPost = findViewById(R.id.feed_time);
         postedImage = findViewById(R.id.postedImage);
+        overFlowBtn = findViewById(R.id.imageView);
     }
 
     public static Intent newIntent(Context context, String questionAsked, String content, String publishedImg, String imageThumb, String timeAgo, User publisher, String questionId, String tag) {

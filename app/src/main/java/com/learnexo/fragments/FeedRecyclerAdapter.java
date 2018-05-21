@@ -6,21 +6,16 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.main.AllAnswersActivity;
@@ -378,201 +373,21 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void postOverflowListener(@NonNull PostHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(posAnsCrackItemOverFlowListener(publisher));
+        holder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, publisher));
     }
     private void answerOverflowListener(@NonNull AnswerHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(posAnsCrackItemOverFlowListener(publisher));
+        holder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, publisher));
     }
     private void crackOverflowListener(@NonNull CrackHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(posAnsCrackItemOverFlowListener(publisher));
+        holder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, publisher));
     }
 
     private void questionOverflowListener(@NonNull QuestionHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(questChallengeItemOverFlowListener(publisher));
+        holder.overflowImgView.setOnClickListener(new QuestionChallengeItemOverFlowListener(mContext, publisher));
     }
     private void challengeOverflowListener(@NonNull ChallengeHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(questChallengeItemOverFlowListener(publisher));
+        holder.overflowImgView.setOnClickListener(new QuestionChallengeItemOverFlowListener(mContext, publisher));
     }
-
-
-
-
-
-    private View.OnClickListener posAnsCrackItemOverFlowListener(final User publisher) {
-        return new View.OnClickListener() {
-
-            private TextView followTView;
-            private LinearLayout followBtnLayout;
-            private LinearLayout deleteBtnLayout;
-            private LinearLayout editBtnLayout;
-            private LinearLayout copyBtnLayout;
-            private LinearLayout notifBtnLayout;
-            private LinearLayout connectBtnLayout;
-
-            @Override
-            public void onClick(View view) {
-
-                View bottomSheetView = View.inflate(mContext, R.layout.bottom_sheet_dialog_for_sharedposts, null);
-
-                mDialog = new BottomSheetDialog(mContext);
-                mDialog.setContentView(bottomSheetView);
-                mDialog.show();
-
-                inflateBottomSheetButtons(bottomSheetView);
-            }
-
-            private void inflateBottomSheetButtons(final View bottomSheetView) {
-
-                followTView = bottomSheetView.findViewById(R.id.followTView);
-                followBtnLayout = bottomSheetView.findViewById(R.id.followUser);
-                deleteBtnLayout = bottomSheetView.findViewById(R.id.deleteBtn);
-                editBtnLayout = bottomSheetView.findViewById(R.id.editNameBtn);
-                copyBtnLayout = bottomSheetView.findViewById(R.id.copyBtn);
-                notifBtnLayout =  bottomSheetView.findViewById(R.id.notifBtn);
-                connectBtnLayout =  bottomSheetView.findViewById(R.id.connectBtn);
-
-
-                followBtnLayout.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-                        mDialog.dismiss();
-
-                        final Map<String, Object> followingUser = new HashMap<>();
-                        followingUser.put("name", publisher.getFirstName());
-                        followingUser.put("dpUrl", publisher.getDpUrl());
-
-                       mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
-                               .collection("following").document(publisher.getUserId()).set(followingUser)
-                               .addOnSuccessListener(new OnSuccessListener<Void>() {
-                           @Override
-                           public void onSuccess(Void aVoid) {
-                               followingUser.put("name", FeedFragment.sName);
-                               followingUser.put("dpUrl", FeedFragment.sDpUrl);
-                               mFirebaseUtil.mFirestore.collection("users").document(publisher.getUserId())
-                                       .collection("followers").document(FirebaseUtil.getCurrentUserId()).set(followingUser).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                   @Override
-                                   public void onSuccess(Void aVoid) {
-
-                                         //  followTView.setText("Unfollow");
-                                       Toast.makeText(mContext, "Now You are following "+publisher.getFirstName(), Toast.LENGTH_SHORT).show();
-
-                                   }
-                               }).addOnFailureListener(new OnFailureListener() {
-                                   @Override
-                                   public void onFailure(@NonNull Exception e) {
-                                       Toast.makeText(mContext, "SomethingWentWrong", Toast.LENGTH_LONG).show();
-                                   }
-                               });
-
-
-                           }
-                       }).addOnFailureListener(new OnFailureListener() {
-                           @Override
-                           public void onFailure(@NonNull Exception e) {
-
-                               Toast.makeText(mContext, "SomethingWentWrong", Toast.LENGTH_LONG).show();
-
-                               Log.d("FeedAdapter", "SomethingWentWrong "+e);
-
-                           }
-                       });
-
-                    }
-                });
-
-            }
-        };
-    }
-
-    private View.OnClickListener questChallengeItemOverFlowListener(final User publisher) {
-        return new View.OnClickListener() {
-
-            private TextView followTView;
-            private LinearLayout followBtnLayout;
-            private LinearLayout deleteBtnLayout;
-            private LinearLayout editBtnLayout;
-            private LinearLayout copyBtnLayout;
-            private LinearLayout notifBtnLayout;
-            private LinearLayout connectBtnLayout;
-
-            @Override
-            public void onClick(View view) {
-
-                View bottomSheetView = View.inflate(mContext, R.layout.bottom_sheet_dialog_for_sharedposts, null);
-
-
-                mDialog = new BottomSheetDialog(mContext);
-                mDialog.setContentView(bottomSheetView);
-                mDialog.show();
-
-                inflateBottomSheetButtons(bottomSheetView);
-            }
-
-            private void inflateBottomSheetButtons(final View bottomSheetView) {
-
-                followTView = bottomSheetView.findViewById(R.id.followTView);
-                followBtnLayout = bottomSheetView.findViewById(R.id.followUser);
-                deleteBtnLayout = bottomSheetView.findViewById(R.id.deleteBtn);
-                editBtnLayout = bottomSheetView.findViewById(R.id.editNameBtn);
-                copyBtnLayout = bottomSheetView.findViewById(R.id.copyBtn);
-                notifBtnLayout =  bottomSheetView.findViewById(R.id.notifBtn);
-                connectBtnLayout =  bottomSheetView.findViewById(R.id.connectBtn);
-
-                followBtnLayout.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-                        mDialog.dismiss();
-
-                        final Map<String, Object> followingUser = new HashMap<>();
-                        followingUser.put("name", publisher.getFirstName());
-                        followingUser.put("dpUrl", publisher.getDpUrl());
-
-                        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
-                                .collection("following").document(publisher.getUserId()).set(followingUser)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        followingUser.put("name", FeedFragment.sName);
-                                        followingUser.put("dpUrl", FeedFragment.sDpUrl);
-                                        mFirebaseUtil.mFirestore.collection("users").document(publisher.getUserId())
-                                                .collection("followers").document(FirebaseUtil.getCurrentUserId()).set(followingUser).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-
-                                                followTView.setVisibility(View.INVISIBLE);
-
-                                                Toast.makeText(mContext, "Now You are following "+publisher.getFirstName(), Toast.LENGTH_LONG).show();
-
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Toast.makeText(mContext, "SomethingWentWrong", Toast.LENGTH_LONG).show();
-                                            }
-                                        });
-
-
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                                Toast.makeText(mContext, "SomethingWentWrong", Toast.LENGTH_LONG).show();
-
-                                Log.d("FeedAdapter", "SomethingWentWrong "+e);
-
-                            }
-                        });
-
-                    }
-                });
-
-            }
-        };
-    }
-
 
 
     private void bindPost(@NonNull PostHolder holder, final String content, final String publishedImg, final String publishedThumb, String timeAgo) {

@@ -13,9 +13,11 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.learnexo.fragments.QuestionChallengeItemOverFlowListener;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.question.Question;
+import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ public class AllAnswersActivity extends AppCompatActivity {
     private List<Answer> mAnswers;
     private AllAnsRecyclerAdapter mAdapter;
     private ImageView challengeIcon;
+    private ImageView quesOverFlow;
 
     private String quesContent;
     private String questionTag;
@@ -78,6 +81,11 @@ public class AllAnswersActivity extends AppCompatActivity {
                 overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
             }
         });
+
+        User user=new User();
+        quesOverFlow.setOnClickListener(new QuestionChallengeItemOverFlowListener(this, user));
+
+
     }
 
     private void getAnswers() {
@@ -121,7 +129,8 @@ public class AllAnswersActivity extends AppCompatActivity {
         questionTView.setText(quesContent);
         answerBtn = findViewById(R.id.answer);
         noOfAnswersView = findViewById(R.id.totalAnsTView);
-        challengeIcon = findViewById(R.id.challengeIcon);
+
+        quesOverFlow=findViewById(R.id.quesOverFlow);
     }
 
     private void setupRecyclerView() {

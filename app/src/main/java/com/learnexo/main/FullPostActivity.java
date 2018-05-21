@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.learnexo.fragments.FeedFragment;
+import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
@@ -42,6 +43,7 @@ public class FullPostActivity extends AppCompatActivity {
     private TextView viewsText;
 
     private ImageView fullPostLikeBtn;
+    private ImageView overFlowBtn;
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
     @Override
@@ -50,6 +52,9 @@ public class FullPostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_full_post);
 
         viewsText = findViewById(R.id.viewsText);
+        overFlowBtn = findViewById(R.id.imageView);
+        User publisher =new User();
+        overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
 
 
         fullPostLikeBtn = findViewById(R.id.full_post_like);

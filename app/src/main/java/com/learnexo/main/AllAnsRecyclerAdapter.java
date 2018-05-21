@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.user.User;
@@ -63,8 +64,13 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             allAnsHolder.wireViews();
             bindAnswer(allAnsHolder, itemContent, imagePosted, imageThumb, timeAgo);
             bindAnswererData(allAnsHolder, publisher);
+            allAnsOverflowListener(allAnsHolder, publisher, answer);
 
         }
+    }
+
+    private void allAnsOverflowListener(AllAnsHolder allAnsHolder, User publisher, Answer answer) {
+        allAnsHolder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, publisher));
     }
 
     @Override
