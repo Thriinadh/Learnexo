@@ -204,11 +204,13 @@
                     <android.support.design.widget.TabLayout
                         android:id="@+id/tabs"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:background="@color/white"
+                        android:layout_height="48dp"
+                        app:tabIndicatorHeight="3dp"
+                        android:background="@drawable/tablayout_border"
                         app:tabGravity="fill"
+                        app:tabMode="scrollable"
                         app:tabIndicatorColor="#1da1f2"
-                        app:tabMode="fixed"
+                        app:tabTextAppearance="@style/TabLayoutTextStyle"
                         app:tabSelectedTextColor="#1da1f2"/>
                 </android.support.design.widget.AppBarLayout>
 

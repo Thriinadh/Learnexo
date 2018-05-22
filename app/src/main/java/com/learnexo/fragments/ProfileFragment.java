@@ -66,8 +66,11 @@ public class ProfileFragment extends Fragment {
         tabLayout = view.findViewById(R.id.tabs);
         tabLayout.addTab(tabLayout.newTab().setText("Posts"));
         tabLayout.addTab(tabLayout.newTab().setText("Answers"));
+        tabLayout.addTab(tabLayout.newTab().setText("Cracks"));
         tabLayout.addTab(tabLayout.newTab().setText("Questions"));
+        tabLayout.addTab(tabLayout.newTab().setText("Challenges"));
         tabLayout.addTab(tabLayout.newTab().setText("Interests"));
+        tabLayout.addTab(tabLayout.newTab().setText("Activity"));
 
         if (savedInstanceState == null) {
             getChildFragmentManager()
@@ -93,12 +96,30 @@ public class ProfileFragment extends Fragment {
 
                 }else if(tabLayout.getSelectedTabPosition() == 2){
 
-                    fragment = new ProfileQuestions();
+                    fragment = new ProfileCracksFragment();
                     replaceFragment(fragment);
 
                 }else if(tabLayout.getSelectedTabPosition() == 3){
 
+                    fragment = new ProfileQuestions();
+                    replaceFragment(fragment);
+
+                }
+                else if(tabLayout.getSelectedTabPosition() == 4){
+
+                    fragment = new ProfileChallengeFragment();
+                    replaceFragment(fragment);
+
+                }
+                else if(tabLayout.getSelectedTabPosition() == 5){
+
                     fragment = new ProfileInterests();
+                    replaceFragment(fragment);
+
+                }
+                else if(tabLayout.getSelectedTabPosition() == 6){
+
+                    fragment = new ProfileActivityFragment();
                     replaceFragment(fragment);
 
                 }
