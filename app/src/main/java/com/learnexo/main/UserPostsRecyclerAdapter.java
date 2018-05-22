@@ -90,6 +90,7 @@ public class UserPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         private TextView answeredTime;
         private ImageView overflowImgView;
         private ImageView postedImgView;
+        private TextView seeMore;
 
         public AllPostsHolder(View itemView) {
             super(itemView);
@@ -103,10 +104,19 @@ public class UserPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             answeredTime = mView.findViewById(R.id.answeredTime);
             overflowImgView = mView.findViewById(R.id.overflow);
             postContent = mView.findViewById(R.id.answerContent);
+            seeMore = mView.findViewById(R.id.seeMore);
         }
 
         public void setContent(String answer) {
             postContent.setText(answer);
+            postContent.post(new Runnable() {
+                @Override
+                public void run() {
+                    int lineCount = postContent.getLineCount();
+                    if(lineCount>=3)
+                        seeMore.setVisibility(View.VISIBLE);
+                }
+            });
 
         }
         public void setAnsImgView(String imageUrl, String imageThumb) {
