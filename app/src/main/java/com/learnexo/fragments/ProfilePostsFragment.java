@@ -20,9 +20,7 @@ import com.learnexo.util.FirebaseUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class ProfilePostsFragment extends Fragment {
 
     private List<Post> mPosts;

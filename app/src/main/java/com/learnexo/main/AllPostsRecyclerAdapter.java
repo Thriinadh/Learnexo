@@ -51,7 +51,6 @@ public class AllPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         Post post = mPosts.get(position);
 
         if (post != null) {
-
             User publisher = new User();
             final String publisherId = post.getUserId();
             final String itemContent = post.getContent();

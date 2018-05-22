@@ -47,6 +47,7 @@ public class FullPostActivity extends AppCompatActivity {
     private TextView userName;
     private TextView viewsText;
     private String publisherId;
+    private long upVotes;
 
     private ImageView fullPostLikeBtn;
     private ImageView overFlowBtn;
@@ -104,38 +105,7 @@ public class FullPostActivity extends AppCompatActivity {
 
 
 
-            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").
-                    document(publisherId).collection("posts").document(postId).get();
 
-            documentSnapshotTask.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful()){
-                        DocumentSnapshot documentSnapshot = task.getResult();
-                        Object upVotes = documentSnapshot.get("upVotes");
-                        long upvotess=0;
-                        if(flag){
-                            fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_likeblue_icon));
-                            flag = false;
-                            if(upVotes!=null)
-                                upvotess = ((Long) upVotes).longValue()+1;
-                        }else{
-                            if(upVotes!=null)
-                                upvotess = ((Long) upVotes).longValue()-1;
-                            fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_like_icn));
-                            flag = true;
-                        }
-
-                        Map<String, Object> map= new HashMap();
-                        map.put("upVotes",upvotess);
-                        likesCount.setText(upvotess+" Up votes");
-
-                        mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").
-                                document(postId).update(map);
-
-                    }
-                }
-            });
 
 
 
