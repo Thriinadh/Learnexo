@@ -3,6 +3,7 @@ package com.learnexo.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +14,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.post.Post;
@@ -37,10 +41,12 @@ public class FullPostActivity extends AppCompatActivity {
     private TextView fullText;
     private ImageView postedImage;
     private TextView timeOfPost;
+    private TextView likesCount;
     private Toolbar toolbar;
     private CircleImageView profileImage;
     private TextView userName;
     private TextView viewsText;
+    private String publisherId;
 
     private ImageView fullPostLikeBtn;
     private ImageView overFlowBtn;
@@ -52,6 +58,7 @@ public class FullPostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_full_post);
 
         viewsText = findViewById(R.id.viewsText);
+        likesCount = findViewById(R.id.likesCount);
         overFlowBtn = findViewById(R.id.imageView);
         User publisher =new User();
         overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
@@ -62,6 +69,7 @@ public class FullPostActivity extends AppCompatActivity {
         setupToolbar();
 
         Intent intent=getIntent();
+        publisherId=intent.getStringExtra("PUBLISHER_ID");
         long views=intent.getLongExtra("VIEWS",0);
         viewsText.setText(views+ " Views");
         final String postId=intent.getStringExtra("POST_ID");
@@ -90,18 +98,94 @@ public class FullPostActivity extends AppCompatActivity {
                 .thumbnail(Glide.with(getApplicationContext()).load(imageThumb))
                 .apply(requestOptions).into(postedImage);
 
+
+
+
+
+
+
+            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").
+                    document(publisherId).collection("posts").document(postId).get();
+
+            documentSnapshotTask.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()){
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        Object upVotes = documentSnapshot.get("upVotes");
+                        long upvotess=0;
+                        if(flag){
+                            fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_likeblue_icon));
+                            flag = false;
+                            if(upVotes!=null)
+                                upvotess = ((Long) upVotes).longValue()+1;
+                        }else{
+                            if(upVotes!=null)
+                                upvotess = ((Long) upVotes).longValue()-1;
+                            fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_like_icn));
+                            flag = true;
+                        }
+
+                        Map<String, Object> map= new HashMap();
+                        map.put("upVotes",upvotess);
+                        likesCount.setText(upvotess+" Up votes");
+
+                        mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").
+                                document(postId).update(map);
+
+                    }
+                }
+            });
+
+
+
+
+
+
+
+
         fullPostLikeBtn.setOnClickListener(new View.OnClickListener() {
+            //color the like button and increase the likes in the UI
+            //save new no of likes
+            //store it in his activity log
+            //generate edge rank
+            //notify publisher
+            //notify his followers
+
             @Override
             public void onClick(View view) {
-                if(flag) {
-                    fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_likeblue_icon));
-                flag = false;
-                }
-                else {
-                    fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_like_icn));
-                    flag = true;
-                }
-                mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("posts").document(postId);
+                Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").
+                        document(publisherId).collection("posts").document(postId).get();
+
+                documentSnapshotTask.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            DocumentSnapshot documentSnapshot = task.getResult();
+                            Object upVotes = documentSnapshot.get("upVotes");
+                            long upvotess=0;
+                            if(flag){
+                                fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_likeblue_icon));
+                                flag = false;
+                                if(upVotes!=null)
+                                    upvotess = ((Long) upVotes).longValue()+1;
+                            }else{
+                                if(upVotes!=null)
+                                    upvotess = ((Long) upVotes).longValue()-1;
+                                fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_like_icn));
+                                flag = true;
+                            }
+
+                            Map<String, Object> map= new HashMap();
+                            map.put("upVotes",upvotess);
+                            likesCount.setText(upvotess+" Up votes");
+
+                            mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").
+                                    document(postId).update(map);
+
+                        }
+                    }
+                });
             }
         });
 
@@ -124,6 +208,7 @@ public class FullPostActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_PUBLISHER_DP, publisher.getDpUrl());
         intent.putExtra("POST_ID", postId);
         intent.putExtra("VIEWS",viewss);
+        intent.putExtra("PUBLISHER_ID",publisher.getUserId());
         if(publishedImg!=null) {
             intent.putExtra(EXTRA_IMAGE, publishedImg);
             intent.putExtra(EXTRA_THUMB, imageThumb);

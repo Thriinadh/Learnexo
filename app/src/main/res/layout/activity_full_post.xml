@@ -225,7 +225,7 @@
             android:layout_toRightOf="@+id/full_post_like"
             android:layout_marginLeft="4dp"
             android:layout_centerVertical="true"
-            android:text="2.1k likes"/>
+            android:text="0 Up votes"/>
 
         <ImageView
             android:id="@+id/full_post_comment"
