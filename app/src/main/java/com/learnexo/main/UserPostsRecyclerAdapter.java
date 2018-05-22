@@ -12,12 +12,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
-import com.learnexo.model.feed.FeedItem;
-import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
@@ -28,13 +24,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.learnexo.util.DateUtil.convertDateToAgo;
 
-public class AllPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class UserPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Post> mPosts;
     private Context mContext;
-    private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
-    public AllPostsRecyclerAdapter(List<Post> mFeedItems) {
+    private final String mCurrentUserId = FirebaseUtil.getCurrentUserId();
+    User mUser = new User(mCurrentUserId,FeedFragment.sName,FeedFragment.sDpUrl);
+
+    public UserPostsRecyclerAdapter(List<Post> mFeedItems) {
         this.mPosts = mFeedItems;
     }
 
@@ -51,26 +49,22 @@ public class AllPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         Post post = mPosts.get(position);
 
         if (post != null) {
-            User publisher = new User();
-            final String publisherId = post.getUserId();
+
             final String itemContent = post.getContent();
             final String imagePosted = post.getImgUrl();
             final String imageThumb = post.getImgThmb();
             final String timeAgo = convertDateToAgo(post.getPublishTime());
 
-            publisher.setUserId(publisherId);
-
             AllPostsHolder allPostsHolder = (AllPostsHolder) holder;
             allPostsHolder.wireViews();
             bindPost(allPostsHolder, itemContent, imagePosted, imageThumb, timeAgo);
-            bindPostData(allPostsHolder, publisher);
-            allPostsOverflowListener(allPostsHolder, publisher, post);
+            allPostsOverflowListener(allPostsHolder, post);
 
         }
     }
 
-    private void allPostsOverflowListener(AllPostsHolder allPostsHolder, User publisher, Post post) {
-        allPostsHolder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, publisher));
+    private void allPostsOverflowListener(AllPostsHolder allPostsHolder, Post post) {
+        allPostsHolder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, mUser));
     }
 
     @Override
@@ -82,33 +76,8 @@ public class AllPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         holder.setContent(answer);
         holder.setAnsImgView(publishedImg, publishedThumb);
         holder.setTime(timeAgo);
+        holder.setUserData(FeedFragment.sName, FeedFragment.sDpUrl);
     }
-
-    private void bindPostData(@NonNull final AllPostsHolder holder, final User user) {
-        mFirebaseUtil.mFirestore.collection("users").document(user.getUserId()).
-                collection("reg_details").document("doc").get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                        if(task.isSuccessful()) {
-                            DocumentSnapshot snapshot = task.getResult();
-                            String name = snapshot.getString("firstName");
-                            name=name.concat(" "+snapshot.getString("lastName"));
-                            String image = snapshot.getString("dpUrl");
-                            holder.setUserData(name, image);
-                            user.setDpUrl(image);
-                            user.setFirstName(name);
-
-                        } else {
-                            // Error handling here
-                        }
-
-                    }
-                });
-    }
-
-
 
 
     public class AllPostsHolder extends RecyclerView.ViewHolder {

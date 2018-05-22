@@ -1,7 +1,6 @@
 package com.learnexo.fragments;
 
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -75,7 +74,7 @@ public class ProfileFragment extends Fragment {
         if (savedInstanceState == null) {
             getChildFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, new ProfilePostsFragment())
+                    .replace(R.id.fragment_container, new UserPostsFragment())
                     .commit();
         }
 
@@ -86,7 +85,7 @@ public class ProfileFragment extends Fragment {
             public void onTabSelected(TabLayout.Tab tab) {
                 if(tabLayout.getSelectedTabPosition() == 0){
                   //  tabLayout.setTabTextColors(Color.parseColor("#1da1f2"));
-                    fragment = new ProfilePostsFragment();
+                    fragment = new UserPostsFragment();
                     replaceFragment(fragment);
 
                 }else if(tabLayout.getSelectedTabPosition() == 1){

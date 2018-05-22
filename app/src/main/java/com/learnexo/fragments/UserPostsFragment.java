@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.learnexo.main.AllPostsRecyclerAdapter;
+import com.learnexo.main.UserPostsRecyclerAdapter;
 import com.learnexo.main.R;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.util.FirebaseUtil;
@@ -21,14 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ProfilePostsFragment extends Fragment {
+public class UserPostsFragment extends Fragment {
 
     private List<Post> mPosts;
-    private AllPostsRecyclerAdapter mAdapter;
+    private UserPostsRecyclerAdapter mAdapter;
 
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
-    public ProfilePostsFragment() {
+    public UserPostsFragment() {
         // Required empty public constructor
     }
 
@@ -62,7 +62,7 @@ public class ProfilePostsFragment extends Fragment {
 
     private void setupRecyclerView(View view) {
         mPosts = new ArrayList<>();
-        mAdapter = new AllPostsRecyclerAdapter(mPosts);
+        mAdapter = new UserPostsRecyclerAdapter(mPosts);
 
         RecyclerView profilePostsRecyclerView = view.findViewById(R.id.profilePostsRecycler);
         profilePostsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

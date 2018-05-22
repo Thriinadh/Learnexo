@@ -12,12 +12,11 @@ public class User {
 
     public User() {}
 
-    public User(String firstName, String lastName, Gender gender, String dpUrl, String email) {
+
+    public User(String userId,String firstName,String dpUrl) {
+        this.userId=userId;
         this.firstName = firstName;
-        this.lastName = lastName;
-        this.gender = gender;
         this.dpUrl = dpUrl;
-        this.email = email;
     }
 
     public String getUserId() {
