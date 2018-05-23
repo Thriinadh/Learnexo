@@ -41,7 +41,7 @@ public class UserAnswersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         mContext = parent.getContext();
-        View view = LayoutInflater.from(mContext).inflate(R.layout.ans_list_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.crack_list_item, parent, false);
         return new AllAnswersHolder(view);
     }
 
@@ -51,6 +51,7 @@ public class UserAnswersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
         if (answer != null) {
 
+            final int type = answer.getType();
             final String question = answer.getQuesContent();
             final String itemContent = answer.getContent();
             final String imagePosted = answer.getImgUrl();
@@ -59,7 +60,7 @@ public class UserAnswersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
             AllAnswersHolder allAnswersHolder = (AllAnswersHolder) holder;
             allAnswersHolder.wireViews();
-            bindPost(allAnswersHolder, question, itemContent, imagePosted, imageThumb, timeAgo);
+            bindPost(allAnswersHolder, question, itemContent, imagePosted, imageThumb, timeAgo, type);
             allPostsOverflowListener(allAnswersHolder, answer);
 
         }
@@ -74,8 +75,9 @@ public class UserAnswersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         return mAnswers.size();
     }
 
-    private void bindPost(@NonNull AllAnswersHolder holder, final String question, final String answer, final String publishedImg, final String publishedThumb, String timeAgo) {
+    private void bindPost(@NonNull AllAnswersHolder holder, final String question, final String answer, final String publishedImg, final String publishedThumb, String timeAgo, int type) {
         holder.setContent(answer, question);
+        holder.setType(type);
         holder.setAnsImgView(publishedImg, publishedThumb);
         holder.setTime(timeAgo);
         holder.setUserData(FeedFragment.sName, FeedFragment.sDpUrl);
@@ -93,6 +95,7 @@ public class UserAnswersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         private TextView answeredTime;
         private ImageView overflowImgView;
         private ImageView postedImgView;
+        private ImageView challengeIcon;
         private TextView seeMore;
 
         public AllAnswersHolder(View itemView) {
@@ -105,6 +108,7 @@ public class UserAnswersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             circleImageView = mView.findViewById(R.id.circleImageView);
             userName = mView.findViewById(R.id.userName);
             postedImgView = mView.findViewById(R.id.postedImagee);
+            challengeIcon = mView.findViewById(R.id.imageView4);
             answeredTime = mView.findViewById(R.id.answeredTime);
             overflowImgView = mView.findViewById(R.id.overflow);
             postContent = mView.findViewById(R.id.answerContent);
@@ -145,6 +149,10 @@ public class UserAnswersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             if (image!=null&&null!=mContext)
                 Glide.with(mContext.getApplicationContext()).load(image).apply(placeholderOption).into(circleImageView);
 
+        }
+        public  void setType(int type) {
+            if(type == 1)
+                challengeIcon.setVisibility(View.INVISIBLE);
         }
 
     }
