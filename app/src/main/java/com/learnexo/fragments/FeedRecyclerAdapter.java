@@ -748,7 +748,4 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     }
 
-
-
-
 }
