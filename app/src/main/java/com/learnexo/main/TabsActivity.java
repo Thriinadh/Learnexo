@@ -51,6 +51,7 @@ public class TabsActivity extends AppCompatActivity {
 
     public static final String EXTRA_PUBLISH_TYPE ="com.learnexo.main.TabsActivity.EXTRA_PUBLISH_TYPE";
 
+    private boolean save_profile;
 
     private TextView mToolbarTitle;
     private TabLayout tabLayout;
@@ -86,6 +87,8 @@ public class TabsActivity extends AppCompatActivity {
         setupTabPagerAdapter();
         setupTablayout();
         tabSelectListener();
+
+        save_profile = getIntent().getBooleanExtra("SAVE_PROFILE_FROM_PROFILE",false);
 
         floatingBtnListener();
         shareInfoBtnListener();
@@ -248,6 +251,9 @@ public class TabsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        if(save_profile)
+            viewPager.setCurrentItem(4);
 
         TabLayout.Tab tab = tabLayout.getTabAt(currentTab);
         tab.select();

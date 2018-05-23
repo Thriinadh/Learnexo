@@ -20,10 +20,13 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -60,7 +63,9 @@ import static com.learnexo.util.FirebaseUtil.sStorageReference;
 public class SetupActivity extends AppCompatActivity {
 
     private static final String TAG = SetupActivity.class.getSimpleName();
-    public static final String EXTRA_IS_SKIPPED="com.learnexo.main.IS_SKIPPED_PROFILE";
+    public static final String EXTRA_IS_SKIPPED = "com.learnexo.main.IS_SKIPPED_PROFILE";
+    public static final String EXTRA_BOOLEAN_PROFILE_NAME = "com.learnexo.main.IS_EDIT_PROFILE_CLICKED";
+
 
     private ConstraintLayout constaintLayout;
     private ScrollView scrollView;
@@ -73,10 +78,13 @@ public class SetupActivity extends AppCompatActivity {
     private String user_id;
     private Button edit_desc_Btn;
     private TextView skipTView;
+    private EditText editName;
+    private LinearLayout edittName;
 
     private boolean isChanged = false;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
-    private  boolean is_profile_edit;
+    private boolean is_profile_edit;
+    private boolean is_edit_profile_clicked;
 
     private Bitmap mBitmap;
     Uri downloadUri;
@@ -86,6 +94,7 @@ public class SetupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
         is_profile_edit=getIntent().getBooleanExtra("IS_PROFILE_EDIT",false);
+        is_edit_profile_clicked = getIntent().getBooleanExtra("IS_EDIT_NAME_CLICKED", false);
 
         setupToolbar();
         setUserId();
@@ -98,14 +107,14 @@ public class SetupActivity extends AppCompatActivity {
             public void onGlobalLayout() {
                 int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
                 if (heightDiff > dpToPx(SetupActivity.this, 200)) {
-                    scrollView.scrollTo(0, 120);
+                    scrollView.scrollTo(0, 400);
                 }
             }
         });
 
         googleNfbDpSetup();
 
-        skipNgotoFeed();
+       // skipNgotoFeed();
 
         if(is_profile_edit)
             getFromFirebaseAndSet();
@@ -114,6 +123,71 @@ public class SetupActivity extends AppCompatActivity {
 
         setupBtnListener();
 
+        if(is_edit_profile_clicked) {
+            edittName.setVisibility(View.VISIBLE);
+            getFromFirebaseAndSet();
+        }
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_profile_skip, menu);
+        View view = findViewById(R.id.skip_button);
+        if (view != null && view instanceof TextView) {
+            ((TextView) view).setTextColor(Color.RED);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.skip_button) {
+
+            if (!is_profile_edit) {
+
+                if(is_edit_profile_clicked)
+                    finish();
+                else {
+                    Map<String, Object> is_skipped_profile = new HashMap<>();
+                    is_skipped_profile.put("IS_SKIPPED_PROFILE", true);
+
+                    mFirebaseUtil.mFirestore.collection("users").document(user_id).
+                            set(is_skipped_profile).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                            if (task.isSuccessful()) {
+                                Intent tabIntent = new Intent(SetupActivity.this, TabsActivity.class);
+                                tabIntent.putExtra(EXTRA_IS_SKIPPED, true);
+                                startActivity(tabIntent);
+                                finish();
+                            } else {
+                                String errorMessage = task.getException().getMessage();
+                                Toast.makeText(SetupActivity.this, "Firestore Error : " + errorMessage, Toast.LENGTH_LONG).show();
+                            }
+
+                            setupProgerss.setVisibility(View.INVISIBLE);
+                        }
+                    });
+                }
+
+
+            }else {
+
+//                Intent tabIntent = new Intent(SetupActivity.this, TabsActivity.class);
+//                startActivity(tabIntent);
+                finish();
+            }
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public static float dpToPx(Context context, float valueInDp) {
@@ -132,6 +206,7 @@ public class SetupActivity extends AppCompatActivity {
                             if (snapshot.exists()) {
                                 String googleImage = snapshot.getString("googleDpUri");
                                 String fbImage = snapshot.getString("fbDpUri");
+
                                 if (googleImage != null)
                                     mainImageURI = Uri.parse(googleImage);
                                 else if(fbImage != null)
@@ -229,6 +304,7 @@ public class SetupActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 final String description = SetupActivity.this.description.getText().toString();
+                final String name = SetupActivity.this.editName.getText().toString();
 
                 if(TextUtils.isEmpty(description) && mainImageURI == null) {
                     Toast.makeText(SetupActivity.this, "Fields can't be empty", Toast.LENGTH_LONG).show();
@@ -239,6 +315,8 @@ public class SetupActivity extends AppCompatActivity {
                 if(TextUtils.isEmpty(description) && mainImageURI != null) {
                     Toast.makeText(SetupActivity.this, "Describe yourself", Toast.LENGTH_LONG).show();
                 }
+                if(TextUtils.isEmpty(name))
+                    Toast.makeText(SetupActivity.this, "Name cannot be empty", Toast.LENGTH_LONG).show();
                 if (!TextUtils.isEmpty(description) && mainImageURI != null) {
                     setupProgerss.setVisibility(View.VISIBLE);
 
@@ -277,7 +355,7 @@ public class SetupActivity extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                                            storeFirestore(taskSnapshot, description);
+                                            storeFirestore(taskSnapshot, description, name);
 
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
@@ -297,7 +375,7 @@ public class SetupActivity extends AppCompatActivity {
                             }
                         });
                     } else {
-                        storeFirestore(null, description);
+                        storeFirestore(null, description, name);
                     }
                 }
             }
@@ -315,6 +393,9 @@ public class SetupActivity extends AppCompatActivity {
                     if (snapshot.exists()) {
                         String description = snapshot.getString("description");
                         String image = snapshot.getString("dpUrl");
+                        String name = snapshot.getString("firstName");
+                        name=name.concat(" "+snapshot.getString("lastName"));
+                        editName.setText(name);
                         if (image != null)
                             mainImageURI = Uri.parse(image);
 
@@ -341,13 +422,14 @@ public class SetupActivity extends AppCompatActivity {
         scrollView = findViewById(R.id.scrollView);
         setupImage = findViewById(R.id.setup_image);
         description = findViewById(R.id.setup_nickName);
-        skipTView = findViewById(R.id.skipTView);
+      //  skipTView = findViewById(R.id.skipTView);
         setupProgerss = findViewById(R.id.setup_progress);
         // pickImageCView = findViewById(R.id.pickImageCView);
+        editName = findViewById(R.id.edit_namee);
+        edittName = findViewById(R.id.edit_name);
 
         setupBtn = findViewById(R.id.setup_btn);
     }
-
 
     private void setUserId() {
         user_id = FirebaseUtil.getCurrentUserId();
@@ -364,7 +446,7 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
-    private void storeFirestore(UploadTask.TaskSnapshot taskSnapshot, String description) {
+    private void storeFirestore(UploadTask.TaskSnapshot taskSnapshot, String description, String name) {
 
         Map<String, Object> userMap = new HashMap<>();
         Uri downloadthumbUri;
@@ -376,6 +458,8 @@ public class SetupActivity extends AppCompatActivity {
             downloadUri = mainImageURI;
         }
 
+        userMap.put("firstName", name);
+        userMap.put("lastName", "");
         userMap.put("description", description);
         userMap.put("dpUrl", downloadUri.toString());
 
@@ -385,9 +469,16 @@ public class SetupActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
 
                 if (task.isSuccessful()) {
-                    Intent tabIntent = new Intent(SetupActivity.this, TabsActivity.class);
-                    startActivity(tabIntent);
-                    finish();
+                    if(is_edit_profile_clicked) {
+                        Intent intent = new Intent(SetupActivity.this, TabsActivity.class);
+                        intent.putExtra("SAVE_PROFILE_FROM_PROFILE", true);
+                        startActivity(intent);
+
+                    }
+                    else {
+                        Intent tabIntent = new Intent(SetupActivity.this, TabsActivity.class);
+                        startActivity(tabIntent);
+                        finish(); }
                 } else {
                     String errorMessage = task.getException().getMessage();
                     Toast.makeText(SetupActivity.this, "Firestore Error : " + errorMessage, Toast.LENGTH_LONG).show();

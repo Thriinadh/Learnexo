@@ -1,6 +1,7 @@
 package com.learnexo.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -21,13 +22,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.main.R;
+import com.learnexo.main.SetupActivity;
 import com.learnexo.util.FirebaseUtil;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ProfileFragment extends Fragment {
 
     private TabLayout tabLayout;
@@ -35,6 +34,7 @@ public class ProfileFragment extends Fragment {
     private CircleImageView profileImage;
     private TextView userName;
     private TextView description;
+    private TextView editProfile;
 
     private String mUserId;
     public static String sDpUrl;
@@ -58,6 +58,7 @@ public class ProfileFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        editProfile = view.findViewById(R.id.edit_profile);
         profileImage = view.findViewById(R.id.profile_image);
         userName = view.findViewById(R.id.user_name);
         description = view.findViewById(R.id.description);
@@ -137,6 +138,15 @@ public class ProfileFragment extends Fragment {
         });
 
         getDPandUserName();
+
+        editProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SetupActivity.class);
+                intent.putExtra("IS_EDIT_NAME_CLICKED", true);
+                startActivity(intent);
+            }
+        });
 
         // Inflate the layout for this fragment
         return view;

@@ -120,6 +120,7 @@ public class AllAnswersActivity extends AppCompatActivity {
     private void bindData() {
         if(is_Challenge== FeedItem.CRACK) {
             answerBtn.setText("Crack");
+            challengeIcon = findViewById(R.id.challengeIcon);
             challengeIcon.setVisibility(View.VISIBLE);
         }
     }
