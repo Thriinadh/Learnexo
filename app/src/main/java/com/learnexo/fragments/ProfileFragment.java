@@ -21,6 +21,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.learnexo.main.EduDetailsActivity;
 import com.learnexo.main.R;
 import com.learnexo.main.SetupActivity;
 import com.learnexo.util.FirebaseUtil;
@@ -35,6 +36,7 @@ public class ProfileFragment extends Fragment {
     private TextView userName;
     private TextView description;
     private TextView editProfile;
+    private TextView eduDetails;
 
     private String mUserId;
     public static String sDpUrl;
@@ -62,7 +64,16 @@ public class ProfileFragment extends Fragment {
         profileImage = view.findViewById(R.id.profile_image);
         userName = view.findViewById(R.id.user_name);
         description = view.findViewById(R.id.description);
+        eduDetails = view.findViewById(R.id.eduDetails);
         frameLayout = view.findViewById(R.id.fragment_container);
+
+        eduDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), EduDetailsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         tabLayout = view.findViewById(R.id.tabs);
         tabLayout.addTab(tabLayout.newTab().setText("Posts"));

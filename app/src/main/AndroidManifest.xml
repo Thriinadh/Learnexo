@@ -3,8 +3,8 @@
     package="com.learnexo.main">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -12,13 +12,13 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/MyMaterialTheme"
-        android:name="android.support.multidex.MultiDexApplication">
+        android:theme="@style/MyMaterialTheme">
         <activity
             android:name=".MainActivity"
             android:windowSoftInputMode="adjustResize">
@@ -67,7 +67,8 @@
             android:name=".AnswerActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".FullAnswerActivity" />
-        <activity android:name=".AllAnswersActivity"></activity>
+        <activity android:name=".AllAnswersActivity" />
+        <activity android:name=".EduDetailsActivity"></activity>
     </application>
 
 </manifest>

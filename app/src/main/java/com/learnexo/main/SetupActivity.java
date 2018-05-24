@@ -315,9 +315,9 @@ public class SetupActivity extends AppCompatActivity {
                 if(TextUtils.isEmpty(description) && mainImageURI != null) {
                     Toast.makeText(SetupActivity.this, "Describe yourself", Toast.LENGTH_LONG).show();
                 }
-                if(TextUtils.isEmpty(name))
+                if(TextUtils.isEmpty(name) && is_edit_profile_clicked)
                     Toast.makeText(SetupActivity.this, "Name cannot be empty", Toast.LENGTH_LONG).show();
-                if (!TextUtils.isEmpty(description) && mainImageURI != null) {
+                else if (!TextUtils.isEmpty(description) && mainImageURI != null) {
                     setupProgerss.setVisibility(View.VISIBLE);
 
                     if (isChanged) {
@@ -458,8 +458,10 @@ public class SetupActivity extends AppCompatActivity {
             downloadUri = mainImageURI;
         }
 
-        userMap.put("firstName", name);
-        userMap.put("lastName", "");
+        if(is_edit_profile_clicked || is_profile_edit) {
+            userMap.put("firstName", name);
+            userMap.put("lastName", "");
+        }
         userMap.put("description", description);
         userMap.put("dpUrl", downloadUri.toString());
 

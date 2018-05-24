@@ -129,5 +129,8 @@
     <string name="longg_text">This can be a question or a challenge!! This can be a question or a challenge!!</string>
     <string name="followingPpl"><font color="#000000"><b>209</b></font> Following</string>
     <string name="followersPpl"><font color="#000000"><b>1.7M</b></font> Followers</string>
+    <string name="school_university"><font size="15">School/University</font></string>
+    <string name="add_a_concentration1"><font size="15">add a concentration</font></string>
+    <string name="add_a_concentration2"><font size="15">add a concentration</font></string>
 
 </resources>
