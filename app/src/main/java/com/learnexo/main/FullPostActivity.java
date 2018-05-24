@@ -106,7 +106,12 @@ public class FullPostActivity extends AppCompatActivity {
             views=postDetails.getNoOfViews();
 
             likesCount.setText(upVotes+" Up votes");
-            viewsText.setText(views+ " Views");
+            if(views==0){
+                views=1;
+                viewsText.setText("1 View");
+            }else{
+                viewsText.setText(views+ " Views");
+            }
 
 
             long viewss = views+1;
