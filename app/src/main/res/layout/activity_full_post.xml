@@ -123,7 +123,6 @@
                 android:id="@+id/viewsText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="2.1k views"
                 app:layout_constraintBottom_toTopOf="@+id/likesLayoutt"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
