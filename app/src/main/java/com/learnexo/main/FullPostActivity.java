@@ -4,29 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.learnexo.dao.PostDao;
-import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
-import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.feed.post.PostDetails;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
-import com.learnexo.util.RunInBackground;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,29 +73,30 @@ public class FullPostActivity extends AppCompatActivity {
         String publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DP);
 
         bindData(imagePosted, imageThumb, publisherName, posTime, publisherDP);
-        bindViewsUpvotes();
+        new GetViewsAndUpVotes().execute(publisherId, postId);
 
         User publisher =new User();
         overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
 
 
-        //color the like button and increase the likes in the UI
-        //save new no of likes
-        //store it in his activity log
-        //generate edge rank
-        //notify publisher
-        //notify his followers
-        fullPostLikeBtn.setOnClickListener(
-                new LikeBtnListener(fullPostLikeBtn,likesCount,flag, publisherId, upVotes,postId, FullPostActivity.this)
-        );
+
 
     }
 
-    private void bindViewsUpvotes() {
+    private void bindViewsUpvotes(PostDetails postDetails) {
         try {
-            PostDetails postDetails = (PostDetails)new RunInBackground().execute(publisherId, postId).get();
             upVotes=postDetails.getNoOfLikes();
             views=postDetails.getNoOfViews();
+
+            //color the like button and increase the likes in the UI
+            //save new no of likes
+            //store it in his activity log
+            //generate edge rank
+            //notify publisher
+            //notify his followers
+            fullPostLikeBtn.setOnClickListener(
+                    new LikeBtnListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,FullPostActivity.this)
+            );
 
             likesCount.setText(upVotes+" Up votes");
             if(views==0){
@@ -123,9 +116,7 @@ public class FullPostActivity extends AppCompatActivity {
                     collection("posts").
                     document(postId).update(map);
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -181,5 +172,37 @@ public class FullPostActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_THUMB, imageThumb);
         }
         return intent;
+    }
+
+
+    public class GetViewsAndUpVotes extends AsyncTask<Object, Object,PostDetails> {
+
+        @Override
+        protected PostDetails doInBackground(Object[] objects) {
+            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").
+                    document((String) objects[0]).collection("posts").document((String) objects[1]).get();
+            PostDetails postDetails=null;
+
+            try {
+                DocumentSnapshot documentSnapshot = Tasks.await(documentSnapshotTask);
+
+                postDetails = new PostDetails();
+                postDetails.setNoOfLikes((Long) documentSnapshot.get("upVotes"));
+                postDetails.setNoOfViews((Long) documentSnapshot.get("views"));
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return postDetails;
+        }
+
+        @Override
+        protected void onPostExecute(PostDetails result) {
+            bindViewsUpvotes(result);
+        }
+
     }
 }
