@@ -1,15 +1,15 @@
 package com.learnexo.dao;
 
-import android.support.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.util.FirebaseUtil;
 
+import java.util.concurrent.ExecutionException;
+
 public class PostDao {
-    private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
+    private static FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     private Post mPost;
 
     public Post getPost() {
@@ -20,23 +20,24 @@ public class PostDao {
         mPost = post;
     }
 
-    public long getNumberOfUpVotes(String publisherId, String postId){
 
-        Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").
+    public static long getNumberOfUpVotes(String publisherId, String postId){
+
+        final Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").
                 document(publisherId).collection("posts").document(postId).get();
+        final Object[] upVotes = new Object[1];
 
-        documentSnapshotTask.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    DocumentSnapshot documentSnapshot = task.getResult();
-                    Object upVotes = documentSnapshot.get("upVotes");
+                    try {
+                        DocumentSnapshot documentSnapshot = Tasks.await(documentSnapshotTask);
+                        upVotes[0] = documentSnapshot.get("upVotes");
 
-                }
-            }
-        });
-//        documentSnapshotTask
-        return 0;
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+        return (Long) upVotes[0];
     }
 
 

@@ -2,11 +2,13 @@ package com.learnexo.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,14 +19,17 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.learnexo.dao.PostDao;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
+import com.learnexo.util.RunInBackground;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -98,19 +103,15 @@ public class FullPostActivity extends AppCompatActivity {
         Glide.with(getApplicationContext()).load(imagePosted)
                 .thumbnail(Glide.with(getApplicationContext()).load(imageThumb))
                 .apply(requestOptions).into(postedImage);
-
-
-
-
-
-
-
-
-
-
-
-
-
+        try {
+            upVotes = (long) new RunInBackground().execute(publisherId, postId).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        likesCount.setText(upVotes+" Up votes");
+        Log.d("no of Upvotess", upVotes+" no of upVotesss");
 
 
 
@@ -124,38 +125,24 @@ public class FullPostActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").
-                        document(publisherId).collection("posts").document(postId).get();
+                long upvotess=0;
+                if(flag){
+                    fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_likeblue_icon));
+                    flag = false;
+                        upvotess = upVotes +1;
+                }else{
+                        upvotess = upVotes;
+                    fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_like_icn));
+                    flag = true;
+                }
 
-                documentSnapshotTask.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            DocumentSnapshot documentSnapshot = task.getResult();
-                            Object upVotes = documentSnapshot.get("upVotes");
-                            long upvotess=0;
-                            if(flag){
-                                fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_likeblue_icon));
-                                flag = false;
-                                if(upVotes!=null)
-                                    upvotess = ((Long) upVotes).longValue()+1;
-                            }else{
-                                if(upVotes!=null)
-                                    upvotess = ((Long) upVotes).longValue()-1;
-                                fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_like_icn));
-                                flag = true;
-                            }
+                Map<String, Object> map= new HashMap();
+                map.put("upVotes",upvotess);
+                likesCount.setText(upvotess+" Up votes");
 
-                            Map<String, Object> map= new HashMap();
-                            map.put("upVotes",upvotess);
-                            likesCount.setText(upvotess+" Up votes");
+                mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").
+                        document(postId).update(map);
 
-                            mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").
-                                    document(postId).update(map);
-
-                        }
-                    }
-                });
             }
         });
 
