@@ -185,30 +185,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.content.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").
-                            document(publisher.getUserId()).collection("posts").document(postId).get();
-
-                    documentSnapshotTask.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()){
-                                DocumentSnapshot documentSnapshot = task.getResult();
-                                Object views = documentSnapshot.get("views");
-                                long viewss=0;
-                                if(views!=null)
-                                    viewss = ((Long) views).longValue()+1;
-                                Map<String, Object> map= new HashMap();
-                                map.put("views",viewss);
-
-                                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, imageThumb, timeAgo, publisher, postId, viewss);
-                                mContext.startActivity(intent);
-
-                                mFirebaseUtil.mFirestore.collection("users").document(publisher.getUserId()).collection("posts").
-                                        document(postId).update(map);
-
-                            }
-                        }
-                    });
+                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, imageThumb, timeAgo, publisher, postId);
+                mContext.startActivity(intent);
 
             }
         });

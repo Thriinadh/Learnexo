@@ -23,6 +23,7 @@ import com.learnexo.dao.PostDao;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.post.Post;
+import com.learnexo.model.feed.post.PostDetails;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 import com.learnexo.util.RunInBackground;
@@ -42,7 +43,6 @@ public class FullPostActivity extends AppCompatActivity {
     private static final String EXTRA_THUMB = "com.learnexo.imagepostedthumb";
     private static final String EXTRA_TIME = "com.learnexo.postedtime";
 
-    Boolean flag = true;
     private TextView fullText;
     private ImageView postedImage;
     private TextView timeOfPost;
@@ -51,8 +51,12 @@ public class FullPostActivity extends AppCompatActivity {
     private CircleImageView profileImage;
     private TextView userName;
     private TextView viewsText;
+    private boolean flag = true;
     private String publisherId;
     private long upVotes;
+    private long views;
+    private String postId;
+    private String postData;
 
     private ImageView fullPostLikeBtn;
     private ImageView overFlowBtn;
@@ -63,100 +67,102 @@ public class FullPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_post);
 
-        viewsText = findViewById(R.id.viewsText);
-        likesCount = findViewById(R.id.likesCount);
-        overFlowBtn = findViewById(R.id.imageView);
-        User publisher =new User();
-        overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
-
-
-        fullPostLikeBtn = findViewById(R.id.full_post_like);
-
+        wireViews();
         setupToolbar();
 
         Intent intent=getIntent();
         publisherId=intent.getStringExtra("PUBLISHER_ID");
-        long views=intent.getLongExtra("VIEWS",0);
-        viewsText.setText(views+ " Views");
-        final String postId=intent.getStringExtra("POST_ID");
-        String postData = intent.getStringExtra(EXTRA_CONTENT);
-
-        fullText = findViewById(R.id.full_text);
-        fullText.setText(postData);
-
-        profileImage = findViewById(R.id.profile_image);
-        RequestOptions requestOptions = new RequestOptions();
-        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
-        Glide.with(getApplicationContext()).load(intent.getStringExtra(EXTRA_PUBLISHER_DP)).apply(requestOptions).into(profileImage);
-
-        userName = findViewById(R.id.userNameTView);
-        userName.setText(intent.getStringExtra(EXTRA_PUBLISHER_NAME));
-
-        String posTime = intent.getStringExtra(EXTRA_TIME);
-        timeOfPost = findViewById(R.id.feed_time);
-        timeOfPost.setText(posTime);
-
+        postId = intent.getStringExtra("POST_ID");
+        postData = intent.getStringExtra(EXTRA_CONTENT);
         String imagePosted = intent.getStringExtra(EXTRA_IMAGE);
         String imageThumb = intent.getStringExtra(EXTRA_THUMB);
-        postedImage = findViewById(R.id.postedImage);
-        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
-        Glide.with(getApplicationContext()).load(imagePosted)
-                .thumbnail(Glide.with(getApplicationContext()).load(imageThumb))
-                .apply(requestOptions).into(postedImage);
+        String publisherName = intent.getStringExtra(EXTRA_PUBLISHER_NAME);
+        String posTime = intent.getStringExtra(EXTRA_TIME);
+        String publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DP);
+
+        bindData(imagePosted, imageThumb, publisherName, posTime, publisherDP);
+        bindViewsUpvotes();
+
+        User publisher =new User();
+        overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
+
+
+        //color the like button and increase the likes in the UI
+        //save new no of likes
+        //store it in his activity log
+        //generate edge rank
+        //notify publisher
+        //notify his followers
+        fullPostLikeBtn.setOnClickListener(
+                new LikeBtnListener(fullPostLikeBtn,likesCount,flag, publisherId, upVotes,postId, FullPostActivity.this)
+        );
+
+    }
+
+    private void bindViewsUpvotes() {
         try {
-            upVotes = (long) new RunInBackground().execute(publisherId, postId).get();
+            PostDetails postDetails = (PostDetails)new RunInBackground().execute(publisherId, postId).get();
+            upVotes=postDetails.getNoOfLikes();
+            views=postDetails.getNoOfViews();
+
+            likesCount.setText(upVotes+" Up votes");
+            viewsText.setText(views+ " Views");
+
+
+            long viewss = views+1;
+            Map<String, Object> map= new HashMap();
+            map.put("views",viewss);
+
+            mFirebaseUtil.mFirestore.collection("users").
+                    document(publisherId).
+                    collection("posts").
+                    document(postId).update(map);
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        likesCount.setText(upVotes+" Up votes");
-        Log.d("no of Upvotess", upVotes+" no of upVotesss");
+    }
+
+    private void bindData(String imagePosted, String imageThumb, String publisherName, String posTime, String publisherDP) {
+        fullText.setText(postData);
+        userName.setText(publisherName);
+        timeOfPost.setText(posTime);
 
 
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+        Glide.with(getApplicationContext()).load(publisherDP).apply(requestOptions).into(profileImage);
 
-        fullPostLikeBtn.setOnClickListener(new View.OnClickListener() {
-            //color the like button and increase the likes in the UI
-            //save new no of likes
-            //store it in his activity log
-            //generate edge rank
-            //notify publisher
-            //notify his followers
 
-            @Override
-            public void onClick(View view) {
-                long upvotess=0;
-                if(flag){
-                    fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_likeblue_icon));
-                    flag = false;
-                        upvotess = upVotes +1;
-                }else{
-                        upvotess = upVotes;
-                    fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_like_icn));
-                    flag = true;
-                }
+        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+        Glide.with(getApplicationContext()).load(imagePosted)
+                .thumbnail(Glide.with(getApplicationContext()).load(imageThumb))
+                .apply(requestOptions).into(postedImage);
+    }
 
-                Map<String, Object> map= new HashMap();
-                map.put("upVotes",upvotess);
-                likesCount.setText(upvotess+" Up votes");
-
-                mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").
-                        document(postId).update(map);
-
-            }
-        });
-
+    private void wireViews() {
+        viewsText = findViewById(R.id.viewsText);
+        likesCount = findViewById(R.id.likesCount);
+        overFlowBtn = findViewById(R.id.imageView);
+        fullPostLikeBtn = findViewById(R.id.full_post_like);
+        fullText = findViewById(R.id.full_text);
+        profileImage = findViewById(R.id.profile_image);
+        userName = findViewById(R.id.userNameTView);
+        timeOfPost = findViewById(R.id.feed_time);
+        postedImage = findViewById(R.id.postedImage);
     }
 
     private void setupToolbar() {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null){
-            getSupportActionBar().setTitle("Full post");
+            getSupportActionBar().setTitle("Full Post");
         }
     }
 
-    public static Intent newIntent(Context context, String content, String publishedImg, String imageThumb, String timeAgo, User publisher, String postId, long viewss) {
+    public static Intent newIntent(Context context, String content, String publishedImg, String imageThumb, String timeAgo, User publisher, String postId) {
 
         Intent intent = new Intent(context, FullPostActivity.class);
         intent.putExtra(EXTRA_CONTENT,content);
@@ -164,7 +170,6 @@ public class FullPostActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_PUBLISHER_NAME, publisher.getFirstName());
         intent.putExtra(EXTRA_PUBLISHER_DP, publisher.getDpUrl());
         intent.putExtra("POST_ID", postId);
-        intent.putExtra("VIEWS",viewss);
         intent.putExtra("PUBLISHER_ID",publisher.getUserId());
         if(publishedImg!=null) {
             intent.putExtra(EXTRA_IMAGE, publishedImg);
