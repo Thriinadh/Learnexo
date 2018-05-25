@@ -24,14 +24,17 @@ public class LikeBtnListener implements View.OnClickListener {
     private long upVotes;
     private String postId;
     private Activity mActivity;
+    private boolean isAnswer;
 
-    public LikeBtnListener(ImageView fullPostLikeBtn, TextView likesCount, boolean flag, String publisherId, String postId, long upVotes, Activity activity) {
+    public LikeBtnListener(ImageView fullPostLikeBtn, TextView likesCount, boolean flag, String publisherId,
+                           String postId, long upVotes, Activity activity, boolean isAnswer) {
         this.fullPostLikeBtn = fullPostLikeBtn;
         this.likesCount = likesCount;
         this.flag = flag;
         this.upVotes=upVotes;
         this.publisherId = publisherId;
         this.postId = postId;
+        this.isAnswer=isAnswer;
         mActivity = activity;
     }
 
@@ -55,7 +58,13 @@ public class LikeBtnListener implements View.OnClickListener {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").
+                String path;
+                if(isAnswer)
+                    path = "answers";
+                else
+                    path = "posts";
+
+                mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection(path).
                         document(postId).update(map);
             }
         });

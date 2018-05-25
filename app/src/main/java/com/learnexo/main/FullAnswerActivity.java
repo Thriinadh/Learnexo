@@ -2,6 +2,7 @@ package com.learnexo.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,12 +12,20 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.FeedItem;
+import com.learnexo.model.feed.post.PostDetails;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.user.User;
+import com.learnexo.util.FirebaseUtil;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -46,6 +55,18 @@ public class FullAnswerActivity extends AppCompatActivity {
     String questionerId;
     private ImageView overFlowBtn;
 
+    private String ansPublisherId;
+    private long upVotes;
+    private long views;
+    private String ansId;
+    private TextView viewsText;
+    private TextView likesCount;
+    private ImageView LikeBtn;
+    private boolean flag = true;
+
+
+    FirebaseUtil mFirebaseUtil=new FirebaseUtil();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,15 +87,55 @@ public class FullAnswerActivity extends AppCompatActivity {
         String postData = intent.getStringExtra(EXTRA_CONTENT);
         String imagePosted = intent.getStringExtra(EXTRA_IMAGE);
         String imageThumb = intent.getStringExtra(EXTRA_THUMBNAIL);
+        ansPublisherId = intent.getStringExtra("ANS_PUBLISHER_ID");
+        ansId = intent.getStringExtra("ANS_ID");
 
         tag = intent.getStringExtra("TAG");
         questionerId = intent.getStringExtra("QUESTIONER_ID");
 
 
         bindData(intent, posTime, postData, imagePosted, imageThumb);
+        new GetAnswerViewsAndUpVotes().execute(ansPublisherId, ansId);
 
     }
 
+    private void bindViewsUpvotes(PostDetails postDetails) {
+        try {
+            upVotes=postDetails.getNoOfLikes();
+            views=postDetails.getNoOfViews();
+
+            //color the like button and increase the likes in the UI
+            //save new no of likes
+            //store it in his activity log
+            //generate edge rank
+            //notify publisher
+            //notify his followers
+            LikeBtn.setOnClickListener(
+                    new LikeBtnListener(LikeBtn,likesCount,flag, ansPublisherId, ansId, upVotes,FullAnswerActivity.this, true)
+            );
+
+            likesCount.setText(upVotes+" Up votes");
+            if(views==0){
+                views=1;
+                viewsText.setText("1 View");
+            }else{
+                viewsText.setText(views+ " Views");
+            }
+
+
+            long viewss = views+1;
+            Map<String, Object> map= new HashMap();
+            map.put("views",viewss);
+
+            mFirebaseUtil.mFirestore.collection("users").
+                    document(ansPublisherId).
+                    collection("answers").
+                    document(ansId).update(map);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private void bindData(Intent intent, String posTime, String postData, String imagePosted, String imageThumb) {
         questionAsked.setText(questionData);
         fullText.setText(postData);
@@ -116,6 +177,9 @@ public class FullAnswerActivity extends AppCompatActivity {
     }
 
     private void wireViews() {
+        viewsText = findViewById(R.id.viewsText);
+        likesCount = findViewById(R.id.likesCount);
+        LikeBtn = findViewById(R.id.full_post_like);
         viewAllAns = findViewById(R.id.viewAllAns);
         questionAsked = findViewById(R.id.questionAsked);
         fullText = findViewById(R.id.full_text);
@@ -126,7 +190,8 @@ public class FullAnswerActivity extends AppCompatActivity {
         overFlowBtn = findViewById(R.id.imageView);
     }
 
-    public static Intent newIntent(Context context, String questionAsked, String content, String publishedImg, String imageThumb, String timeAgo, User publisher, String questionId, String tag) {
+    public static Intent newIntent(Context context, String questionAsked, String content, String publishedImg, String imageThumb,
+                                   String timeAgo, User publisher, String questionId, String tag, String ansId) {
 
         Intent intent = new Intent(context, FullAnswerActivity.class);
         intent.putExtra(EXTRA_QUESTION_CONTENT, questionAsked);
@@ -137,10 +202,44 @@ public class FullAnswerActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_QUESTION_ID, questionId);
         intent.putExtra("TAG", tag);
         intent.putExtra("QUESTIONER_ID", publisher.getUserId());
+        intent.putExtra("ANS_ID", ansId);
+        intent.putExtra("ANS_PUBLISHER_ID",publisher.getUserId());
         if(publishedImg!=null) {
             intent.putExtra(EXTRA_IMAGE, publishedImg);
             intent.putExtra(EXTRA_THUMBNAIL, imageThumb);
         }
         return intent;
+    }
+
+
+    public class GetAnswerViewsAndUpVotes extends AsyncTask<Object, Object,PostDetails> {
+
+        @Override
+        protected PostDetails doInBackground(Object[] objects) {
+            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").
+                    document((String) objects[0]).collection("answers").document((String) objects[1]).get();
+            PostDetails postDetails=null;
+
+            try {
+                DocumentSnapshot documentSnapshot = Tasks.await(documentSnapshotTask);
+
+                postDetails = new PostDetails();
+                postDetails.setNoOfLikes((Long) documentSnapshot.get("upVotes"));
+                postDetails.setNoOfViews((Long) documentSnapshot.get("views"));
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return postDetails;
+        }
+
+        @Override
+        protected void onPostExecute(PostDetails result) {
+            bindViewsUpvotes(result);
+        }
+
     }
 }

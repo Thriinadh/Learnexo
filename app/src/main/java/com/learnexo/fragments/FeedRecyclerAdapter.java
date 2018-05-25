@@ -30,9 +30,7 @@ import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -139,7 +137,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     answerHolder.wireViews();
                     bindAnswer(answerHolder, itemContent, answer.getQuesContent(), imagePosted, imageThumb, timeAgo);
                     bindAnswererData(answerHolder, publisher);
-                    answerContentListener(answerHolder, itemContent, answer.getQuesContent(), imagePosted, imageThumb, timeAgo, publisher, answer.getQuesId(), answer.getTags());
+                    answerContentListener(answerHolder, itemContent, answer.getQuesContent(), imagePosted, imageThumb,
+                            timeAgo, publisher, answer.getQuesId(), answer.getTags(), answer.getFeedItemId());
                     answerOverflowListener(answerHolder, publisher, feedItem);
 
                     break;
@@ -150,7 +149,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     crackHolder.wireViews();
                     bindCrack(crackHolder, itemContent, crack.getQuesContent(), imagePosted, imageThumb, timeAgo);
                     bindCrackerData(crackHolder, publisher);
-                    crackContentListener(crackHolder, itemContent, crack.getQuesContent(),imagePosted, imageThumb, timeAgo, publisher, crack.getQuesId(), crack.getTags());
+                    crackContentListener(crackHolder, itemContent, crack.getQuesContent(),imagePosted, imageThumb,
+                            timeAgo, publisher, crack.getQuesId(), crack.getTags(), crack.getFeedItemId());
                     crackOverflowListener(crackHolder, publisher, feedItem);
 
                     break;
@@ -192,39 +192,43 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
     }
 
-    private void answerContentListener(@NonNull AnswerHolder holder, final String itemContent, final String questionAsked, final String imagePosted, final String imageThumb, final String timeAgo, final User publisher, final String questionId, final List<String> tags) {
+    private void answerContentListener(@NonNull AnswerHolder holder, final String itemContent,
+                                       final String questionAsked, final String imagePosted, final String imageThumb,
+                                       final String timeAgo, final User publisher, final String questionId, final List<String> tags, final String ansId) {
         holder.quesContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                gotoFullAnswerActivity(itemContent, questionAsked, imagePosted, imageThumb, timeAgo, publisher, questionId, false, tags.get(0));
+                gotoFullAnswerActivity(itemContent, questionAsked, imagePosted, imageThumb, timeAgo, publisher, questionId, false, tags.get(0), ansId);
             }
         });
         holder.answerContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                gotoFullAnswerActivity(itemContent, questionAsked, imagePosted, imageThumb, timeAgo, publisher, questionId, false, tags.get(0));
+                gotoFullAnswerActivity(itemContent, questionAsked, imagePosted, imageThumb, timeAgo, publisher, questionId, false, tags.get(0), ansId);
             }
         });
     }
 
-    private void crackContentListener(@NonNull CrackHolder holder, final String challenge, final String itemContent, final String imagePosted, final String imageThumb, final String timeAgo, final User publisher, final String questionId, final List<String> tags) {
+    private void crackContentListener(@NonNull CrackHolder holder, final String challenge,
+                                      final String itemContent, final String imagePosted, final String imageThumb,
+                                      final String timeAgo, final User publisher, final String questionId, final List<String> tags, final String crackId) {
         holder.challenge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                gotoFullAnswerActivity(challenge, itemContent, imagePosted, imageThumb, timeAgo, publisher, questionId, true, tags.get(0));
+                gotoFullAnswerActivity(challenge, itemContent, imagePosted, imageThumb, timeAgo, publisher, questionId, true, tags.get(0), crackId);
             }
         });
 
         holder.crackContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                gotoFullAnswerActivity(challenge, itemContent, imagePosted, imageThumb, timeAgo, publisher,questionId, true, tags.get(0));
+                gotoFullAnswerActivity(challenge, itemContent, imagePosted, imageThumb, timeAgo, publisher,questionId, true, tags.get(0), crackId);
             }
         });
     }
 
-    private void gotoFullAnswerActivity(String challenge, String itemContent, String imagePosted, String imageThumb, String timeAgo, User publisher, String questionId, boolean is_crack, String tag) {
-        Intent intent = FullAnswerActivity.newIntent(mContext, itemContent, challenge, imagePosted, imageThumb, timeAgo, publisher, questionId, tag);
+    private void gotoFullAnswerActivity(String challenge, String itemContent, String imagePosted, String imageThumb, String timeAgo, User publisher, String questionId, boolean is_crack, String tag, String ansId) {
+        Intent intent = FullAnswerActivity.newIntent(mContext, itemContent, challenge, imagePosted, imageThumb, timeAgo, publisher, questionId, tag, ansId);
         if(is_crack)
             intent.putExtra("IS_CRACK",true);
         mContext.startActivity(intent);

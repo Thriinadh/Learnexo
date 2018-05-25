@@ -73,7 +73,7 @@ public class FullPostActivity extends AppCompatActivity {
         String publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DP);
 
         bindData(imagePosted, imageThumb, publisherName, posTime, publisherDP);
-        new GetViewsAndUpVotes().execute(publisherId, postId);
+        new GetPostViewsAndUpVotes().execute(publisherId, postId);
 
         User publisher =new User();
         overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
@@ -95,7 +95,7 @@ public class FullPostActivity extends AppCompatActivity {
             //notify publisher
             //notify his followers
             fullPostLikeBtn.setOnClickListener(
-                    new LikeBtnListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,FullPostActivity.this)
+                    new LikeBtnListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,FullPostActivity.this, false)
             );
 
             likesCount.setText(upVotes+" Up votes");
@@ -141,8 +141,8 @@ public class FullPostActivity extends AppCompatActivity {
     private void wireViews() {
         viewsText = findViewById(R.id.viewsText);
         likesCount = findViewById(R.id.likesCount);
-        overFlowBtn = findViewById(R.id.imageView);
         fullPostLikeBtn = findViewById(R.id.full_post_like);
+        overFlowBtn = findViewById(R.id.imageView);
         fullText = findViewById(R.id.full_text);
         profileImage = findViewById(R.id.profile_image);
         userName = findViewById(R.id.userNameTView);
@@ -175,7 +175,7 @@ public class FullPostActivity extends AppCompatActivity {
     }
 
 
-    public class GetViewsAndUpVotes extends AsyncTask<Object, Object,PostDetails> {
+    public class GetPostViewsAndUpVotes extends AsyncTask<Object, Object,PostDetails> {
 
         @Override
         protected PostDetails doInBackground(Object[] objects) {
