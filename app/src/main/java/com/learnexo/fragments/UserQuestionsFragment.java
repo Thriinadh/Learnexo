@@ -29,6 +29,11 @@ public class UserQuestionsFragment extends Fragment {
     private UserQuesRecyclerAdapter mAdapter;
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
+    private String otherProfileId;
+    private String otherProfileName;
+    private String otherProfileDP;
+    private boolean isOtherProfile;
+
     public UserQuestionsFragment() {
         // Required empty public constructor
     }
@@ -39,6 +44,14 @@ public class UserQuestionsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile_questions, container, false);
 
+        Bundle arguments = getArguments();
+        if(arguments!=null) {
+            isOtherProfile = (boolean) arguments.get("IS_OTHER_PROFILE");
+            otherProfileId = (String) arguments.get("OTHER_PROFILE_ID");
+            otherProfileName = (String) arguments.get("OTHER_PROFILE_NAME");
+            otherProfileDP = (String) arguments.get("OTHER_PROFILE_DP");
+        }
+
         setupRecyclerView(view);
 
         getCracksFromDatabase();
@@ -47,7 +60,13 @@ public class UserQuestionsFragment extends Fragment {
     }
 
     private void getCracksFromDatabase() {
-        CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("questions");
+
+        String userId;
+        if(isOtherProfile)
+            userId=otherProfileId;
+        else
+            userId=FirebaseUtil.getCurrentUserId();
+        CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users").document(userId).collection("questions");
         Query query = collectionReference.whereEqualTo("challenge", false);
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -63,8 +82,15 @@ public class UserQuestionsFragment extends Fragment {
     }
 
     private void setupRecyclerView(View view) {
+//        mQuestions = new ArrayList<>();
+//        mAdapter = new UserQuesRecyclerAdapter(mQuestions);
+
         mQuestions = new ArrayList<>();
-        mAdapter = new UserQuesRecyclerAdapter(mQuestions);
+        if(isOtherProfile)
+            mAdapter = new UserQuesRecyclerAdapter(mQuestions, true, otherProfileId, otherProfileName, otherProfileDP);
+        else
+            mAdapter = new UserQuesRecyclerAdapter(mQuestions, false, null, null, null);
+
 
         RecyclerView profilePostsRecyclerView = view.findViewById(R.id.profilePostsRecycler);
         profilePostsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

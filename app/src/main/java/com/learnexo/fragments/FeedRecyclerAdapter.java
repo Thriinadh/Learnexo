@@ -141,6 +141,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     bindAnswererData(answerHolder, publisher);
                     answerContentListener(answerHolder, itemContent, answer.getQuesContent(), imagePosted, imageThumb,
                             timeAgo, publisher, answer.getQuesId(), answer.getTags(), answer.getFeedItemId());
+                    answerProfileListener(answerHolder, publisher, answer.getFeedItemId());
                     answerOverflowListener(answerHolder, publisher, feedItem);
 
                     break;
@@ -153,6 +154,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     bindCrackerData(crackHolder, publisher);
                     crackContentListener(crackHolder, itemContent, crack.getQuesContent(),imagePosted, imageThumb,
                             timeAgo, publisher, crack.getQuesId(), crack.getTags(), crack.getFeedItemId());
+                    crackProfileListener(crackHolder, publisher, crack.getFeedItemId());
                     crackOverflowListener(crackHolder, publisher, feedItem);
 
                     break;
@@ -193,6 +195,14 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         });
 
+        holder.userName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = OthersProfileActivity.newIntent(mContext, publisher, postId);
+                mContext.startActivity(intent);
+            }
+        });
+
     }
 
     private void postContentListener(@NonNull PostHolder holder, final String itemContent, final String imagePosted, final String imageThumb, final String timeAgo, final User publisher, final String postId) {
@@ -223,6 +233,26 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
     }
 
+    private void answerProfileListener(@NonNull AnswerHolder holder, final User publisher, final String postId) {
+
+        holder.userImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = OthersProfileActivity.newIntent(mContext, publisher, postId);
+                mContext.startActivity(intent);
+            }
+        });
+
+        holder.userName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = OthersProfileActivity.newIntent(mContext, publisher, postId);
+                mContext.startActivity(intent);
+            }
+        });
+
+    }
+
     private void crackContentListener(@NonNull CrackHolder holder, final String challenge,
                                       final String itemContent, final String imagePosted, final String imageThumb,
                                       final String timeAgo, final User publisher, final String questionId, final List<String> tags, final String crackId) {
@@ -239,6 +269,26 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 gotoFullAnswerActivity(challenge, itemContent, imagePosted, imageThumb, timeAgo, publisher,questionId, true, tags.get(0), crackId);
             }
         });
+    }
+
+    private void crackProfileListener(@NonNull CrackHolder holder, final User publisher, final String postId) {
+
+        holder.userImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = OthersProfileActivity.newIntent(mContext, publisher, postId);
+                mContext.startActivity(intent);
+            }
+        });
+
+        holder.userName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = OthersProfileActivity.newIntent(mContext, publisher, postId);
+                mContext.startActivity(intent);
+            }
+        });
+
     }
 
     private void gotoFullAnswerActivity(String challenge, String itemContent, String imagePosted, String imageThumb, String timeAgo, User publisher, String questionId, boolean is_crack, String tag, String ansId) {

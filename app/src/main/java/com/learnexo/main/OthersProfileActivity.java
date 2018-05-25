@@ -155,6 +155,12 @@ public class OthersProfileActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+            super.onBackPressed();
+            finish();
+    }
+
     public static Intent newIntent(Context context, User publisher, String postId) {
 
         Intent intent = new Intent(context, OthersProfileActivity.class);

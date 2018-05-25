@@ -26,10 +26,27 @@ public class UserChallengesRecyclerAdapter extends RecyclerView.Adapter<Recycler
     private Context mContext;
 
     private final String mCurrentUserId = FirebaseUtil.getCurrentUserId();
-    User mUser = new User(mCurrentUserId,FeedFragment.sName,FeedFragment.sDpUrl);
 
-    public UserChallengesRecyclerAdapter(List<Question> mFeedItems) {
+    private boolean isOtherProfile;
+    private String otherProfileId;
+    private String otherProfileName;
+    private String otherProfileDP;
+
+    User mUser;
+
+   // User mUser = new User(mCurrentUserId,FeedFragment.sName,FeedFragment.sDpUrl);
+
+    public UserChallengesRecyclerAdapter(List<Question> mFeedItems, boolean isOtherProfile, String otherProfileId, String otherProfileName, String  otherProfileDP) {
         this.mChallenges = mFeedItems;
+
+        this.isOtherProfile=isOtherProfile;
+        this.otherProfileId=otherProfileId;
+        this.otherProfileName=otherProfileName;
+        this.otherProfileDP=otherProfileDP;
+        if(isOtherProfile)
+            mUser = new User(otherProfileId,otherProfileName,otherProfileDP);
+        else
+            mUser = new User(mCurrentUserId,FeedFragment.sName,FeedFragment.sDpUrl);
     }
 
     @NonNull
