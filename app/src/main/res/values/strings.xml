@@ -132,5 +132,6 @@
     <string name="school_university"><font size="15">School/University</font></string>
     <string name="add_a_concentration1"><font size="15">add a concentration</font></string>
     <string name="add_a_concentration2"><font size="15">add a concentration</font></string>
+    <string name="longgg_text">overflow menu go to profile when tap on image or name tick mark for verified profile implement image option for questio and challenges in feed implement pass and follow in feed for question and challenges why this post?? it should be on top of post in the feed generate actual feed implement pagination for feed make bind method light weight real time data in feed Inside full post implement up button implement number of views implement overflow menu like, comment, share, bookmark fullpostactivity should be opened immediately go to profile when click on image or name in fullpostactivity Inside full answer n full crack go to profile when click on image or name in fullansweractivity like, comment, share, bookmark, views overflow Allansweractivity implement follow, request, overflow menu for Question or challenge implement overflow menu for all answers in recyclerview implement profile clicks in recyclerview view, comments, likes,shares, bookmarks in recyclerview</string>
 
 </resources>
