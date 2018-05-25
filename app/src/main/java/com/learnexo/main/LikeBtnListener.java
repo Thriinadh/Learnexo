@@ -50,7 +50,10 @@ public class LikeBtnListener implements View.OnClickListener {
             upvotess = upVotes;
             flag = true;
         }
-        likesCount.setText(upvotess +" Up votes");
+        if(upvotess!=1)
+            likesCount.setText(upvotess +" Up votes");
+        else
+            likesCount.setText("1 Up vote");
 
         final Map<String, Object> map= new HashMap();
         map.put("upVotes", upvotess);

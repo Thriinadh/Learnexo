@@ -41,8 +41,6 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     User mUser;
 
-  //  User mUser = new User(mCurrentUserId,FeedFragment.sName,FeedFragment.sDpUrl);
-
     public UserQuesRecyclerAdapter(List<Question> mFeedItems, boolean isOtherProfile, String otherProfileId, String otherProfileName, String  otherProfileDP) {
         this.mQuestions = mFeedItems;
 
@@ -95,7 +93,6 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private void bindPost(@NonNull AllQuesHolder holder, final String question, final String publishedImg, final String publishedThumb, String timeAgo) {
         holder.setContent(question);
-      //  holder.setAnsImgView(publishedImg, publishedThumb);
         holder.setTime(timeAgo);
     }
 
@@ -110,7 +107,6 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         private ImageView challengeIcon;
         private TextView answeredTime;
         private ImageView overflowImgView;
-      //  private ImageView postedImgView;
 
         public AllQuesHolder(View itemView) {
             super(itemView);
@@ -123,7 +119,6 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             answer = mView.findViewById(R.id.answer);
             followQues = mView.findViewById(R.id.followQues);
             challengeIcon = mView.findViewById(R.id.imageView2);
-         //   postedImgView = mView.findViewById(R.id.postedImagee);
             answeredTime = mView.findViewById(R.id.postedTime);
             overflowImgView = mView.findViewById(R.id.quesOverFlow);
         }
@@ -132,14 +127,6 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             questionTView.setText(question);
 
         }
-//        public void setAnsImgView(String imageUrl, String imageThumb) {
-//            if(imageUrl != null&&mContext!=null) {
-//                postedImgView.setVisibility(View.VISIBLE);
-//                Glide.with(mContext.getApplicationContext()).load(imageUrl)
-//                        .thumbnail(Glide.with(mContext.getApplicationContext()).load(imageThumb))
-//                        .into(postedImgView);
-//            }
-//        }
 
         public void setTime(String timeAgo) {
             this.answeredTime.setText(timeAgo);

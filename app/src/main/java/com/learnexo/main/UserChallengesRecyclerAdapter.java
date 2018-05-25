@@ -34,8 +34,6 @@ public class UserChallengesRecyclerAdapter extends RecyclerView.Adapter<Recycler
 
     User mUser;
 
-   // User mUser = new User(mCurrentUserId,FeedFragment.sName,FeedFragment.sDpUrl);
-
     public UserChallengesRecyclerAdapter(List<Question> mFeedItems, boolean isOtherProfile, String otherProfileId, String otherProfileName, String  otherProfileDP) {
         this.mChallenges = mFeedItems;
 
@@ -112,6 +110,7 @@ public class UserChallengesRecyclerAdapter extends RecyclerView.Adapter<Recycler
         public void wireViews(){
             questionTView = mView.findViewById(R.id.questionTView);
             noAnswerYet = mView.findViewById(R.id.noAnswerYet);
+            noAnswerYet.setText("No Cracks Yet.");
             answer = mView.findViewById(R.id.answer);
             followQues = mView.findViewById(R.id.followQues);
             challengeIcon = mView.findViewById(R.id.imageView2);

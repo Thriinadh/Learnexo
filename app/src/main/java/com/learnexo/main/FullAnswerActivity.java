@@ -72,12 +72,7 @@ public class FullAnswerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_answer);
 
-
         wireViews();
-
-        final User publisher =new User();
-        overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
-
 
         Intent intent=getIntent();
         is_crack = intent.getBooleanExtra("IS_CRACK", false);
@@ -87,6 +82,8 @@ public class FullAnswerActivity extends AppCompatActivity {
         String postData = intent.getStringExtra(EXTRA_CONTENT);
         String imagePosted = intent.getStringExtra(EXTRA_IMAGE);
         String imageThumb = intent.getStringExtra(EXTRA_THUMBNAIL);
+        String publisherName = intent.getStringExtra(EXTRA_PUBLISHER_NAME);
+        String publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DP);
         ansPublisherId = intent.getStringExtra("ANS_PUBLISHER_ID");
         ansId = intent.getStringExtra("ANS_ID");
 
@@ -96,6 +93,8 @@ public class FullAnswerActivity extends AppCompatActivity {
 
         bindData(intent, posTime, postData, imagePosted, imageThumb);
         new GetAnswerViewsAndUpVotes().execute(ansPublisherId, ansId);
+
+        final User publisher =new User(ansPublisherId,publisherName,publisherDP);
 
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +111,8 @@ public class FullAnswerActivity extends AppCompatActivity {
                 startActivity(intent1);
             }
         });
+
+        overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
 
     }
 

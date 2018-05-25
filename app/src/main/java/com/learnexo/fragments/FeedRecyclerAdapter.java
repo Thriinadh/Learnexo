@@ -551,7 +551,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private TextView timeAgo;
         private ImageView overflowImgView;
         private ImageView postedImgView;
-        private ImageView ansImgView;
         private TextView seeMore;
 
         public AnswerHolder(View itemView) {
@@ -568,7 +567,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             overflowImgView = mView.findViewById(R.id.overflow);
 
             answerContent = mView.findViewById(R.id.answerContent);
-           // ansImgView = mView.findViewById(R.id.postedImagee);
             seeMore = mView.findViewById(R.id.seeMore);
         }
 
@@ -712,14 +710,14 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             noCracksYet = mView.findViewById(R.id.noAnswerYet);
 
             if(question.getNoOfAns()>0)
-                noCracksYet.setText(question.getNoOfAns()+ " Answers");
+                noCracksYet.setText(question.getNoOfAns()+ " Answers.");
 
             int n=question.getNoOfAns();
             // No Answers Yet - will come from layout file, if n=0
             if(n==1)
-                noCracksYet.setText(n+ " Answer");
+                noCracksYet.setText(n+ " Answer.");
             else if(n>1)
-                noCracksYet.setText(n+ " Answers");
+                noCracksYet.setText(n+ " Answers.");
 
             answer=mView.findViewById(R.id.answer);
             pass=mView.findViewById(R.id.pass);
@@ -764,11 +762,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             noCracksYet = mView.findViewById(R.id.noAnswerYet);
             int n=challenge.getNoOfAns();
             if(n==0)
-                noCracksYet.setText("No Cracks Yet");
+                noCracksYet.setText("No Cracks Yet.");
             else if(n==1)
-                noCracksYet.setText(n+ " Crack");
+                noCracksYet.setText(n+ " Crack.");
             else
-                noCracksYet.setText(n+ " Cracks");
+                noCracksYet.setText(n+ " Cracks.");
 
             challengeContent = mView.findViewById(R.id.questionTView);
             timeAgo = mView.findViewById(R.id.postedTime);
