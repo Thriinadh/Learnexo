@@ -69,7 +69,8 @@
         <activity android:name=".FullAnswerActivity" />
         <activity android:name=".AllAnswersActivity" />
         <activity android:name=".EduDetailsActivity" />
-        <activity android:name=".OthersProfileActivity"></activity>
+        <activity android:name=".OthersProfileActivity" />
+        <activity android:name=".CommentsActivity"></activity>
     </application>
 
 </manifest>

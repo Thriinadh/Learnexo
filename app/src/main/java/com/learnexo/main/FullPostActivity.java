@@ -2,13 +2,21 @@ package com.learnexo.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -52,6 +60,7 @@ public class FullPostActivity extends AppCompatActivity {
     private String postId;
     private String postData;
 
+    private ImageView fullPostCommentBtn;
     private ImageView fullPostLikeBtn;
     private ImageView overFlowBtn;
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
@@ -84,7 +93,78 @@ public class FullPostActivity extends AppCompatActivity {
 
         profileListener(publisher);
 
+        fullPostCommentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onShowPopup(view);
+            }
+        });
+
     }
+
+
+    // call this method when required to show popup
+    public void onShowPopup(View v){
+
+        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        // inflate the custom popup layout
+        View inflatedView = layoutInflater.inflate(R.layout.activity_comments, null,false);
+        // find the ListView in the popup layout
+//        ListView listView = (ListView)inflatedView.findViewById(R.id.commentsListView);
+//        LinearLayout headerView = (LinearLayout)inflatedView.findViewById(R.id.headerLayout);
+        // get device size
+        Display display = getWindowManager().getDefaultDisplay();
+        final Point size = new Point();
+        display.getSize(size);
+//        mDeviceHeight = size.y;
+        DisplayMetrics displayMetrics = FullPostActivity.this.getResources().getDisplayMetrics();
+        int width = displayMetrics.widthPixels;
+        int height = displayMetrics.heightPixels;
+
+
+        // fill the data to the list items
+//        setSimpleList(listView);
+
+
+        // set height depends on the device size
+        PopupWindow popWindow = new PopupWindow(inflatedView, width,height, true );
+        // set a background drawable with rounders corners
+        popWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.popup_bg));
+
+        popWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
+        popWindow.setHeight(height-70);
+
+        popWindow.setAnimationStyle(R.style.PopupAnimation);
+
+        // show the popup at bottom of the screen and set some margin at bottom ie,
+        popWindow.showAtLocation(v, Gravity.BOTTOM, 0,0);
+    }
+
+    public static void dimBehind(PopupWindow popupWindow) {
+        View container;
+        if (popupWindow.getBackground() == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                container = (View) popupWindow.getContentView().getParent();
+            } else {
+                container = popupWindow.getContentView();
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                container = (View) popupWindow.getContentView().getParent().getParent();
+            } else {
+                container = (View) popupWindow.getContentView().getParent();
+            }
+        }
+        Context context = popupWindow.getContentView().getContext();
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
+        p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        p.dimAmount = 0.3f;
+        wm.updateViewLayout(container, p);
+    }
+
+
 
     private void profileListener(final User publisher) {
         userName.setOnClickListener(new View.OnClickListener() {
@@ -163,6 +243,7 @@ public class FullPostActivity extends AppCompatActivity {
         viewsText = findViewById(R.id.viewsText);
         likesCount = findViewById(R.id.likesCount);
         fullPostLikeBtn = findViewById(R.id.full_post_like);
+        fullPostCommentBtn = findViewById(R.id.full_post_comment);
         overFlowBtn = findViewById(R.id.imageView);
         fullText = findViewById(R.id.full_text);
         profileImage = findViewById(R.id.profile_image);
