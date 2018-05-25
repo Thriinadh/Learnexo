@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.main.AllAnswersActivity;
+import com.learnexo.main.FriendProfileActivity;
 import com.learnexo.main.FullAnswerActivity;
 import com.learnexo.main.FullPostActivity;
 import com.learnexo.main.AnswerActivity;
@@ -127,6 +128,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     bindPost(postHolder, itemContent, imagePosted, imageThumb, timeAgo);
                     bindPostUserData(postHolder, publisher);
                     postContentListener(postHolder, itemContent, imagePosted, imageThumb, timeAgo, publisher, post.getFeedItemId());
+                    postProfileListener(postHolder, publisher, post.getFeedItemId());
                     postOverflowListener(postHolder, publisher, feedItem);
 
                     break;
@@ -179,6 +181,18 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
 
         }
+    }
+
+    private void postProfileListener(@NonNull PostHolder holder, final User publisher, final String postId) {
+
+        holder.userImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = FriendProfileActivity.newIntent(mContext, publisher, postId);
+                mContext.startActivity(intent);
+            }
+        });
+
     }
 
     private void postContentListener(@NonNull PostHolder holder, final String itemContent, final String imagePosted, final String imageThumb, final String timeAgo, final User publisher, final String postId) {
