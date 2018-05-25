@@ -41,7 +41,7 @@ public class OthersProfileActivity extends AppCompatActivity {
     public static String sName;
 
     private String publisherId;
-    private String postId;
+   // private String postId;
 
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
@@ -52,7 +52,7 @@ public class OthersProfileActivity extends AppCompatActivity {
 
         Intent intent=getIntent();
         publisherId=intent.getStringExtra("PUBLISHER_ID");
-        postId = intent.getStringExtra("POST_ID");
+      //  postId = intent.getStringExtra("POST_ID");
         String publisherName = intent.getStringExtra(EXTRA_PUBLISHER_NAMEE);
         String publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DPP);
 
@@ -161,12 +161,12 @@ public class OthersProfileActivity extends AppCompatActivity {
             finish();
     }
 
-    public static Intent newIntent(Context context, User publisher, String postId) {
+    public static Intent newIntent(Context context, User publisher) {
 
         Intent intent = new Intent(context, OthersProfileActivity.class);
         intent.putExtra(EXTRA_PUBLISHER_NAMEE, publisher.getFirstName());
         intent.putExtra(EXTRA_PUBLISHER_DPP, publisher.getDpUrl());
-        intent.putExtra("POST_ID", postId);
+       // intent.putExtra("POST_ID", postId);
         intent.putExtra("PUBLISHER_ID",publisher.getUserId());
         return intent;
 

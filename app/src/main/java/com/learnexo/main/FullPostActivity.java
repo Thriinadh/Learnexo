@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -72,15 +74,34 @@ public class FullPostActivity extends AppCompatActivity {
         String posTime = intent.getStringExtra(EXTRA_TIME);
         String publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DP);
 
+        final User publisher = new User(publisherId, publisherName, publisherDP);
+
+
         bindData(imagePosted, imageThumb, publisherName, posTime, publisherDP);
         new GetPostViewsAndUpVotes().execute(publisherId, postId);
 
-        User publisher =new User();
         overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
 
+        profileListener(publisher);
 
+    }
 
+    private void profileListener(final User publisher) {
+        userName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = OthersProfileActivity.newIntent(FullPostActivity.this, publisher);
+                startActivity(intent1);
+            }
+        });
 
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = OthersProfileActivity.newIntent(FullPostActivity.this, publisher);
+                startActivity(intent1);
+            }
+        });
     }
 
     private void bindViewsUpvotes(PostDetails postDetails) {

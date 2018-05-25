@@ -1,6 +1,7 @@
 package com.learnexo.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -65,12 +66,31 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             bindAnswer(allAnsHolder, itemContent, imagePosted, imageThumb, timeAgo);
             bindAnswererData(allAnsHolder, publisher);
             allAnsOverflowListener(allAnsHolder, publisher, answer);
+            answersProfileListener(allAnsHolder, publisher, answer.getFeedItemId());
 
         }
     }
 
     private void allAnsOverflowListener(AllAnsHolder allAnsHolder, User publisher, Answer answer) {
         allAnsHolder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, publisher));
+    }
+
+    private void answersProfileListener(final AllAnsHolder allAnsHolder, final User publisher, final String postId) {
+        allAnsHolder.userImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = OthersProfileActivity.newIntent(mContext, publisher);
+                mContext.startActivity(intent);
+            }
+        });
+
+        allAnsHolder.userName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = OthersProfileActivity.newIntent(mContext, publisher);
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override

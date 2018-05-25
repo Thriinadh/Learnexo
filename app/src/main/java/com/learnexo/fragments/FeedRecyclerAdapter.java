@@ -190,7 +190,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.userImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = OthersProfileActivity.newIntent(mContext, publisher, postId);
+                Intent intent = OthersProfileActivity.newIntent(mContext, publisher);
                 mContext.startActivity(intent);
             }
         });
@@ -198,7 +198,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.userName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = OthersProfileActivity.newIntent(mContext, publisher, postId);
+                Intent intent = OthersProfileActivity.newIntent(mContext, publisher);
                 mContext.startActivity(intent);
             }
         });
@@ -238,7 +238,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.userImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = OthersProfileActivity.newIntent(mContext, publisher, postId);
+                Intent intent = OthersProfileActivity.newIntent(mContext, publisher);
                 mContext.startActivity(intent);
             }
         });
@@ -246,7 +246,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.userName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = OthersProfileActivity.newIntent(mContext, publisher, postId);
+                Intent intent = OthersProfileActivity.newIntent(mContext, publisher);
                 mContext.startActivity(intent);
             }
         });
@@ -276,7 +276,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.userImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = OthersProfileActivity.newIntent(mContext, publisher, postId);
+                Intent intent = OthersProfileActivity.newIntent(mContext, publisher);
                 mContext.startActivity(intent);
             }
         });
@@ -284,7 +284,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.userName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = OthersProfileActivity.newIntent(mContext, publisher, postId);
+                Intent intent = OthersProfileActivity.newIntent(mContext, publisher);
                 mContext.startActivity(intent);
             }
         });

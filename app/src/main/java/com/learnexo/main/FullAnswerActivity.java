@@ -75,7 +75,7 @@ public class FullAnswerActivity extends AppCompatActivity {
 
         wireViews();
 
-        User publisher =new User();
+        final User publisher =new User();
         overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
 
 
@@ -96,6 +96,22 @@ public class FullAnswerActivity extends AppCompatActivity {
 
         bindData(intent, posTime, postData, imagePosted, imageThumb);
         new GetAnswerViewsAndUpVotes().execute(ansPublisherId, ansId);
+
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = OthersProfileActivity.newIntent(FullAnswerActivity.this, publisher);
+                startActivity(intent1);
+            }
+        });
+
+        userName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = OthersProfileActivity.newIntent(FullAnswerActivity.this, publisher);
+                startActivity(intent1);
+            }
+        });
 
     }
 
