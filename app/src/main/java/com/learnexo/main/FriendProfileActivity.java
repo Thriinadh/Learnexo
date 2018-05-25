@@ -76,6 +76,22 @@ public class FriendProfileActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText("Interests"));
         tabLayout.addTab(tabLayout.newTab().setText("Activity"));
 
+        final Bundle bundle = new Bundle();
+        bundle.putString("OTHER_PROFILE_ID",publisherId);
+        bundle.putString("OTHER_PROFILE_NAME",publisherName);
+        bundle.putString("OTHER_PROFILE_DP",publisherDP);
+        bundle.putBoolean("IS_OTHER_PROFILE",true);
+
+        final Fragment userPostFragment= new UserPostsFragment();
+        if (savedInstanceState == null) {
+            userPostFragment.setArguments(bundle);
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, userPostFragment)
+                    .commit();
+        }
+
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
             Fragment fragment;
@@ -83,8 +99,7 @@ public class FriendProfileActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 if(tabLayout.getSelectedTabPosition() == 0){
                     //  tabLayout.setTabTextColors(Color.parseColor("#1da1f2"));
-                    fragment = new UserPostsFragment();
-                    replaceFragment(fragment);
+                    replaceFragment(userPostFragment);
 
                 }else if(tabLayout.getSelectedTabPosition() == 1){
 

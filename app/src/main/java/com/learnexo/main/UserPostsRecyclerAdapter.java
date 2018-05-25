@@ -17,7 +17,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.fragments.FeedFragment;
-import com.learnexo.fragments.FeedRecyclerAdapter;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.user.User;
@@ -38,15 +37,30 @@ public class UserPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
     private final String mCurrentUserId = FirebaseUtil.getCurrentUserId();
-    User mUser = new User(mCurrentUserId,FeedFragment.sName,FeedFragment.sDpUrl);
+    private boolean isOtherProfile;
+    private String otherProfileId;
+    private String otherProfileName;
+    private String otherProfileDP;
 
-    public UserPostsRecyclerAdapter(List<Post> mFeedItems) {
+    User mUser;
+
+    public UserPostsRecyclerAdapter(List<Post> mFeedItems, boolean isOtherProfile, String otherProfileId, String otherProfileName, String  otherProfileDP) {
         this.mPosts = mFeedItems;
+        this.isOtherProfile=isOtherProfile;
+        this.otherProfileId=otherProfileId;
+        this.otherProfileName=otherProfileName;
+        this.otherProfileDP=otherProfileDP;
+        if(isOtherProfile)
+            mUser = new User(otherProfileId,otherProfileName,otherProfileDP);
+        else
+            mUser = new User(mCurrentUserId,FeedFragment.sName,FeedFragment.sDpUrl);
     }
+
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
         mContext = parent.getContext();
         View view = LayoutInflater.from(mContext).inflate(R.layout.post_list_item, parent, false);
         return new AllPostsHolder(view);
@@ -65,7 +79,7 @@ public class UserPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
             AllPostsHolder allPostsHolder = (AllPostsHolder) holder;
             allPostsHolder.wireViews();
-            bindPost(allPostsHolder, itemContent, imagePosted, imageThumb, timeAgo);
+            bindPost(allPostsHolder, itemContent, imagePosted, imageThumb, timeAgo, mUser);
             allPostsOverflowListener(allPostsHolder, post);
 
         }
@@ -113,11 +127,11 @@ public class UserPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         });
     }
 
-    private void bindPost(@NonNull AllPostsHolder holder, final String answer, final String publishedImg, final String publishedThumb, String timeAgo) {
+    private void bindPost(@NonNull AllPostsHolder holder, final String answer, final String publishedImg, final String publishedThumb, String timeAgo, User user) {
         holder.setContent(answer);
         holder.setAnsImgView(publishedImg, publishedThumb);
         holder.setTime(timeAgo);
-        holder.setUserData(FeedFragment.sName, FeedFragment.sDpUrl);
+        holder.setUserData(mUser.getFirstName(), mUser.getDpUrl());
     }
 
 

@@ -27,6 +27,10 @@ public class UserPostsFragment extends Fragment {
     private UserPostsRecyclerAdapter mAdapter;
 
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
+    private String otherProfileId;
+    private String otherProfileName;
+    private String otherProfileDP;
+    private boolean isOtherProfile;
 
     public UserPostsFragment() {
         // Required empty public constructor
@@ -37,7 +41,13 @@ public class UserPostsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_profile_posts, container, false);
-
+        Bundle arguments = getArguments();
+        if(arguments!=null) {
+            isOtherProfile = (boolean) arguments.get("IS_OTHER_PROFILE");
+            otherProfileId = (String) arguments.get("OTHER_PROFILE_ID");
+            otherProfileName = (String) arguments.get("OTHER_PROFILE_NAME");
+            otherProfileDP = (String) arguments.get("OTHER_PROFILE_DP");
+        }
         setupRecyclerView(view);
 
         getPostsFromDatabase();
@@ -47,7 +57,12 @@ public class UserPostsFragment extends Fragment {
     }
 
     private void getPostsFromDatabase() {
-        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+        String userId;
+        if(isOtherProfile)
+            userId=otherProfileId;
+        else
+            userId=FirebaseUtil.getCurrentUserId();
+        mFirebaseUtil.mFirestore.collection("users").document(userId)
                 .collection("posts").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -62,7 +77,10 @@ public class UserPostsFragment extends Fragment {
 
     private void setupRecyclerView(View view) {
         mPosts = new ArrayList<>();
-        mAdapter = new UserPostsRecyclerAdapter(mPosts);
+        if(isOtherProfile)
+        mAdapter = new UserPostsRecyclerAdapter(mPosts, true, otherProfileId, otherProfileName, otherProfileDP);
+        else
+            mAdapter = new UserPostsRecyclerAdapter(mPosts, false, null, null, null);
 
         RecyclerView profilePostsRecyclerView = view.findViewById(R.id.profilePostsRecycler);
         profilePostsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
