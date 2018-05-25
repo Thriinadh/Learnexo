@@ -31,10 +31,25 @@ public class UserAnswersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private Context mContext;
 
     private final String mCurrentUserId = FirebaseUtil.getCurrentUserId();
-    User mUser = new User(mCurrentUserId,FeedFragment.sName,FeedFragment.sDpUrl);
+ //   User mUser = new User(mCurrentUserId,FeedFragment.sName,FeedFragment.sDpUrl);
 
-    public UserAnswersRecyclerAdapter(List<Answer> mFeedItems) {
+    private boolean isOtherProfile;
+    private String otherProfileId;
+    private String otherProfileName;
+    private String otherProfileDP;
+
+    User mUser;
+
+    public UserAnswersRecyclerAdapter(List<Answer> mFeedItems, boolean isOtherProfile, String otherProfileId, String otherProfileName, String  otherProfileDP) {
         this.mAnswers = mFeedItems;
+        this.isOtherProfile=isOtherProfile;
+        this.otherProfileId=otherProfileId;
+        this.otherProfileName=otherProfileName;
+        this.otherProfileDP=otherProfileDP;
+        if(isOtherProfile)
+            mUser = new User(otherProfileId,otherProfileName,otherProfileDP);
+        else
+            mUser = new User(mCurrentUserId,FeedFragment.sName,FeedFragment.sDpUrl);
     }
 
     @NonNull
@@ -60,7 +75,7 @@ public class UserAnswersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
             AllAnswersHolder allAnswersHolder = (AllAnswersHolder) holder;
             allAnswersHolder.wireViews();
-            bindPost(allAnswersHolder, question, itemContent, imagePosted, imageThumb, timeAgo, type);
+            bindPost(allAnswersHolder, question, itemContent, imagePosted, imageThumb, timeAgo, type, mUser);
             allPostsOverflowListener(allAnswersHolder, answer);
 
         }
@@ -75,7 +90,7 @@ public class UserAnswersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         return mAnswers.size();
     }
 
-    private void bindPost(@NonNull AllAnswersHolder holder, final String question, final String answer, final String publishedImg, final String publishedThumb, String timeAgo, int type) {
+    private void bindPost(@NonNull AllAnswersHolder holder, final String question, final String answer, final String publishedImg, final String publishedThumb, String timeAgo, int type, User user) {
         holder.setContent(answer, question);
         holder.setType(type);
         holder.setAnsImgView(publishedImg, publishedThumb);
