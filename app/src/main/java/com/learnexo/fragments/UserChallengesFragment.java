@@ -1,6 +1,5 @@
 package com.learnexo.fragments;
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,63 +15,50 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.main.R;
 import com.learnexo.main.UserAnswersRecyclerAdapter;
+import com.learnexo.main.UserChallengesRecyclerAdapter;
+import com.learnexo.main.UserQuesRecyclerAdapter;
 import com.learnexo.model.feed.answer.Answer;
+import com.learnexo.model.feed.question.Question;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileAnswers extends Fragment {
+public class UserChallengesFragment extends Fragment {
 
-    private List<Answer> mAnswers;
-    private UserAnswersRecyclerAdapter mAdapter;
-
+    private List<Question> mChallenges;
+    private UserChallengesRecyclerAdapter mAdapter;
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
-    private String otherProfileId;
-    private String otherProfileName;
-    private String otherProfileDP;
-    private boolean isOtherProfile;
-
-    public ProfileAnswers() {
+    public UserChallengesFragment() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_profile_answers, container, false);
 
-        Bundle arguments = getArguments();
-        if(arguments!=null) {
-            isOtherProfile = (boolean) arguments.get("IS_OTHER_PROFILE");
-            otherProfileId = (String) arguments.get("OTHER_PROFILE_ID");
-            otherProfileName = (String) arguments.get("OTHER_PROFILE_NAME");
-            otherProfileDP = (String) arguments.get("OTHER_PROFILE_DP");
-        }
+        View view = inflater.inflate(R.layout.fragment_profile_challenge, container, false);
 
         setupRecyclerView(view);
 
-        getAnswersFromDatabase();
+        getCracksFromDatabase();
 
         return view;
     }
 
-    private void getAnswersFromDatabase() {
-        String userId;
-        if(isOtherProfile)
-            userId=otherProfileId;
-        else
-            userId=FirebaseUtil.getCurrentUserId();
-        CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users").document(userId).collection("answers");
-        Query query = collectionReference.whereEqualTo("type", 1);
+    private void getCracksFromDatabase() {
+        CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("questions");
+        final Query query = collectionReference.whereEqualTo("challenge", true);
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                int totalChallenges = documents.size();
 
                 for(DocumentSnapshot documentSnapshot:documents){
-                    mAnswers.add(documentSnapshot.toObject(Answer.class));
+                    mChallenges.add(documentSnapshot.toObject(Question.class));
+
                 }
                 mAdapter.notifyDataSetChanged();
             }
@@ -80,14 +66,8 @@ public class ProfileAnswers extends Fragment {
     }
 
     private void setupRecyclerView(View view) {
-//        mAnswers = new ArrayList<>();
-//        mAdapter = new UserAnswersRecyclerAdapter(mAnswers);
-
-        mAnswers = new ArrayList<>();
-        if(isOtherProfile)
-            mAdapter = new UserAnswersRecyclerAdapter(mAnswers, true, otherProfileId, otherProfileName, otherProfileDP);
-        else
-            mAdapter = new UserAnswersRecyclerAdapter(mAnswers, false, null, null, null);
+        mChallenges = new ArrayList<>();
+        mAdapter = new UserChallengesRecyclerAdapter(mChallenges);
 
         RecyclerView profilePostsRecyclerView = view.findViewById(R.id.profilePostsRecycler);
         profilePostsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

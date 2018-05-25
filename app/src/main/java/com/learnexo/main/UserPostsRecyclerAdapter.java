@@ -79,7 +79,7 @@ public class UserPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
             AllPostsHolder allPostsHolder = (AllPostsHolder) holder;
             allPostsHolder.wireViews();
-            bindPost(allPostsHolder, itemContent, imagePosted, imageThumb, timeAgo, mUser);
+            bindPost(allPostsHolder, itemContent, imagePosted, imageThumb, timeAgo);
             allPostsOverflowListener(allPostsHolder, post);
 
         }
@@ -127,7 +127,8 @@ public class UserPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         });
     }
 
-    private void bindPost(@NonNull AllPostsHolder holder, final String answer, final String publishedImg, final String publishedThumb, String timeAgo, User user) {
+    private void bindPost(@NonNull AllPostsHolder holder, final String answer, final String publishedImg,
+                          final String publishedThumb, String timeAgo) {
         holder.setContent(answer);
         holder.setAnsImgView(publishedImg, publishedThumb);
         holder.setTime(timeAgo);

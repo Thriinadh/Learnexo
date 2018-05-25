@@ -22,7 +22,7 @@ import com.learnexo.util.FirebaseUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileCracksFragment extends Fragment {
+public class UserCracksFragment extends Fragment {
 
     private List<Answer> mAnswers;
     private UserAnswersRecyclerAdapter mAdapter;
@@ -33,7 +33,7 @@ public class ProfileCracksFragment extends Fragment {
     private String otherProfileDP;
     private boolean isOtherProfile;
 
-    public ProfileCracksFragment() {
+    public UserCracksFragment() {
         // Required empty public constructor
     }
 
@@ -80,9 +80,6 @@ public class ProfileCracksFragment extends Fragment {
     }
 
     private void setupRecyclerView(View view) {
-//        mAnswers = new ArrayList<>();
-//        mAdapter = new UserAnswersRecyclerAdapter(mAnswers);
-
         mAnswers = new ArrayList<>();
         if(isOtherProfile)
             mAdapter = new UserAnswersRecyclerAdapter(mAnswers, true, otherProfileId, otherProfileName, otherProfileDP);

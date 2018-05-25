@@ -19,7 +19,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.main.AllAnswersActivity;
-import com.learnexo.main.FriendProfileActivity;
+import com.learnexo.main.OthersProfileActivity;
 import com.learnexo.main.FullAnswerActivity;
 import com.learnexo.main.FullPostActivity;
 import com.learnexo.main.AnswerActivity;
@@ -188,7 +188,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.userImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = FriendProfileActivity.newIntent(mContext, publisher, postId);
+                Intent intent = OthersProfileActivity.newIntent(mContext, publisher, postId);
                 mContext.startActivity(intent);
             }
         });

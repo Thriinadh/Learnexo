@@ -31,7 +31,6 @@ public class UserAnswersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private Context mContext;
 
     private final String mCurrentUserId = FirebaseUtil.getCurrentUserId();
- //   User mUser = new User(mCurrentUserId,FeedFragment.sName,FeedFragment.sDpUrl);
 
     private boolean isOtherProfile;
     private String otherProfileId;
@@ -75,7 +74,7 @@ public class UserAnswersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
             AllAnswersHolder allAnswersHolder = (AllAnswersHolder) holder;
             allAnswersHolder.wireViews();
-            bindPost(allAnswersHolder, question, itemContent, imagePosted, imageThumb, timeAgo, type, mUser);
+            bindPost(allAnswersHolder, question, itemContent, imagePosted, imageThumb, timeAgo, type);
             allPostsOverflowListener(allAnswersHolder, answer);
 
         }
@@ -90,12 +89,13 @@ public class UserAnswersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         return mAnswers.size();
     }
 
-    private void bindPost(@NonNull AllAnswersHolder holder, final String question, final String answer, final String publishedImg, final String publishedThumb, String timeAgo, int type, User user) {
+    private void bindPost(@NonNull AllAnswersHolder holder, final String question, final String answer, final String publishedImg,
+                          final String publishedThumb, String timeAgo, int type) {
         holder.setContent(answer, question);
         holder.setType(type);
         holder.setAnsImgView(publishedImg, publishedThumb);
         holder.setTime(timeAgo);
-        holder.setUserData(FeedFragment.sName, FeedFragment.sDpUrl);
+        holder.setUserData(mUser.getFirstName(), mUser.getDpUrl());
     }
 
 

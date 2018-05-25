@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,35 +102,35 @@ public class ProfileFragment extends Fragment {
 
                 }else if(tabLayout.getSelectedTabPosition() == 1){
 
-                    fragment = new ProfileAnswers();
+                    fragment = new UserAnswersFragment();
                     replaceFragment(fragment);
 
                 }else if(tabLayout.getSelectedTabPosition() == 2){
 
-                    fragment = new ProfileCracksFragment();
+                    fragment = new UserCracksFragment();
                     replaceFragment(fragment);
 
                 }else if(tabLayout.getSelectedTabPosition() == 3){
 
-                    fragment = new ProfileQuestions();
+                    fragment = new UserQuestionsFragment();
                     replaceFragment(fragment);
 
                 }
                 else if(tabLayout.getSelectedTabPosition() == 4){
 
-                    fragment = new ProfileChallengeFragment();
+                    fragment = new UserChallengesFragment();
                     replaceFragment(fragment);
 
                 }
                 else if(tabLayout.getSelectedTabPosition() == 5){
 
-                    fragment = new ProfileInterests();
+                    fragment = new UserInterestsFragment();
                     replaceFragment(fragment);
 
                 }
                 else if(tabLayout.getSelectedTabPosition() == 6){
 
-                    fragment = new ProfileActivityFragment();
+                    fragment = new UserActivityFragment();
                     replaceFragment(fragment);
 
                 }

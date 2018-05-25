@@ -13,19 +13,19 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.learnexo.fragments.ProfileActivityFragment;
-import com.learnexo.fragments.ProfileAnswers;
-import com.learnexo.fragments.ProfileChallengeFragment;
-import com.learnexo.fragments.ProfileCracksFragment;
-import com.learnexo.fragments.ProfileInterests;
-import com.learnexo.fragments.ProfileQuestions;
+import com.learnexo.fragments.UserActivityFragment;
+import com.learnexo.fragments.UserAnswersFragment;
+import com.learnexo.fragments.UserChallengesFragment;
+import com.learnexo.fragments.UserCracksFragment;
+import com.learnexo.fragments.UserInterestsFragment;
+import com.learnexo.fragments.UserQuestionsFragment;
 import com.learnexo.fragments.UserPostsFragment;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class FriendProfileActivity extends AppCompatActivity {
+public class OthersProfileActivity extends AppCompatActivity {
 
     public static final String EXTRA_PUBLISHER_NAMEE = "com.learnexo.publisher_namee";
     public static final String EXTRA_PUBLISHER_DPP = "com.learnexo.publisher_dpp";
@@ -83,9 +83,9 @@ public class FriendProfileActivity extends AppCompatActivity {
         bundle.putBoolean("IS_OTHER_PROFILE",true);
 
         final Fragment userPostFragment= new UserPostsFragment();
-        if (savedInstanceState == null) {
-            userPostFragment.setArguments(bundle);
+        userPostFragment.setArguments(bundle);
 
+        if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_container, userPostFragment)
@@ -98,40 +98,45 @@ public class FriendProfileActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if(tabLayout.getSelectedTabPosition() == 0){
-                    //  tabLayout.setTabTextColors(Color.parseColor("#1da1f2"));
+
                     replaceFragment(userPostFragment);
 
                 }else if(tabLayout.getSelectedTabPosition() == 1){
 
-                    fragment = new ProfileAnswers();
+                    fragment = new UserAnswersFragment();
+                    fragment.setArguments(bundle);
                     replaceFragment(fragment);
 
                 }else if(tabLayout.getSelectedTabPosition() == 2){
-
-                    fragment = new ProfileCracksFragment();
+                    fragment = new UserCracksFragment();
+                    fragment.setArguments(bundle);
                     replaceFragment(fragment);
 
                 }else if(tabLayout.getSelectedTabPosition() == 3){
 
-                    fragment = new ProfileQuestions();
+                    fragment = new UserQuestionsFragment();
+                    fragment.setArguments(bundle);
                     replaceFragment(fragment);
 
                 }
                 else if(tabLayout.getSelectedTabPosition() == 4){
 
-                    fragment = new ProfileChallengeFragment();
+                    fragment = new UserChallengesFragment();
+                    fragment.setArguments(bundle);
                     replaceFragment(fragment);
 
                 }
                 else if(tabLayout.getSelectedTabPosition() == 5){
 
-                    fragment = new ProfileInterests();
+                    fragment = new UserInterestsFragment();
+                    fragment.setArguments(bundle);
                     replaceFragment(fragment);
 
                 }
                 else if(tabLayout.getSelectedTabPosition() == 6){
 
-                    fragment = new ProfileActivityFragment();
+                    fragment = new UserActivityFragment();
+                    fragment.setArguments(bundle);
                     replaceFragment(fragment);
 
                 }
@@ -152,7 +157,7 @@ public class FriendProfileActivity extends AppCompatActivity {
 
     public static Intent newIntent(Context context, User publisher, String postId) {
 
-        Intent intent = new Intent(context, FriendProfileActivity.class);
+        Intent intent = new Intent(context, OthersProfileActivity.class);
         intent.putExtra(EXTRA_PUBLISHER_NAMEE, publisher.getFirstName());
         intent.putExtra(EXTRA_PUBLISHER_DPP, publisher.getDpUrl());
         intent.putExtra("POST_ID", postId);

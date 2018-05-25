@@ -15,47 +15,65 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.main.R;
-import com.learnexo.main.UserQuesRecyclerAdapter;
-import com.learnexo.model.feed.question.Question;
+import com.learnexo.main.UserAnswersRecyclerAdapter;
+import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
+public class UserAnswersFragment extends Fragment {
 
-public class ProfileQuestions extends Fragment {
+    private List<Answer> mAnswers;
+    private UserAnswersRecyclerAdapter mAdapter;
 
-    private List<Question> mQuestions;
-    private UserQuesRecyclerAdapter mAdapter;
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
-    public ProfileQuestions() {
+    private String otherProfileId;
+    private String otherProfileName;
+    private String otherProfileDP;
+    private boolean isOtherProfile;
+
+    public UserAnswersFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_profile_questions, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile_answers, container, false);
+
+        Bundle arguments = getArguments();
+        if(arguments!=null) {
+            isOtherProfile = (boolean) arguments.get("IS_OTHER_PROFILE");
+            otherProfileId = (String) arguments.get("OTHER_PROFILE_ID");
+            otherProfileName = (String) arguments.get("OTHER_PROFILE_NAME");
+            otherProfileDP = (String) arguments.get("OTHER_PROFILE_DP");
+        }
 
         setupRecyclerView(view);
 
-        getCracksFromDatabase();
+        getAnswersFromDatabase();
 
         return view;
     }
 
-    private void getCracksFromDatabase() {
-        CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("questions");
-        Query query = collectionReference.whereEqualTo("challenge", false);
+    private void getAnswersFromDatabase() {
+        String userId;
+        if(isOtherProfile)
+            userId=otherProfileId;
+        else
+            userId=FirebaseUtil.getCurrentUserId();
+
+        CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users").document(userId).collection("answers");
+        Query query = collectionReference.whereEqualTo("type", 1);
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
 
                 for(DocumentSnapshot documentSnapshot:documents){
-                    mQuestions.add(documentSnapshot.toObject(Question.class));
+                    mAnswers.add(documentSnapshot.toObject(Answer.class));
                 }
                 mAdapter.notifyDataSetChanged();
             }
@@ -63,8 +81,11 @@ public class ProfileQuestions extends Fragment {
     }
 
     private void setupRecyclerView(View view) {
-        mQuestions = new ArrayList<>();
-        mAdapter = new UserQuesRecyclerAdapter(mQuestions);
+        mAnswers = new ArrayList<>();
+        if(isOtherProfile)
+            mAdapter = new UserAnswersRecyclerAdapter(mAnswers, true, otherProfileId, otherProfileName, otherProfileDP);
+        else
+            mAdapter = new UserAnswersRecyclerAdapter(mAnswers, false, null, null, null);
 
         RecyclerView profilePostsRecyclerView = view.findViewById(R.id.profilePostsRecycler);
         profilePostsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
