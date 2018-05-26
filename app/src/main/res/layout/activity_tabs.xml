@@ -43,6 +43,18 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <!--<EditText-->
+        <!--android:id="@+id/searchLearnexo"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="52dp"-->
+        <!--android:hint="Search Learnexo..."-->
+        <!--android:paddingLeft="20dp"-->
+        <!--android:layout_marginTop="4dp"-->
+        <!--android:layout_marginRight="16dp"-->
+        <!--android:layout_marginLeft="16dp"-->
+        <!--android:visibility="gone"-->
+        <!--style="@style/edit_profile_btn"/>-->
+
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"

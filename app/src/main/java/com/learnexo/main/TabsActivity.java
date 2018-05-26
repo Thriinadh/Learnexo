@@ -10,6 +10,7 @@ import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +56,9 @@ public class TabsActivity extends AppCompatActivity {
 
     private boolean save_profile;
 
+    private AppBarLayout appBarLayout;
+    private Toolbar toolbar;
+    private EditText searchLearnexo;
     private TextView mToolbarTitle;
     private TabLayout tabLayout;
     private CardView mCardView;
@@ -124,6 +130,9 @@ public class TabsActivity extends AppCompatActivity {
     }
 
     private void wireViews() {
+        appBarLayout = findViewById(R.id.appBarLayout);
+        toolbar = findViewById(R.id.toolbar);
+       // searchLearnexo = findViewById(R.id.searchLearnexo);
         FAB_Layout = findViewById(R.id.FAB_Layout);
         mCardView = findViewById(R.id.cardView);
 
@@ -358,7 +367,17 @@ public class TabsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
-        return super.onCreateOptionsMenu(menu);
+       // return super.onCreateOptionsMenu(menu);
+
+        MenuItem searchItem = menu.findItem(R.id.search);
+
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setQueryHint("Search Learnexo...");
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+      //  searchView.setOnQueryTextListener(this);
+      //  searchView.setIconified(false);
+
+        return true;
     }
 
     @Override
@@ -373,6 +392,9 @@ public class TabsActivity extends AppCompatActivity {
                 setupIntent.putExtra("IS_PROFILE_EDIT",true);
                 startActivity(setupIntent);
                 return  true;
+            case R.id.search:
+              //  mFloatingBtn.hide();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
