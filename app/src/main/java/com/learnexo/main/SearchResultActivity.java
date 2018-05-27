@@ -1,12 +1,14 @@
 package com.learnexo.main;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -15,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -45,17 +46,6 @@ public class SearchResultActivity extends AppCompatActivity {
         searchRecycler.setHasFixedSize(true);
         searchRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-//        String searchText = searchUser.getText().toString();
-//        firebaseUserSearch(searchText);
-
-//        searchBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //  Toast.makeText(SearchResultActivity.this, "Search", Toast.LENGTH_SHORT).show();
-//                String searchText = searchUser.getText().toString();
-//                firebaseUserSearch(searchText);
-//            }
-//        });
 
         searchUser.addTextChangedListener(new TextWatcher() {
             @Override
@@ -85,7 +75,7 @@ public class SearchResultActivity extends AppCompatActivity {
 
     }
 
-    private void firebaseUserSearch(String searchText) {
+    private void firebaseUserSearch(final String searchText) {
 
         Query query = FirebaseFirestore.getInstance().collection("Users").orderBy("firstName").startAt(searchText).endAt(searchText+ "\uf8ff");
 
@@ -96,16 +86,14 @@ public class SearchResultActivity extends AppCompatActivity {
         adapter = new FirestoreRecyclerAdapter<User, UsersViewHolder>(options) {
             @Override
             public void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull User model) {
-                // Bind the Chat object to the ChatHolder
-                // ...
-                holder.setDetails(getApplicationContext(), model.getFirstName(), model.getDpUrl());
+                int i=searchText.length();
+                holder.setDetails(getApplicationContext(), model.getFirstName(), model.getDpUrl(), i);
             }
 
             @NonNull
             @Override
             public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup group, int i) {
-                // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.message for each item
+
                 View view = LayoutInflater.from(group.getContext())
                         .inflate(R.layout.search_profile, group, false);
 
@@ -130,27 +118,16 @@ public class SearchResultActivity extends AppCompatActivity {
 
         }
 
-        public void setDetails(Context context, String userNamee, String userImage) {
+        public void setDetails(Context context, String userNamee, String userImage, int i) {
 
             userName = mView.findViewById(R.id.userName);
             profileImage = mView.findViewById(R.id.profile_image);
 
-            userName.setText(userNamee);
+            SpannableStringBuilder str = new SpannableStringBuilder(userNamee);
+            str.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, i, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            userName.setText(str);
             Glide.with(context).load(userImage).into(profileImage);
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-
     }
 
 }
