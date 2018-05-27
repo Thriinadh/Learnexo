@@ -19,8 +19,10 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Users\hp\Desktop\icon\ic_notifications_off_black_24dp\android\drawable-hdpi\ic_notifications_off_black_24dp.png" />
-                                      <entry key="outputName" value="ic_notif_off" />
+                                      <entry key="imageAsset" value="C:\Users\hp\Desktop\fullpostIcons\2x\baseline_thumb_up_alt_black_24dp.png" />
+                                      <entry key="outputName" value="post_likeblue_icon" />
+                                      <entry key="theme" value="CUSTOM" />
+                                      <entry key="themeColor" value="1da1f2" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -31,6 +33,30 @@
                         <option name="values">
                           <map>
                             <entry key="outputIconType" value="ACTIONBAR" />
+                          </map>
+                        </option>
+                      </PersistentState>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </PersistentState>
+          </value>
+        </entry>
+        <entry key="vectorWizard">
+          <value>
+            <PersistentState>
+              <option name="children">
+                <map>
+                  <entry key="vectorAssetStep">
+                    <value>
+                      <PersistentState>
+                        <option name="values">
+                          <map>
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_outline_search_24px" />
+                            <entry key="overrideSize" value="true" />
+                            <entry key="sourceFile" value="C:\Users\hp\Desktop\outline-search-24px.svg" />
                           </map>
                         </option>
                       </PersistentState>
