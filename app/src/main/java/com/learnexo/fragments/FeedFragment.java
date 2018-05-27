@@ -95,6 +95,24 @@ public class FeedFragment extends Fragment {
         });
     }
 
+
+    //    POST,ANSWER,CRACK,QUESTION,CHALLENGE,
+    //    UP_VOTE,DOWN_VOTE,COMMENT,SHARE,BOOKMARK,
+    //    FOLLOW,TAG,SEARCH,
+    //
+    //    EDIT, COMMENT_ON_QUES,
+    //
+    //    SUBSCRIBE,COMPLETE_SUB,COMPLETE_TEST,
+    //    ADD_IVQ,ADD_TEST_Q,
+    //    REQUEST_HELP,GUIDE,
+    //    PROFILE_UPDATE,INTEREST_UPDATE
+
+    //    interests, related topics, trending, search history, activity history,
+    //    topProfiles, nearby, girls, priority profiles, visited profiles
+    //    show related topics to follow
+    //    show related people to follow
+    //    news
+
     private void generateFeedItemList() {
 
         mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("interests").
