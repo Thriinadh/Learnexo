@@ -1,9 +1,9 @@
 package com.learnexo.main;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -28,6 +27,7 @@ public class SearchResultActivity extends AppCompatActivity {
     private RecyclerView searchRecycler;
     private EditText searchUser;
     private ImageView searchBtn;
+    FirestoreRecyclerOptions<User> options;
     private FirestoreRecyclerAdapter<User, UsersViewHolder> adapter;
 
     @Override
@@ -42,41 +42,46 @@ public class SearchResultActivity extends AppCompatActivity {
         searchRecycler.setHasFixedSize(true);
         searchRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-        String searchText = searchUser.getText().toString();
-        firebaseUserSearch(searchText);
+        final String searchText = searchUser.getText().toString();
+
+        noResultAdapter();
+
 
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              //  Toast.makeText(SearchResultActivity.this, "Search", Toast.LENGTH_SHORT).show();
-//                String searchText = searchUser.getText().toString();
-//                firebaseUserSearch(searchText);
+                Query query = FirebaseFirestore.getInstance().collection("Users").orderBy("firstName").startAt(searchText).endAt(searchText +"\uf8ff");
+                options = new FirestoreRecyclerOptions.Builder<User>()
+                        .setQuery(query, User.class)
+                        .build();
+
+                createAdapter(options);
+
+                searchRecycler.setAdapter(adapter);
             }
         });
 
     }
 
-    private void firebaseUserSearch(String searchText) {
+    private void noResultAdapter() {
+        Query query = FirebaseFirestore.getInstance().collection("subjects");
+        options = new FirestoreRecyclerOptions.Builder<User>().
+                setQuery(query, User.class).
+                build();
+        createAdapter(options);
+    }
 
-        Query query = FirebaseFirestore.getInstance().collection("Users").orderBy("firstName");
-
-        FirestoreRecyclerOptions<User> options = new FirestoreRecyclerOptions.Builder<User>()
-                .setQuery(query, User.class)
-                .build();
-
+    private void createAdapter(final FirestoreRecyclerOptions<User> options) {
         adapter = new FirestoreRecyclerAdapter<User, UsersViewHolder>(options) {
             @Override
             public void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull User model) {
-                // Bind the Chat object to the ChatHolder
-                // ...
-                holder.setDetails(getApplicationContext(), model.getFirstName(), model.getDpUrl());
+                if(model!=null)
+                    holder.setDetails(getApplicationContext(), model.getFirstName(), model.getDpUrl());
             }
 
             @NonNull
             @Override
             public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup group, int i) {
-                // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.message for each item
                 View view = LayoutInflater.from(group.getContext())
                         .inflate(R.layout.search_profile, group, false);
 
@@ -84,8 +89,6 @@ public class SearchResultActivity extends AppCompatActivity {
             }
 
         };
-
-        searchRecycler.setAdapter(adapter);
     }
 
     public static class UsersViewHolder extends RecyclerView.ViewHolder {
