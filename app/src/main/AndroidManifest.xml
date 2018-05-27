@@ -70,7 +70,8 @@
         <activity android:name=".AllAnswersActivity" />
         <activity android:name=".EduDetailsActivity" />
         <activity android:name=".OthersProfileActivity" />
-        <activity android:name=".CommentsActivity"></activity>
+        <activity android:name=".CommentsActivity" />
+        <activity android:name=".SearchResultActivity"></activity>
     </application>
 
 </manifest>

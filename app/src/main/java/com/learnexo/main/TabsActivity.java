@@ -2,10 +2,12 @@ package com.learnexo.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,33 +22,50 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.learnexo.fragments.ConnectFragment;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.ProfileFragment;
 import com.learnexo.fragments.TextFragment;
 import com.learnexo.fragments.VideoFragment;
+import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.learnexo.main.SetupActivity.EXTRA_IS_SKIPPED;
 
@@ -56,9 +75,9 @@ public class TabsActivity extends AppCompatActivity {
 
     private boolean save_profile;
 
+
     private AppBarLayout appBarLayout;
     private Toolbar toolbar;
-    private EditText searchLearnexo;
     private TextView mToolbarTitle;
     private TabLayout tabLayout;
     private CardView mCardView;
@@ -73,6 +92,9 @@ public class TabsActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
     private TabPagerAdapter mAdapter;
+
+
+  //  private List<User> users=new ArrayList<>();
 
     private int[] tabIcons = {
             R.drawable.ic_tab_home,
@@ -367,18 +389,11 @@ public class TabsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
-       // return super.onCreateOptionsMenu(menu);
-
-        MenuItem searchItem = menu.findItem(R.id.search);
-
-        SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setQueryHint("Search Learnexo...");
-        searchView.setMaxWidth(Integer.MAX_VALUE);
-      //  searchView.setOnQueryTextListener(this);
-      //  searchView.setIconified(false);
-
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -393,11 +408,48 @@ public class TabsActivity extends AppCompatActivity {
                 startActivity(setupIntent);
                 return  true;
             case R.id.search:
-              //  mFloatingBtn.hide();
+                Intent intent = new Intent(TabsActivity.this, SearchResultActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void onShowPopup(View v){
+
+        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        // inflate the custom popup layout
+        View inflatedView = layoutInflater.inflate(R.layout.activity_search_result, null,false);
+        // find the ListView in the popup layout
+//        ListView listView = (ListView)inflatedView.findViewById(R.id.commentsListView);
+//        LinearLayout headerView = (LinearLayout)inflatedView.findViewById(R.id.headerLayout);
+        // get device size
+        Display display = getWindowManager().getDefaultDisplay();
+        final Point size = new Point();
+        display.getSize(size);
+//        mDeviceHeight = size.y;
+        DisplayMetrics displayMetrics = TabsActivity.this.getResources().getDisplayMetrics();
+        int width = displayMetrics.widthPixels;
+        int height = displayMetrics.heightPixels;
+
+
+        // fill the data to the list items
+//        setSimpleList(listView);
+
+        // set height depends on the device size
+        PopupWindow popWindow = new PopupWindow(inflatedView, width,height, true );
+        // set a background drawable with rounders corners
+      //  popWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.popup_bg));
+
+        popWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
+        popWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
+
+      //  popWindow.setAnimationStyle(R.style.PopupAnimation);
+
+        // show the popup at bottom of the screen and set some margin at bottom ie,
+        popWindow.showAtLocation(v, Gravity.TOP, 0,0);
     }
 
     private void gotoFeedtab() {
@@ -578,4 +630,5 @@ public class TabsActivity extends AppCompatActivity {
 
         }
     }
+
 }
