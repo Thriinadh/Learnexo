@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -19,11 +20,14 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
+import com.learnexo.model.feed.likediv.Comment;
 import com.learnexo.model.feed.post.PostDetails;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -37,6 +41,9 @@ public class FullPostActivity extends AppCompatActivity {
     private static final String EXTRA_IMAGE = "com.learnexo.imageposted";
     private static final String EXTRA_THUMB = "com.learnexo.imagepostedthumb";
     private static final String EXTRA_TIME = "com.learnexo.postedtime";
+
+    private List<Comment> mComments;
+    private UserCommentsRecyclerAdapter mAdapter;
 
     private TextView fullText;
     private ImageView postedImage;
@@ -67,6 +74,13 @@ public class FullPostActivity extends AppCompatActivity {
 
         wireViews();
         setupToolbar();
+
+        mComments = new ArrayList<>();
+        mAdapter = new UserCommentsRecyclerAdapter(mComments);
+
+        commentsRecycler = findViewById(R.id.commentsRecycler);
+        commentsRecycler.setLayoutManager(new LinearLayoutManager(FullPostActivity.this));
+        commentsRecycler.setAdapter(mAdapter);
 
         Intent intent=getIntent();
         publisherId=intent.getStringExtra("PUBLISHER_ID");
@@ -187,7 +201,7 @@ public class FullPostActivity extends AppCompatActivity {
         userName = findViewById(R.id.userNameTView);
         timeOfPost = findViewById(R.id.feed_time);
         postedImage = findViewById(R.id.postedImage);
-        commentsRecycler = findViewById(R.id.commentsRecycler);
+
         commentsImage = findViewById(R.id.commentsImage);
         commentBtn = findViewById(R.id.commentBtn);
 
