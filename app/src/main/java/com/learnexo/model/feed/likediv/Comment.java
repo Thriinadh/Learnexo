@@ -10,15 +10,19 @@ public class Comment {
     private String publisherId;
     private String comment;
     private @ServerTimestamp Date commentTime;
+    private String name;
+    private String userDp;
 
     public Comment() {}
 
-    public Comment(String itemId, String commenterId, String publisherId, String comment, Date commentTime) {
+    public Comment(String itemId, String commenterId, String publisherId, String comment, Date commentTime, String name, String userDp) {
         this.itemId = itemId;
         this.commenterId = commenterId;
         this.publisherId = publisherId;
         this.comment = comment;
         this.commentTime = commentTime;
+        this.name = name;
+        this.userDp = userDp;
     }
 
     public String getItemId() {
@@ -59,5 +63,21 @@ public class Comment {
 
     public void setCommentTime(Date commentTime) {
         this.commentTime = commentTime;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUserDp() {
+        return userDp;
+    }
+
+    public void setUserDp(String userDp) {
+        this.userDp = userDp;
     }
 }

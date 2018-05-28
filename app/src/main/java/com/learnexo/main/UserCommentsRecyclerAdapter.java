@@ -20,6 +20,8 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.learnexo.util.DateUtil.convertDateToAgo;
+
 public class UserCommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private List<Comment> mComments;
@@ -42,9 +44,15 @@ public class UserCommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
+        Comment comment = mComments.get(position);
+        String content = comment.getComment();
+        String timeAgo = convertDateToAgo(comment.getCommentTime());
+        String publisherName = comment.getName();
+        String publisherDp = comment.getPublisherId();
+
         AllCommentsHolder allCommentsHolder = (AllCommentsHolder) holder;
         allCommentsHolder.wireViews();
-     //   bindPost(allCommentsHolder, );
+        bindPost(allCommentsHolder, content, timeAgo, publisherDp, publisherName);
 
     }
 
@@ -53,10 +61,10 @@ public class UserCommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
         return mComments.size();
     }
 
-    private void bindPost(@NonNull AllCommentsHolder holder, final String answer, String timeAgo) {
+    private void bindPost(@NonNull AllCommentsHolder holder, String answer, String timeAgo, String publisherDp, String publisherName) {
         holder.setContent(answer);
         holder.setTime(timeAgo);
-        holder.setUserData(FeedFragment.sName, FeedFragment.sDpUrl);
+        holder.setUserData(publisherName, publisherDp);
     }
 
     public class AllCommentsHolder extends RecyclerView.ViewHolder {
@@ -89,14 +97,16 @@ public class UserCommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
 
         public void setContent(String answer) {
             postContent.setText(answer);
-            postContent.post(new Runnable() {
-                @Override
-                public void run() {
-                    int lineCount = postContent.getLineCount();
-                    if(lineCount>=3) {}
-                       // seeMore.setVisibility(View.VISIBLE);
-                }
-            });
+
+//            postContent.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    int noOfChars = postContent.length();
+//                    if(noOfChars>=140) {
+//                        postContent.append("...Read more");
+//                    }
+//                }
+//            });
 
         }
 

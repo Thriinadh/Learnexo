@@ -15,9 +15,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.likediv.Comment;
@@ -62,6 +64,10 @@ public class FullPostActivity extends AppCompatActivity {
     private CircleImageView commentsImage;
     private TextView commentBtn;
     private RecyclerView commentsRecycler;
+    private TextView seeAllComments;
+
+    private String publisherDP;
+    private String publisherName;
 
     private ImageView fullPostLikeBtn;
     private ImageView overFlowBtn;
@@ -88,9 +94,9 @@ public class FullPostActivity extends AppCompatActivity {
         postData = intent.getStringExtra(EXTRA_CONTENT);
         String imagePosted = intent.getStringExtra(EXTRA_IMAGE);
         String imageThumb = intent.getStringExtra(EXTRA_THUMB);
-        String publisherName = intent.getStringExtra(EXTRA_PUBLISHER_NAME);
+        publisherName = intent.getStringExtra(EXTRA_PUBLISHER_NAME);
         String posTime = intent.getStringExtra(EXTRA_TIME);
-        String publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DP);
+        publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DP);
 
         final User publisher = new User(publisherId, publisherName, publisherDP);
 
@@ -108,8 +114,29 @@ public class FullPostActivity extends AppCompatActivity {
                 Intent intent1 = new Intent(FullPostActivity.this, CommentsActivity.class);
                 intent1.putExtra("EXTRA_PUBLISHER_IDDD", publisherId);
                 intent1.putExtra("EXTRA_POST_ITEM_ID", postId);
+                intent1.putExtra("PUBLISHER_NAME", publisherName);
+                intent1.putExtra("PUBLISHER_DP", publisherDP);
                 startActivity(intent1);
               //  onShowPopup(view);
+            }
+        });
+
+        seeAllComments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").document(postId).collection("comments").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                        for(DocumentSnapshot documentSnapshot: documents) {
+                            Comment comment = documentSnapshot.toObject(Comment.class);
+                            mComments.add(comment);
+                        }
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+
             }
         });
 
@@ -202,6 +229,7 @@ public class FullPostActivity extends AppCompatActivity {
         timeOfPost = findViewById(R.id.feed_time);
         postedImage = findViewById(R.id.postedImage);
 
+        seeAllComments = findViewById(R.id.seeAllComments);
         commentsImage = findViewById(R.id.commentsImage);
         commentBtn = findViewById(R.id.commentBtn);
 

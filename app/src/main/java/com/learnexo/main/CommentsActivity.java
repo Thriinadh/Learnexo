@@ -22,6 +22,8 @@ public class CommentsActivity extends AppCompatActivity {
     Comment comment;
     private String publisherId;
     private String postId;
+    private String publisherName;
+    private String publisherDp;
 
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
@@ -35,6 +37,8 @@ public class CommentsActivity extends AppCompatActivity {
 
         publisherId = getIntent().getStringExtra("EXTRA_PUBLISHER_IDDD");
         postId = getIntent().getStringExtra("EXTRA_POST_ITEM_ID");
+        publisherName = getIntent().getStringExtra("PUBLISHER_NAME");
+        publisherDp = getIntent().getStringExtra("PUBLISHER_DP");
 
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,6 +49,8 @@ public class CommentsActivity extends AppCompatActivity {
                 comment.setCommenterId(FirebaseUtil.getCurrentUserId());
                 comment.setPublisherId(publisherId);
                 comment.setItemId(postId);
+                comment.setName(publisherName);
+                comment.setPublisherId(publisherDp);
 
                 mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts")
                         .document(postId).collection("comments").add(comment).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

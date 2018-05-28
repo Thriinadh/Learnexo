@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="#e6e6e6">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/circleImageView"
@@ -22,8 +23,8 @@
         android:id="@+id/userName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
         android:textColor="#1a1a1a"
         app:layout_constraintStart_toEndOf="@+id/circleImageView"
@@ -33,8 +34,8 @@
         android:id="@+id/answeredTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
         app:layout_constraintStart_toEndOf="@+id/circleImageView"
         app:layout_constraintTop_toBottomOf="@+id/userName" />
 
@@ -49,7 +50,6 @@
         android:layout_marginTop="8dp"
         android:gravity="start"
         android:textColor="#404040"
-        android:maxLines="3"
         android:text="@string/tested_text"
         android:textAlignment="textStart"
         android:textSize="16sp"
@@ -84,20 +84,20 @@
         app:layout_constraintStart_toEndOf="@id/answerContent"
         app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
 
-    <TextView
-        android:id="@+id/seeMore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginBottom="4dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginRight="2dp"
-        android:text="...See more"
-        android:textAlignment="viewEnd"
-        android:textColor="@android:color/darker_gray"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/answerContent"
-        app:layout_constraintEnd_toEndOf="@+id/answerContent" />
+    <!--<TextView-->
+        <!--android:id="@+id/seeMore"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="end"-->
+        <!--android:layout_marginBottom="4dp"-->
+        <!--android:layout_marginEnd="2dp"-->
+        <!--android:layout_marginRight="2dp"-->
+        <!--android:text="...See more"-->
+        <!--android:textAlignment="viewEnd"-->
+        <!--android:textColor="@android:color/darker_gray"-->
+        <!--android:textSize="16sp"-->
+        <!--app:layout_constraintBottom_toBottomOf="@+id/answerContent"-->
+        <!--app:layout_constraintEnd_toEndOf="@+id/answerContent" />-->
 
     <TextView
         android:id="@+id/replyTView"
