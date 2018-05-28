@@ -44,14 +44,16 @@ public class UserCommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
         Comment comment = mComments.get(position);
-        String content = comment.getComment();
-        String timeAgo = convertDateToAgo(comment.getCommentTime());
-        String publisherName = comment.getCommenterName();
-        String publisherDp = comment.getPublisherId();
+        if(comment != null) {
+            String content = comment.getComment();
+            String timeAgo = convertDateToAgo(comment.getCommentTime());
+            String publisherName = comment.getCommenterName();
+            String publisherDp = comment.getCommenterDp();
 
-        AllCommentsHolder allCommentsHolder = (AllCommentsHolder) holder;
-        allCommentsHolder.wireViews();
-        bindPost(allCommentsHolder, content, timeAgo, publisherDp, publisherName);
+            AllCommentsHolder allCommentsHolder = (AllCommentsHolder) holder;
+            allCommentsHolder.wireViews();
+            bindPost(allCommentsHolder, content, timeAgo, publisherDp, publisherName);
+        }
 
     }
 
@@ -88,7 +90,7 @@ public class UserCommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
             userName = mView.findViewById(R.id.userName);
             answeredTime = mView.findViewById(R.id.answeredTime);
             overflowImgView = mView.findViewById(R.id.overflow);
-            postContent = mView.findViewById(R.id.answerContent);
+            postContent = mView.findViewById(R.id.commentData);
             replyTView = mView.findViewById(R.id.replyTView);
             upvoteTView = mView.findViewById(R.id.upvoteTView);
             downvoteTView = mView.findViewById(R.id.downvoteTView);
@@ -96,16 +98,6 @@ public class UserCommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
 
         public void setContent(String answer) {
             postContent.setText(answer);
-
-//            postContent.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    int noOfChars = postContent.length();
-//                    if(noOfChars>=140) {
-//                        postContent.append("...Read more");
-//                    }
-//                }
-//            });
 
         }
 

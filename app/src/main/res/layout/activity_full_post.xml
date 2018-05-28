@@ -19,7 +19,7 @@
         app:popupTheme="@style/customPopupStyle"
         app:titleTextAppearance="@style/ActionBar.nameText" />
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/likesLayout"
@@ -123,11 +123,10 @@
                 android:id="@+id/viewsText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/commentsRelative"
+                app:layout_constraintTop_toBottomOf="@+id/postedImage"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginLeft="16dp"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginLeft="16dp" />
 
             <View
                 android:layout_width="match_parent"
@@ -143,11 +142,12 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/viewsText"
+                android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
-                android:background="#f2f2f2"
-                app:layout_constraintBottom_toTopOf="@+id/likesLayoutt">
+                android:background="#f2f2f2">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/commentsImage"
@@ -190,76 +190,78 @@
                 android:id="@+id/commentsRecycler"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
                 android:nestedScrollingEnabled="false"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/commentsRelative" />
 
-            <RelativeLayout
-                android:id="@+id/likesLayoutt"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:visibility="gone"
-                android:background="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+            <!--<RelativeLayout-->
+                <!--android:id="@+id/likesLayoutt"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="48dp"-->
+                <!--android:visibility="gone"-->
+                <!--android:background="@color/white"-->
+                <!--app:layout_constraintBottom_toBottomOf="parent"-->
+                <!--app:layout_constraintEnd_toEndOf="parent"-->
+                <!--app:layout_constraintStart_toStartOf="parent">-->
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_grey"/>
+                <!--<View-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="1dp"-->
+                    <!--android:background="@color/light_grey"/>-->
 
-                <ImageView
-                    android:id="@+id/full_post_likee"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginLeft="12dp"
-                    android:layout_centerVertical="true"
-                    app:srcCompat="@drawable/post_like_icn" />
+                <!--<ImageView-->
+                    <!--android:id="@+id/full_post_likee"-->
+                    <!--android:layout_width="32dp"-->
+                    <!--android:layout_height="32dp"-->
+                    <!--android:layout_marginLeft="12dp"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--app:srcCompat="@drawable/post_like_icn" />-->
 
-                <TextView
-                    android:id="@+id/likesCountt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/full_post_likee"
-                    android:layout_marginLeft="4dp"
-                    android:layout_centerVertical="true"
-                    android:text="2.1k likes"/>
+                <!--<TextView-->
+                    <!--android:id="@+id/likesCountt"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_toRightOf="@+id/full_post_likee"-->
+                    <!--android:layout_marginLeft="4dp"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:text="2.1k likes"/>-->
 
-                <ImageView
-                    android:id="@+id/full_post_commentt"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_toRightOf="@+id/likesCountt"
-                    android:layout_centerVertical="true"
-                    app:srcCompat="@drawable/post_comment_icon" />
+                <!--<ImageView-->
+                    <!--android:id="@+id/full_post_commentt"-->
+                    <!--android:layout_width="32dp"-->
+                    <!--android:layout_height="32dp"-->
+                    <!--android:layout_marginLeft="8dp"-->
+                    <!--android:layout_toRightOf="@+id/likesCountt"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--app:srcCompat="@drawable/post_comment_icon" />-->
 
-                <ImageView
-                    android:id="@+id/full_post_sharee"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_toRightOf="@+id/full_post_commentt"
-                    android:layout_centerVertical="true"
-                    app:srcCompat="@drawable/post_share_icon" />
+                <!--<ImageView-->
+                    <!--android:id="@+id/full_post_sharee"-->
+                    <!--android:layout_width="32dp"-->
+                    <!--android:layout_height="32dp"-->
+                    <!--android:layout_marginLeft="8dp"-->
+                    <!--android:layout_toRightOf="@+id/full_post_commentt"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--app:srcCompat="@drawable/post_share_icon" />-->
 
-                <ImageView
-                    android:id="@+id/full_post_bookmarkk"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    app:srcCompat="@drawable/post_bookmark_icon" />
+                <!--<ImageView-->
+                    <!--android:id="@+id/full_post_bookmarkk"-->
+                    <!--android:layout_width="32dp"-->
+                    <!--android:layout_height="32dp"-->
+                    <!--android:layout_marginRight="12dp"-->
+                    <!--android:layout_alignParentRight="true"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--app:srcCompat="@drawable/post_bookmark_icon" />-->
 
-            </RelativeLayout>
+            <!--</RelativeLayout>-->
 
 
         </android.support.constraint.ConstraintLayout>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
     <RelativeLayout
         android:id="@+id/likesLayout"
