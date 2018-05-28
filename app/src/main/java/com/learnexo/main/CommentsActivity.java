@@ -1,5 +1,6 @@
 package com.learnexo.main;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.learnexo.fragments.FeedFragment;
 import com.learnexo.model.feed.likediv.Comment;
 import com.learnexo.util.FirebaseUtil;
 
@@ -22,8 +24,6 @@ public class CommentsActivity extends AppCompatActivity {
     Comment comment;
     private String publisherId;
     private String postId;
-    private String publisherName;
-    private String publisherDp;
 
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
@@ -34,11 +34,11 @@ public class CommentsActivity extends AppCompatActivity {
 
         doneBtn = findViewById(R.id.doneBtn);
         enterContent = findViewById(R.id.enterContent);
+        Intent intent = getIntent();
 
-        publisherId = getIntent().getStringExtra("EXTRA_PUBLISHER_IDDD");
-        postId = getIntent().getStringExtra("EXTRA_POST_ITEM_ID");
-        publisherName = getIntent().getStringExtra("PUBLISHER_NAME");
-        publisherDp = getIntent().getStringExtra("PUBLISHER_DP");
+        publisherId = intent.getStringExtra("EXTRA_PUBLISHER_IDDD");
+        postId = intent.getStringExtra("EXTRA_POST_ITEM_ID");
+
 
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,9 +48,9 @@ public class CommentsActivity extends AppCompatActivity {
                 comment.setComment(content);
                 comment.setCommenterId(FirebaseUtil.getCurrentUserId());
                 comment.setPublisherId(publisherId);
-                comment.setItemId(postId);
-                comment.setName(publisherName);
-                comment.setPublisherId(publisherDp);
+                comment.setFeedItemId(postId);
+                comment.setCommenterName(FeedFragment.sName);
+                comment.setPublisherId(FeedFragment.sDpUrl);
 
                 mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts")
                         .document(postId).collection("comments").add(comment).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

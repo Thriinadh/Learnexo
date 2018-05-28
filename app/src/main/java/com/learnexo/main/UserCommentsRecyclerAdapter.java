@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.learnexo.fragments.FeedFragment;
 import com.learnexo.model.feed.likediv.Comment;
 import com.learnexo.util.FirebaseUtil;
 
@@ -47,7 +46,7 @@ public class UserCommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
         Comment comment = mComments.get(position);
         String content = comment.getComment();
         String timeAgo = convertDateToAgo(comment.getCommentTime());
-        String publisherName = comment.getName();
+        String publisherName = comment.getCommenterName();
         String publisherDp = comment.getPublisherId();
 
         AllCommentsHolder allCommentsHolder = (AllCommentsHolder) holder;

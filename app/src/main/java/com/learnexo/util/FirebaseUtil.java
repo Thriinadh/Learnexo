@@ -140,6 +140,23 @@ public class FirebaseUtil {
         }
     }
 
+    public void pushFeed(FeedItem answer, Task<DocumentReference> documentReferenceTask, String userId) {
+        List<User> friends;
+        List<User> friendsWithLessFollowers=null;
+        String feedInboxPath="feed_inbox";
+        try {
+            friends = new FriendsFetcher().execute(userId).get();
+            friendsWithLessFollowers = new RemoveFriends().execute(friends).get();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        pushFeedToFriends(friendsWithLessFollowers, answer, documentReferenceTask, feedInboxPath);
+    }
+
     public class RemoveFriends extends AsyncTask<Object, Object,List<User>> {
 
         @Override

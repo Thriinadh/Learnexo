@@ -356,6 +356,11 @@ public class AnswerActivity extends AppCompatActivity {
                                                     document(answer.getQuesId()).update(map);
 
                                             mFirebaseUtil.saveInterestFeedItem(answer, documentReferenceTask, interestFeedPath);
+
+
+                                            mFirebaseUtil.pushFeed(answer, documentReferenceTask, mUserId);
+
+
                                             gotoFeed();
                                         }
                                     }
@@ -385,6 +390,8 @@ public class AnswerActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
 
     @Override

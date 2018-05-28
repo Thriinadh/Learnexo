@@ -114,8 +114,6 @@ public class FullPostActivity extends AppCompatActivity {
                 Intent intent1 = new Intent(FullPostActivity.this, CommentsActivity.class);
                 intent1.putExtra("EXTRA_PUBLISHER_IDDD", publisherId);
                 intent1.putExtra("EXTRA_POST_ITEM_ID", postId);
-                intent1.putExtra("PUBLISHER_NAME", publisherName);
-                intent1.putExtra("PUBLISHER_DP", publisherDP);
                 startActivity(intent1);
               //  onShowPopup(view);
             }

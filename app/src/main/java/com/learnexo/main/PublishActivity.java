@@ -41,7 +41,6 @@ import com.learnexo.fragments.FeedFragment;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.feed.question.Question;
-import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -52,10 +51,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
@@ -296,7 +293,6 @@ public class PublishActivity extends AppCompatActivity {
             path="questions";
         }
         final String interestFeedPath="interest_feed";
-        final String feedInboxPath="feed_inbox";
 
         final Task<DocumentReference> documentReferenceTask = mFirebaseUtil.mFirestore.collection("users")
                 .document(mUserId).collection(path).add(mFeedItem);
@@ -312,19 +308,7 @@ public class PublishActivity extends AppCompatActivity {
                     mFirebaseUtil.saveInterestFeedItem(mFeedItem, documentReferenceTask, interestFeedPath);
 
 
-                    List<User> friends=null;
-                    List<User> friendsWithLessFollowers=null;
-                    try {
-                        friends = mFirebaseUtil.new FriendsFetcher().execute(mUserId).get();
-                        friendsWithLessFollowers = mFirebaseUtil.new RemoveFriends().execute(friends).get();
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
-
-                    mFirebaseUtil.pushFeedToFriends(friendsWithLessFollowers, mFeedItem, documentReferenceTask, feedInboxPath);
+                    mFirebaseUtil.pushFeed(mFeedItem, documentReferenceTask, mUserId);
 
                     gotoFeed();
 

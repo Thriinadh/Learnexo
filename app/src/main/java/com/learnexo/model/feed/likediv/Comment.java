@@ -5,32 +5,32 @@ import com.google.firebase.firestore.ServerTimestamp;
 import java.util.Date;
 
 public class Comment {
-    private String itemId;
+    private String feedItemId;
     private String commenterId;
     private String publisherId;
     private String comment;
     private @ServerTimestamp Date commentTime;
-    private String name;
-    private String userDp;
+    private String commenterName;
+    private String commenterDp;
 
     public Comment() {}
 
-    public Comment(String itemId, String commenterId, String publisherId, String comment, Date commentTime, String name, String userDp) {
-        this.itemId = itemId;
+    public Comment(String feedItemId, String commenterId, String publisherId, String comment, Date commentTime, String commenterName, String commenterDp) {
+        this.feedItemId = feedItemId;
         this.commenterId = commenterId;
         this.publisherId = publisherId;
         this.comment = comment;
         this.commentTime = commentTime;
-        this.name = name;
-        this.userDp = userDp;
+        this.commenterName = commenterName;
+        this.commenterDp = commenterDp;
     }
 
-    public String getItemId() {
-        return itemId;
+    public String getFeedItemId() {
+        return feedItemId;
     }
 
-    public void setItemId(String itemId) {
-        this.itemId = itemId;
+    public void setFeedItemId(String feedItemId) {
+        this.feedItemId = feedItemId;
     }
 
     public String getCommenterId() {
@@ -65,19 +65,19 @@ public class Comment {
         this.commentTime = commentTime;
     }
 
-    public String getName() {
-        return name;
+    public String getCommenterName() {
+        return commenterName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCommenterName(String commenterName) {
+        this.commenterName = commenterName;
     }
 
-    public String getUserDp() {
-        return userDp;
+    public String getCommenterDp() {
+        return commenterDp;
     }
 
-    public void setUserDp(String userDp) {
-        this.userDp = userDp;
+    public void setCommenterDp(String commenterDp) {
+        this.commenterDp = commenterDp;
     }
 }
