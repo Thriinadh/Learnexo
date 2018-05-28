@@ -32,7 +32,7 @@ public class PostAnsCrackItemOverflowListener implements View.OnClickListener {
     private Dialog mDialog;
     private User publisher;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
-    private String mCurrentUserId;
+    private String mCurrentUserId=FirebaseUtil.getCurrentUserId();
     private String mPublisherId;
 
     public PostAnsCrackItemOverflowListener(Context context, User publisher) {

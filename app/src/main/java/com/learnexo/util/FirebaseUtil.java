@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.learnexo.main.PublishActivity;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.InterestFeed;
 import com.learnexo.model.user.User;
@@ -69,28 +70,21 @@ public class FirebaseUtil {
         mFirestore.collection(interestFeedPath).add(interestFeed);
     }
 
-    public void pushFeedToFriends(List<User> friends, FeedItem mFeedItem, Task<DocumentReference> documentReferenceTask,
+    public void pushFeedToFriends(List<User> friends, FeedItem feedItem, Task<DocumentReference> documentReferenceTask,
                                   String feedInboxPath) {
 
-        mFeedItem.setFeedItemId(documentReferenceTask.getResult().getId());
+        feedItem.setFeedItemId(documentReferenceTask.getResult().getId());
 
-        for(User friend:friends){
-            String friendId=friend.getUserId();
+        for(User friend : friends){
+            String friendId = friend.getUserId();
             int edgeRank = generateEdgeRank(friend);
-            mFeedItem.setEdgeRank(edgeRank);
-            mFirestore.collection("users").document(friendId).collection(feedInboxPath).add(mFeedItem);
+            feedItem.setEdgeRank(edgeRank);
+
+            mFirestore.collection("users").document(friendId).collection(feedInboxPath).add(feedItem);
         }
 
     }
-    public void removeFriendsWithMoreFollowers(List<User> friends, int i) {
-        new RemoveFriends().execute(friends,i);
-    }
 
-    public void getFriends(String userId) {
-
-            new FriendsFetcher().execute(userId);
-
-    }
 
     public int generateEdgeRank(User friend) {
         //∑e = ue we de,
@@ -101,7 +95,7 @@ public class FirebaseUtil {
         //de is a time decay factor.
 
 
-        int effinityScore=generateEffinityScore(friend);
+        //        int effinityScore=generateEffinityScore(friend);
 
 
         return 10;
@@ -120,12 +114,16 @@ public class FirebaseUtil {
 
 
 
-    public class FriendsFetcher extends AsyncTask<String, Void,List<User>> {
+    public class FriendsFetcher extends AsyncTask<Object, Void,List<User>> {
 
         @Override
-        protected List<User> doInBackground(String[] objects) {
+        protected List<User> doInBackground(Object[] arguments) {
+
             final List<User> users=new ArrayList<>();
-            mFirestore.collection("users").document(objects[0]).collection("following").
+            if(arguments[1].getClass()==PublishActivity.class)
+
+
+            mFirestore.collection("users").document((String) arguments[0]).collection("following").
                     get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -143,7 +141,6 @@ public class FirebaseUtil {
 
         @Override
         protected void onPostExecute(List<User> users) {
-            new RemoveFriends().execute(users);
         }
 
     }
@@ -165,7 +162,6 @@ public class FirebaseUtil {
 
         @Override
         protected void onPostExecute(List<User> friends) {
-            //bindViewsUpvotes(result);
         }
 
     }
