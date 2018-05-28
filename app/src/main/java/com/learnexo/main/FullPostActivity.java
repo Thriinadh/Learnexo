@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
@@ -53,6 +54,7 @@ public class FullPostActivity extends AppCompatActivity {
     private String postData;
     private CircleImageView commentsImage;
     private TextView commentBtn;
+    private RecyclerView commentsRecycler;
 
     private ImageView fullPostLikeBtn;
     private ImageView overFlowBtn;
@@ -185,6 +187,7 @@ public class FullPostActivity extends AppCompatActivity {
         userName = findViewById(R.id.userNameTView);
         timeOfPost = findViewById(R.id.feed_time);
         postedImage = findViewById(R.id.postedImage);
+        commentsRecycler = findViewById(R.id.commentsRecycler);
         commentsImage = findViewById(R.id.commentsImage);
         commentBtn = findViewById(R.id.commentBtn);
 
