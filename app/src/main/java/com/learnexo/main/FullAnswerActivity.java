@@ -229,12 +229,12 @@ public class FullAnswerActivity extends AppCompatActivity {
     }
 
 
-    public class GetAnswerViewsAndUpVotes extends AsyncTask<Object, Object,PostDetails> {
+    public class GetAnswerViewsAndUpVotes extends AsyncTask<String, Void,PostDetails> {
 
         @Override
-        protected PostDetails doInBackground(Object[] objects) {
+        protected PostDetails doInBackground(String[] objects) {
             Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").
-                    document((String) objects[0]).collection("answers").document((String) objects[1]).get();
+                    document(objects[0]).collection("answers").document(objects[1]).get();
             PostDetails postDetails=null;
 
             try {

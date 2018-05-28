@@ -9,6 +9,24 @@ public class User {
     public String email;
     public String dpUrl;
     private Gender gender;
+    private long following;
+    private long followers;
+
+    public long getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(long following) {
+        this.following = following;
+    }
+
+    public long getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(long followers) {
+        this.followers = followers;
+    }
 
     public User() {}
 

@@ -4,15 +4,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -37,7 +35,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.model.feed.FeedItem;
-import com.learnexo.model.feed.InterestFeed;
 import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.util.FirebaseUtil;
@@ -238,13 +235,13 @@ public class AnswerActivity extends AppCompatActivity {
 
                 if(!TextUtils.isEmpty(answerContent)) {
                     mProgressBar.setVisibility(View.VISIBLE);
-                        saveAnswer(answerContent);
+                        prepareAnswer(answerContent);
                 }
         }
     });
     }
 
-    private void saveAnswer(String content) {
+    private void prepareAnswer(String content) {
             answer.setType(ansType);
             answer.setContent(content);
             answer.setUserId(mUserId);
@@ -358,7 +355,7 @@ public class AnswerActivity extends AppCompatActivity {
                                             mFirebaseUtil.mFirestore.collection("users").document(questionerId).collection("questions").
                                                     document(answer.getQuesId()).update(map);
 
-                                            mFirebaseUtil.saveInterestFeedItem(answer, documentReferenceTask, interestFeedPath, answer.getType(),mUserId);
+                                            mFirebaseUtil.saveInterestFeedItem(answer, documentReferenceTask, interestFeedPath);
                                             gotoFeed();
                                         }
                                     }

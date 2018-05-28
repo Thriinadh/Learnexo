@@ -1,38 +1,24 @@
 package com.learnexo.util;
 
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.InterestFeed;
+import com.learnexo.model.user.User;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-
-import id.zelory.compressor.Compressor;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FirebaseUtil {
 
@@ -72,88 +58,116 @@ public class FirebaseUtil {
 
 
 
-    public void saveInterestFeedItem(FeedItem mFeedItem, Task<DocumentReference> documentReferenceTask, String interestFeedPath, int type, String publisherId) {
-        InterestFeed interestFeed=new InterestFeed();
+    public void saveInterestFeedItem(FeedItem mFeedItem, Task<DocumentReference> documentReferenceTask, String interestFeedPath) {
+        InterestFeed interestFeed = new InterestFeed();
 
         interestFeed.setInterest(mFeedItem.getTags().get(0));
-        interestFeed.setPublisherId(publisherId);
-        interestFeed.setFeedType(type);
+        interestFeed.setPublisherId(mFeedItem.getUserId());
+        interestFeed.setFeedType(mFeedItem.getType());
         interestFeed.setFeedItemId(documentReferenceTask.getResult().getId());
 
         mFirestore.collection(interestFeedPath).add(interestFeed);
     }
 
+    public void pushFeedToFriends(List<User> friends, FeedItem mFeedItem, Task<DocumentReference> documentReferenceTask,
+                                  String feedInboxPath) {
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public ImageUtil saveImagetoStorage(final Uri mPublishedImageUri, final String path, final Activity activity, final ProgressBar mProgressBar) {
+        mFeedItem.setFeedItemId(documentReferenceTask.getResult().getId());
 
-        final CompletableFuture<ImageUtil> futureImageUtil = new CompletableFuture<>();;
+        for(User friend:friends){
+            String friendId=friend.getUserId();
+            int edgeRank = generateEdgeRank(friend);
+            mFeedItem.setEdgeRank(edgeRank);
+            mFirestore.collection("users").document(friendId).collection(feedInboxPath).add(mFeedItem);
+        }
 
-        final ImageUtil imageUtil = new ImageUtil();
+    }
+    public void removeFriendsWithMoreFollowers(List<User> friends, int i) {
+        new RemoveFriends().execute(friends,i);
+    }
 
-        final String randomName = UUID.randomUUID().toString();
-        StorageReference filepath = sStorageReference.child(path).child(randomName + ".jpg");
+    public void getFriends(String userId) {
 
-        filepath.putFile(mPublishedImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
+            new FriendsFetcher().execute(userId);
 
-                final String downloadUri = task.getResult().getDownloadUrl().toString();
+    }
 
-                if (task.isSuccessful()) {
-                    File newImageFile = new File(mPublishedImageUri.getPath());
-                    Bitmap mBitmap=null;
-                    try {
-                        mBitmap = new Compressor(activity)
-                                .setMaxHeight(100)
-                                .setMaxWidth(100)
-                                .setQuality(2)
-                                .compressToBitmap(newImageFile);
-                    } catch (IOException e) {
-                        Log.e("TAG", Arrays.toString(e.getStackTrace()));
+    public int generateEdgeRank(User friend) {
+        //∑e = ue we de,
+        //
+        //∑e is the sum of the edge's rank,
+        //ue is the affinity score with the user who created the edge,
+        //we is the weight for the content type, and
+        //de is a time decay factor.
+
+
+        int effinityScore=generateEffinityScore(friend);
+
+
+        return 10;
+    }
+
+    public int generateEffinityScore(User friend) {
+        //∑i = li ni wi
+        //
+        //∑i is the sum of the interactions with that friend,
+        //li is the time since your last interaction (weighted so that 1 day > 30 days),
+        //ni is the number of interacts, and
+        //wi is the weight of those interactions.
+
+        return 5;
+    }
+
+
+
+    public class FriendsFetcher extends AsyncTask<String, Void,List<User>> {
+
+        @Override
+        protected List<User> doInBackground(String[] objects) {
+            final List<User> users=new ArrayList<>();
+            mFirestore.collection("users").document(objects[0]).collection("following").
+                    get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    List<DocumentSnapshot> documents = task.getResult().getDocuments();
+                    for(DocumentSnapshot documentSnapshot:documents){
+                        User user = documentSnapshot.toObject(User.class);
+                        users.add(user);
                     }
 
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                    byte[] thumbData = baos.toByteArray();
+                }
+            });
 
-                    String thumbs= path.concat("/thumbs");
-                    UploadTask uploadTask = FirebaseUtil.sStorageReference.child(thumbs)
-                            .child(randomName + ".jpg").putBytes(thumbData);
+            return users;
+        }
 
-                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+        @Override
+        protected void onPostExecute(List<User> users) {
+            new RemoveFriends().execute(users);
+        }
 
-                            String downloadthumbUri = taskSnapshot.getDownloadUrl().toString();
-                            imageUtil.setImgUrl(downloadUri);
-                            imageUtil.setImgThumb(downloadthumbUri);
-                            futureImageUtil.complete(imageUtil);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            String error = task.getException().getMessage();
-                            futureImageUtil.complete(null);
-                            Log.e(TAG,"Firestore Retrieve Error : " + error);
-                        }
-                    });
+    }
 
+    public class RemoveFriends extends AsyncTask<Object, Object,List<User>> {
 
-                } else {
-                    mProgressBar.setVisibility(View.INVISIBLE);
+        @Override
+        protected List<User> doInBackground(Object[] objects) {
+
+            final List<User> friends= (List<User>) objects[0];
+            final int i=100;
+            for(User friend:friends){
+                if(friend.getFollowers()>i){
+                    friends.remove(friend);
                 }
             }
-        });
-
-        try {
-            return futureImageUtil.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+            return friends;
         }
-        return null;
-     }
+
+        @Override
+        protected void onPostExecute(List<User> friends) {
+            //bindViewsUpvotes(result);
+        }
+
+    }
 
 }

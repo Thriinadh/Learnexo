@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -39,7 +39,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.model.feed.FeedItem;
-import com.learnexo.model.feed.InterestFeed;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.util.FirebaseUtil;
@@ -172,15 +171,14 @@ public class PublishActivity extends AppCompatActivity {
 
                     if(publishType.equals(getString(R.string.shareInfo))) {
                         post = new Post();
-                        saveFeedItem(content,publishType);
+                        prepareFeedItem(content,publishType);
                     } else {
                         question = new Question();
                         if(publishType.equals(getString(R.string.postChallenge))){
                             question.setChallenge(true);
-                            question.setAnswerForChallenge("This is answer for the challenge and it should come from Answer for challenge edit text in PostChallenge");
                         }
                         //for both questions and challenges
-                        saveFeedItem(content,publishType);
+                        prepareFeedItem(content,publishType);
 
                     }
                 } else if(!TextUtils.isEmpty(content) && tag == null)
@@ -189,7 +187,7 @@ public class PublishActivity extends AppCompatActivity {
         });
     }
 
-    private void saveFeedItem(String content, String publishType) {
+    private void prepareFeedItem(String content, String publishType) {
         if(publishType.equals(getString(R.string.shareInfo))){
             post.setContent(content);
             post.setTags(Collections.singletonList(tag));
@@ -295,19 +293,25 @@ public class PublishActivity extends AppCompatActivity {
             path="questions";
         }
         final String interestFeedPath="interest_feed";
-
+        final String feedInboxPath="feed_inbox";
 
         final Task<DocumentReference> documentReferenceTask = mFirebaseUtil.mFirestore.collection("users")
                 .document(mUserId).collection(path).add(mFeedItem);
+
         documentReferenceTask.addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if (task.isSuccessful()) {
-
-                    mFirebaseUtil.mFirestore.collection("questions")
+                    if(path.equals("questions"))
+                        mFirebaseUtil.mFirestore.collection("questions")
                             .document(task.getResult().getId()).set(mFeedItem);
 
-                    mFirebaseUtil.saveInterestFeedItem(mFeedItem, documentReferenceTask, interestFeedPath, mFeedItem.getType(),mUserId);
+                    mFirebaseUtil.saveInterestFeedItem(mFeedItem, documentReferenceTask, interestFeedPath);
+
+
+//                    List<User> friends=mFirebaseUtil.getFriends(mUserId);
+//                    List<User> friendsWithLessFollowers=mFirebaseUtil.removeFriendsWithMoreFollowers(friends,100);
+//                    mFirebaseUtil.pushFeedToFriends(friendsWithLessFollowers, mFeedItem, documentReferenceTask, feedInboxPath);
 
                     gotoFeed();
 
@@ -318,7 +322,6 @@ public class PublishActivity extends AppCompatActivity {
                 mProgressBar.setVisibility(View.INVISIBLE);
             }
             private void gotoFeed() {
-                //postId = documentReferenceTask.getResult().getId();
                 Intent intent = TabsActivity.newIntent(PublishActivity.this);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
@@ -326,6 +329,8 @@ public class PublishActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
 
 
@@ -440,29 +445,13 @@ public class PublishActivity extends AppCompatActivity {
                 (this, android.R.layout.simple_spinner_item,
                         subjects);
 
-        // Create an ArrayAdapter using the string array and a default spinner
-//        ArrayAdapter<CharSequence> staticAdapter = ArrayAdapter
-//                .createFromResource(this, R.array.subject_names,
-//                        android.R.layout.simple_spinner_item);
-
-        // Specify the layout to use when the list of choices appears
         staticAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setPrompt("Select any subject");
 
-        // Apply the adapter to the spinner
-        spinner.setAdapter(new NothingSelectedSpinnerAdapter(staticAdapter,
-                        R.layout.contact_spinner_row_nothing_selected,
-                        // R.layout.contact_spinner_nothing_selected_dropdown, // Optional
-                        this));
 
-//        String subjects[] = {"Tag Subject","Java","Mongo DB","Scala","Python","Ruby", "C sharp","Android"};
-//
-//        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>
-//                (this, android.R.layout.simple_spinner_item,
-//                        subjects); //selected item will look like a spinner set from XML
-//        spinnerArrayAdapter.setDropDownViewResource(android.R.layout
-//                .simple_spinner_dropdown_item);
-//        spinner.setAdapter(spinnerArrayAdapter);
+        spinner.setAdapter(new NothingSelectedSpinnerAdapter(staticAdapter,
+                        R.layout.contact_spinner_row_nothing_selected, this));
+
 
     }
 

@@ -6,7 +6,6 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -301,12 +300,12 @@ public class FullPostActivity extends AppCompatActivity {
     }
 
 
-    public class GetPostViewsAndUpVotes extends AsyncTask<Object, Object,PostDetails> {
+    public class GetPostViewsAndUpVotes extends AsyncTask<String, Void,PostDetails> {
 
         @Override
-        protected PostDetails doInBackground(Object[] objects) {
+        protected PostDetails doInBackground(String[] objects) {
             Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").
-                    document((String) objects[0]).collection("posts").document((String) objects[1]).get();
+                    document(objects[0]).collection("posts").document(objects[1]).get();
             PostDetails postDetails=null;
 
             try {

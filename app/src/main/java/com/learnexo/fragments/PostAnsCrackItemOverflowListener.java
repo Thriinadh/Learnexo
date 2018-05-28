@@ -32,6 +32,8 @@ public class PostAnsCrackItemOverflowListener implements View.OnClickListener {
     private Dialog mDialog;
     private User publisher;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
+    private String mCurrentUserId;
+    private String mPublisherId;
 
     public PostAnsCrackItemOverflowListener(Context context, User publisher) {
         mContext = context;
@@ -67,19 +69,25 @@ public class PostAnsCrackItemOverflowListener implements View.OnClickListener {
             public void onClick(View view) {
                 mDialog.dismiss();
 
-                final Map<String, Object> followingUser = new HashMap<>();
-                followingUser.put("name", publisher.getFirstName());
-                followingUser.put("dpUrl", publisher.getDpUrl());
+                final Map<String, Object> user = new HashMap<>();
+                user.put("firstName", publisher.getFirstName());
+                user.put("dpUrl", publisher.getDpUrl());
+                mPublisherId = publisher.getUserId();
+                user.put("userId", mPublisherId);
 
-                mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
-                        .collection("following").document(publisher.getUserId()).set(followingUser)
+                mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId)
+                        .collection("following").document(mPublisherId).set(user)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                followingUser.put("name", FeedFragment.sName);
-                                followingUser.put("dpUrl", FeedFragment.sDpUrl);
-                                mFirebaseUtil.mFirestore.collection("users").document(publisher.getUserId())
-                                        .collection("followers").document(FirebaseUtil.getCurrentUserId()).set(followingUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                                user.put("firstName", FeedFragment.sName);
+
+                                user.put("dpUrl", FeedFragment.sDpUrl);
+                                user.put("userId", mCurrentUserId);
+
+                                mFirebaseUtil.mFirestore.collection("users").document(mPublisherId)
+                                        .collection("followers").document(mCurrentUserId).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
 

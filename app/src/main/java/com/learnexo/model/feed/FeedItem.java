@@ -25,7 +25,17 @@ private String feedItemId;
     public static final int CRACK =2;
     public static final int QUESTION =3;
     public static final int CHALLENGE =4;
+
     public int type;
+    private int edgeRank;
+
+    public int getEdgeRank() {
+        return edgeRank;
+    }
+
+    public void setEdgeRank(int edgeRank) {
+        this.edgeRank = edgeRank;
+    }
 
     public int getType() {
         return type;
