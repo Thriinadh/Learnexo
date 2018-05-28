@@ -1,10 +1,9 @@
 package com.learnexo.util;
 
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -13,13 +12,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.learnexo.main.PublishActivity;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.InterestFeed;
 import com.learnexo.model.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class FirebaseUtil {
 
@@ -120,29 +119,25 @@ public class FirebaseUtil {
         protected List<User> doInBackground(Object[] arguments) {
 
             final List<User> users=new ArrayList<>();
-            if(arguments[1].getClass()==PublishActivity.class)
 
+            Task<QuerySnapshot> querySnapshotTask = mFirestore.collection("users").document((String) arguments[0]).
+                    collection("following").get();
 
-            mFirestore.collection("users").document((String) arguments[0]).collection("following").
-                    get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    List<DocumentSnapshot> documents = task.getResult().getDocuments();
-                    for(DocumentSnapshot documentSnapshot:documents){
-                        User user = documentSnapshot.toObject(User.class);
-                        users.add(user);
-                    }
-
+            try {
+                QuerySnapshot queryDocumentSnapshots = Tasks.await(querySnapshotTask);
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                for (DocumentSnapshot documentSnapshot : documents) {
+                    User user = documentSnapshot.toObject(User.class);
+                    users.add(user);
                 }
-            });
 
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             return users;
         }
-
-        @Override
-        protected void onPostExecute(List<User> users) {
-        }
-
     }
 
     public class RemoveFriends extends AsyncTask<Object, Object,List<User>> {
@@ -159,11 +154,6 @@ public class FirebaseUtil {
             }
             return friends;
         }
-
-        @Override
-        protected void onPostExecute(List<User> friends) {
-        }
-
     }
 
 }
