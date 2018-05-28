@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.learnexo.util.FirebaseUtil;
+import com.learnexo.util.MyBounceInterpolator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +43,13 @@ public class LikeBtnListener implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+
+        Animation myAnim = AnimationUtils.loadAnimation(mActivity, R.anim.bounce);
+
+        // Use bounce interpolator with amplitude 0.2 and frequency 20
+        MyBounceInterpolator interpolator = new MyBounceInterpolator(0.1, 5);
+        myAnim.setInterpolator(interpolator);
+
         long upvotess;
         if(flag){
             fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.post_likeblue_icon));

@@ -15,6 +15,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -25,10 +27,12 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.post.PostDetails;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
+import com.learnexo.util.MyBounceInterpolator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +63,8 @@ public class FullPostActivity extends AppCompatActivity {
     private long views;
     private String postId;
     private String postData;
+    private CircleImageView commentsImage;
+    private TextView commentBtn;
 
     private ImageView fullPostCommentBtn;
     private ImageView fullPostLikeBtn;
@@ -96,50 +102,60 @@ public class FullPostActivity extends AppCompatActivity {
         fullPostCommentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onShowPopup(view);
+              //  onShowPopup(view);
+            }
+        });
+        commentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = new Intent(FullPostActivity.this, CommentsActivity.class);
+                intent1.putExtra("EXTRA_PUBLISHER_IDDD", publisherId);
+                intent1.putExtra("EXTRA_POST_ITEM_ID", postId);
+                startActivity(intent1);
+              //  onShowPopup(view);
             }
         });
 
     }
 
-
-    // call this method when required to show popup
-    public void onShowPopup(View v){
-
-        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        // inflate the custom popup layout
-        View inflatedView = layoutInflater.inflate(R.layout.activity_comments, null,false);
-        // find the ListView in the popup layout
-//        ListView listView = (ListView)inflatedView.findViewById(R.id.commentsListView);
-//        LinearLayout headerView = (LinearLayout)inflatedView.findViewById(R.id.headerLayout);
-        // get device size
-        Display display = getWindowManager().getDefaultDisplay();
-        final Point size = new Point();
-        display.getSize(size);
-//        mDeviceHeight = size.y;
-        DisplayMetrics displayMetrics = FullPostActivity.this.getResources().getDisplayMetrics();
-        int width = displayMetrics.widthPixels;
-        int height = displayMetrics.heightPixels;
-
-
-        // fill the data to the list items
-//        setSimpleList(listView);
-
-
-        // set height depends on the device size
-        PopupWindow popWindow = new PopupWindow(inflatedView, width,height, true );
-        // set a background drawable with rounders corners
-        popWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.popup_bg));
-
-        popWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
-        popWindow.setHeight(height-70);
-
-        popWindow.setAnimationStyle(R.style.PopupAnimation);
-
-        // show the popup at bottom of the screen and set some margin at bottom ie,
-        popWindow.showAtLocation(v, Gravity.BOTTOM, 0,0);
-    }
+//
+//    // call this method when required to show popup
+//    public void onShowPopup(View v){
+//
+//        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//
+//        // inflate the custom popup layout
+//        View inflatedView = layoutInflater.inflate(R.layout.activity_comments, null,false);
+//        // find the ListView in the popup layout
+////        ListView listView = (ListView)inflatedView.findViewById(R.id.commentsListView);
+////        LinearLayout headerView = (LinearLayout)inflatedView.findViewById(R.id.headerLayout);
+//        // get device size
+//        Display display = getWindowManager().getDefaultDisplay();
+//        final Point size = new Point();
+//        display.getSize(size);
+////        mDeviceHeight = size.y;
+//        DisplayMetrics displayMetrics = FullPostActivity.this.getResources().getDisplayMetrics();
+//        int width = displayMetrics.widthPixels;
+//        int height = displayMetrics.heightPixels;
+//
+//
+//        // fill the data to the list items
+////        setSimpleList(listView);
+//
+//
+//        // set height depends on the device size
+//        PopupWindow popWindow = new PopupWindow(inflatedView, width,height, true );
+//        // set a background drawable with rounders corners
+//        popWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.popup_bg));
+//
+//        popWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
+//        popWindow.setHeight(height-70);
+//
+//        popWindow.setAnimationStyle(R.style.PopupAnimation);
+//
+//        // show the popup at bottom of the screen and set some margin at bottom ie,
+//        popWindow.showAtLocation(v, Gravity.BOTTOM, 0,0);
+//    }
 
     public static void dimBehind(PopupWindow popupWindow) {
         View container;
@@ -196,6 +212,7 @@ public class FullPostActivity extends AppCompatActivity {
             //notify publisher
             //notify his followers
             fullPostLikeBtn.setOnClickListener(
+
                     new LikeBtnListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,FullPostActivity.this, false)
             );
 
@@ -237,6 +254,7 @@ public class FullPostActivity extends AppCompatActivity {
         Glide.with(getApplicationContext()).load(imagePosted)
                 .thumbnail(Glide.with(getApplicationContext()).load(imageThumb))
                 .apply(requestOptions).into(postedImage);
+
     }
 
     private void wireViews() {
@@ -250,6 +268,12 @@ public class FullPostActivity extends AppCompatActivity {
         userName = findViewById(R.id.userNameTView);
         timeOfPost = findViewById(R.id.feed_time);
         postedImage = findViewById(R.id.postedImage);
+        commentsImage = findViewById(R.id.commentsImage);
+        commentBtn = findViewById(R.id.commentBtn);
+
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+        Glide.with(getApplicationContext()).load(FeedFragment.sDpUrl).apply(requestOptions).into(commentsImage);
     }
 
     private void setupToolbar() {
