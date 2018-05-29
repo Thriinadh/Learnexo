@@ -2,10 +2,8 @@ package com.learnexo.main;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,12 +11,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.FeedItem;
-import com.learnexo.model.feed.likediv.Comment;
 import com.learnexo.model.feed.post.PostDetails;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.user.User;
@@ -26,9 +20,7 @@ import com.learnexo.util.FirebaseUtil;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -42,9 +34,6 @@ public class FullAnswerActivity extends AppCompatActivity {
     private static final String EXTRA_THUMBNAIL = "com.learnexo.imagepostedthumbnail";
     private static final String EXTRA_TIME = "com.learnexo.postedtime";
     private static final String EXTRA_QUESTION_ID = "com.learnexo.questionId";
-
-    private List<Comment> mComments;
-    private UserCommentsRecyclerAdapter mAdapter;
 
     private TextView viewAllAns;
     private TextView questionAsked;
@@ -60,11 +49,6 @@ public class FullAnswerActivity extends AppCompatActivity {
     String tag;
     String questionerId;
     private ImageView overFlowBtn;
-
-    private CircleImageView commentsImage;
-    private TextView commentBtn;
-    private RecyclerView commentsRecycler;
-    private TextView seeAllComments;
 
     private String ansPublisherId;
     private long upVotes;
@@ -103,7 +87,14 @@ public class FullAnswerActivity extends AppCompatActivity {
 
 
         bindData(intent, posTime, postData, imagePosted, imageThumb);
-        new GetAnswerViewsAndUpVotes().execute(ansPublisherId, ansId);
+
+
+        String path="answers";
+        PostDetails postDetails = mFirebaseUtil.getViewsUpvotes(ansPublisherId, ansId, path);
+        bindViewsUpvotes(postDetails);
+
+
+        //new GetAnswerViewsAndUpVotes().execute(ansPublisherId, ansId);
 
         final User publisher =new User(ansPublisherId,publisherName,publisherDP);
 
@@ -127,7 +118,7 @@ public class FullAnswerActivity extends AppCompatActivity {
 
     }
 
-    private void bindViewsUpvotes(PostDetails postDetails) {
+    public void bindViewsUpvotes(PostDetails postDetails) {
         try {
             upVotes=postDetails.getNoOfLikes();
             views=postDetails.getNoOfViews();
@@ -139,7 +130,7 @@ public class FullAnswerActivity extends AppCompatActivity {
             //notify publisher
             //notify his followers
             LikeBtn.setOnClickListener(
-                    new LikeBtnListener(LikeBtn,likesCount,flag, ansPublisherId, ansId, upVotes,FullAnswerActivity.this, true)
+                    new LikeBtnListener(LikeBtn,likesCount,flag, ansPublisherId, ansId, upVotes,FullAnswerActivity.this, true, null)
             );
 
             likesCount.setText(upVotes+" Up votes");
@@ -237,37 +228,5 @@ public class FullAnswerActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_THUMBNAIL, imageThumb);
         }
         return intent;
-    }
-
-
-    public class GetAnswerViewsAndUpVotes extends AsyncTask<String, Void,PostDetails> {
-
-        @Override
-        protected PostDetails doInBackground(String[] objects) {
-            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").
-                    document(objects[0]).collection("answers").document(objects[1]).get();
-            PostDetails postDetails=null;
-
-            try {
-                DocumentSnapshot documentSnapshot = Tasks.await(documentSnapshotTask);
-
-                postDetails = new PostDetails();
-                postDetails.setNoOfLikes((Long) documentSnapshot.get("upVotes"));
-                postDetails.setNoOfViews((Long) documentSnapshot.get("views"));
-
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            return postDetails;
-        }
-
-        @Override
-        protected void onPostExecute(PostDetails result) {
-            bindViewsUpvotes(result);
-        }
-
     }
 }

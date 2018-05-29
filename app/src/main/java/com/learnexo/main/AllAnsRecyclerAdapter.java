@@ -1,5 +1,6 @@
 package com.learnexo.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -17,12 +18,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
-import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
+import com.learnexo.model.feed.post.PostDetails;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -33,6 +36,7 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private List<Answer> mAnswers;
     private Context mContext;
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
+    String path="answers";
 
     public AllAnsRecyclerAdapter(List<Answer> mFeedItems) {
         this.mAnswers = mFeedItems;
@@ -53,23 +57,30 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         if (answer != null) {
 
             User publisher = new User();
-            final String publisherId = answer.getUserId();
+            final String answererId = answer.getUserId();
             final String itemContent = answer.getContent();
             final String imagePosted = answer.getImgUrl();
             final String imageThumb = answer.getImgThmb();
             final String timeAgo = convertDateToAgo(answer.getPublishTime());
+            String answerId = answer.getFeedItemId();
+            String quesId = answer.getQuesId();
 
-            publisher.setUserId(publisherId);
+            publisher.setUserId(answererId);
 
             AllAnsHolder allAnsHolder = (AllAnsHolder) holder;
             allAnsHolder.wireViews();
             bindAnswer(allAnsHolder, itemContent, imagePosted, imageThumb, timeAgo);
             bindAnswererData(allAnsHolder, publisher);
+
+            PostDetails postDetails = mFirebaseUtil.getViewsUpvotes(answererId, answerId, path);
+            allAnsHolder.bindViewsUpvotes(postDetails, quesId, answererId, answerId);
+
             allAnsOverflowListener(allAnsHolder, publisher, answer);
-            answersProfileListener(allAnsHolder, publisher, answer.getFeedItemId());
+            answersProfileListener(allAnsHolder, publisher, answerId);
 
         }
     }
+
 
     private void allAnsOverflowListener(AllAnsHolder allAnsHolder, User publisher, Answer answer) {
         allAnsHolder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, publisher));
@@ -141,6 +152,15 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         private TextView timeAgo;
         private ImageView overflowImgView;
         private ImageView postedImgView;
+        private TextView viewsText;
+        private TextView likesCount;
+        private ImageView LikeBtn;
+
+        private long upVotes;
+        private long views;
+
+        private boolean flag = true;
+
 
         public AllAnsHolder(View itemView) {
             super(itemView);
@@ -154,8 +174,48 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             timeAgo = mView.findViewById(R.id.feed_time);
             overflowImgView = mView.findViewById(R.id.overflow);
             answerContent = mView.findViewById(R.id.full_text);
+            viewsText = mView.findViewById(R.id.viewsText);
+            likesCount = mView.findViewById(R.id.likesCount);
+            LikeBtn = mView.findViewById(R.id.full_post_like);
         }
 
+        public void bindViewsUpvotes(PostDetails postDetails, String questionId, String answererId, String answerId) {
+            try {
+                upVotes=postDetails.getNoOfLikes();
+                views=postDetails.getNoOfViews();
+
+                //color the like button and increase the likes in the UI
+                //save new no of likes
+                //store it in his activity log
+                //generate edge rank
+                //notify publisher
+                //notify his followers
+                LikeBtn.setOnClickListener(
+                        new LikeBtnListener(LikeBtn,likesCount,flag, answererId, answerId, upVotes, (Activity) mContext, true, questionId)
+                );
+
+                likesCount.setText(upVotes+" Up votes");
+                if(views==0){
+                    views=1;
+                    viewsText.setText("1 View");
+                }else{
+                    viewsText.setText(views+ " Views");
+                }
+
+
+                long viewss = views+1;
+                Map<String, Object> map= new HashMap();
+                map.put("views",viewss);
+
+                mFirebaseUtil.mFirestore.collection("users").
+                        document(answererId).
+                        collection("answers").
+                        document(answerId).update(map);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         public void setContent(String answer) {
             answerContent.setText(answer);
 

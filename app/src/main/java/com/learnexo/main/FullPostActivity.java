@@ -2,7 +2,6 @@ package com.learnexo.main;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,8 +15,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.fragments.FeedFragment;
@@ -31,7 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -103,7 +99,10 @@ public class FullPostActivity extends AppCompatActivity {
 
 
         bindData(imagePosted, imageThumb, publisherName, posTime, publisherDP);
-        new GetPostViewsAndUpVotes().execute(publisherId, postId);
+
+        String path="posts";
+        PostDetails postDetails = mFirebaseUtil.getViewsUpvotes(publisherId, postId, path);
+        bindViewsUpvotes(postDetails);
 
         overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
 
@@ -116,7 +115,6 @@ public class FullPostActivity extends AppCompatActivity {
                 intent1.putExtra("EXTRA_PUBLISHER_IDDD", publisherId);
                 intent1.putExtra("EXTRA_POST_ITEM_ID", postId);
                 startActivity(intent1);
-              //  onShowPopup(view);
             }
         });
 
@@ -159,6 +157,7 @@ public class FullPostActivity extends AppCompatActivity {
         seeAllComments.setEnabled(true);
     }
 
+
     private void profileListener(final User publisher) {
         userName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,7 +189,7 @@ public class FullPostActivity extends AppCompatActivity {
             //notify his followers
             fullPostLikeBtn.setOnClickListener(
 
-                    new LikeBtnListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,FullPostActivity.this, false)
+                    new LikeBtnListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,FullPostActivity.this, false, null)
             );
 
             likesCount.setText(upVotes+" Up votes");
@@ -278,35 +277,4 @@ public class FullPostActivity extends AppCompatActivity {
         return intent;
     }
 
-
-    public class GetPostViewsAndUpVotes extends AsyncTask<String, Void,PostDetails> {
-
-        @Override
-        protected PostDetails doInBackground(String[] objects) {
-            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").
-                    document(objects[0]).collection("posts").document(objects[1]).get();
-            PostDetails postDetails=null;
-
-            try {
-                DocumentSnapshot documentSnapshot = Tasks.await(documentSnapshotTask);
-
-                postDetails = new PostDetails();
-                postDetails.setNoOfLikes((Long) documentSnapshot.get("upVotes"));
-                postDetails.setNoOfViews((Long) documentSnapshot.get("views"));
-
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            return postDetails;
-        }
-
-        @Override
-        protected void onPostExecute(PostDetails result) {
-            bindViewsUpvotes(result);
-        }
-
-    }
 }

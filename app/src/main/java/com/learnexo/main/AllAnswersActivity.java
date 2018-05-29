@@ -97,7 +97,9 @@ public class AllAnswersActivity extends AppCompatActivity {
                 noOfAns=documents.size();
                 bindNoOfAns();
                 for(DocumentSnapshot documentSnapshot:documents){
-                    mAnswers.add(documentSnapshot.toObject(Answer.class));
+                    Answer answer=documentSnapshot.toObject(Answer.class);
+                    answer.setFeedItemId(documentSnapshot.getId());
+                    mAnswers.add(answer);
                 }
                 mAdapter.notifyDataSetChanged();
             }
