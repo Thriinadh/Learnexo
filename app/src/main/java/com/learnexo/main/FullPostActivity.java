@@ -120,6 +120,17 @@ public class FullPostActivity extends AppCompatActivity {
             }
         });
 
+        commentsImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = new Intent(FullPostActivity.this, CommentsActivity.class);
+                intent1.putExtra("EXTRA_PUBLISHER_IDDD", publisherId);
+                intent1.putExtra("EXTRA_POST_ITEM_ID", postId);
+                startActivity(intent1);
+                //  onShowPopup(view);
+            }
+        });
+
         seeAllComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

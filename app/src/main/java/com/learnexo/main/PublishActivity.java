@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -52,6 +53,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -424,7 +426,38 @@ public class PublishActivity extends AppCompatActivity {
                Object object = adapterView.getItemAtPosition(position);
                 if(object != null)
                        tag = object.toString();
-            }
+
+                if(!TextUtils.isEmpty(tag) && tag.equals("others")) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PublishActivity.this);
+                    builder.setTitle("Enter subject");
+                    builder.setMessage("Do you want to tag this?");
+
+                    final EditText input = new EditText(PublishActivity.this);
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT);
+                    input.setLayoutParams(lp);
+                    builder.setView(input);
+
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            tag = input.getText().toString();
+
+                                }
+                            });
+
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+
+                        }
+
+                }
+
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.FeedItem;
+import com.learnexo.model.feed.likediv.Comment;
 import com.learnexo.model.feed.post.PostDetails;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.user.User;
@@ -24,6 +26,7 @@ import com.learnexo.util.FirebaseUtil;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -40,6 +43,9 @@ public class FullAnswerActivity extends AppCompatActivity {
     private static final String EXTRA_TIME = "com.learnexo.postedtime";
     private static final String EXTRA_QUESTION_ID = "com.learnexo.questionId";
 
+    private List<Comment> mComments;
+    private UserCommentsRecyclerAdapter mAdapter;
+
     private TextView viewAllAns;
     private TextView questionAsked;
     private TextView fullText;
@@ -54,6 +60,11 @@ public class FullAnswerActivity extends AppCompatActivity {
     String tag;
     String questionerId;
     private ImageView overFlowBtn;
+
+    private CircleImageView commentsImage;
+    private TextView commentBtn;
+    private RecyclerView commentsRecycler;
+    private TextView seeAllComments;
 
     private String ansPublisherId;
     private long upVotes;

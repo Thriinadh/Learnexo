@@ -34,8 +34,8 @@ public class CommentsActivity extends AppCompatActivity {
 
         doneBtn = findViewById(R.id.doneBtn);
         enterContent = findViewById(R.id.enterContent);
-        Intent intent = getIntent();
 
+        Intent intent = getIntent();
         publisherId = intent.getStringExtra("EXTRA_PUBLISHER_IDDD");
         postId = intent.getStringExtra("EXTRA_POST_ITEM_ID");
 

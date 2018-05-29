@@ -54,7 +54,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="18dp"
+                android:text="User name"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -155,7 +156,8 @@
                     android:layout_height="24dp"
                     android:layout_marginLeft="16dp"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/empty_profilee"/>
+                    android:src="@drawable/empty_profilee"
+                    android:layout_marginStart="16dp" />
 
                 <TextView
                     android:id="@+id/commentBtn"
@@ -164,7 +166,9 @@
                     android:text="Comment..."
                     android:layout_toRightOf="@id/commentsImage"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="16dp"/>
+                    android:layout_marginLeft="16dp"
+                    android:layout_toEndOf="@id/commentsImage"
+                    android:layout_marginStart="16dp" />
 
                 <TextView
                     android:id="@+id/seeAllComments"
@@ -174,7 +178,9 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="16dp"
                     android:layout_centerVertical="true"
-                    android:textColor="#1da1f2"/>
+                    android:textColor="#1da1f2"
+                    android:layout_marginEnd="16dp"
+                    android:layout_alignParentEnd="true" />
 
             </RelativeLayout>
 
