@@ -171,7 +171,7 @@ public class FullAnswerActivity extends AppCompatActivity {
             //notify publisher
             //notify his followers
             LikeBtn.setOnClickListener(
-                    new LikeBtnListener(LikeBtn,likesCount,flag, ansPublisherId, ansId, upVotes,FullAnswerActivity.this, true, null)
+                    new LikeBtnListener(LikeBtn,likesCount,flag, ansPublisherId, ansId, upVotes,FullAnswerActivity.this, true, null, false)
             );
 
             likesCount.setText(upVotes+" Up votes");

@@ -214,7 +214,7 @@ public class FullPostActivity extends AppCompatActivity {
             //notify publisher
             //notify his followers
             fullPostLikeBtn.setOnClickListener(
-                    new LikeBtnListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,FullPostActivity.this, false, null)
+                    new LikeBtnListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,FullPostActivity.this, false, null, false)
             );
 
             likesCount.setText(upVotes+" Up votes");

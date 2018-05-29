@@ -28,10 +28,11 @@ public class LikeBtnListener implements View.OnClickListener {
     private String postId;
     private Activity mActivity;
     private boolean isAnswer;
+    private boolean isFromAllAnswers;
     private String questionId;
 
     public LikeBtnListener(ImageView fullPostLikeBtn, TextView likesCount, boolean flag, String publisherId,
-                           String postId, long upVotes, Activity activity, boolean isAnswer, String questionId) {
+                           String postId, long upVotes, Activity activity, boolean isAnswer, String questionId, boolean isFromAllAnswers) {
         this.fullPostLikeBtn = fullPostLikeBtn;
         this.likesCount = likesCount;
         this.flag = flag;
@@ -41,6 +42,7 @@ public class LikeBtnListener implements View.OnClickListener {
         this.isAnswer=isAnswer;
         mActivity = activity;
         this.questionId=questionId;
+        this.isFromAllAnswers=isFromAllAnswers;
     }
 
     @Override
@@ -57,10 +59,14 @@ public class LikeBtnListener implements View.OnClickListener {
             fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.post_likeblue_icon));
             upVotes = upVotes +1;
             flag = false;
-        }else{
-            fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.post_like_icn));
-            upVotes = upVotes;
-            flag = true;
+        } else{
+              fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.post_like_icn));
+
+              if(isFromAllAnswers)
+                  upVotes = upVotes - 1;
+              else
+                upVotes = upVotes;
+              flag = true;
         }
         if(upVotes!=1)
             likesCount.setText(upVotes +" Up votes");
@@ -83,7 +89,7 @@ public class LikeBtnListener implements View.OnClickListener {
                         document(postId).update(map);
 
                 if(path.equals("answers")&&questionId!=null)
-                mFirebaseUtil.mFirestore.collection("questions").document(questionId).collection(path).
+                    mFirebaseUtil.mFirestore.collection("questions").document(questionId).collection(path).
                         document(postId).update(map);
             }
         });
