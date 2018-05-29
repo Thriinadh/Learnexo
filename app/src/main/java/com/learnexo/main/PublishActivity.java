@@ -188,8 +188,10 @@ public class PublishActivity extends AppCompatActivity {
                         prepareFeedItem(content,publishType);
 
                     }
-                } else if(!TextUtils.isEmpty(content) && tag == null && tag.equals("others"))
+                } else if(!TextUtils.isEmpty(content) && tag == null)
                     Toast.makeText(PublishActivity.this, "Tag must not be empty", Toast.LENGTH_SHORT).show();
+                else if(!TextUtils.isEmpty(content) && tag.equals("others"))
+                    Toast.makeText(PublishActivity.this, "Tag a subject", Toast.LENGTH_SHORT).show();
             }
         });
     }
