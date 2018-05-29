@@ -9,67 +9,40 @@ import java.util.List;
 @IgnoreExtraProperties
 public class FeedItem {
 
-private String feedItemId;
-
-    public String getFeedItemId() {
-        return feedItemId;
-    }
-
-    public void setFeedItemId(String feedItemId) {
-        this.feedItemId = feedItemId;
-    }
-
-    private String content;
     public static final int POST=0;
     public static final int ANSWER =1;
     public static final int CRACK =2;
     public static final int QUESTION =3;
     public static final int CHALLENGE =4;
 
-    public int type;
-    private int edgeRank;
-
-    public int getEdgeRank() {
-        return edgeRank;
-    }
-
-    public void setEdgeRank(int edgeRank) {
-        this.edgeRank = edgeRank;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
+    private String feedItemId;
+    private String content;
 
     @ServerTimestamp
     private Date publishTime;
 
     private String userId;
     private String userName;
-
     private String imgUrl;
     private String imgThmb;
 
-    private boolean is_notifiable;
+    public int type;
+    private int edgeRank;
+    private long comments;
     private List<String> tags;
+    private boolean is_notifiable;
+
 
     public FeedItem() {}
 
-    public FeedItem(String content, Date mPublishTime, String userId, String userName, String imgUrl, String imgThmb, boolean is_notifiable, List<String> tags, String postId) {
-        this.content = content;
-        this.publishTime = mPublishTime;
-        this.userId = userId;
-        this.userName = userName;
-        this.imgUrl = imgUrl;
-        this.imgThmb = imgThmb;
-
-        this.is_notifiable = is_notifiable;
-        this.tags = tags;
+    public long getComments() {
+        return comments;
     }
+
+    public void setComments(long comments) {
+        this.comments = comments;
+    }
+
 
     public String getContent() {
         return content;
@@ -135,5 +108,30 @@ private String feedItemId;
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+
+
+    public String getFeedItemId() {
+        return feedItemId;
+    }
+    public void setFeedItemId(String feedItemId) {
+        this.feedItemId = feedItemId;
+    }
+
+    public int getEdgeRank() {
+        return edgeRank;
+    }
+
+    public void setEdgeRank(int edgeRank) {
+        this.edgeRank = edgeRank;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

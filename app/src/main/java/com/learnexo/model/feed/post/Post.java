@@ -9,20 +9,10 @@ public class Post extends FeedItem {
     private long views;
     private long upVotes;
     private long shares;
-    private long comments;
     private long bookMarks;
     private long downVotes;
 
     public Post() {}
-
-    public Post(long views, int upVotes, int shares, int comments, int bookMarks, int downVotes) {
-        this.views = views;
-        this.upVotes = upVotes;
-        this.shares = shares;
-        this.comments = comments;
-        this.bookMarks = bookMarks;
-        this.downVotes = downVotes;
-    }
 
     public long getViews() {
         return views;
@@ -46,14 +36,6 @@ public class Post extends FeedItem {
 
     public void setShares(long shares) {
         this.shares = shares;
-    }
-
-    public long getComments() {
-        return comments;
-    }
-
-    public void setComments(long comments) {
-        this.comments = comments;
     }
 
     public long getBookMarks() {

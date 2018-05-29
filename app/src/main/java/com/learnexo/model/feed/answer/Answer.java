@@ -12,7 +12,7 @@ public class Answer extends FeedItem {
     private long views;
     private long upVotes;
     private long shares;
-    private long comments;
+
     private long downVotes;
 
     public Answer() {}
@@ -80,14 +80,6 @@ public class Answer extends FeedItem {
 
     public void setShares(long shares) {
         this.shares = shares;
-    }
-
-    public long getComments() {
-        return comments;
-    }
-
-    public void setComments(long comments) {
-        this.comments = comments;
     }
 
     public long getDownVotes() {

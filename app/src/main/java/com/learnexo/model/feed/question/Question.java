@@ -11,6 +11,19 @@ public class Question extends FeedItem{
     private String answerForChallenge;
     private int noOfAns;
 
+    public Question() {}
+
+    public Question(boolean isChallenge) {
+        this.isChallenge = isChallenge;
+    }
+
+    public boolean isChallenge() {
+        return isChallenge;
+    }
+    public void setChallenge(boolean challenge) {
+        isChallenge = challenge;
+    }
+
     public int getNoOfAns() {
         return noOfAns;
     }
@@ -25,18 +38,5 @@ public class Question extends FeedItem{
 
     public void setAnswerForChallenge(String answerForChallenge) {
         this.answerForChallenge = answerForChallenge;
-    }
-
-    public Question() {}
-
-    public Question(boolean isChallenge) {
-        this.isChallenge = isChallenge;
-    }
-
-    public boolean isChallenge() {
-        return isChallenge;
-    }
-    public void setChallenge(boolean challenge) {
-        isChallenge = challenge;
     }
 }
