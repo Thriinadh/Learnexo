@@ -2,7 +2,6 @@ package com.learnexo.main;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,15 +15,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.likediv.Comment;
-import com.learnexo.model.feed.post.PostDetails;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
@@ -32,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -96,7 +90,9 @@ public class FullPostActivity extends AppCompatActivity {
 
         bindData(imagePosted, imageThumb, publisherName, posTime, publisherDP);
 
-        handleViewsUpvotes();
+        //handleViewsUpvotes();
+
+        bindViewsUpvotes();
 
         overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
 
@@ -120,6 +116,8 @@ public class FullPostActivity extends AppCompatActivity {
         publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DP);
 
         comments = intent.getLongExtra("COMMENTS", 0);
+        views = intent.getLongExtra("VIEWS", 0);
+        upVotes = intent.getLongExtra("UPVOTES", 0);
     }
 
 
@@ -156,10 +154,10 @@ public class FullPostActivity extends AppCompatActivity {
         commentsRecycler.setAdapter(mAdapter);
     }
 
-    private void handleViewsUpvotes() {
-        String path="posts";
-        new GetViewsAndUpVotes().execute(publisherId,postId,path);
-    }
+//    private void handleViewsUpvotes() {
+//        String path="posts";
+//        new GetViewsAndUpVotes().execute(publisherId,postId,path);
+//    }
 
     private void gotoCommentsActivity() {
         commentBtn.setOnClickListener(new View.OnClickListener() {
@@ -189,13 +187,7 @@ public class FullPostActivity extends AppCompatActivity {
         super.onDestroy();
         seeAllComments.setEnabled(true);
     }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if(comments==0)
-//            seeAllComments.setVisibility(View.INVISIBLE);
-//    }
+
 
     private void profileListener(final User publisher) {
         userName.setOnClickListener(new View.OnClickListener() {
@@ -215,19 +207,13 @@ public class FullPostActivity extends AppCompatActivity {
         });
     }
 
-    public void bindViewsUpvotes(PostDetails postDetails) {
+    public void bindViewsUpvotes() {
         try {
-            upVotes=postDetails.getNoOfLikes();
-            views=postDetails.getNoOfViews();
-
-            //color the like button and increase the likes in the UI
-            //save new no of likes
             //store it in his activity log
             //generate edge rank
             //notify publisher
             //notify his followers
             fullPostLikeBtn.setOnClickListener(
-
                     new LikeBtnListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,FullPostActivity.this, false, null)
             );
 
@@ -239,10 +225,9 @@ public class FullPostActivity extends AppCompatActivity {
                 viewsText.setText(views+ " Views");
             }
 
-
-            long viewss = views+1;
+            views = views+1;
             Map<String, Object> map= new HashMap();
-            map.put("views",viewss);
+            map.put("views",views);
 
             mFirebaseUtil.mFirestore.collection("users").
                     document(publisherId).
@@ -284,7 +269,8 @@ public class FullPostActivity extends AppCompatActivity {
         postedImage = findViewById(R.id.postedImage);
 
         seeAllComments = findViewById(R.id.seeAllComments);
-
+        if(comments==0)
+            seeAllComments.setVisibility(View.INVISIBLE);
         commentsImage = findViewById(R.id.commentsImage);
         commentBtn = findViewById(R.id.commentBtn);
 
@@ -302,7 +288,7 @@ public class FullPostActivity extends AppCompatActivity {
     }
 
     public static Intent newIntent(Context context, String content, String publishedImg, String imageThumb,
-                                   String timeAgo, User publisher, String postId, long comments) {
+                                   String timeAgo, User publisher, String postId, long comments, long views, long upvotes) {
 
         Intent intent = new Intent(context, FullPostActivity.class);
         intent.putExtra(EXTRA_CONTENT,content);
@@ -311,7 +297,9 @@ public class FullPostActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_PUBLISHER_DP, publisher.getDpUrl());
         intent.putExtra("POST_ID", postId);
         intent.putExtra("PUBLISHER_ID",publisher.getUserId());
-        intent.putExtra("COMMENTS",comments);
+        intent.putExtra("COMMENTS", comments);
+        intent.putExtra("VIEWS", views);
+        intent.putExtra("UPVOTES", upvotes);
         if(publishedImg!=null) {
             intent.putExtra(EXTRA_IMAGE, publishedImg);
             intent.putExtra(EXTRA_THUMB, imageThumb);
@@ -320,39 +308,39 @@ public class FullPostActivity extends AppCompatActivity {
     }
 
 
-    public class GetViewsAndUpVotes extends AsyncTask<String, Void,PostDetails> {
-
-
-        @Override
-        protected PostDetails doInBackground(String[] objects) {
-
-            Task<DocumentSnapshot> documentSnapshotTask = FirebaseFirestore.getInstance().collection("users").
-                    document(objects[0]).collection(objects[2]).document(objects[1]).get();
-           PostDetails postDetails=null;
-
-            try {
-                DocumentSnapshot documentSnapshot = Tasks.await(documentSnapshotTask);
-
-                postDetails = new PostDetails();
-                postDetails.setNoOfLikes((Long) documentSnapshot.get("upVotes"));
-                postDetails.setNoOfViews((Long) documentSnapshot.get("views"));
-
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            return postDetails;
-        }
-
-        @Override
-        protected void onPostExecute(PostDetails result) {
-            bindViewsUpvotes(result);
-        }
-
-
-    }
+//    public class GetViewsAndUpVotes extends AsyncTask<String, Void,PostDetails> {
+//
+//
+//        @Override
+//        protected PostDetails doInBackground(String[] objects) {
+//
+//            Task<DocumentSnapshot> documentSnapshotTask = FirebaseFirestore.getInstance().collection("users").
+//                    document(objects[0]).collection(objects[2]).document(objects[1]).get();
+//           PostDetails postDetails=null;
+//
+//            try {
+//                DocumentSnapshot documentSnapshot = Tasks.await(documentSnapshotTask);
+//
+//                postDetails = new PostDetails();
+//                postDetails.setNoOfLikes((Long) documentSnapshot.get("upVotes"));
+//                postDetails.setNoOfViews((Long) documentSnapshot.get("views"));
+//
+//            } catch (ExecutionException e) {
+//                e.printStackTrace();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//
+//            return postDetails;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(PostDetails result) {
+//            //bindViewsUpvotes(result);
+//        }
+//
+//
+//    }
 
 
 }

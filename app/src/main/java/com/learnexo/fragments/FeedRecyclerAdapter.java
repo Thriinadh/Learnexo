@@ -26,6 +26,7 @@ import com.learnexo.main.OthersProfileActivity;
 import com.learnexo.main.R;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
+import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
@@ -122,12 +123,14 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             switch (feedItem.getType()) {
 
                 case FeedItem.POST:
-
+                    Post post = (Post) feedItem;
+                    long views = post.getViews();
+                    long upVotes = post.getUpVotes();
                     PostHolder postHolder = (PostHolder) holder;
                     postHolder.wireViews();
                     bindPost(postHolder, itemContent, imagePosted, imageThumb, timeAgo);
                     bindPostUserData(postHolder, publisher);
-                    postContentListener(postHolder, itemContent, imagePosted, imageThumb, timeAgo, publisher, feedItemId, comments);
+                    postContentListener(postHolder, itemContent, imagePosted, imageThumb, timeAgo, publisher, feedItemId, comments, views, upVotes);
                     postProfileListener(postHolder, publisher, feedItemId);
                     postOverflowListener(postHolder, publisher, feedItem);
 
@@ -135,12 +138,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 case FeedItem.ANSWER:
                     Answer answer= (Answer) feedItem;
+                    long ansViews = answer.getViews();
+                    long ansUpvotes = answer.getUpVotes();
+                    String quesContent = answer.getQuesContent();
                     AnswerHolder answerHolder = (AnswerHolder) holder;
                     answerHolder.wireViews();
-                    bindAnswer(answerHolder, itemContent, answer.getQuesContent(), imagePosted, imageThumb, timeAgo);
+                    bindAnswer(answerHolder, itemContent, quesContent, imagePosted, imageThumb, timeAgo);
                     bindAnswererData(answerHolder, publisher);
-                    answerContentListener(answerHolder, itemContent, answer.getQuesContent(), imagePosted, imageThumb,
-                            timeAgo, publisher, answer.getQuesId(), answer.getTags(), feedItemId);
+                    answerContentListener(answerHolder, itemContent, quesContent, imagePosted, imageThumb,
+                            timeAgo, publisher, answer.getQuesId(), answer.getTags(), feedItemId, comments, ansViews, ansUpvotes);
                     answerProfileListener(answerHolder, publisher, feedItemId);
                     answerOverflowListener(answerHolder, publisher, feedItem);
 
@@ -148,12 +154,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 case FeedItem.CRACK:
                     Answer crack= (Answer) feedItem;
+                    long crackViews=crack.getViews();
+                    long crackUpvotes=crack.getUpVotes();
+                    String crackContent = crack.getQuesContent();
                     CrackHolder crackHolder = (CrackHolder) holder;
                     crackHolder.wireViews();
-                    bindCrack(crackHolder, itemContent, crack.getQuesContent(), imagePosted, imageThumb, timeAgo);
+                    bindCrack(crackHolder, itemContent, crackContent, imagePosted, imageThumb, timeAgo);
                     bindCrackerData(crackHolder, publisher);
-                    crackContentListener(crackHolder, itemContent, crack.getQuesContent(),imagePosted, imageThumb,
-                            timeAgo, publisher, crack.getQuesId(), crack.getTags(), feedItemId);
+                    crackContentListener(crackHolder, itemContent, crackContent,imagePosted, imageThumb,
+                            timeAgo, publisher, crack.getQuesId(), crack.getTags(), feedItemId, comments, crackViews, crackUpvotes);
                     crackProfileListener(crackHolder, publisher, feedItemId);
                     crackOverflowListener(crackHolder, publisher, feedItem);
 
@@ -206,11 +215,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void postContentListener(@NonNull PostHolder holder, final String itemContent, final String imagePosted, final String imageThumb,
-                                     final String timeAgo, final User publisher, final String postId, final long comments) {
+                                     final String timeAgo, final User publisher, final String postId,
+                                     final long comments, final long views, final long upvotes) {
         holder.content.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, imageThumb, timeAgo, publisher, postId, comments);
+                Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, imageThumb, timeAgo, publisher, postId,
+                        comments, views, upvotes);
                 mContext.startActivity(intent);
 
             }
@@ -219,17 +230,19 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void answerContentListener(@NonNull AnswerHolder holder, final String itemContent,
                                        final String questionAsked, final String imagePosted, final String imageThumb,
-                                       final String timeAgo, final User publisher, final String questionId, final List<String> tags, final String ansId) {
+                                       final String timeAgo, final User publisher, final String questionId, final List<String> tags, final String ansId,
+                                       final long comments, final long ansViews, final long ansUpvotes) {
         holder.quesContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                gotoFullAnswerActivity(itemContent, questionAsked, imagePosted, imageThumb, timeAgo, publisher, questionId, false, tags.get(0), ansId);
+                gotoFullAnswerActivity(itemContent, questionAsked, imagePosted, imageThumb, timeAgo, publisher,
+                        questionId, false, tags.get(0), ansId, comments, ansViews, ansUpvotes);
             }
         });
         holder.answerContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                gotoFullAnswerActivity(itemContent, questionAsked, imagePosted, imageThumb, timeAgo, publisher, questionId, false, tags.get(0), ansId);
+                gotoFullAnswerActivity(itemContent, questionAsked, imagePosted, imageThumb, timeAgo, publisher, questionId, false, tags.get(0), ansId, comments, ansViews, ansUpvotes);
             }
         });
     }
@@ -256,18 +269,21 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void crackContentListener(@NonNull CrackHolder holder, final String challenge,
                                       final String itemContent, final String imagePosted, final String imageThumb,
-                                      final String timeAgo, final User publisher, final String questionId, final List<String> tags, final String crackId) {
+                                      final String timeAgo, final User publisher, final String questionId, final List<String> tags, final String crackId,
+                                      final long comments, final long crackViews, final long crackUpvotes) {
         holder.challenge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                gotoFullAnswerActivity(challenge, itemContent, imagePosted, imageThumb, timeAgo, publisher, questionId, true, tags.get(0), crackId);
+                gotoFullAnswerActivity(challenge, itemContent, imagePosted, imageThumb, timeAgo, publisher, questionId,
+                        true, tags.get(0), crackId, comments, crackViews, crackUpvotes);
             }
         });
 
         holder.crackContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                gotoFullAnswerActivity(challenge, itemContent, imagePosted, imageThumb, timeAgo, publisher,questionId, true, tags.get(0), crackId);
+                gotoFullAnswerActivity(challenge, itemContent, imagePosted, imageThumb, timeAgo, publisher,questionId,
+                        true, tags.get(0), crackId, comments, crackViews, crackUpvotes);
             }
         });
     }
@@ -292,8 +308,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     }
 
-    private void gotoFullAnswerActivity(String challenge, String itemContent, String imagePosted, String imageThumb, String timeAgo, User publisher, String questionId, boolean is_crack, String tag, String ansId) {
-        Intent intent = FullAnswerActivity.newIntent(mContext, itemContent, challenge, imagePosted, imageThumb, timeAgo, publisher, questionId, tag, ansId);
+    private void gotoFullAnswerActivity(String challenge, String itemContent, String imagePosted, String imageThumb,
+                                        String timeAgo, User publisher, String questionId, boolean is_crack, String tag,
+                                        String ansId, long comments, long ansViews, long ansUpvotes) {
+        Intent intent = FullAnswerActivity.newIntent(mContext, itemContent, challenge, imagePosted, imageThumb,
+                timeAgo, publisher, questionId, tag, ansId, comments, ansViews, ansUpvotes);
         if(is_crack)
             intent.putExtra("IS_CRACK",true);
         mContext.startActivity(intent);

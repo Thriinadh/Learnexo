@@ -52,23 +52,23 @@ public class LikeBtnListener implements View.OnClickListener {
         MyBounceInterpolator interpolator = new MyBounceInterpolator(0.1, 5);
         myAnim.setInterpolator(interpolator);
 
-        long upvotess;
+
         if(flag){
             fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.post_likeblue_icon));
-            upvotess = upVotes +1;
+            upVotes = upVotes +1;
             flag = false;
         }else{
             fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.post_like_icn));
-            upvotess = upVotes;
+            upVotes = upVotes;
             flag = true;
         }
-        if(upvotess!=1)
-            likesCount.setText(upvotess +" Up votes");
+        if(upVotes!=1)
+            likesCount.setText(upVotes +" Up votes");
         else
             likesCount.setText("1 Up vote");
 
         final Map<String, Object> map= new HashMap();
-        map.put("upVotes", upvotess);
+        map.put("upVotes", upVotes);
 
         AsyncTask.execute(new Runnable() {
             @Override
