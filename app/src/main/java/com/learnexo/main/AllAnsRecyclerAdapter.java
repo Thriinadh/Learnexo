@@ -3,6 +3,7 @@ package com.learnexo.main;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,7 +17,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.post.PostDetails;
@@ -26,6 +29,7 @@ import com.learnexo.util.FirebaseUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -72,8 +76,10 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             bindAnswer(allAnsHolder, itemContent, imagePosted, imageThumb, timeAgo);
             bindAnswererData(allAnsHolder, publisher);
 
-            PostDetails postDetails = mFirebaseUtil.getViewsUpvotes(answererId, answerId, path);
-            allAnsHolder.bindViewsUpvotes(postDetails, quesId, answererId, answerId);
+            new GetViewsAndUpVotes().execute(answererId, answerId, path, allAnsHolder, quesId);
+
+//            PostDetails postDetails = mFirebaseUtil.getViewsUpvotes(answererId, answerId, path);
+//            allAnsHolder.bindViewsUpvotes(postDetails, quesId, answererId, answerId);
 
             allAnsOverflowListener(allAnsHolder, publisher, answer);
             answersProfileListener(allAnsHolder, publisher, answerId);
@@ -242,6 +248,48 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 Glide.with(mContext.getApplicationContext()).load(image).apply(placeholderOption).into(userImage);
 
         }
+
+    }
+
+    public class GetViewsAndUpVotes extends AsyncTask<Object, Void,PostDetails> {
+
+        private AllAnsHolder mAllAnsHolder;
+        private String answererId;
+        private String answerId;
+        private String questionId;
+        @Override
+        protected PostDetails doInBackground(Object[] objects) {
+            mAllAnsHolder= (AllAnsHolder) objects[3];
+            questionId= (String) objects[4];
+            answererId= (String) objects[0];
+            answerId= (String) objects[1];
+
+            Task<DocumentSnapshot> documentSnapshotTask = FirebaseFirestore.getInstance().collection("users").
+                    document(answererId).collection((String) objects[2]).document(answerId).get();
+            PostDetails postDetails=null;
+
+
+            try {
+                DocumentSnapshot documentSnapshot = Tasks.await(documentSnapshotTask);
+
+                postDetails = new PostDetails();
+                postDetails.setNoOfLikes((Long) documentSnapshot.get("upVotes"));
+                postDetails.setNoOfViews((Long) documentSnapshot.get("views"));
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return postDetails;
+        }
+
+        @Override
+        protected void onPostExecute(PostDetails result) {
+            mAllAnsHolder.bindViewsUpvotes(result, questionId, answererId, answerId);
+        }
+
 
     }
 
