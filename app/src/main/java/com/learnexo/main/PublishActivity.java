@@ -426,7 +426,6 @@ public class PublishActivity extends AppCompatActivity {
                Object object = adapterView.getItemAtPosition(position);
                 if(object != null)
                        tag = object.toString();
-
                 if(!TextUtils.isEmpty(tag) && tag.equals("others")) {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(PublishActivity.this);
