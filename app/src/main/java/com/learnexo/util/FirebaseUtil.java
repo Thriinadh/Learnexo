@@ -14,7 +14,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.InterestFeed;
-import com.learnexo.model.feed.post.PostDetails;
 import com.learnexo.model.user.User;
 
 import java.util.ArrayList;
@@ -173,53 +172,5 @@ public class FirebaseUtil {
             return friends;
         }
     }
-
-    public class GetViewsAndUpVotes extends AsyncTask<String, Void,PostDetails> {
-
-
-        @Override
-        protected PostDetails doInBackground(String[] objects) {
-
-            Task<DocumentSnapshot> documentSnapshotTask = mFirestore.collection("users").
-                    document(objects[0]).collection(objects[2]).document(objects[1]).get();
-            PostDetails postDetails=null;
-
-            try {
-                DocumentSnapshot documentSnapshot = Tasks.await(documentSnapshotTask);
-
-                postDetails = new PostDetails();
-                Object upVotes = documentSnapshot.get("upVotes");
-                Object views = documentSnapshot.get("views");
-
-                if(upVotes !=null&& views !=null) {
-                    postDetails.setNoOfLikes((Long) upVotes);
-                    postDetails.setNoOfViews((Long) views);
-                }
-
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            return postDetails;
-        }
-
-    }
-
-    public PostDetails getViewsUpvotes(String publisherId, String postId, String path) {
-        PostDetails postDetails=null;
-        try {
-            postDetails = new GetViewsAndUpVotes().execute(publisherId, postId, path).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        return postDetails;
-    }
-
-
 
 }
