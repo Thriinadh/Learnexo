@@ -354,8 +354,9 @@ public class FullAnswerActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         seeAllComments.setEnabled(true);
+
     }
 }

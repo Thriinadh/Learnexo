@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.post.PostDetails;
@@ -151,6 +152,9 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         private TextView viewsText;
         private TextView likesCount;
         private ImageView LikeBtn;
+        private CircleImageView commentsImage;
+        private TextView commentBtn;
+        private TextView seeAllComments;
 
         private long upVotes;
         private long views;
@@ -171,6 +175,13 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             viewsText = mView.findViewById(R.id.viewsText);
             likesCount = mView.findViewById(R.id.likesCount);
             LikeBtn = mView.findViewById(R.id.full_post_like);
+            commentsImage = mView.findViewById(R.id.commentsImage);
+            commentBtn = mView.findViewById(R.id.commentBtn);
+            seeAllComments = mView.findViewById(R.id.seeAllComments);
+
+            RequestOptions placeholderOption = new RequestOptions();
+            placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
+            Glide.with(mContext.getApplicationContext()).load(FeedFragment.sDpUrl).apply(placeholderOption).into(commentsImage);
         }
 
         public void bindViewsUpvotes(PostDetails postDetails, String questionId, String answererId, String answerId) {
