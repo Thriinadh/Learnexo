@@ -151,46 +151,44 @@
                 android:id="@+id/commentsRelative"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/commentsRecycler"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="12dp"
-                android:paddingTop="12dp"
+                android:background="#f2f2f2"
                 android:paddingBottom="12dp"
-                android:background="#f2f2f2">
+                android:paddingTop="12dp"
+                app:layout_constraintBottom_toTopOf="@id/commentsRecycler"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/commentsImage"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_marginLeft="16dp"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/empty_profilee"
-                    android:layout_marginStart="16dp" />
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:src="@drawable/empty_profilee" />
 
                 <TextView
                     android:id="@+id/commentBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Comment..."
-                    android:layout_toRightOf="@id/commentsImage"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:layout_toEndOf="@id/commentsImage"
-                    android:layout_marginStart="16dp" />
+                    android:layout_toRightOf="@id/commentsImage"
+                    android:text="Comment..." />
 
                 <TextView
                     android:id="@+id/seeAllComments"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="see all"
+                    android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="16dp"
                     android:layout_centerVertical="true"
-                    android:textColor="#1da1f2"
                     android:layout_marginEnd="16dp"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_marginRight="16dp"
+                    android:text="see all"
+                    android:textColor="#1da1f2" />
 
             </RelativeLayout>
 

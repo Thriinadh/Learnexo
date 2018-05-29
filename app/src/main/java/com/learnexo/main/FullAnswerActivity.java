@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.post.PostDetails;
@@ -59,6 +60,10 @@ public class FullAnswerActivity extends AppCompatActivity {
     private ImageView LikeBtn;
     private boolean flag = true;
 
+    private CircleImageView commentsImage;
+    private TextView commentBtn;
+    private TextView seeAllComments;
+
 
     FirebaseUtil mFirebaseUtil=new FirebaseUtil();
 
@@ -92,6 +97,21 @@ public class FullAnswerActivity extends AppCompatActivity {
         String path="answers";
         PostDetails postDetails = mFirebaseUtil.getViewsUpvotes(ansPublisherId, ansId, path);
         bindViewsUpvotes(postDetails);
+
+
+
+        commentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = new Intent(FullAnswerActivity.this, CommentsActivity.class);
+                intent1.putExtra("EXTRA_QUESTION_ID", questionId);
+                intent1.putExtra("EXTRA_ANSWER_ID", ansId);
+                intent1.putExtra("ANSWER_PUBLISHER_ID", ansPublisherId);
+                intent1.putExtra("IF_FROM_FULLANSWER_ACTIVITY", flag);
+                startActivity(intent1);
+            }
+        });
+
 
 
         //new GetAnswerViewsAndUpVotes().execute(ansPublisherId, ansId);
@@ -207,6 +227,14 @@ public class FullAnswerActivity extends AppCompatActivity {
         timeOfPost = findViewById(R.id.feed_time);
         postedImage = findViewById(R.id.postedImage);
         overFlowBtn = findViewById(R.id.imageView);
+
+        commentsImage = findViewById(R.id.commentsImage);
+        commentBtn = findViewById(R.id.commentBtn);
+        seeAllComments = findViewById(R.id.seeAllComments);
+
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+        Glide.with(getApplicationContext()).load(FeedFragment.sDpUrl).apply(requestOptions).into(commentsImage);
     }
 
     public static Intent newIntent(Context context, String questionAsked, String content, String publishedImg, String imageThumb,
