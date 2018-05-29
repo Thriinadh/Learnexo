@@ -60,6 +60,7 @@ public class FullPostActivity extends AppCompatActivity {
     private String publisherId;
     private long upVotes;
     private long views;
+    private long comments;
     private String postId;
     private String postData;
     private CircleImageView commentsImage;
@@ -82,13 +83,13 @@ public class FullPostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_post);
+        handleIntent();
 
         wireViews();
         setupToolbar();
 
         setupCommentsRecycler();
 
-        handleIntent();
 
         final User publisher = new User(publisherId, publisherName, publisherDP);
 
@@ -117,6 +118,8 @@ public class FullPostActivity extends AppCompatActivity {
         publisherName = intent.getStringExtra(EXTRA_PUBLISHER_NAME);
         posTime = intent.getStringExtra(EXTRA_TIME);
         publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DP);
+
+        comments = intent.getLongExtra("COMMENTS", 0);
     }
 
 
@@ -126,7 +129,8 @@ public class FullPostActivity extends AppCompatActivity {
             public void onClick(View view) {
                 seeAllComments.setEnabled(false);
 
-                mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").document(postId).collection("comments").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").document(postId).
+                        collection("comments").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
@@ -179,12 +183,19 @@ public class FullPostActivity extends AppCompatActivity {
         });
     }
 
+
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         seeAllComments.setEnabled(true);
     }
-
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        if(comments==0)
+//            seeAllComments.setVisibility(View.INVISIBLE);
+//    }
 
     private void profileListener(final User publisher) {
         userName.setOnClickListener(new View.OnClickListener() {
@@ -273,6 +284,7 @@ public class FullPostActivity extends AppCompatActivity {
         postedImage = findViewById(R.id.postedImage);
 
         seeAllComments = findViewById(R.id.seeAllComments);
+
         commentsImage = findViewById(R.id.commentsImage);
         commentBtn = findViewById(R.id.commentBtn);
 
@@ -289,7 +301,8 @@ public class FullPostActivity extends AppCompatActivity {
         }
     }
 
-    public static Intent newIntent(Context context, String content, String publishedImg, String imageThumb, String timeAgo, User publisher, String postId) {
+    public static Intent newIntent(Context context, String content, String publishedImg, String imageThumb,
+                                   String timeAgo, User publisher, String postId, long comments) {
 
         Intent intent = new Intent(context, FullPostActivity.class);
         intent.putExtra(EXTRA_CONTENT,content);
@@ -298,6 +311,7 @@ public class FullPostActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_PUBLISHER_DP, publisher.getDpUrl());
         intent.putExtra("POST_ID", postId);
         intent.putExtra("PUBLISHER_ID",publisher.getUserId());
+        intent.putExtra("COMMENTS",comments);
         if(publishedImg!=null) {
             intent.putExtra(EXTRA_IMAGE, publishedImg);
             intent.putExtra(EXTRA_THUMB, imageThumb);

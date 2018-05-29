@@ -113,7 +113,7 @@ public class UserPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
                             Map<String, Object> map= new HashMap();
                             map.put("views",viewss);
 
-                            Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, imageThumb, timeAgo, publisher, postId);
+                            Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, imageThumb, timeAgo, publisher, postId, 0);
                             mContext.startActivity(intent);
 
                             mFirebaseUtil.mFirestore.collection("users").document(publisher.getUserId()).collection("posts").
