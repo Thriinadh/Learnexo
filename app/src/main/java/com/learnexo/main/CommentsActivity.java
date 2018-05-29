@@ -50,7 +50,7 @@ public class CommentsActivity extends AppCompatActivity {
                 comment.setPublisherId(publisherId);
                 comment.setFeedItemId(postId);
                 comment.setCommenterName(FeedFragment.sName);
-                comment.setPublisherId(FeedFragment.sDpUrl);
+                comment.setCommenterDp(FeedFragment.sDpUrl);
 
                 mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts")
                         .document(postId).collection("comments").add(comment).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

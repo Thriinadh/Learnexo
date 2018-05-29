@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#e6e6e6">
+    android:background="#f2f2f2">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/circleImageView"
@@ -40,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@+id/userName" />
 
     <TextView
-        android:id="@+id/answerContent"
+        android:id="@+id/commentData"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -48,12 +48,10 @@
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:gravity="start"
+        android:text="Textview"
         android:textColor="#404040"
-        android:text="@string/tested_text"
-        android:textAlignment="textStart"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@id/postedImagee"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
 
@@ -63,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/ic_outline_more_horiz_24px"
         android:backgroundTint="@color/light_black"
         android:clickable="true"
@@ -71,65 +69,68 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/postedImagee"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/answerContent"
-        app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
+    <!--<ImageView-->
+        <!--android:id="@+id/postedImagee"-->
+        <!--android:layout_width="64dp"-->
+        <!--android:layout_height="64dp"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--android:layout_marginEnd="16dp"-->
+        <!--android:layout_marginRight="16dp"-->
+        <!--android:visibility="gone"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toEndOf="@id/commentData"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/circleImageView" />-->
 
     <!--<TextView-->
-        <!--android:id="@+id/seeMore"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="end"-->
-        <!--android:layout_marginBottom="4dp"-->
-        <!--android:layout_marginEnd="2dp"-->
-        <!--android:layout_marginRight="2dp"-->
-        <!--android:text="...See more"-->
-        <!--android:textAlignment="viewEnd"-->
-        <!--android:textColor="@android:color/darker_gray"-->
-        <!--android:textSize="16sp"-->
-        <!--app:layout_constraintBottom_toBottomOf="@+id/answerContent"-->
-        <!--app:layout_constraintEnd_toEndOf="@+id/answerContent" />-->
+    <!--android:id="@+id/seeMore"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="end"-->
+    <!--android:layout_marginBottom="4dp"-->
+    <!--android:layout_marginEnd="2dp"-->
+    <!--android:layout_marginRight="2dp"-->
+    <!--android:text="...See more"-->
+    <!--android:textAlignment="viewEnd"-->
+    <!--android:textColor="@android:color/darker_gray"-->
+    <!--android:textSize="16sp"-->
+    <!--app:layout_constraintBottom_toBottomOf="@+id/answerContent"-->
+    <!--app:layout_constraintEnd_toEndOf="@+id/answerContent" />-->
 
     <TextView
         android:id="@+id/replyTView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reply"
+        android:layout_marginBottom="12dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
+        android:text="Reply"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/answerContent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/commentData"
+        android:layout_marginStart="16dp" />
 
     <TextView
         android:id="@+id/upvoteTView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upvote"
         android:layout_marginLeft="24dp"
+        android:text="Upvote"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/replyTView"
-        app:layout_constraintTop_toBottomOf="@id/answerContent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/commentData"
+        android:layout_marginStart="24dp" />
 
     <TextView
         android:id="@+id/downvoteTView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Downvote"
         android:layout_marginLeft="24dp"
+        android:text="Downvote"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/upvoteTView"
-        app:layout_constraintTop_toBottomOf="@id/answerContent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/commentData"
+        android:layout_marginStart="24dp" />
 
     <View
         android:layout_width="match_parent"

@@ -81,6 +81,7 @@ public class FullPostActivity extends AppCompatActivity {
         mAdapter = new UserCommentsRecyclerAdapter(mComments);
 
         commentsRecycler = findViewById(R.id.commentsRecycler);
+        commentsRecycler.setHasFixedSize(true);
         commentsRecycler.setLayoutManager(new LinearLayoutManager(FullPostActivity.this));
         commentsRecycler.setAdapter(mAdapter);
 
@@ -120,6 +121,7 @@ public class FullPostActivity extends AppCompatActivity {
         seeAllComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                seeAllComments.setEnabled(false);
 
                 mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").document(postId).collection("comments").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -138,6 +140,11 @@ public class FullPostActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        seeAllComments.setEnabled(true);
+    }
 
 
     private void profileListener(final User publisher) {
