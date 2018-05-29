@@ -323,16 +323,18 @@ public class AnswerActivity extends AppCompatActivity {
 
         final Task<DocumentReference> documentReferenceTask = mFirebaseUtil.mFirestore.collection("users")
                 .document(mUserId).collection("answers").add(answer);
+
         documentReferenceTask.addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if (task.isSuccessful()) {
 
-                    Task<DocumentReference> documentReferenceTask1 = mFirebaseUtil.mFirestore.collection("questions")
-                            .document(answer.getQuesId()).collection("answers").add(answer);
-                    documentReferenceTask1.addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    Task<Void> documentReferenceTask1 = mFirebaseUtil.mFirestore.collection("questions")
+                            .document(answer.getQuesId()).collection("answers").document(documentReferenceTask.getResult().getId()).set(answer);
+
+                    documentReferenceTask1.addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
-                        public void onComplete(@NonNull Task<DocumentReference> task) {
+                        public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
 
                                 Task<DocumentSnapshot> documentSnapshotTask =  mFirebaseUtil.mFirestore.collection("users")

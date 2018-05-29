@@ -28,9 +28,10 @@ public class LikeBtnListener implements View.OnClickListener {
     private String postId;
     private Activity mActivity;
     private boolean isAnswer;
+    private String questionId;
 
     public LikeBtnListener(ImageView fullPostLikeBtn, TextView likesCount, boolean flag, String publisherId,
-                           String postId, long upVotes, Activity activity, boolean isAnswer) {
+                           String postId, long upVotes, Activity activity, boolean isAnswer, String questionId) {
         this.fullPostLikeBtn = fullPostLikeBtn;
         this.likesCount = likesCount;
         this.flag = flag;
@@ -39,6 +40,7 @@ public class LikeBtnListener implements View.OnClickListener {
         this.postId = postId;
         this.isAnswer=isAnswer;
         mActivity = activity;
+        this.questionId=questionId;
     }
 
     @Override
@@ -78,6 +80,10 @@ public class LikeBtnListener implements View.OnClickListener {
                     path = "posts";
 
                 mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection(path).
+                        document(postId).update(map);
+
+                if(path.equals("answers")&&questionId!=null)
+                mFirebaseUtil.mFirestore.collection("questions").document(questionId).collection(path).
                         document(postId).update(map);
             }
         });
