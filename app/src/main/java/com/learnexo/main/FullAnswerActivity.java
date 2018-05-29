@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -55,32 +56,37 @@ public class FullAnswerActivity extends AppCompatActivity {
     private TextView viewAllAns;
     private TextView questionAsked;
     private TextView fullText;
-    private ImageView postedImage;
-    private ImageView challengeIcon;
     private TextView timeOfPost;
-    private CircleImageView profileImage;
     private TextView userName;
-    private String questionId;
-    String questionData;
-    boolean is_crack;
-    String tag;
-    String questionerId;
-    private ImageView overFlowBtn;
-
-    private String ansPublisherId;
-    private long upVotes;
-    private long views;
-    private String ansId;
     private TextView viewsText;
     private TextView likesCount;
-    private ImageView LikeBtn;
-    private boolean flag = true;
-
-    private CircleImageView commentsImage;
     private TextView commentBtn;
     private TextView seeAllComments;
+    private ImageView overFlowBtn;
+    private ImageView postedImage;
+    private ImageView challengeIcon;
+    private ImageView LikeBtn;
+    private CircleImageView profileImage;
+    private CircleImageView commentsImage;
     private RecyclerView commentsRecycler;
 
+    private String questionId;
+    private String questionData;
+    private String tag;
+    private String questionerId;
+    private String ansPublisherId;
+    private String ansId;
+    private String posTime;
+    private String postData;
+    private String imagePosted;
+    private String imageThumb;
+    private String publisherName;
+    private String publisherDP;
+
+    private long upVotes;
+    private long views;
+    private boolean is_crack;
+    private boolean flag = true;
 
     FirebaseUtil mFirebaseUtil=new FirebaseUtil();
 
@@ -88,72 +94,75 @@ public class FullAnswerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_answer);
+        hangleIntent();
 
         wireViews();
         setupCommentsRecycler();
 
-        Intent intent=getIntent();
-        is_crack = intent.getBooleanExtra("IS_CRACK", false);
-        questionData = intent.getStringExtra(EXTRA_QUESTION_CONTENT);
-        questionId = intent.getStringExtra(EXTRA_QUESTION_ID);
-        String posTime = intent.getStringExtra(EXTRA_TIME);
-        String postData = intent.getStringExtra(EXTRA_CONTENT);
-        String imagePosted = intent.getStringExtra(EXTRA_IMAGE);
-        String imageThumb = intent.getStringExtra(EXTRA_THUMBNAIL);
-        String publisherName = intent.getStringExtra(EXTRA_PUBLISHER_NAME);
-        String publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DP);
-        ansPublisherId = intent.getStringExtra("ANS_PUBLISHER_ID");
-        ansId = intent.getStringExtra("ANS_ID");
+        bindData(posTime, postData, imagePosted, imageThumb);
+        handleViewsUpvotes();
+        commentBtnListener();
+        seeAllCommentsListener();
 
-        tag = intent.getStringExtra("TAG");
-        questionerId = intent.getStringExtra("QUESTIONER_ID");
+        final User publisher =new User(ansPublisherId,publisherName,publisherDP);
+        othersProfileListeners(publisher);
+        overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
 
+    }
 
-        bindData(intent, posTime, postData, imagePosted, imageThumb);
-
-
-        String path="answers";
-        new GetViewsAndUpVotes().execute(ansPublisherId,ansId,path);
-//        PostDetails postDetails = mFirebaseUtil.getViewsUpvotes(ansPublisherId, ansId, path);
-//        bindViewsUpvotes(postDetails);
-
-
-
+    private void commentBtnListener() {
         commentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent1 = new Intent(FullAnswerActivity.this, CommentsActivity.class);
-                intent1.putExtra("EXTRA_QUESTION_ID", questionId);
-                intent1.putExtra("EXTRA_ANSWER_ID", ansId);
-                intent1.putExtra("ANSWER_PUBLISHER_ID", ansPublisherId);
-                intent1.putExtra("IF_FROM_FULLANSWER_ACTIVITY", flag);
-                startActivity(intent1);
+                Intent intent = new Intent(FullAnswerActivity.this, CommentsActivity.class);
+                intent.putExtra("EXTRA_QUESTION_ID", questionId);
+                intent.putExtra("EXTRA_ANSWER_ID", ansId);
+                intent.putExtra("ANSWER_PUBLISHER_ID", ansPublisherId);
+                intent.putExtra("IF_FROM_FULLANSWER_ACTIVITY", flag);
+                startActivity(intent);
             }
         });
+    }
 
-
-        final User publisher =new User(ansPublisherId,publisherName,publisherDP);
-
+    private void othersProfileListeners(final User publisher) {
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent1 = OthersProfileActivity.newIntent(FullAnswerActivity.this, publisher);
-                startActivity(intent1);
+                Intent intent = OthersProfileActivity.newIntent(FullAnswerActivity.this, publisher);
+                startActivity(intent);
             }
         });
 
         userName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent1 = OthersProfileActivity.newIntent(FullAnswerActivity.this, publisher);
-                startActivity(intent1);
+                Intent intent = OthersProfileActivity.newIntent(FullAnswerActivity.this, publisher);
+                startActivity(intent);
             }
         });
+    }
 
-        overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
+    private void handleViewsUpvotes() {
+        String path="answers";
+        new GetViewsAndUpVotes().execute(ansPublisherId,ansId,path);
+    }
 
-        seeAllCommentsListener();
-
+    @NonNull
+    private void hangleIntent() {
+        Intent intent=getIntent();
+        is_crack = intent.getBooleanExtra("IS_CRACK", false);
+        ansPublisherId = intent.getStringExtra("ANS_PUBLISHER_ID");
+        ansId = intent.getStringExtra("ANS_ID");
+        tag = intent.getStringExtra("TAG");
+        questionerId = intent.getStringExtra("QUESTIONER_ID");
+        questionData = intent.getStringExtra(EXTRA_QUESTION_CONTENT);
+        questionId = intent.getStringExtra(EXTRA_QUESTION_ID);
+        posTime = intent.getStringExtra(EXTRA_TIME);
+        postData = intent.getStringExtra(EXTRA_CONTENT);
+        imagePosted = intent.getStringExtra(EXTRA_IMAGE);
+        imageThumb = intent.getStringExtra(EXTRA_THUMBNAIL);
+        publisherName = intent.getStringExtra(EXTRA_PUBLISHER_NAME);
+        publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DP);
     }
 
     public void bindViewsUpvotes(PostDetails postDetails) {
@@ -193,10 +202,10 @@ public class FullAnswerActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    private void bindData(Intent intent, String posTime, String postData, String imagePosted, String imageThumb) {
+    private void bindData(String posTime, String postData, String imagePosted, String imageThumb) {
         questionAsked.setText(questionData);
         fullText.setText(postData);
-        userName.setText(intent.getStringExtra(EXTRA_PUBLISHER_NAME));
+        userName.setText(publisherName);
         timeOfPost.setText(posTime);
         if(is_crack){
             challengeIcon = findViewById(R.id.imageView5);
@@ -224,7 +233,7 @@ public class FullAnswerActivity extends AppCompatActivity {
 
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
-        Glide.with(getApplicationContext()).load(intent.getStringExtra(EXTRA_PUBLISHER_DP)).apply(requestOptions).into(profileImage);
+        Glide.with(getApplicationContext()).load(publisherDP).apply(requestOptions).into(profileImage);
 
 
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
@@ -281,7 +290,6 @@ public class FullAnswerActivity extends AppCompatActivity {
 
     public class GetViewsAndUpVotes extends AsyncTask<String, Void,PostDetails> {
 
-
         @Override
         protected PostDetails doInBackground(String[] objects) {
 
@@ -310,7 +318,6 @@ public class FullAnswerActivity extends AppCompatActivity {
             bindViewsUpvotes(result);
         }
 
-
     }
 
     private void setupCommentsRecycler() {
@@ -329,7 +336,8 @@ public class FullAnswerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 seeAllComments.setEnabled(false);
 
-                mFirebaseUtil.mFirestore.collection("questions").document(questionId).collection("answers").document(ansId).collection("comments").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                mFirebaseUtil.mFirestore.collection("questions").document(questionId).collection("answers").
+                        document(ansId).collection("comments").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();

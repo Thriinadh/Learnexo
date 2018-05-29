@@ -59,7 +59,6 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         Answer answer = mAnswers.get(position);
 
         if (answer != null) {
-
             User publisher = new User();
             final String answererId = answer.getUserId();
             final String itemContent = answer.getContent();
@@ -77,9 +76,6 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             bindAnswererData(allAnsHolder, publisher);
 
             new GetViewsAndUpVotes().execute(answererId, answerId, path, allAnsHolder, quesId);
-
-//            PostDetails postDetails = mFirebaseUtil.getViewsUpvotes(answererId, answerId, path);
-//            allAnsHolder.bindViewsUpvotes(postDetails, quesId, answererId, answerId);
 
             allAnsOverflowListener(allAnsHolder, publisher, answer);
             answersProfileListener(allAnsHolder, publisher, answerId);
@@ -140,18 +136,12 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                         } else {
                             // Error handling here
                         }
-
                     }
                 });
     }
 
-
-
-
     public class AllAnsHolder extends RecyclerView.ViewHolder {
-
         private View mView;
-
         private TextView answerContent;
         private TextView userName;
         private CircleImageView userImage;
@@ -164,9 +154,7 @@ public class AllAnsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         private long upVotes;
         private long views;
-
         private boolean flag = true;
-
 
         public AllAnsHolder(View itemView) {
             super(itemView);
