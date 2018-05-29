@@ -49,9 +49,11 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -92,6 +94,9 @@ public class PublishActivity extends AppCompatActivity {
     String publishType;
 
     String coontent;
+
+    ArrayAdapter<String> staticAdapter;
+    List<String> subjectsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,7 +173,7 @@ public class PublishActivity extends AppCompatActivity {
             public void onClick(View view) {
                 final String content = PublishActivity.this.content.getText().toString();
 
-                if(!TextUtils.isEmpty(content) && tag != null) {
+                if(!TextUtils.isEmpty(content) && tag != null && !tag.equals("others")) {
                     mProgressBar.setVisibility(View.VISIBLE);
 
                     if(publishType.equals(getString(R.string.shareInfo))) {
@@ -183,7 +188,7 @@ public class PublishActivity extends AppCompatActivity {
                         prepareFeedItem(content,publishType);
 
                     }
-                } else if(!TextUtils.isEmpty(content) && tag == null)
+                } else if(!TextUtils.isEmpty(content) && tag == null && tag.equals("others"))
                     Toast.makeText(PublishActivity.this, "Tag must not be empty", Toast.LENGTH_SHORT).show();
             }
         });
@@ -426,6 +431,7 @@ public class PublishActivity extends AppCompatActivity {
                Object object = adapterView.getItemAtPosition(position);
                 if(object != null)
                        tag = object.toString();
+
                 if(!TextUtils.isEmpty(tag) && tag.equals("others")) {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(PublishActivity.this);
@@ -443,11 +449,15 @@ public class PublishActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int id) {
                             tag = input.getText().toString();
 
+                            subjectsList.add(tag);
+                            staticAdapter.notifyDataSetChanged();
+                            spinner.setSelection(subjectsList.size());
                                 }
                             });
 
                     builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
+
                             dialog.cancel();
                         }
                     });
@@ -469,9 +479,11 @@ public class PublishActivity extends AppCompatActivity {
 
         String subjects[] = {"Department0 Java 0","Relational Database", "Java","Mongo DB","Scala","Python","Ruby", "C sharp","Android", "others"};
 
-        ArrayAdapter<String> staticAdapter = new ArrayAdapter<>
+        subjectsList = new ArrayList<>(Arrays.asList(subjects));
+
+        staticAdapter = new ArrayAdapter<>
                 (this, android.R.layout.simple_spinner_item,
-                        subjects);
+                        subjectsList);
 
         staticAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setPrompt("Select any subject");
