@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,20 +14,25 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.FeedItem;
+import com.learnexo.model.feed.likediv.Comment;
 import com.learnexo.model.feed.post.PostDetails;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -41,6 +48,9 @@ public class FullAnswerActivity extends AppCompatActivity {
     private static final String EXTRA_THUMBNAIL = "com.learnexo.imagepostedthumbnail";
     private static final String EXTRA_TIME = "com.learnexo.postedtime";
     private static final String EXTRA_QUESTION_ID = "com.learnexo.questionId";
+
+    private List<Comment> mComments;
+    private UserCommentsRecyclerAdapter mAdapter;
 
     private TextView viewAllAns;
     private TextView questionAsked;
@@ -69,6 +79,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     private CircleImageView commentsImage;
     private TextView commentBtn;
     private TextView seeAllComments;
+    private RecyclerView commentsRecycler;
 
 
     FirebaseUtil mFirebaseUtil=new FirebaseUtil();
@@ -79,6 +90,7 @@ public class FullAnswerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_full_answer);
 
         wireViews();
+        setupCommentsRecycler();
 
         Intent intent=getIntent();
         is_crack = intent.getBooleanExtra("IS_CRACK", false);
@@ -139,6 +151,8 @@ public class FullAnswerActivity extends AppCompatActivity {
         });
 
         overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
+
+        seeAllCommentsListener();
 
     }
 
@@ -235,6 +249,7 @@ public class FullAnswerActivity extends AppCompatActivity {
         commentsImage = findViewById(R.id.commentsImage);
         commentBtn = findViewById(R.id.commentBtn);
         seeAllComments = findViewById(R.id.seeAllComments);
+        commentsRecycler = findViewById(R.id.commentsRecycler);
 
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
@@ -296,5 +311,43 @@ public class FullAnswerActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    private void setupCommentsRecycler() {
+        mComments = new ArrayList<>();
+        mAdapter = new UserCommentsRecyclerAdapter(mComments);
+
+        commentsRecycler = findViewById(R.id.commentsRecycler);
+        commentsRecycler.setHasFixedSize(true);
+        commentsRecycler.setLayoutManager(new LinearLayoutManager(FullAnswerActivity.this));
+        commentsRecycler.setAdapter(mAdapter);
+    }
+
+    private void seeAllCommentsListener() {
+        seeAllComments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                seeAllComments.setEnabled(false);
+
+                mFirebaseUtil.mFirestore.collection("questions").document(questionId).collection("answers").document(ansId).collection("comments").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                        for(DocumentSnapshot documentSnapshot: documents) {
+                            Comment comment = documentSnapshot.toObject(Comment.class);
+                            mComments.add(comment);
+                        }
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+
+            }
+        });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        seeAllComments.setEnabled(true);
     }
 }
