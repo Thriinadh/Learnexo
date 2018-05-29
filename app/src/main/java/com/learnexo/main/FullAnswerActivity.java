@@ -2,6 +2,7 @@ package com.learnexo.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,6 +12,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
 import com.learnexo.model.feed.FeedItem;
@@ -22,6 +27,7 @@ import com.learnexo.util.FirebaseUtil;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -95,8 +101,9 @@ public class FullAnswerActivity extends AppCompatActivity {
 
 
         String path="answers";
-        PostDetails postDetails = mFirebaseUtil.getViewsUpvotes(ansPublisherId, ansId, path);
-        bindViewsUpvotes(postDetails);
+        new GetViewsAndUpVotes().execute(ansPublisherId,ansId,path);
+//        PostDetails postDetails = mFirebaseUtil.getViewsUpvotes(ansPublisherId, ansId, path);
+//        bindViewsUpvotes(postDetails);
 
 
 
@@ -112,9 +119,6 @@ public class FullAnswerActivity extends AppCompatActivity {
             }
         });
 
-
-
-        //new GetAnswerViewsAndUpVotes().execute(ansPublisherId, ansId);
 
         final User publisher =new User(ansPublisherId,publisherName,publisherDP);
 
@@ -256,5 +260,41 @@ public class FullAnswerActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_THUMBNAIL, imageThumb);
         }
         return intent;
+    }
+
+
+
+    public class GetViewsAndUpVotes extends AsyncTask<String, Void,PostDetails> {
+
+
+        @Override
+        protected PostDetails doInBackground(String[] objects) {
+
+            Task<DocumentSnapshot> documentSnapshotTask = FirebaseFirestore.getInstance().collection("users").
+                    document(objects[0]).collection(objects[2]).document(objects[1]).get();
+            PostDetails postDetails=null;
+
+            try {
+                DocumentSnapshot documentSnapshot = Tasks.await(documentSnapshotTask);
+
+                postDetails = new PostDetails();
+                postDetails.setNoOfLikes((Long) documentSnapshot.get("upVotes"));
+                postDetails.setNoOfViews((Long) documentSnapshot.get("views"));
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return postDetails;
+        }
+
+        @Override
+        protected void onPostExecute(PostDetails result) {
+            bindViewsUpvotes(result);
+        }
+
+
     }
 }

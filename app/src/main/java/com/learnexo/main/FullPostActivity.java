@@ -2,6 +2,7 @@ package com.learnexo.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +16,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
@@ -28,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -67,6 +72,10 @@ public class FullPostActivity extends AppCompatActivity {
 
     private ImageView fullPostLikeBtn;
     private ImageView overFlowBtn;
+    private String imagePosted;
+    private String imageThumb;
+    private String posTime;
+
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
     @Override
@@ -77,58 +86,41 @@ public class FullPostActivity extends AppCompatActivity {
         wireViews();
         setupToolbar();
 
-        mComments = new ArrayList<>();
-        mAdapter = new UserCommentsRecyclerAdapter(mComments);
+        setupCommentsRecycler();
 
-        commentsRecycler = findViewById(R.id.commentsRecycler);
-        commentsRecycler.setHasFixedSize(true);
-        commentsRecycler.setLayoutManager(new LinearLayoutManager(FullPostActivity.this));
-        commentsRecycler.setAdapter(mAdapter);
-
-        Intent intent=getIntent();
-        publisherId=intent.getStringExtra("PUBLISHER_ID");
-        postId = intent.getStringExtra("POST_ID");
-        postData = intent.getStringExtra(EXTRA_CONTENT);
-        String imagePosted = intent.getStringExtra(EXTRA_IMAGE);
-        String imageThumb = intent.getStringExtra(EXTRA_THUMB);
-        publisherName = intent.getStringExtra(EXTRA_PUBLISHER_NAME);
-        String posTime = intent.getStringExtra(EXTRA_TIME);
-        publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DP);
+        handleIntent();
 
         final User publisher = new User(publisherId, publisherName, publisherDP);
 
 
         bindData(imagePosted, imageThumb, publisherName, posTime, publisherDP);
 
-        String path="posts";
-        PostDetails postDetails = mFirebaseUtil.getViewsUpvotes(publisherId, postId, path);
-        bindViewsUpvotes(postDetails);
+        handleViewsUpvotes();
 
         overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
 
         profileListener(publisher);
 
-        commentBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent1 = new Intent(FullPostActivity.this, CommentsActivity.class);
-                intent1.putExtra("EXTRA_PUBLISHER_IDDD", publisherId);
-                intent1.putExtra("EXTRA_POST_ITEM_ID", postId);
-                startActivity(intent1);
-            }
-        });
+        gotoCommentsActivity();
 
-        commentsImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent1 = new Intent(FullPostActivity.this, CommentsActivity.class);
-                intent1.putExtra("EXTRA_PUBLISHER_IDDD", publisherId);
-                intent1.putExtra("EXTRA_POST_ITEM_ID", postId);
-                startActivity(intent1);
-                //  onShowPopup(view);
-            }
-        });
+        seeAllCommentsListener();
 
+    }
+
+    private void handleIntent() {
+        Intent intent=getIntent();
+        publisherId = intent.getStringExtra("PUBLISHER_ID");
+        postId = intent.getStringExtra("POST_ID");
+        postData = intent.getStringExtra(EXTRA_CONTENT);
+        imagePosted = intent.getStringExtra(EXTRA_IMAGE);
+        imageThumb = intent.getStringExtra(EXTRA_THUMB);
+        publisherName = intent.getStringExtra(EXTRA_PUBLISHER_NAME);
+        posTime = intent.getStringExtra(EXTRA_TIME);
+        publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DP);
+    }
+
+
+    private void seeAllCommentsListener() {
         seeAllComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -148,7 +140,43 @@ public class FullPostActivity extends AppCompatActivity {
 
             }
         });
+    }
 
+    private void setupCommentsRecycler() {
+        mComments = new ArrayList<>();
+        mAdapter = new UserCommentsRecyclerAdapter(mComments);
+
+        commentsRecycler = findViewById(R.id.commentsRecycler);
+        commentsRecycler.setHasFixedSize(true);
+        commentsRecycler.setLayoutManager(new LinearLayoutManager(FullPostActivity.this));
+        commentsRecycler.setAdapter(mAdapter);
+    }
+
+    private void handleViewsUpvotes() {
+        String path="posts";
+        new GetViewsAndUpVotes().execute(publisherId,postId,path);
+    }
+
+    private void gotoCommentsActivity() {
+        commentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = new Intent(FullPostActivity.this, CommentsActivity.class);
+                intent1.putExtra("EXTRA_PUBLISHER_IDDD", publisherId);
+                intent1.putExtra("EXTRA_POST_ITEM_ID", postId);
+                startActivity(intent1);
+            }
+        });
+
+        commentsImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = new Intent(FullPostActivity.this, CommentsActivity.class);
+                intent1.putExtra("EXTRA_PUBLISHER_IDDD", publisherId);
+                intent1.putExtra("EXTRA_POST_ITEM_ID", postId);
+                startActivity(intent1);
+            }
+        });
     }
 
     @Override
@@ -176,7 +204,7 @@ public class FullPostActivity extends AppCompatActivity {
         });
     }
 
-    private void bindViewsUpvotes(PostDetails postDetails) {
+    public void bindViewsUpvotes(PostDetails postDetails) {
         try {
             upVotes=postDetails.getNoOfLikes();
             views=postDetails.getNoOfViews();
@@ -276,5 +304,41 @@ public class FullPostActivity extends AppCompatActivity {
         }
         return intent;
     }
+
+
+    public class GetViewsAndUpVotes extends AsyncTask<String, Void,PostDetails> {
+
+
+        @Override
+        protected PostDetails doInBackground(String[] objects) {
+
+            Task<DocumentSnapshot> documentSnapshotTask = FirebaseFirestore.getInstance().collection("users").
+                    document(objects[0]).collection(objects[2]).document(objects[1]).get();
+           PostDetails postDetails=null;
+
+            try {
+                DocumentSnapshot documentSnapshot = Tasks.await(documentSnapshotTask);
+
+                postDetails = new PostDetails();
+                postDetails.setNoOfLikes((Long) documentSnapshot.get("upVotes"));
+                postDetails.setNoOfViews((Long) documentSnapshot.get("views"));
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return postDetails;
+        }
+
+        @Override
+        protected void onPostExecute(PostDetails result) {
+            bindViewsUpvotes(result);
+        }
+
+
+    }
+
 
 }
