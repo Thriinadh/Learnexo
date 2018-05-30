@@ -276,51 +276,34 @@ if(!flag && gag) {
         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
             List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-            documents.remove(0);
+            DocumentSnapshot documentSnapshot = documents.get(0);
+            String id = documentSnapshot.getId();
 
-        }
-    });
+            mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+                    .collection("bookmarks").document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
 
-//    mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
-//            .collection("bookmarks").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//        @Override
-//        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//            List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-//            for(DocumentSnapshot documentSnapshot : documents) {
-//                Object bookMarkItemId = documentSnapshot.get("bookMarkItemId");
-//                bookMarkItemIdd = (String) bookMarkItemId;
-//
-//                if(bookMarkItemIdd != null) {
-//                    if (bookMarkItemIdd.equals(postId)) {
-//
-//                        documents.remove();
-//
-//                    }
-//
-//                }
-//
-//            }
-//
-//        }
-//    });
+                    mFirebaseUtil.mFirestore.collection("users").document(publisherId)
+                            .collection("posts").document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
 
+                            long noOfBookMarks = (long) documentSnapshot.get("bookMarks");
 
+                            noOfBookMarks = noOfBookMarks - 1;
 
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("bookMarks", noOfBookMarks);
 
-    mFirebaseUtil.mFirestore.collection("users").document(publisherId)
-            .collection("posts").document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-        @Override
-        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            mFirebaseUtil.mFirestore.collection("users").document(publisherId)
+                                    .collection("posts").document(postId).update(map);
 
-            long noOfBookMarks = (long) documentSnapshot.get("bookMarks");
+                        }
+                    });
 
-            noOfBookMarks = noOfBookMarks - 1;
-
-            Map<String, Object> map = new HashMap<>();
-            map.put("bookMarks", noOfBookMarks);
-
-            mFirebaseUtil.mFirestore.collection("users").document(publisherId)
-                    .collection("posts").document(postId).update(map);
+                }
+            });
 
         }
     });
