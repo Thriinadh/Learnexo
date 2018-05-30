@@ -16,8 +16,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
@@ -264,6 +266,46 @@ if(!flag && gag) {
         }
     });
 } else if(flag && !gag) {
+
+    CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users")
+            .document(FirebaseUtil.getCurrentUserId()).collection("bookmarks");
+    Query query = collectionReference.whereEqualTo("bookMarkItemId", postId);
+
+    query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        @Override
+        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+            List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+            documents.remove(0);
+
+        }
+    });
+
+//    mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+//            .collection("bookmarks").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//        @Override
+//        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//            List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+//            for(DocumentSnapshot documentSnapshot : documents) {
+//                Object bookMarkItemId = documentSnapshot.get("bookMarkItemId");
+//                bookMarkItemIdd = (String) bookMarkItemId;
+//
+//                if(bookMarkItemIdd != null) {
+//                    if (bookMarkItemIdd.equals(postId)) {
+//
+//                        documents.remove();
+//
+//                    }
+//
+//                }
+//
+//            }
+//
+//        }
+//    });
+
+
+
 
     mFirebaseUtil.mFirestore.collection("users").document(publisherId)
             .collection("posts").document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
