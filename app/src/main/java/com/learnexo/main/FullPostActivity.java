@@ -78,7 +78,8 @@ public class FullPostActivity extends AppCompatActivity {
     private ImageView overFlowBtn;
 
     private ImageView full_post_bookmark;
-    private long noOfBookMarkss;
+    String bookMarkItemIdd;
+    boolean gag = true;
 
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
@@ -112,46 +113,43 @@ public class FullPostActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if(flag) {
+
                     full_post_bookmark.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.ic_baseline_bookmark_24px));
-                    noOfBookMarkss = noOfBookMarkss + 1;
                     flag = false;
-                }
-                else {
+                } else {
+
                     full_post_bookmark.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_bookmark_icon));
-                    noOfBookMarkss = noOfBookMarkss - 1;
                     flag = true;
                 }
-                Bookmark bookmark = new Bookmark();
-                bookmark.setBookMarkerId(FirebaseUtil.getCurrentUserId());
-                bookmark.setBookMarkItemId(postId);
-                bookmark.setBookMarkType(BookMarkType.POST);
-                bookmark.setPublisherId(publisherId);
 
-                mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
-                        .collection("bookmarks").add(bookmark).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        mFirebaseUtil.mFirestore.collection("users").document(publisherId)
-                                .collection("posts").document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                            @Override
-                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                                noOfBookMarkss = (long) documentSnapshot.get("bookMarks");
-
-                                Map<String, Object> map = new HashMap<>();
-                                map.put("bookMarks", noOfBookMarkss);
-
-                                mFirebaseUtil.mFirestore.collection("users").document(publisherId)
-                                        .collection("posts").document(postId).update(map);
-
-                            }
-                        });
-                    }
-                });
             }
         });
 
+        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+                .collection("bookmarks").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                for(DocumentSnapshot documentSnapshot : documents) {
+                    Object bookMarkItemId = documentSnapshot.get("bookMarkItemId");
+                    bookMarkItemIdd = (String) bookMarkItemId;
+                }
+                if(bookMarkItemIdd != null) {
+                    if (bookMarkItemIdd.equals(postId)) {
+                        full_post_bookmark.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.ic_baseline_bookmark_24px));
+                        flag = false;
+                        gag = false;
+                    }
+
+                }
+
+            }
+        });
+
+
     }
+
+
 
     private void overFlowListener(User publisher) {
         overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
@@ -234,6 +232,58 @@ public class FullPostActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         seeAllComments.setEnabled(true);
+
+if(!flag && gag) {
+    Bookmark bookmark = new Bookmark();
+    bookmark.setBookMarkerId(FirebaseUtil.getCurrentUserId());
+    bookmark.setBookMarkItemId(postId);
+    bookmark.setBookMarkType(BookMarkType.POST);
+    bookmark.setPublisherId(publisherId);
+
+    mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+            .collection("bookmarks").add(bookmark).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        @Override
+        public void onSuccess(DocumentReference documentReference) {
+            mFirebaseUtil.mFirestore.collection("users").document(publisherId)
+                    .collection("posts").document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                    long noOfBookMarks = (long) documentSnapshot.get("bookMarks");
+
+                    noOfBookMarks = noOfBookMarks + 1;
+
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("bookMarks", noOfBookMarks);
+
+                    mFirebaseUtil.mFirestore.collection("users").document(publisherId)
+                            .collection("posts").document(postId).update(map);
+
+                }
+            });
+        }
+    });
+} else if(flag && gag) {
+
+    mFirebaseUtil.mFirestore.collection("users").document(publisherId)
+            .collection("posts").document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        @Override
+        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+            long noOfBookMarks = (long) documentSnapshot.get("bookMarks");
+
+            noOfBookMarks = noOfBookMarks - 1;
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("bookMarks", noOfBookMarks);
+
+            mFirebaseUtil.mFirestore.collection("users").document(publisherId)
+                    .collection("posts").document(postId).update(map);
+
+        }
+    });
+
+}
     }
 
 
