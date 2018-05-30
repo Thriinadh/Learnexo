@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ public class ProfileFragment extends Fragment {
     private TextView description;
     private TextView editProfile;
     private TextView eduDetails;
+    private ImageView fullProfileImage;
 
     private String mUserId;
     public static String sDpUrl;
@@ -65,6 +67,14 @@ public class ProfileFragment extends Fragment {
         description = view.findViewById(R.id.description);
         eduDetails = view.findViewById(R.id.eduDetails);
         frameLayout = view.findViewById(R.id.fragment_container);
+        fullProfileImage = view.findViewById(R.id.fullProfileImage);
+
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         eduDetails.setOnClickListener(new View.OnClickListener() {
             @Override
