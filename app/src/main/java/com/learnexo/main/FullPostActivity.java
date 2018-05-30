@@ -263,7 +263,7 @@ if(!flag && gag) {
             });
         }
     });
-} else if(flag && gag) {
+} else if(flag && !gag) {
 
     mFirebaseUtil.mFirestore.collection("users").document(publisherId)
             .collection("posts").document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
