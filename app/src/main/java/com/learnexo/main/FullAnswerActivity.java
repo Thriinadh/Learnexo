@@ -112,9 +112,20 @@ public class FullAnswerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(FullAnswerActivity.this, CommentsActivity.class);
                 intent.putExtra("EXTRA_QUESTION_ID", questionId);
-                intent.putExtra("EXTRA_ANSWER_ID", ansId);
-                intent.putExtra("ANSWER_PUBLISHER_ID", ansPublisherId);
-                intent.putExtra("IF_FROM_FULLANSWER_ACTIVITY", flag);
+                intent.putExtra("EXTRA_FEED_ITEM_ID", ansId);
+                intent.putExtra("EXTRA_PUBLISHER_IDDD", ansPublisherId);
+                intent.putExtra("IF_FROM_FULL_ANSWER_ACTIVITY", flag);
+                startActivity(intent);
+            }
+        });
+        commentsImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(FullAnswerActivity.this, CommentsActivity.class);
+                intent.putExtra("EXTRA_QUESTION_ID", questionId);
+                intent.putExtra("EXTRA_FEED_ITEM_ID", ansId);
+                intent.putExtra("EXTRA_PUBLISHER_IDDD", ansPublisherId);
+                intent.putExtra("IF_FROM_FULL_ANSWER_ACTIVITY", flag);
                 startActivity(intent);
             }
         });

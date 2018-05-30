@@ -165,7 +165,7 @@ public class FullPostActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent1 = new Intent(FullPostActivity.this, CommentsActivity.class);
                 intent1.putExtra("EXTRA_PUBLISHER_IDDD", publisherId);
-                intent1.putExtra("EXTRA_POST_ITEM_ID", postId);
+                intent1.putExtra("EXTRA_FEED_ITEM_ID", postId);
                 startActivity(intent1);
             }
         });
@@ -175,7 +175,7 @@ public class FullPostActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent1 = new Intent(FullPostActivity.this, CommentsActivity.class);
                 intent1.putExtra("EXTRA_PUBLISHER_IDDD", publisherId);
-                intent1.putExtra("EXTRA_POST_ITEM_ID", postId);
+                intent1.putExtra("EXTRA_FEED_ITEM_ID", postId);
                 startActivity(intent1);
             }
         });

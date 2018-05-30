@@ -1,6 +1,7 @@
 package com.learnexo.main;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -23,13 +24,14 @@ public class CommentsActivity extends AppCompatActivity {
     private EditText enterContent;
     Comment comment;
     private String publisherId;
-    private String postId;
+    private String feedItemId;
 
     private String questionId;
-    private String answerId;
-    private String ansPublisherId;
-    boolean is_from_fullanswer;
 
+    boolean isFromFullAnswer;
+
+    final String comments="comments";
+    final String users = "users";
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
     @Override
@@ -37,122 +39,128 @@ public class CommentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
 
-        doneBtn = findViewById(R.id.doneBtn);
-        enterContent = findViewById(R.id.enterContent);
+        wireViews();
 
-        Intent intent = getIntent();
-        publisherId = intent.getStringExtra("EXTRA_PUBLISHER_IDDD");
-        postId = intent.getStringExtra("EXTRA_POST_ITEM_ID");
-
-        questionId = intent.getStringExtra("EXTRA_QUESTION_ID");
-        answerId = intent.getStringExtra("EXTRA_ANSWER_ID");
-        ansPublisherId = intent.getStringExtra("ANSWER_PUBLISHER_ID");
-        is_from_fullanswer = intent.getBooleanExtra("IF_FROM_FULLANSWER_ACTIVITY", false);
-
-
+        handleIntent();
 
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String content = enterContent.getText().toString();
+                comment = new Comment();
+                comment.setComment(content);
+                comment.setCommenterId(FirebaseUtil.getCurrentUserId());
+                comment.setCommenterName(FeedFragment.sName);
+                comment.setCommenterDp(FeedFragment.sDpUrl);
+                comment.setPublisherId(publisherId);
+                comment.setFeedItemId(feedItemId);
 
-                if(!is_from_fullanswer) {
-                    String content = enterContent.getText().toString();
-                    comment = new Comment();
-                    comment.setComment(content);
-                    comment.setCommenterId(FirebaseUtil.getCurrentUserId());
-                    comment.setPublisherId(publisherId);
-                    comment.setFeedItemId(postId);
-                    comment.setCommenterName(FeedFragment.sName);
-                    comment.setCommenterDp(FeedFragment.sDpUrl);
 
-                    mFirebaseUtil.mFirestore.collection("users").document(publisherId)
-                            .collection("posts").document(postId).collection("comments")
-                            .add(comment).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-
-                            mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts")
-                                    .document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                                    long comments = (long) documentSnapshot.get("comments");
-                                    long commentss = comments + 1;
-                                    Map<String, Object> map = new HashMap();
-                                    map.put("comments", commentss);
-
-                                    mFirebaseUtil.mFirestore.collection("users").
-                                            document(publisherId).
-                                            collection("posts").
-                                            document(postId).update(map);
-
-                                    finish();
-                                }
-                            });
-
-                        }
-
-                    });
+                if(!isFromFullAnswer) {
+                    handlePosts(comments, users);
                 }
                 else {
-                    String content = enterContent.getText().toString();
-                    comment = new Comment();
-                    comment.setComment(content);
-                    comment.setCommenterId(FirebaseUtil.getCurrentUserId());
-                    comment.setPublisherId(ansPublisherId);
-                    comment.setCommenterName(FeedFragment.sName);
-                    comment.setCommenterDp(FeedFragment.sDpUrl);
-
-                    mFirebaseUtil.mFirestore.collection("questions").document(questionId)
-                            .collection("answers").document(answerId).collection("comments")
-                            .add(comment).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-
-                            mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
-                                    .collection("answers").document(answerId).get()
-                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                                            long comments = (long) documentSnapshot.get("comments");
-                                            long commentss = comments + 1;
-                                            Map<String, Object> map = new HashMap();
-                                            map.put("comments", commentss);
-
-                                            mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
-                                                    .collection("answers").document(answerId).update(map);
-
-                                            mFirebaseUtil.mFirestore.collection("questions").document(questionId)
-                                                    .collection("answers").document(answerId).get()
-                                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                        @Override
-                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                                                            long comments = (long) documentSnapshot.get("comments");
-                                                            long commentss = comments + 1;
-                                                            Map<String, Object> map = new HashMap();
-                                                            map.put("comments", commentss);
-
-                                                            mFirebaseUtil.mFirestore.collection("questions").document(questionId)
-                                                                    .collection("answers").document(answerId).update(map);
-
-                                                            finish();
-
-                                                        }
-                                                    });
-
-                                        }
-                                    });
-
-                        }
-                    });
+                    handleAnswers(comments, users);
                 }
-
-
-
             }
         });
 
+    }
+
+    private void handleAnswers(final String comments, final String users) {
+        final String questions = "questions";
+        final String answers = "answers";
+
+        mFirebaseUtil.mFirestore.collection(questions).document(questionId)
+                .collection(answers).document(feedItemId).collection(comments)
+                .add(comment).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+
+                mFirebaseUtil.mFirestore.collection(users).document(publisherId)
+                        .collection(answers).document(feedItemId).get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                Map<String, Object> map = getStringObjectMap(documentSnapshot, comments);
+
+                                mFirebaseUtil.mFirestore.collection(users).document(publisherId)
+                                        .collection(answers).document(feedItemId).update(map);
+
+                                mFirebaseUtil.mFirestore.collection(questions).document(questionId)
+                                        .collection(answers).document(feedItemId).get()
+                                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                                Map<String, Object> map = getStringObjectMap(documentSnapshot, comments);
+
+                                                mFirebaseUtil.mFirestore.collection(questions).document(questionId)
+                                                        .collection(answers).document(feedItemId).update(map);
+
+                                                finish();
+
+                                            }
+                                        });
+
+                            }
+                        });
+
+            }
+        });
+    }
+
+    private void handlePosts(final String comments, final String users) {
+        final String posts = "posts";
+
+
+        mFirebaseUtil.mFirestore.collection(users).document(publisherId)
+                .collection(posts).document(feedItemId).collection(comments)
+                .add(comment).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+
+                mFirebaseUtil.mFirestore.collection(users).document(publisherId).collection(posts)
+                        .document(feedItemId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                        Map<String, Object> map = getStringObjectMap(documentSnapshot, comments);
+
+                        mFirebaseUtil.mFirestore.collection(users).
+                                document(publisherId).
+                                collection(posts).
+                                document(feedItemId).update(map);
+
+                        finish();
+                    }
+                });
+
+            }
+
+        });
+    }
+
+    @NonNull
+    private Map<String, Object> getStringObjectMap(DocumentSnapshot documentSnapshot, String comments) {
+        long noOfComments = (long) documentSnapshot.get(comments);
+        noOfComments = noOfComments + 1;
+        Map<String, Object> map = new HashMap();
+        map.put(comments, noOfComments);
+        return map;
+    }
+
+    private void handleIntent() {
+        Intent intent = getIntent();
+        publisherId = intent.getStringExtra("EXTRA_PUBLISHER_IDDD");
+        feedItemId = intent.getStringExtra("EXTRA_FEED_ITEM_ID");
+        isFromFullAnswer = intent.getBooleanExtra("IF_FROM_FULL_ANSWER_ACTIVITY", false);
+        questionId = intent.getStringExtra("EXTRA_QUESTION_ID");
+    }
+
+    private void wireViews() {
+        doneBtn = findViewById(R.id.doneBtn);
+        enterContent = findViewById(R.id.enterContent);
     }
 }
