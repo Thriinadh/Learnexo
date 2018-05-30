@@ -22,7 +22,7 @@ public class CommentsActivity extends AppCompatActivity {
 
     private TextView doneBtn;
     private EditText enterContent;
-    Comment comment;
+    private Comment comment;
     private String publisherId;
     private String feedItemId;
 
@@ -32,6 +32,10 @@ public class CommentsActivity extends AppCompatActivity {
 
     final String comments="comments";
     final String users = "users";
+    final String posts = "posts";
+    final String questions = "questions";
+    final String answers = "answers";
+
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
     @Override
@@ -43,6 +47,11 @@ public class CommentsActivity extends AppCompatActivity {
 
         handleIntent();
 
+        doneBtnListener();
+
+    }
+
+    private void doneBtnListener() {
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,12 +73,10 @@ public class CommentsActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     private void handleAnswers(final String comments, final String users) {
-        final String questions = "questions";
-        final String answers = "answers";
+
 
         mFirebaseUtil.mFirestore.collection(questions).document(questionId)
                 .collection(answers).document(feedItemId).collection(comments)
@@ -112,7 +119,7 @@ public class CommentsActivity extends AppCompatActivity {
     }
 
     private void handlePosts(final String comments, final String users) {
-        final String posts = "posts";
+
 
 
         mFirebaseUtil.mFirestore.collection(users).document(publisherId)
