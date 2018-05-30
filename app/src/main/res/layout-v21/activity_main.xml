@@ -88,7 +88,7 @@
                 android:layout_marginBottom="4dp"
                 android:layout_marginTop="10dp"
                 android:text="@string/login"
-                android:textSize="25sp" />
+                android:textSize="24sp" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/loginEmailTIL"
@@ -135,8 +135,9 @@
                 android:background="@drawable/login_button"
                 android:onClick="loginButtonListener"
                 android:text="@string/login"
+                android:textAllCaps="false"
                 android:textColor="#ffffff"
-                android:textSize="20sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/forgotPassTView"

@@ -52,7 +52,8 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegistrationActivity" />
+        <activity android:name=".RegistrationActivity"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".SetupActivity" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
@@ -71,7 +72,8 @@
         <activity android:name=".EduDetailsActivity" />
         <activity android:name=".OthersProfileActivity" />
         <activity android:name=".CommentsActivity" />
-        <activity android:name=".SearchResultActivity"></activity>
+        <activity android:name=".SearchResultActivity" />
+        <activity android:name=".FullCommentActivity"></activity>
     </application>
 
 </manifest>

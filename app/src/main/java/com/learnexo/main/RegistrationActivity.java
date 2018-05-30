@@ -30,7 +30,8 @@ import com.learnexo.util.FirebaseUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.learnexo.main.MainActivity.dpToPx;
+
+
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -55,6 +56,7 @@ public class RegistrationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_registration);
 
         wireViews();
+
         setupToolbar();
 
     }

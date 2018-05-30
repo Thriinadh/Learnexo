@@ -101,17 +101,6 @@ public class SetupActivity extends AppCompatActivity {
 
         wireViews();
 
-        final View activityRootView = findViewById(R.id.constraintLayout);
-        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
-                if (heightDiff > dpToPx(SetupActivity.this, 200)) {
-                    scrollView.scrollTo(0, 400);
-                }
-            }
-        });
-
         googleNfbDpSetup();
 
        // skipNgotoFeed();
@@ -188,11 +177,6 @@ public class SetupActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public static float dpToPx(Context context, float valueInDp) {
-        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
     }
 
     private void googleNfbDpSetup() {
