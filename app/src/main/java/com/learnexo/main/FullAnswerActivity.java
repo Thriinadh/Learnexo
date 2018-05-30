@@ -45,7 +45,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     private static final String EXTRA_QUESTION_ID = "com.learnexo.questionId";
 
     private List<Comment> mComments;
-    private UserCommentsRecyclerAdapter mAdapter;
+    private CommentsAdapter mAdapter;
 
     private TextView viewAllAns;
     private TextView questionAsked;
@@ -95,7 +95,7 @@ public class FullAnswerActivity extends AppCompatActivity {
         setupCommentsRecycler();
 
         bindData(posTime, postData, imagePosted, imageThumb);
-        //handleViewsUpvotes();
+
         bindViewsUpvotes();
         commentBtnListener();
         seeAllCommentsListener();
@@ -148,11 +148,6 @@ public class FullAnswerActivity extends AppCompatActivity {
             }
         });
     }
-
-//    private void handleViewsUpvotes() {
-//        String path="answers";
-//        new GetViewsAndUpVotes().execute(ansPublisherId,ansId,path);
-//    }
 
     @NonNull
     private void hangleIntent() {
@@ -298,43 +293,9 @@ public class FullAnswerActivity extends AppCompatActivity {
     }
 
 
-//
-//    public class GetViewsAndUpVotes extends AsyncTask<String, Void,PostDetails> {
-//
-//        @Override
-//        protected PostDetails doInBackground(String[] objects) {
-//
-//            Task<DocumentSnapshot> documentSnapshotTask = FirebaseFirestore.getInstance().collection("users").
-//                    document(objects[0]).collection(objects[2]).document(objects[1]).get();
-//            PostDetails postDetails=null;
-//
-//            try {
-//                DocumentSnapshot documentSnapshot = Tasks.await(documentSnapshotTask);
-//
-//                postDetails = new PostDetails();
-//                postDetails.setNoOfLikes((Long) documentSnapshot.get("upVotes"));
-//                postDetails.setNoOfViews((Long) documentSnapshot.get("views"));
-//
-//            } catch (ExecutionException e) {
-//                e.printStackTrace();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//
-//            return postDetails;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(PostDetails result) {
-//
-//            //bindViewsUpvotes(result);
-//        }
-//
-//    }
-
     private void setupCommentsRecycler() {
         mComments = new ArrayList<>();
-        mAdapter = new UserCommentsRecyclerAdapter(mComments);
+        mAdapter = new CommentsAdapter(mComments);
 
         commentsRecycler = findViewById(R.id.commentsRecycler);
         commentsRecycler.setHasFixedSize(true);

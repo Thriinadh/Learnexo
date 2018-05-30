@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.learnexo.model.feed.likediv.Comment;
-import com.learnexo.util.FirebaseUtil;
 
 import java.util.List;
 
@@ -21,14 +20,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.learnexo.util.DateUtil.convertDateToAgo;
 
-public class UserCommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private List<Comment> mComments;
     private Context mContext;
 
-    private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
-
-    public UserCommentsRecyclerAdapter(List<Comment> comments) {
+    public CommentsAdapter(List<Comment> comments) {
         this.mComments = comments;
     }
 
@@ -37,7 +34,7 @@ public class UserCommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         View view = LayoutInflater.from(mContext).inflate(R.layout.comments_list_item, parent, false);
-        return new AllCommentsHolder(view);
+        return new CommentHolder(view);
     }
 
     @Override
@@ -50,9 +47,9 @@ public class UserCommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
             String publisherName = comment.getCommenterName();
             String publisherDp = comment.getCommenterDp();
 
-            AllCommentsHolder allCommentsHolder = (AllCommentsHolder) holder;
-            allCommentsHolder.wireViews();
-            bindPost(allCommentsHolder, content, timeAgo, publisherDp, publisherName);
+            CommentHolder commentHolder = (CommentHolder) holder;
+            commentHolder.wireViews();
+            bindPost(commentHolder, content, timeAgo, publisherDp, publisherName);
         }
 
     }
@@ -62,13 +59,13 @@ public class UserCommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
         return mComments.size();
     }
 
-    private void bindPost(@NonNull AllCommentsHolder holder, String answer, String timeAgo, String publisherDp, String publisherName) {
+    private void bindPost(@NonNull CommentHolder holder, String answer, String timeAgo, String publisherDp, String publisherName) {
         holder.setContent(answer);
         holder.setTime(timeAgo);
         holder.setUserData(publisherName, publisherDp);
     }
 
-    public class AllCommentsHolder extends RecyclerView.ViewHolder {
+    public class CommentHolder extends RecyclerView.ViewHolder {
 
         private View mView;
         private CircleImageView circleImageView;
@@ -80,7 +77,7 @@ public class UserCommentsRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
         private TextView upvoteTView;
         private TextView downvoteTView;
 
-        public AllCommentsHolder(View itemView) {
+        public CommentHolder(View itemView) {
             super(itemView);
             mView = itemView;
         }

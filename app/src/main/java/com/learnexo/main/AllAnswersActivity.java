@@ -38,7 +38,7 @@ public class AllAnswersActivity extends AppCompatActivity {
     private int noOfAns;
     private TextView noOfAnswersView;
     private List<Answer> mAnswers;
-    private AllAnsRecyclerAdapter mAdapter;
+    private AllAnswersAdapter mAdapter;
     private ImageView challengeIcon;
     private ImageView quesOverFlow;
 
@@ -55,7 +55,7 @@ public class AllAnswersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_answers);
 
-        setupRecyclerView();
+        setupAnswersRecyclerView();
 
         getIntentDetails();
 
@@ -136,13 +136,13 @@ public class AllAnswersActivity extends AppCompatActivity {
         quesOverFlow=findViewById(R.id.quesOverFlow);
     }
 
-    private void setupRecyclerView() {
+    private void setupAnswersRecyclerView() {
         mAnswers = new ArrayList<>();
-        mAdapter = new AllAnsRecyclerAdapter(mAnswers);
+        mAdapter = new AllAnswersAdapter(mAnswers);
 
-        RecyclerView feedRecyclerView = findViewById(R.id.allAnsRecycler);
-        feedRecyclerView.setLayoutManager(new LinearLayoutManager(AllAnswersActivity.this));
-        feedRecyclerView.setAdapter(mAdapter);
+        RecyclerView answersRecyclerView = findViewById(R.id.allAnsRecycler);
+        answersRecyclerView.setLayoutManager(new LinearLayoutManager(AllAnswersActivity.this));
+        answersRecyclerView.setAdapter(mAdapter);
     }
 
     private void getIntentDetails() {

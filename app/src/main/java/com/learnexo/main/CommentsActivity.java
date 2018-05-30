@@ -64,47 +64,41 @@ public class CommentsActivity extends AppCompatActivity {
                 comment.setPublisherId(publisherId);
                 comment.setFeedItemId(feedItemId);
 
-
-                if(!isFromFullAnswer) {
-                    handlePosts(comments, users);
-                }
-                else {
-                    handleAnswers(comments, users);
-                }
+                if(!isFromFullAnswer)
+                    handlePostComments(comments, users);
+                else
+                    handleAnswerComments(comments, users);
             }
         });
     }
 
-    private void handleAnswers(final String comments, final String users) {
+    private void handleAnswerComments(final String comments, final String users) {
 
-
-        mFirebaseUtil.mFirestore.collection(questions).document(questionId)
-                .collection(answers).document(feedItemId).collection(comments)
+        mFirebaseUtil.mFirestore.collection(questions).document(questionId).collection(answers).document(feedItemId).collection(comments)
                 .add(comment).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
 
-                mFirebaseUtil.mFirestore.collection(users).document(publisherId)
-                        .collection(answers).document(feedItemId).get()
+                mFirebaseUtil.mFirestore.collection(users).document(publisherId).collection(answers).document(feedItemId).get()
                         .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                                 Map<String, Object> map = getStringObjectMap(documentSnapshot, comments);
 
-                                mFirebaseUtil.mFirestore.collection(users).document(publisherId)
-                                        .collection(answers).document(feedItemId).update(map);
+                                mFirebaseUtil.mFirestore.collection(users).document(publisherId).collection(answers).document(feedItemId).update(map);
 
-                                mFirebaseUtil.mFirestore.collection(questions).document(questionId)
-                                        .collection(answers).document(feedItemId).get()
+
+
+                                mFirebaseUtil.mFirestore.collection(questions).document(questionId).collection(answers).document(feedItemId).get()
                                         .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                             @Override
                                             public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                                                 Map<String, Object> map = getStringObjectMap(documentSnapshot, comments);
 
-                                                mFirebaseUtil.mFirestore.collection(questions).document(questionId)
-                                                        .collection(answers).document(feedItemId).update(map);
+                                                mFirebaseUtil.mFirestore.collection(questions).document(questionId).collection(answers).
+                                                        document(feedItemId).update(map);
 
                                                 finish();
 
@@ -118,27 +112,21 @@ public class CommentsActivity extends AppCompatActivity {
         });
     }
 
-    private void handlePosts(final String comments, final String users) {
+    private void handlePostComments(final String comments, final String users) {
 
-
-
-        mFirebaseUtil.mFirestore.collection(users).document(publisherId)
-                .collection(posts).document(feedItemId).collection(comments)
+        mFirebaseUtil.mFirestore.collection(users).document(publisherId).collection(posts).document(feedItemId).collection(comments)
                 .add(comment).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
 
-                mFirebaseUtil.mFirestore.collection(users).document(publisherId).collection(posts)
-                        .document(feedItemId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                mFirebaseUtil.mFirestore.collection(users).document(publisherId).collection(posts).document(feedItemId).get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                         Map<String, Object> map = getStringObjectMap(documentSnapshot, comments);
 
-                        mFirebaseUtil.mFirestore.collection(users).
-                                document(publisherId).
-                                collection(posts).
-                                document(feedItemId).update(map);
+                        mFirebaseUtil.mFirestore.collection(users).document(publisherId).collection(posts).document(feedItemId).update(map);
 
                         finish();
                     }
@@ -151,7 +139,11 @@ public class CommentsActivity extends AppCompatActivity {
 
     @NonNull
     private Map<String, Object> getStringObjectMap(DocumentSnapshot documentSnapshot, String comments) {
-        long noOfComments = (long) documentSnapshot.get(comments);
+        Object noOfCommentss = documentSnapshot.get(comments);
+        long noOfComments = 0;
+        if(noOfCommentss!=null) {
+            noOfComments = (long) noOfCommentss;
+        }
         noOfComments = noOfComments + 1;
         Map<String, Object> map = new HashMap();
         map.put(comments, noOfComments);

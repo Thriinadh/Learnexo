@@ -35,41 +35,43 @@ public class FullPostActivity extends AppCompatActivity {
     public static final String EXTRA_CONTENT = "com.learnexo.postdata";
     public static final String EXTRA_PUBLISHER_NAME = "com.learnexo.publisher_name";
     public static final String EXTRA_PUBLISHER_DP = "com.learnexo.publisher_dp";
-    private static final String EXTRA_IMAGE = "com.learnexo.imageposted";
-    private static final String EXTRA_THUMB = "com.learnexo.imagepostedthumb";
-    private static final String EXTRA_TIME = "com.learnexo.postedtime";
+    public static final String EXTRA_IMAGE = "com.learnexo.imageposted";
+    public static final String EXTRA_THUMB = "com.learnexo.imagepostedthumb";
+    public static final String EXTRA_TIME = "com.learnexo.postedtime";
 
     private List<Comment> mComments;
-    private UserCommentsRecyclerAdapter mAdapter;
+    private CommentsAdapter mAdapter;
 
     private TextView fullText;
-    private ImageView postedImage;
     private TextView timeOfPost;
     private TextView likesCount;
-    private Toolbar toolbar;
-    private CircleImageView profileImage;
     private TextView userName;
     private TextView viewsText;
-    private boolean flag = true;
-    private String publisherId;
+    private TextView seeAllComments;
+    private TextView commentBtn;
+
+    private Toolbar toolbar;
     private long upVotes;
     private long views;
     private long comments;
+    private boolean flag = true;
+
+    private CircleImageView profileImage;
+    private CircleImageView commentsImage;
+    private RecyclerView commentsRecycler;
+
+    private String publisherId;
     private String postId;
     private String postData;
-    private CircleImageView commentsImage;
-    private TextView commentBtn;
-    private RecyclerView commentsRecycler;
-    private TextView seeAllComments;
-
     private String publisherDP;
     private String publisherName;
-
-    private ImageView fullPostLikeBtn;
-    private ImageView overFlowBtn;
-    private String imagePosted;
     private String imageThumb;
     private String posTime;
+    private String imagePosted;
+
+    private ImageView postedImage;
+    private ImageView fullPostLikeBtn;
+    private ImageView overFlowBtn;
 
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
@@ -84,24 +86,24 @@ public class FullPostActivity extends AppCompatActivity {
 
         setupCommentsRecycler();
 
-
         final User publisher = new User(publisherId, publisherName, publisherDP);
-
 
         bindData(imagePosted, imageThumb, publisherName, posTime, publisherDP);
 
-        //handleViewsUpvotes();
-
         bindViewsUpvotes();
 
-        overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
+        overFlowListener(publisher);
 
         profileListener(publisher);
 
-        gotoCommentsActivity();
+        commentBtnListener();
 
         seeAllCommentsListener();
 
+    }
+
+    private void overFlowListener(User publisher) {
+        overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
     }
 
     private void handleIntent() {
@@ -146,7 +148,7 @@ public class FullPostActivity extends AppCompatActivity {
 
     private void setupCommentsRecycler() {
         mComments = new ArrayList<>();
-        mAdapter = new UserCommentsRecyclerAdapter(mComments);
+        mAdapter = new CommentsAdapter(mComments);
 
         commentsRecycler = findViewById(R.id.commentsRecycler);
         commentsRecycler.setHasFixedSize(true);
@@ -154,12 +156,7 @@ public class FullPostActivity extends AppCompatActivity {
         commentsRecycler.setAdapter(mAdapter);
     }
 
-//    private void handleViewsUpvotes() {
-//        String path="posts";
-//        new GetViewsAndUpVotes().execute(publisherId,postId,path);
-//    }
-
-    private void gotoCommentsActivity() {
+    private void commentBtnListener() {
         commentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -306,41 +303,5 @@ public class FullPostActivity extends AppCompatActivity {
         }
         return intent;
     }
-
-
-//    public class GetViewsAndUpVotes extends AsyncTask<String, Void,PostDetails> {
-//
-//
-//        @Override
-//        protected PostDetails doInBackground(String[] objects) {
-//
-//            Task<DocumentSnapshot> documentSnapshotTask = FirebaseFirestore.getInstance().collection("users").
-//                    document(objects[0]).collection(objects[2]).document(objects[1]).get();
-//           PostDetails postDetails=null;
-//
-//            try {
-//                DocumentSnapshot documentSnapshot = Tasks.await(documentSnapshotTask);
-//
-//                postDetails = new PostDetails();
-//                postDetails.setNoOfLikes((Long) documentSnapshot.get("upVotes"));
-//                postDetails.setNoOfViews((Long) documentSnapshot.get("views"));
-//
-//            } catch (ExecutionException e) {
-//                e.printStackTrace();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//
-//            return postDetails;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(PostDetails result) {
-//            //bindViewsUpvotes(result);
-//        }
-//
-//
-//    }
-
 
 }
