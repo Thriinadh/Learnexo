@@ -1,5 +1,6 @@
 package com.learnexo.model.feed.likediv;
 
+import com.google.firebase.firestore.ServerTimestamp;
 import com.learnexo.model.core.BookMarkType;
 
 import java.util.Date;
@@ -9,6 +10,7 @@ public class Bookmark {
     private String publisherId;
     private String bookMarkerId;
     private BookMarkType mBookMarkType;
+    @ServerTimestamp
     private Date bookMarkTime;
 
     public String getBookMarkItemId() {

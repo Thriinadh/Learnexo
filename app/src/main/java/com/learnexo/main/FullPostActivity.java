@@ -3,6 +3,7 @@ package com.learnexo.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,10 +16,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
+import com.learnexo.model.core.BookMarkType;
+import com.learnexo.model.feed.likediv.Bookmark;
 import com.learnexo.model.feed.likediv.Comment;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
@@ -73,6 +77,9 @@ public class FullPostActivity extends AppCompatActivity {
     private ImageView fullPostLikeBtn;
     private ImageView overFlowBtn;
 
+    private ImageView full_post_bookmark;
+    private long noOfBookMarkss;
+
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
     @Override
@@ -99,6 +106,50 @@ public class FullPostActivity extends AppCompatActivity {
         commentBtnListener();
 
         seeAllCommentsListener();
+
+        full_post_bookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(flag) {
+                    full_post_bookmark.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.ic_baseline_bookmark_24px));
+                    noOfBookMarkss = noOfBookMarkss + 1;
+                    flag = false;
+                }
+                else {
+                    full_post_bookmark.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_bookmark_icon));
+                    noOfBookMarkss = noOfBookMarkss - 1;
+                    flag = true;
+                }
+                Bookmark bookmark = new Bookmark();
+                bookmark.setBookMarkerId(FirebaseUtil.getCurrentUserId());
+                bookmark.setBookMarkItemId(postId);
+                bookmark.setBookMarkType(BookMarkType.POST);
+                bookmark.setPublisherId(publisherId);
+
+                mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+                        .collection("bookmarks").add(bookmark).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        mFirebaseUtil.mFirestore.collection("users").document(publisherId)
+                                .collection("posts").document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                noOfBookMarkss = (long) documentSnapshot.get("bookMarks");
+
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("bookMarks", noOfBookMarkss);
+
+                                mFirebaseUtil.mFirestore.collection("users").document(publisherId)
+                                        .collection("posts").document(postId).update(map);
+
+                            }
+                        });
+                    }
+                });
+            }
+        });
 
     }
 
@@ -255,6 +306,7 @@ public class FullPostActivity extends AppCompatActivity {
     }
 
     private void wireViews() {
+        full_post_bookmark = findViewById(R.id.full_post_bookmark);
         viewsText = findViewById(R.id.viewsText);
         likesCount = findViewById(R.id.likesCount);
         fullPostLikeBtn = findViewById(R.id.full_post_like);

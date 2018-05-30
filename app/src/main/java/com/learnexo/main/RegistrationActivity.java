@@ -81,6 +81,7 @@ public class RegistrationActivity extends AppCompatActivity {
         final String pass = mPass.getText().toString();
 
         if((!TextUtils.isEmpty(first_name) || !TextUtils.isEmpty(last_name)) && !TextUtils.isEmpty(email) && !email.contains(" ") && !TextUtils.isEmpty(pass)) {
+            progressBar.setVisibility(View.VISIBLE);
             createUserinFirestore(first_name, last_name, email, pass);
         }
         else if((!TextUtils.isEmpty(first_name) || !TextUtils.isEmpty(last_name)) && email.contains(" ") && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass))
@@ -182,7 +183,6 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
-                progressBar.setVisibility(View.VISIBLE);
                 FirebaseUser user = mFirebaseUtil.getCurrentUser();
 
                 if(user != null) {
