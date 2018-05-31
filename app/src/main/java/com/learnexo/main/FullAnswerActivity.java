@@ -244,7 +244,7 @@ public class FullAnswerActivity extends AppCompatActivity {
             //notify publisher
             //notify his followers
             LikeBtn.setOnClickListener(
-                    new LikeBtnListener(LikeBtn,likesCount,flag, ansPublisherId, ansId, upVotes,FullAnswerActivity.this, true, null, false)
+                    new LikeBtnListener(LikeBtn,likesCount,flag, ansPublisherId, ansId, upVotes,FullAnswerActivity.this, true, null)
             );
 
             likesCount.setText(upVotes+" Up votes");
@@ -262,6 +262,10 @@ public class FullAnswerActivity extends AppCompatActivity {
 
             mFirebaseUtil.mFirestore.collection("users").
                     document(ansPublisherId).
+                    collection("answers").
+                    document(ansId).update(map);
+            mFirebaseUtil.mFirestore.collection("questions").
+                    document(questionId).
                     collection("answers").
                     document(ansId).update(map);
 

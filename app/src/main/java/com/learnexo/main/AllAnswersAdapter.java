@@ -162,7 +162,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             //notify his followers
             answerHolder.LikeBtn.setOnClickListener(
                     new LikeBtnListener(answerHolder.LikeBtn, answerHolder.likesCount, answerHolder.flag,
-                            answererId, answerId, upVotes, (Activity) mContext, true, questionId, true)
+                            answererId, answerId, upVotes, (Activity) mContext, true, questionId)
             );
 
             answerHolder.likesCount.setText(upVotes+" Up votes");

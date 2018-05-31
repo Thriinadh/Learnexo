@@ -355,7 +355,7 @@ if(!flag && gag) {
             //notify publisher
             //notify his followers
             fullPostLikeBtn.setOnClickListener(
-                    new LikeBtnListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,FullPostActivity.this, false, null, false)
+                    new LikeBtnListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,FullPostActivity.this, false, null)
             );
 
             likesCount.setText(upVotes+" Up votes");

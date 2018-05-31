@@ -5,14 +5,12 @@ import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.learnexo.util.FirebaseUtil;
-import com.learnexo.util.MyBounceInterpolator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,11 +28,11 @@ public class LikeBtnListener implements View.OnClickListener {
     private String postId;
     private Activity mActivity;
     private boolean isAnswer;
-    private boolean isFromAllAnswers;
+
     private String questionId;
 
     public LikeBtnListener(ImageView fullPostLikeBtn, TextView likesCount, boolean flag, String publisherId,
-                           String postId, long upVotes, Activity activity, boolean isAnswer, String questionId, boolean isFromAllAnswers) {
+                           String postId, long upVotes, Activity activity, boolean isAnswer, String questionId) {
         this.fullPostLikeBtn = fullPostLikeBtn;
         this.likesCount = likesCount;
         this.flag = flag;
@@ -44,7 +42,6 @@ public class LikeBtnListener implements View.OnClickListener {
         this.isAnswer=isAnswer;
         mActivity = activity;
         this.questionId=questionId;
-        this.isFromAllAnswers=isFromAllAnswers;
     }
 
     @Override
@@ -63,11 +60,7 @@ public class LikeBtnListener implements View.OnClickListener {
             flag = false;
         } else{
               fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.post_like_icn));
-
-              if(isFromAllAnswers)
-                  upVotes = upVotes - 1;
-              else
-                upVotes = upVotes;
+              upVotes = upVotes - 1;
               flag = true;
         }
         if(upVotes!=1)
