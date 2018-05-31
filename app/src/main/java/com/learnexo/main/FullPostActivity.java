@@ -2,6 +2,10 @@ package com.learnexo.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +13,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -114,13 +121,24 @@ public class FullPostActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(flag) {
+                RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                anim.setInterpolator(new LinearInterpolator());
+                anim.setRepeatCount(0);
+                anim.setDuration(300);
 
-                    full_post_bookmark.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.ic_baseline_bookmark_24px));
+                full_post_bookmark.startAnimation(anim);
+
+                if(flag) {
+                    Drawable drawable = ContextCompat.getDrawable(FullPostActivity.this, R.drawable.ic_baseline_bookmark_24px);
+                    full_post_bookmark.setImageDrawable(drawable);
+                    if(drawable != null)
+                    drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
                     flag = false;
                 } else {
-
-                    full_post_bookmark.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_bookmark_icon));
+                    Drawable drawable = ContextCompat.getDrawable(FullPostActivity.this, R.drawable.ic_outline_bookmark_border_24px);
+                    full_post_bookmark.setImageDrawable(drawable);
+                    if(drawable != null)
+                    drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
                     flag = true;
                 }
 

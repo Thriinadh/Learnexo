@@ -6,6 +6,8 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -48,12 +50,12 @@ public class LikeBtnListener implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
-        Animation myAnim = AnimationUtils.loadAnimation(mActivity, R.anim.bounce);
+        RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim.setInterpolator(new LinearInterpolator());
+        anim.setRepeatCount(0);
+        anim.setDuration(300);
 
-        // Use bounce interpolator with amplitude 0.2 and frequency 20
-        MyBounceInterpolator interpolator = new MyBounceInterpolator(0.1, 5);
-        myAnim.setInterpolator(interpolator);
-
+        fullPostLikeBtn.startAnimation(anim);
 
         if(flag){
             fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.post_likeblue_icon));

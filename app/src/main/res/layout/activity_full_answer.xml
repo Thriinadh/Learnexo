@@ -290,7 +290,9 @@
             android:layout_marginLeft="8dp"
             android:layout_toRightOf="@+id/likesCount"
             android:layout_centerVertical="true"
-            app:srcCompat="@drawable/post_comment_icon" />
+            app:srcCompat="@drawable/post_comment_icon"
+            android:layout_toEndOf="@+id/likesCount"
+            android:layout_marginStart="8dp" />
 
         <ImageView
             android:id="@+id/full_post_share"
@@ -299,16 +301,21 @@
             android:layout_marginLeft="8dp"
             android:layout_toRightOf="@+id/full_post_comment"
             android:layout_centerVertical="true"
-            app:srcCompat="@drawable/post_share_icon" />
+            app:srcCompat="@drawable/post_share_icon"
+            android:layout_toEndOf="@+id/full_post_comment"
+            android:layout_marginStart="8dp" />
 
         <ImageView
             android:id="@+id/full_post_bookmark"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginRight="12dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            app:srcCompat="@drawable/post_bookmark_icon" />
+            android:layout_marginRight="12dp"
+            android:background="@drawable/ic_outline_bookmark_border_24px"
+            android:backgroundTint="#1da1f2"
+            android:layout_marginEnd="12dp"
+            android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
 
