@@ -18,7 +18,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.main.R;
 import com.learnexo.main.TabsActivity;
@@ -51,7 +50,7 @@ public class FeedFragment extends Fragment {
     public static String sName;
 
 
-    FirebaseUtil mFirebaseUtil = new FirebaseUtil();
+    FirebaseUtil mFireBaseUtil = new FirebaseUtil();
 
 
     public FeedFragment() {
@@ -71,12 +70,6 @@ public class FeedFragment extends Fragment {
         getDPandUserName();
         setupFeedRecyclerAdapter(view);
         wireViews(view);
-
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setPersistenceEnabled(true)
-                .build();
-        mFirebaseUtil.mFirestore.setFirestoreSettings(settings);
-
 
         askQuestionListener();
         generateFeedItemList();
@@ -115,7 +108,7 @@ public class FeedFragment extends Fragment {
 
     private void generateFeedItemList() {
 
-        mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("interests").
+        mFireBaseUtil.mFirestore.collection("users").document(mUserId).collection("interests").
                 document("doc1").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 
             Map<String, Object> intestMap =null;
@@ -134,7 +127,7 @@ public class FeedFragment extends Fragment {
                 if (interests != null) {
                     for (final String userInterest:interests){
 
-                        mFirebaseUtil.mFirestore.collection("interest_feed").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        mFireBaseUtil.mFirestore.collection("interest_feed").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             List<DocumentSnapshot> interest_feed_docs;
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -162,7 +155,7 @@ public class FeedFragment extends Fragment {
 
                                     switch (interestFeed.getFeedType()){
                                         case FeedItem.POST:
-                                        mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
+                                        mFireBaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
                                                 .collection("posts").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -179,7 +172,7 @@ public class FeedFragment extends Fragment {
 
                                         case FeedItem.ANSWER:
 
-                                            mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
+                                            mFireBaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
                                                     .collection("answers").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -198,7 +191,7 @@ public class FeedFragment extends Fragment {
 
                                         case FeedItem.CRACK:
 
-                                            mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
+                                            mFireBaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
                                                     .collection("answers").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -216,7 +209,7 @@ public class FeedFragment extends Fragment {
 
                                         case FeedItem.QUESTION:
 
-                                            mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
+                                            mFireBaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
                                                     .collection("questions").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -234,7 +227,7 @@ public class FeedFragment extends Fragment {
 
                                         case FeedItem.CHALLENGE:
 
-                                            mFirebaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
+                                            mFireBaseUtil.mFirestore.collection("users").document(interestFeed.getPublisherId())
                                                     .collection("questions").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -249,34 +242,26 @@ public class FeedFragment extends Fragment {
                                                 }
                                             });
                                             break;
-
-
                                     }
-
-
 
                                 }
 
-
                             }
-
 
                         });
                     }
                 }
 
-
             }
 
         });
-
 
     }
 
 
     private void getDPandUserName() {
         mUserId = FirebaseUtil.getCurrentUserId();
-        mFirebaseUtil.mFirestore.collection("users").document(mUserId).
+        mFireBaseUtil.mFirestore.collection("users").document(mUserId).
                 collection("reg_details").document("doc").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -345,44 +330,5 @@ public class FeedFragment extends Fragment {
             }
         });
 
-
     }
-
 }
-
-
-// addSnapshotListener(new EventListener<QuerySnapshot>() {
-//                            @Override
-//                            public void onEvent(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
-//
-//                                if(queryDocumentSnapshots != null)
-//                                    for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
-//
-//                                        if (doc.getDocument().getId().equals(interestFeed.getFeedItemId())) {
-//                                            Post post;
-//                                            switch (doc.getType()) {
-//
-//                                                case ADDED:
-//                                                    post = doc.getDocument().toObject(Post.class);
-//                                                    mFeedItems.add(post);
-//                                                    mAdapter.notifyDataSetChanged();
-//                                                    break;
-//
-//                                                case REMOVED:
-//                                                    post = doc.getDocument().toObject(Post.class);
-//                                                    mFeedItems.remove(post);
-//                                                    mAdapter.notifyDataSetChanged();
-//                                                    break;
-//
-//                                                case MODIFIED:
-//                                                    post = doc.getDocument().toObject(Post.class);
-//                                                    mFeedItems.remove(post);
-//                                                    mAdapter.notifyDataSetChanged();
-//                                                    break;
-//                                            }
-//                                        }//
-//
-//
-//                                    }
-//                            }
-//                        });

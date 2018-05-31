@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,19 +21,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
-import android.view.Display;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -394,46 +387,15 @@ public class TabsActivity extends AppCompatActivity {
                 Intent intent = new Intent(TabsActivity.this, SearchResultActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.bookmarks:
+                Intent bookMarkIntent = new Intent(TabsActivity.this, BookmarksActivity.class);
+                startActivity(bookMarkIntent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void onShowPopup(View v){
-
-        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        // inflate the custom popup layout
-        View inflatedView = layoutInflater.inflate(R.layout.activity_search_result, null,false);
-        // find the ListView in the popup layout
-//        ListView listView = (ListView)inflatedView.findViewById(R.id.commentsListView);
-//        LinearLayout headerView = (LinearLayout)inflatedView.findViewById(R.id.headerLayout);
-        // get device size
-        Display display = getWindowManager().getDefaultDisplay();
-        final Point size = new Point();
-        display.getSize(size);
-//        mDeviceHeight = size.y;
-        DisplayMetrics displayMetrics = TabsActivity.this.getResources().getDisplayMetrics();
-        int width = displayMetrics.widthPixels;
-        int height = displayMetrics.heightPixels;
-
-
-        // fill the data to the list items
-//        setSimpleList(listView);
-
-        // set height depends on the device size
-        PopupWindow popWindow = new PopupWindow(inflatedView, width,height, true );
-        // set a background drawable with rounders corners
-      //  popWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.popup_bg));
-
-        popWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NEEDED);
-        popWindow.setHeight(WindowManager.LayoutParams.MATCH_PARENT);
-
-      //  popWindow.setAnimationStyle(R.style.PopupAnimation);
-
-        // show the popup at bottom of the screen and set some margin at bottom ie,
-        popWindow.showAtLocation(v, Gravity.TOP, 0,0);
-    }
 
     private void gotoFeedtab() {
         // Check if user is signed in (non-null) and update UI accordingly.

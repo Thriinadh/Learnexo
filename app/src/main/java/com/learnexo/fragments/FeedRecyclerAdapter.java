@@ -42,7 +42,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     BottomSheetDialog mDialog;
     private List<FeedItem> mFeedItems;
     private Context mContext;
-    private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
+    private FirebaseUtil mFireBaseUtil = new FirebaseUtil();
 
     public FeedRecyclerAdapter(List<FeedItem> mFeedItems) {
         this.mFeedItems = mFeedItems;
@@ -366,7 +366,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
     private void bindPostUserData(@NonNull final PostHolder holder, final User user) {
-        mFirebaseUtil.mFirestore.collection("users").document(user.getUserId()).
+        mFireBaseUtil.mFirestore.collection("users").document(user.getUserId()).
                 collection("reg_details").document("doc").get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -392,7 +392,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void bindAnswererData(@NonNull final AnswerHolder holder, final User user) {
-        mFirebaseUtil.mFirestore.collection("users").document(user.getUserId()).
+        mFireBaseUtil.mFirestore.collection("users").document(user.getUserId()).
                 collection("reg_details").document("doc").get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -416,7 +416,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void bindCrackerData(@NonNull final CrackHolder holder, final User user) {
-        mFirebaseUtil.mFirestore.collection("users").document(user.getUserId()).
+        mFireBaseUtil.mFirestore.collection("users").document(user.getUserId()).
                 collection("reg_details").document("doc").get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
