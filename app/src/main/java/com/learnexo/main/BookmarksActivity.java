@@ -14,10 +14,14 @@ import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.likediv.Bookmark;
 import com.learnexo.model.feed.post.Post;
+import com.learnexo.model.video.Branch;
+import com.learnexo.model.video.Subject;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BookmarksActivity extends AppCompatActivity {
     private List<FeedItem> mFeedItems;
@@ -47,6 +51,9 @@ public class BookmarksActivity extends AppCompatActivity {
     }
 
         private void fetchBookMarks(String currentUserId) {
+
+            //just for data insertion, it is not pat of bookmarks.
+            insertBranchData();
 
             mFirebaseUtil.mFirestore.collection("users").document(currentUserId).collection("bookmarks").
                     get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -94,6 +101,30 @@ public class BookmarksActivity extends AppCompatActivity {
 
     }
 
+    private void insertBranchData() {
+        Branch branch=new Branch();
+        branch.setName("Fundamentals");
+        Map<String,Subject> stringSubjectMap=new HashMap<>();
+
+        Subject subject1=new Subject();
+        subject1.setName("OS");
+        subject1.setPrice(123.60);
+        stringSubjectMap.put("OS",subject1);
+
+        subject1.setName("CO");
+        subject1.setPrice(222222.60);
+        stringSubjectMap.put("CO",subject1);
+
+        subject1.setName("CPP");
+        subject1.setPrice(333.30);
+        stringSubjectMap.put("CPP",subject1);
+
+
+        branch.setStringSubjectMap(stringSubjectMap);
+
+
+        mFirebaseUtil.mFirestore.collection("branches").document("Fundamentals").set(branch);
+    }
 
 
 }

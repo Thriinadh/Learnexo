@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +28,7 @@ import com.learnexo.util.FirebaseUtil;
 import com.learnexo.util.MyBounceInterpolator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,16 +57,16 @@ public class InterestsActivity extends AppCompatActivity {
 
         for (int b = 0; b <= 5; b++) {
 
-            List<Subject> subjects = new ArrayList<>();
+            Map<String,Subject> stringSubjectMap = new HashMap<>();
             branch = new Branch();
             branch.setName("Programming "+b);
 
-            for (int i = 0; i <= 7; i++) {
+            for (int i = 0; i <= 10; i++) {
                 Subject subject = new Subject();
-                subject.setSubjectName("Department"+b+" Java " + i);
-                subjects.add(subject);
+                subject.setName("Java " + i);
+                stringSubjectMap.put("Java "+i,subject);
             }
-            branch.setSubjects(subjects);
+            branch.setStringSubjectMap(stringSubjectMap);
             mBranches.add(branch);
         }
 
@@ -152,8 +152,10 @@ public class InterestsActivity extends AppCompatActivity {
 
             Branch branch =  mBranches.get(position);
 
-            List<Subject> subjectList = branch.getSubjects();
-            SubjectAdapter subjectAdapter = new SubjectAdapter(context, subjectList);
+            Map<String,Subject> stringSubjectMap = branch.getStringSubjectMap();
+            Collection<Subject> subjects = stringSubjectMap.values();
+
+            SubjectAdapter subjectAdapter = new SubjectAdapter(context, new ArrayList(subjects));
 
             holder.mSubBranchTView.setText(branch.getName());
 
@@ -231,7 +233,7 @@ public class InterestsActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull final SubjectHolder holder, int position) {
 
             final Subject subject = mSubjects.get(position);
-            holder.mSubjectCheckbox.setText(subject.getSubjectName());
+            holder.mSubjectCheckbox.setText(subject.getName());
             holder.mSubjectCheckbox.setChecked(subject.isChecked());
 
             final Animation myAnim = AnimationUtils.loadAnimation(InterestsActivity.this, R.anim.bounce);
@@ -249,7 +251,7 @@ public class InterestsActivity extends AppCompatActivity {
                     subject.setChecked(holder.mSubjectCheckbox.isChecked());
 
                     String subjectName = null;
-                    subjectName = subject.getSubjectName();
+                    subjectName = subject.getName();
 
                     if (null != interestMap&&subjectName!=null) {
                         if (interestMap.containsKey(subjectName))

@@ -21,7 +21,10 @@ import com.learnexo.model.video.Branch;
 import com.learnexo.model.video.Subject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class VideoFragment extends Fragment {
 
@@ -43,16 +46,16 @@ public class VideoFragment extends Fragment {
 
         for (int b = 0; b <= 5; b++) {
 
-            List<Subject> subjects = new ArrayList<>();
+            Map<String,Subject> stringSubjectMap = new HashMap<>();
             branch = new Branch();
             branch.setName("Programming "+b);
 
             for (int i = 0; i <= 10; i++) {
                 Subject subject = new Subject();
-                subject.setSubjectName("Java " + i);
-                subjects.add(subject);
+                subject.setName("Java " + i);
+                stringSubjectMap.put("Java "+i,subject);
             }
-            branch.setSubjects(subjects);
+            branch.setStringSubjectMap(stringSubjectMap);
             branches.add(branch);
         }
 
@@ -100,8 +103,10 @@ public class VideoFragment extends Fragment {
 
             Branch branch =  mBranches.get(position);
 
-            List<Subject> subjects = branch.getSubjects();
-            SubjectAdapter subjectAdapter = new SubjectAdapter(subjects);
+            Map<String,Subject> stringSubjectMap = branch.getStringSubjectMap();
+            Collection<Subject> subjects = stringSubjectMap.values();
+
+            SubjectAdapter subjectAdapter = new SubjectAdapter((new ArrayList(subjects)));
 
             holder.mBranchTView.setText(branch.getName());
 
@@ -152,7 +157,7 @@ public class VideoFragment extends Fragment {
         }
 
         public void bind(Subject subject) {
-            mSubjectBtn.setText(subject.getSubjectName());
+            mSubjectBtn.setText(subject.getName());
             mSubjectBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

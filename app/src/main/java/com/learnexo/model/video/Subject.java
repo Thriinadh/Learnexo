@@ -4,21 +4,22 @@ import com.learnexo.model.video.chapter.Chapter;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class Subject {
-    private String subjectName;
+    private String name;
     private Double mPrice;
     private Date lastUpdated;
-    private List<Chapter> chapterList;
-    private boolean isChecked;//placed for interests recycler view issue
+    private Map<String,Chapter> mStringChapterMap;
+    //placed for interests recycler view issue
+    private boolean isChecked;
 
     public Subject() {}
 
-    public Subject(boolean isChecked, Department department, Branch branch, Double price, String subjectName, List<Chapter> chapterList, Date lastUpdated) {
+    public Subject(boolean isChecked, Department department, Branch branch, Double price, String subjectName, List<Chapter> mChapterMap, Date lastUpdated) {
         this.isChecked = isChecked;
         mPrice = price;
-        this.subjectName = subjectName;
-        this.chapterList = chapterList;
+
         this.lastUpdated = lastUpdated;
     }
 
@@ -47,19 +48,19 @@ public class Subject {
         this.lastUpdated = lastUpdated;
     }
 
-    public String getSubjectName() {
-        return subjectName;
+    public String getName() {
+        return name;
     }
 
-    public void setSubjectName(String subjectName) {
-        this.subjectName = subjectName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public List<Chapter> getChapterList() {
-        return chapterList;
+    public Map<String, Chapter> getStringChapterMap() {
+        return mStringChapterMap;
     }
 
-    public void setChapterList(List<Chapter> chapterList) {
-        this.chapterList = chapterList;
+    public void setStringChapterMap(Map<String, Chapter> stringChapterMap) {
+        mStringChapterMap = stringChapterMap;
     }
 }
