@@ -3,14 +3,14 @@ package com.learnexo.model.video.chapter;
 import java.util.Map;
 
 class ChapterTest {
-    private String name;
+    private String chapTestName;
 
-    public String getName() {
-        return name;
+    public String getChapTestName() {
+        return chapTestName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setChapTestName(String chapTestName) {
+        this.chapTestName = chapTestName;
     }
 
     public Map<String, ChapterTestQuestion> getStringChapterTestQuestionMap() {
