@@ -156,7 +156,10 @@ public class FullPostActivity extends AppCompatActivity {
                 }
                 if(bookMarkItemIdd != null) {
                     if (bookMarkItemIdd.equals(postId)) {
-                        full_post_bookmark.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.ic_baseline_bookmark_24px));
+                        Drawable drawable = ContextCompat.getDrawable(FullPostActivity.this, R.drawable.ic_baseline_bookmark_24px);
+                        full_post_bookmark.setImageDrawable(drawable);
+                        if(drawable != null)
+                            drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
                         flag = false;
                         gag = false;
                     }

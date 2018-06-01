@@ -15,18 +15,28 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.main.PlayVideoActivity;
 import com.learnexo.main.R;
 import com.learnexo.model.video.Branch;
 import com.learnexo.model.video.Subject;
+import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class VideoFragment extends Fragment {
+
+
+
+    FirebaseUtil mFirebaseUtil=new FirebaseUtil();
+    BranchAdapter branchAdapter;
 
     public VideoFragment() {
         // Required empty public constructor
@@ -41,28 +51,63 @@ public class VideoFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_video, container, false);
 
-        List<Branch> branches = new ArrayList<>();
-        Branch branch;
+        final List<Branch> branches = new ArrayList<>();
+        mFirebaseUtil.mFirestore.collection("branches").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            Branch branch;
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                for (DocumentSnapshot documentSnapshot : documents) {
+                    String name = (String) documentSnapshot.get("name");
+                    Map<String, Subject> stringSubjectMap = new HashMap<>();
+                    branch = new Branch();
+                    branch.setName(name);
 
-        for (int b = 0; b <= 5; b++) {
+                    Map<String, Object> data = documentSnapshot.getData();
 
-            Map<String,Subject> stringSubjectMap = new HashMap<>();
-            branch = new Branch();
-            branch.setName("Programming "+b);
+                    Object stringSubjectMap1 = data.get("stringSubjectMap");
 
-            for (int i = 0; i <= 10; i++) {
-                Subject subject = new Subject();
-                subject.setName("Java " + i);
-                stringSubjectMap.put("Java "+i,subject);
+                    Map<String, Object> map = (Map<String, Object>) stringSubjectMap1;
+                    Set<String> subjectNames = map.keySet();
+                    for(String subjectName:subjectNames){
+                        Subject subject = new Subject();
+                        subject.setName(subjectName);
+                        stringSubjectMap.put(subjectName, subject);
+//                        Object values = map.get(subjectName);
+//                        Map<String,Object> subject= (Map<String, Object>) values;
+//                        subject.get("name");
+                    }
+
+                    branch.setStringSubjectMap(stringSubjectMap);
+                    branches.add(branch);
+                    branchAdapter.notifyDataSetChanged();
+                }
+                branchAdapter.notifyDataSetChanged();
             }
-            branch.setStringSubjectMap(stringSubjectMap);
-            branches.add(branch);
-        }
+        });
+
+//        List<Branch> branches = new ArrayList<>();
+//        Branch branch;
+//
+//        for (int b = 0; b <= 5; b++) {
+//
+//            Map<String,Subject> stringSubjectMap = new HashMap<>();
+//            branch = new Branch();
+//            branch.setName("Programming "+b);
+//
+//            for (int i = 0; i <= 10; i++) {
+//                Subject subject = new Subject();
+//                subject.setName("Java " + i);
+//                stringSubjectMap.put("Java "+i,subject);
+//            }
+//            branch.setStringSubjectMap(stringSubjectMap);
+//            branches.add(branch);
+//        }
 
         RecyclerView branchRecycler =  view.findViewById(R.id.sub_branch_recyclerview);
         branchRecycler.setHasFixedSize(true);
 
-        BranchAdapter branchAdapter = new BranchAdapter(getActivity(), branches);
+        branchAdapter = new BranchAdapter(getActivity(), branches);
         branchRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         branchRecycler.setAdapter(branchAdapter);
 

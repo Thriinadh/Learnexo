@@ -16,6 +16,8 @@ import com.learnexo.model.feed.likediv.Bookmark;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.video.Branch;
 import com.learnexo.model.video.Subject;
+import com.learnexo.model.video.VideoLesson;
+import com.learnexo.model.video.chapter.Chapter;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
@@ -111,20 +113,122 @@ public class BookmarksActivity extends AppCompatActivity {
         subject1.setPrice(123.60);
         stringSubjectMap.put("OS",subject1);
 
-        subject1.setName("CO");
-        subject1.setPrice(222222.60);
-        stringSubjectMap.put("CO",subject1);
+        Chapter chapter = new Chapter();
+        chapter.setName("chapter1");
+        VideoLesson videoLesson = new VideoLesson();
+        videoLesson.setName("video lesson 1");
+        videoLesson.setUri("fsdghkjlh");
+        Map<String, VideoLesson> stringVideoLessonMap=new HashMap<>();
+        stringVideoLessonMap.put("video lesson 1",videoLesson);
+        chapter.setStringVideoLessonMap(stringVideoLessonMap);
+        Map<String, Chapter> stringChapterMap = new HashMap<>();
+        stringChapterMap.put("chapter1", chapter);
+        subject1.setStringChapterMap(stringChapterMap);
 
-        subject1.setName("CPP");
-        subject1.setPrice(333.30);
-        stringSubjectMap.put("CPP",subject1);
+        VideoLesson videoLessonn = new VideoLesson();
+        videoLessonn.setName("video lesson 2");
+        videoLessonn.setUri("fsdghkjjhfuyjhlh");
 
+        stringVideoLessonMap.put("video lesson 2",videoLesson);
+        chapter.setStringVideoLessonMap(stringVideoLessonMap);
+        subject1.setStringChapterMap(stringChapterMap);
+
+        VideoLesson videoLessonnn = new VideoLesson();
+        videoLessonnn.setName("video lesson 3");
+        videoLessonnn.setUri("fsdghkjjhfuyjgchlh");
+
+        stringVideoLessonMap.put("video lesson 3",videoLesson);
+        chapter.setStringVideoLessonMap(stringVideoLessonMap);
+        subject1.setStringChapterMap(stringChapterMap);
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+        Subject subject2=new Subject();
+        subject2.setName("CO");
+        subject2.setPrice(222222.60);
+        stringSubjectMap.put("CO",subject2);
+
+
+        Chapter chapter2 = new Chapter();
+        chapter2.setName("chapter1");
+        VideoLesson videoLesson2 = new VideoLesson();
+        videoLesson2.setName("video lesson 1");
+        videoLesson2.setUri("fsdghkjlh");
+        Map<String, VideoLesson> stringVideoLessonMap2=new HashMap<>();
+        stringVideoLessonMap2.put("video lesson 1",videoLesson2);
+        chapter2.setStringVideoLessonMap(stringVideoLessonMap2);
+        Map<String, Chapter> stringChapterMap2 = new HashMap<>();
+        stringChapterMap2.put("chapter1", chapter2);
+        subject2.setStringChapterMap(stringChapterMap2);
+
+        VideoLesson videoLesson22 = new VideoLesson();
+        videoLesson22.setName("video lesson 2");
+        videoLesson22.setUri("fsdghkjlgfjh");
+
+        stringVideoLessonMap2.put("video lesson 2",videoLesson2);
+        chapter2.setStringVideoLessonMap(stringVideoLessonMap2);
+        subject2.setStringChapterMap(stringChapterMap2);
+
+        VideoLesson videoLesson222 = new VideoLesson();
+        videoLesson222.setName("video lesson 3");
+        videoLesson222.setUri("fsdghkhjbvjhjlgfjh");
+
+        stringVideoLessonMap2.put("video lesson 3",videoLesson2);
+        chapter2.setStringVideoLessonMap(stringVideoLessonMap2);
+        subject2.setStringChapterMap(stringChapterMap2);
+
+        ////////////////////////////////////////////////////////////////
+        Subject subject3=new Subject();
+        subject3.setName("CPP");
+        subject3.setPrice(333.30);
+        stringSubjectMap.put("CPP",subject3);
+
+        Chapter chapter3 = new Chapter();
+        chapter3.setName("chapter1");
+        VideoLesson videoLesson3 = new VideoLesson();
+        videoLesson3.setName("video lesson 1");
+        videoLesson3.setUri("fsdghkjlh");
+        Map<String, VideoLesson> stringVideoLessonMap3=new HashMap<>();
+        stringVideoLessonMap3.put("video lesson 1",videoLesson2);
+        chapter2.setStringVideoLessonMap(stringVideoLessonMap3);
+        Map<String, Chapter> stringChapterMap3 = new HashMap<>();
+        stringChapterMap3.put("chapter1", chapter3);
+        subject3.setStringChapterMap(stringChapterMap3);
+
+        VideoLesson videoLesson223 = new VideoLesson();
+        videoLesson223.setName("video lesson 2");
+        videoLesson223.setUri("fsdghkjlgfjh");
+
+        stringVideoLessonMap3.put("video lesson 2",videoLesson2);
+        chapter3.setStringVideoLessonMap(stringVideoLessonMap2);
+        subject3.setStringChapterMap(stringChapterMap2);
+
+        VideoLesson videoLesson2222 = new VideoLesson();
+        videoLesson2222.setName("video lesson 3");
+        videoLesson2222.setUri("fsdghkhjbvjhjlgfjh");
+
+        stringVideoLessonMap2.put("video lesson 3",videoLesson3);
+        chapter3.setStringVideoLessonMap(stringVideoLessonMap3);
+        subject3.setStringChapterMap(stringChapterMap3);
+
+        /////////////////////////////////////////////////////////
+        Subject s4 = new Subject();
+        s4.setName("AlGOR");
+        stringSubjectMap.put("ALGOR", s4);
+
+        Subject s5 = new Subject();
+        s5.setName("BASICS");
+        stringSubjectMap.put("BASICS", s5);
 
         branch.setStringSubjectMap(stringSubjectMap);
 
-
         mFirebaseUtil.mFirestore.collection("branches").document("Fundamentals").set(branch);
+        mFirebaseUtil.mFirestore.collection("branches").document("Programming").set(branch);
+        mFirebaseUtil.mFirestore.collection("branches").document("Networking").set(branch);
+        mFirebaseUtil.mFirestore.collection("branches").document("Artificial").set(branch);
+        mFirebaseUtil.mFirestore.collection("branches").document("Databases").set(branch);
     }
+
+
 
 
 }

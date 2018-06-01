@@ -91,6 +91,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             overflowListener(answerHolder, publisher, answer);
             answererProfileListener(answerHolder, publisher, answerId);
 
+
         }
     }
 
@@ -263,6 +264,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         private CircleImageView commentsImage;
         private TextView commentBtn;
         private TextView seeAllComments;
+        private ImageView full_post_bookmark;
         private RecyclerView commentsRecycler;
 
         private boolean flag = true;
@@ -282,6 +284,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             viewsText = mView.findViewById(R.id.viewsText);
             likesCount = mView.findViewById(R.id.likesCount);
             LikeBtn = mView.findViewById(R.id.full_post_like);
+            full_post_bookmark = mView.findViewById(R.id.full_post_bookmark);
             commentsImage = mView.findViewById(R.id.commentsImage);
             commentBtn = mView.findViewById(R.id.commentBtn);
             seeAllComments = mView.findViewById(R.id.seeAllComments);
@@ -292,6 +295,9 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             RequestOptions placeholderOption = new RequestOptions();
             placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
             Glide.with(mContext.getApplicationContext()).load(FeedFragment.sDpUrl).apply(placeholderOption).into(commentsImage);
+
+
+
         }
 
 

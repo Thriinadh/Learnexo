@@ -160,7 +160,11 @@ public class FullAnswerActivity extends AppCompatActivity {
                 }
                 if(bookMarkItemIdd != null) {
                     if (bookMarkItemIdd.equals(ansId)) {
-                        full_post_bookmark.setImageDrawable(ContextCompat.getDrawable(FullAnswerActivity.this, R.drawable.ic_baseline_bookmark_24px));
+                        Drawable drawable = ContextCompat.getDrawable(FullAnswerActivity.this, R.drawable.ic_baseline_bookmark_24px);
+                        full_post_bookmark.setImageDrawable(drawable);
+                        if(drawable != null)
+                            drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
+                        
                         flag = false;
                         gag = false;
                     }

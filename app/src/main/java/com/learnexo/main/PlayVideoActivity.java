@@ -27,8 +27,10 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.fragments.ExpandableListAdapter;
 import com.learnexo.util.FirebaseUtil;
 
@@ -88,7 +90,6 @@ public class PlayVideoActivity extends AppCompatActivity {
             for (int i = 0; i < listAdapter.getGroupCount(); i++)
                 expListView.expandGroup(i);
         }
-
 
 //        ViewCompat.setNestedScrollingEnabled(expListView, true);
 
