@@ -59,11 +59,11 @@ public class InterestsActivity extends AppCompatActivity {
 
             Map<String,Subject> stringSubjectMap = new HashMap<>();
             branch = new Branch();
-            branch.setName("Programming "+b);
+            branch.setBranchName("Programming "+b);
 
             for (int i = 0; i <= 10; i++) {
                 Subject subject = new Subject();
-                subject.setName("Java " + i);
+                subject.setSubjectName("Java " + i);
                 stringSubjectMap.put("Java "+i,subject);
             }
             branch.setStringSubjectMap(stringSubjectMap);
@@ -157,7 +157,7 @@ public class InterestsActivity extends AppCompatActivity {
 
             SubjectAdapter subjectAdapter = new SubjectAdapter(context, new ArrayList(subjects));
 
-            holder.mSubBranchTView.setText(branch.getName());
+            holder.mSubBranchTView.setText(branch.getBranchName());
 
             holder.mSubjectRecycler.setHasFixedSize(true);
             LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
@@ -233,7 +233,7 @@ public class InterestsActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull final SubjectHolder holder, int position) {
 
             final Subject subject = mSubjects.get(position);
-            holder.mSubjectCheckbox.setText(subject.getName());
+            holder.mSubjectCheckbox.setText(subject.getSubjectName());
             holder.mSubjectCheckbox.setChecked(subject.isChecked());
 
             final Animation myAnim = AnimationUtils.loadAnimation(InterestsActivity.this, R.anim.bounce);
@@ -251,7 +251,7 @@ public class InterestsActivity extends AppCompatActivity {
                     subject.setChecked(holder.mSubjectCheckbox.isChecked());
 
                     String subjectName = null;
-                    subjectName = subject.getName();
+                    subjectName = subject.getSubjectName();
 
                     if (null != interestMap&&subjectName!=null) {
                         if (interestMap.containsKey(subjectName))

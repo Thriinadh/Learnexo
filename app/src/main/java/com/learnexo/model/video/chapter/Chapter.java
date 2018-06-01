@@ -5,15 +5,15 @@ import com.learnexo.model.video.VideoLesson;
 import java.util.Map;
 
 public class Chapter {
-    private String name;
+    private String mChapterName;
     private Map<String,VideoLesson> mStringVideoLessonMap;
 
-    public String getName() {
-        return name;
+    public String getChapterName() {
+        return mChapterName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setChapterName(String chapterName) {
+        mChapterName = chapterName;
     }
 
     public Map<String, VideoLesson> getStringVideoLessonMap() {

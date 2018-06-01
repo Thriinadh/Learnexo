@@ -9,21 +9,17 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 import com.learnexo.fragments.FeedRecyclerAdapter;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.likediv.Bookmark;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.video.Branch;
-import com.learnexo.model.video.Subject;
-import com.learnexo.model.video.VideoLesson;
-import com.learnexo.model.video.chapter.Chapter;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class BookmarksActivity extends AppCompatActivity {
     private List<FeedItem> mFeedItems;
@@ -104,122 +100,26 @@ public class BookmarksActivity extends AppCompatActivity {
     }
 
     private void insertBranchData() {
-        Branch branch=new Branch();
-        branch.setName("Fundamentals");
-        Map<String,Subject> stringSubjectMap=new HashMap<>();
 
-        Subject subject1=new Subject();
-        subject1.setName("OS");
-        subject1.setPrice(123.60);
-        stringSubjectMap.put("OS",subject1);
-
-        Chapter chapter = new Chapter();
-        chapter.setName("chapter1");
-        VideoLesson videoLesson = new VideoLesson();
-        videoLesson.setName("video lesson 1");
-        videoLesson.setUri("fsdghkjlh");
-        Map<String, VideoLesson> stringVideoLessonMap=new HashMap<>();
-        stringVideoLessonMap.put("video lesson 1",videoLesson);
-        chapter.setStringVideoLessonMap(stringVideoLessonMap);
-        Map<String, Chapter> stringChapterMap = new HashMap<>();
-        stringChapterMap.put("chapter1", chapter);
-        subject1.setStringChapterMap(stringChapterMap);
-
-        VideoLesson videoLessonn = new VideoLesson();
-        videoLessonn.setName("video lesson 2");
-        videoLessonn.setUri("fsdghkjjhfuyjhlh");
-
-        stringVideoLessonMap.put("video lesson 2",videoLesson);
-        chapter.setStringVideoLessonMap(stringVideoLessonMap);
-        subject1.setStringChapterMap(stringChapterMap);
-
-        VideoLesson videoLessonnn = new VideoLesson();
-        videoLessonnn.setName("video lesson 3");
-        videoLessonnn.setUri("fsdghkjjhfuyjgchlh");
-
-        stringVideoLessonMap.put("video lesson 3",videoLesson);
-        chapter.setStringVideoLessonMap(stringVideoLessonMap);
-        subject1.setStringChapterMap(stringChapterMap);
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-        Subject subject2=new Subject();
-        subject2.setName("CO");
-        subject2.setPrice(222222.60);
-        stringSubjectMap.put("CO",subject2);
+        Gson gson=new Gson();
 
 
-        Chapter chapter2 = new Chapter();
-        chapter2.setName("chapter1");
-        VideoLesson videoLesson2 = new VideoLesson();
-        videoLesson2.setName("video lesson 1");
-        videoLesson2.setUri("fsdghkjlh");
-        Map<String, VideoLesson> stringVideoLessonMap2=new HashMap<>();
-        stringVideoLessonMap2.put("video lesson 1",videoLesson2);
-        chapter2.setStringVideoLessonMap(stringVideoLessonMap2);
-        Map<String, Chapter> stringChapterMap2 = new HashMap<>();
-        stringChapterMap2.put("chapter1", chapter2);
-        subject2.setStringChapterMap(stringChapterMap2);
+        Branch branch = gson.fromJson(
 
-        VideoLesson videoLesson22 = new VideoLesson();
-        videoLesson22.setName("video lesson 2");
-        videoLesson22.setUri("fsdghkjlgfjh");
+                "{\"mBranchName\":\"Fundamentals\",\"mStringSubjectMap\":{\"OS\":{\"mSubjectName\":\"OS\",\"isChecked\":false,\"mPrice" +
+                "\":123.6,\"mStringChapterMap\":{\"chapter1\":{\"mChapterName\":\"chapter1\",\"mStringVideoLessonMap\":{\"video lesson 3\":{\"mVideoName\"" +
+                ":\"video lesson 1\",\"uri\":\"aaaaaaaaa\"},\"video lesson 2\":{\"mVideoName\":\"video lesson 2\",\"uri\":\"bbbbbbbbbbb\"},\"video lesson " +
+                "1\":{\"mVideoName\":\"video lesson 3\",\"uri\":\"cccccccccc\"}}},\"chapter2\":{\"mChapterName\":\"chapter2\",\"mStringVideoLessonMap\":{\"" +
+                "video lesson 3\":{\"mVideoName\":\"video lesson 1\",\"uri\":\"aaaaaaaaa\"},\"video lesson 2\":{\"mVideoName\":\"video lesson 2\",\"uri\":\"" +
+                "bbbbbbbbbbb\"},\"video lesson 1\":{\"mVideoName\":\"video lesson 3\",\"uri\":\"cccccccccc\"}}}}},\"CO\":{\"mSubjectName\":\"CO\",\"isChec" +
+                "ked\":false,\"mPrice\":123.6,\"mStringChapterMap\":{\"chapter1\":{\"mChapterName\":\"chapter1\",\"mStringVideoLessonMap\":{\"video les" +
+                "son 3\":{\"mVideoName\":\"video lesson 1\",\"uri\":\"aaaaaaaaa\"},\"video lesson 2\":{\"mVideoName\":\"video lesson 2\",\"uri\":\"bbbbbbbbbbb\"}," +
+                "\"video lesson 1\":{\"mVideoName\":\"video lesson 3\",\"uri\":\"cccccccccc\"}}},\"chapter2\":{\"mChapterName\":\"chapter2\",\"mStringVideoLessonM" +
+                "ap\":{\"video lesson 3\":{\"mVideoName\":\"video lesson 1\",\"uri\":\"aaaaaaaaa\"},\"video lesson 2\":{\"mVideoName\":\"video lesson 2\",\"uri\":\"" +
+                "bbbbbbbbbbb\"},\"video lesson 1\":{\"mVideoName\":\"video lesson 3\",\"uri\":\"cccccccccc\"}}}}}}}"
 
-        stringVideoLessonMap2.put("video lesson 2",videoLesson2);
-        chapter2.setStringVideoLessonMap(stringVideoLessonMap2);
-        subject2.setStringChapterMap(stringChapterMap2);
+                ,Branch.class);
 
-        VideoLesson videoLesson222 = new VideoLesson();
-        videoLesson222.setName("video lesson 3");
-        videoLesson222.setUri("fsdghkhjbvjhjlgfjh");
-
-        stringVideoLessonMap2.put("video lesson 3",videoLesson2);
-        chapter2.setStringVideoLessonMap(stringVideoLessonMap2);
-        subject2.setStringChapterMap(stringChapterMap2);
-
-        ////////////////////////////////////////////////////////////////
-        Subject subject3=new Subject();
-        subject3.setName("CPP");
-        subject3.setPrice(333.30);
-        stringSubjectMap.put("CPP",subject3);
-
-        Chapter chapter3 = new Chapter();
-        chapter3.setName("chapter1");
-        VideoLesson videoLesson3 = new VideoLesson();
-        videoLesson3.setName("video lesson 1");
-        videoLesson3.setUri("fsdghkjlh");
-        Map<String, VideoLesson> stringVideoLessonMap3=new HashMap<>();
-        stringVideoLessonMap3.put("video lesson 1",videoLesson2);
-        chapter2.setStringVideoLessonMap(stringVideoLessonMap3);
-        Map<String, Chapter> stringChapterMap3 = new HashMap<>();
-        stringChapterMap3.put("chapter1", chapter3);
-        subject3.setStringChapterMap(stringChapterMap3);
-
-        VideoLesson videoLesson223 = new VideoLesson();
-        videoLesson223.setName("video lesson 2");
-        videoLesson223.setUri("fsdghkjlgfjh");
-
-        stringVideoLessonMap3.put("video lesson 2",videoLesson2);
-        chapter3.setStringVideoLessonMap(stringVideoLessonMap2);
-        subject3.setStringChapterMap(stringChapterMap2);
-
-        VideoLesson videoLesson2222 = new VideoLesson();
-        videoLesson2222.setName("video lesson 3");
-        videoLesson2222.setUri("fsdghkhjbvjhjlgfjh");
-
-        stringVideoLessonMap2.put("video lesson 3",videoLesson3);
-        chapter3.setStringVideoLessonMap(stringVideoLessonMap3);
-        subject3.setStringChapterMap(stringChapterMap3);
-
-        /////////////////////////////////////////////////////////
-        Subject s4 = new Subject();
-        s4.setName("AlGOR");
-        stringSubjectMap.put("ALGOR", s4);
-
-        Subject s5 = new Subject();
-        s5.setName("BASICS");
-        stringSubjectMap.put("BASICS", s5);
-
-        branch.setStringSubjectMap(stringSubjectMap);
 
         mFirebaseUtil.mFirestore.collection("branches").document("Fundamentals").set(branch);
         mFirebaseUtil.mFirestore.collection("branches").document("Programming").set(branch);

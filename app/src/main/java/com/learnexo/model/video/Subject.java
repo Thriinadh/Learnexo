@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Subject {
-    private String name;
+    private String mSubjectName;
     private Double mPrice;
     private Date lastUpdated;
     private Map<String,Chapter> mStringChapterMap;
@@ -48,12 +48,12 @@ public class Subject {
         this.lastUpdated = lastUpdated;
     }
 
-    public String getName() {
-        return name;
+    public String getSubjectName() {
+        return mSubjectName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSubjectName(String subjectName) {
+        mSubjectName = subjectName;
     }
 
     public Map<String, Chapter> getStringChapterMap() {

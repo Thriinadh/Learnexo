@@ -4,15 +4,15 @@ import java.util.Map;
 
 public class Branch {
 
-    private String name;
+    private String mBranchName;
     private Map<String, Subject> mStringSubjectMap;
 
-    public String getName() {
-        return name;
+    public String getBranchName() {
+        return mBranchName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setBranchName(String branchName) {
+        mBranchName = branchName;
     }
 
     public Map<String, Subject> getStringSubjectMap() {

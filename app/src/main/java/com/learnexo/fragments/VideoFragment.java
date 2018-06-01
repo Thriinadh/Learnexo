@@ -61,7 +61,7 @@ public class VideoFragment extends Fragment {
                     String name = (String) documentSnapshot.get("name");
                     Map<String, Subject> stringSubjectMap = new HashMap<>();
                     branch = new Branch();
-                    branch.setName(name);
+                    branch.setBranchName(name);
 
                     Map<String, Object> data = documentSnapshot.getData();
 
@@ -71,7 +71,7 @@ public class VideoFragment extends Fragment {
                     Set<String> subjectNames = map.keySet();
                     for(String subjectName:subjectNames){
                         Subject subject = new Subject();
-                        subject.setName(subjectName);
+                        subject.setSubjectName(subjectName);
                         stringSubjectMap.put(subjectName, subject);
 //                        Object values = map.get(subjectName);
 //                        Map<String,Object> subject= (Map<String, Object>) values;
@@ -153,7 +153,7 @@ public class VideoFragment extends Fragment {
 
             SubjectAdapter subjectAdapter = new SubjectAdapter((new ArrayList(subjects)));
 
-            holder.mBranchTView.setText(branch.getName());
+            holder.mBranchTView.setText(branch.getBranchName());
 
             holder.mSubjectRecycler.setHasFixedSize(true);
             LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
@@ -202,7 +202,7 @@ public class VideoFragment extends Fragment {
         }
 
         public void bind(Subject subject) {
-            mSubjectBtn.setText(subject.getName());
+            mSubjectBtn.setText(subject.getSubjectName());
             mSubjectBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

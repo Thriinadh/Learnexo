@@ -1,15 +1,15 @@
 package com.learnexo.model.video;
 
 public class VideoLesson {
-    private String name;
+    private String mVideoName;
     private String uri;
 
-    public String getName() {
-        return name;
+    public String getVideoName() {
+        return mVideoName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setVideoName(String videoName) {
+        mVideoName = videoName;
     }
 
     public String getUri() {
