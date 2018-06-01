@@ -66,7 +66,7 @@ public class InterestsActivity extends AppCompatActivity {
                 subject.setSubjectName("Java " + i);
                 stringSubjectMap.put("Java "+i,subject);
             }
-            branch.setStringSubjectMap(stringSubjectMap);
+            branch.setSubjectMap(stringSubjectMap);
             mBranches.add(branch);
         }
 
@@ -152,7 +152,7 @@ public class InterestsActivity extends AppCompatActivity {
 
             Branch branch =  mBranches.get(position);
 
-            Map<String,Subject> stringSubjectMap = branch.getStringSubjectMap();
+            Map<String,Subject> stringSubjectMap = branch.getSubjectMap();
             Collection<Subject> subjects = stringSubjectMap.values();
 
             SubjectAdapter subjectAdapter = new SubjectAdapter(context, new ArrayList(subjects));

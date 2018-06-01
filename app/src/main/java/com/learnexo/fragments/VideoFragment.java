@@ -78,7 +78,7 @@ public class VideoFragment extends Fragment {
 //                        subject.get("name");
                     }
 
-                    branch.setStringSubjectMap(stringSubjectMap);
+                    branch.setSubjectMap(stringSubjectMap);
                     branches.add(branch);
                     branchAdapter.notifyDataSetChanged();
                 }
@@ -100,7 +100,7 @@ public class VideoFragment extends Fragment {
 //                subject.setName("Java " + i);
 //                stringSubjectMap.put("Java "+i,subject);
 //            }
-//            branch.setStringSubjectMap(stringSubjectMap);
+//            branch.setSubjectMap(stringSubjectMap);
 //            branches.add(branch);
 //        }
 
@@ -148,7 +148,7 @@ public class VideoFragment extends Fragment {
 
             Branch branch =  mBranches.get(position);
 
-            Map<String,Subject> stringSubjectMap = branch.getStringSubjectMap();
+            Map<String,Subject> stringSubjectMap = branch.getSubjectMap();
             Collection<Subject> subjects = stringSubjectMap.values();
 
             SubjectAdapter subjectAdapter = new SubjectAdapter((new ArrayList(subjects)));

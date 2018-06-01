@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class Chapter {
     private String mChapterName;
-    private Map<String,VideoLesson> mStringVideoLessonMap;
+    private Map<String,VideoLesson> mVideoLessonMap;
 
     public String getChapterName() {
         return mChapterName;
@@ -16,12 +16,12 @@ public class Chapter {
         mChapterName = chapterName;
     }
 
-    public Map<String, VideoLesson> getStringVideoLessonMap() {
-        return mStringVideoLessonMap;
+    public Map<String, VideoLesson> getVideoLessonMap() {
+        return mVideoLessonMap;
     }
 
-    public void setStringVideoLessonMap(Map<String, VideoLesson> stringVideoLessonMap) {
-        mStringVideoLessonMap = stringVideoLessonMap;
+    public void setVideoLessonMap(Map<String, VideoLesson> videoLessonMap) {
+        mVideoLessonMap = videoLessonMap;
     }
 
     public Map<String, ChapterTest> getStringChapterTestMap() {

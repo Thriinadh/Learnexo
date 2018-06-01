@@ -10,7 +10,7 @@ public class Subject {
     private String mSubjectName;
     private Double mPrice;
     private Date lastUpdated;
-    private Map<String,Chapter> mStringChapterMap;
+    private Map<String,Chapter> mChapterMap;
     //placed for interests recycler view issue
     private boolean isChecked;
 
@@ -56,11 +56,11 @@ public class Subject {
         mSubjectName = subjectName;
     }
 
-    public Map<String, Chapter> getStringChapterMap() {
-        return mStringChapterMap;
+    public Map<String, Chapter> getChapterMap() {
+        return mChapterMap;
     }
 
-    public void setStringChapterMap(Map<String, Chapter> stringChapterMap) {
-        mStringChapterMap = stringChapterMap;
+    public void setChapterMap(Map<String, Chapter> chapterMap) {
+        mChapterMap = chapterMap;
     }
 }

@@ -5,7 +5,7 @@ import java.util.Map;
 public class Branch {
 
     private String mBranchName;
-    private Map<String, Subject> mStringSubjectMap;
+    private Map<String, Subject> mSubjectMap;
 
     public String getBranchName() {
         return mBranchName;
@@ -15,12 +15,12 @@ public class Branch {
         mBranchName = branchName;
     }
 
-    public Map<String, Subject> getStringSubjectMap() {
-        return mStringSubjectMap;
+    public Map<String, Subject> getSubjectMap() {
+        return mSubjectMap;
     }
 
-    public void setStringSubjectMap(Map<String, Subject> stringSubjectMap) {
-        mStringSubjectMap = stringSubjectMap;
+    public void setSubjectMap(Map<String, Subject> subjectMap) {
+        mSubjectMap = subjectMap;
     }
 
 }
