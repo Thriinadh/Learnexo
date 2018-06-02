@@ -22,8 +22,11 @@ import com.learnexo.main.PlayVideoActivity;
 import com.learnexo.main.R;
 import com.learnexo.model.video.Branch;
 import com.learnexo.model.video.Subject;
+import com.learnexo.model.video.VideoLesson;
+import com.learnexo.model.video.chapter.Chapter;
 import com.learnexo.util.FirebaseUtil;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,6 +40,8 @@ public class VideoFragment extends Fragment {
 
     FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     BranchAdapter branchAdapter;
+    List<Branch> branches;
+    List<Branch> branchess;
 
     public VideoFragment() {
         // Required empty public constructor
@@ -51,6 +56,75 @@ public class VideoFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_video, container, false);
 
+
+//        branchess = new ArrayList<>();
+//        mFirebaseUtil.mFirestore.collection("branches").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//            Branch branch;
+//            @Override
+//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+//                for (DocumentSnapshot documentSnapshot : documents) {
+//                    String name = (String) documentSnapshot.get("branchName");
+//
+//                    Map<String, Subject> subjectMap = new HashMap<>();
+//                    Map<String, Chapter> chapterMap = new HashMap<>();
+//                    Map<String, VideoLesson> videoLessonMap = new HashMap<>();
+//
+//                    branch = new Branch();
+//                    branch.setBranchName(name);
+//
+//                    Map<String, Object> data = documentSnapshot.getData();
+//
+//                    Object subjectMap1 = data.get("subjectMap");
+//                    Object chapterMap1 = data.get("chapterMap");
+//                    Object videoLessionMap1 = data.get("videoLessonMap");
+//
+//                    Map<String, Object> smap = (Map<String, Object>) subjectMap1;
+//                    Map<String, Object> cmap = (Map<String, Object>) chapterMap1;
+//                    Map<String, Object> vmap = (Map<String, Object>) videoLessionMap1;
+//
+//                    Set<String> subjectNames = smap.keySet();
+//                    Set<String> chapterNames = cmap.keySet();
+//                    Set<String> videoLessonNames = vmap.keySet();
+//
+//                    for (String videoLessonName : videoLessonNames) {
+//                        VideoLesson videoLesson = new VideoLesson();
+//                        videoLesson.setVideoName(videoLessonName);
+//                        Object values = vmap.get(videoLessonName);
+//                        Map<String,Object> videoLessonn= (Map<String, Object>) values;
+//                        String uri = (String) videoLessonn.get("uri");
+//
+//                        videoLessonMap.put(videoLessonName, videoLesson);
+//                        videoLessonMap.put(uri, videoLesson);
+//                    }
+//
+//
+//                    for (String chapterName : chapterNames) {
+//                        Chapter chapter = new Chapter();
+//                        chapter.setChapterName(chapterName);
+//                        chapterMap.put(chapterName, chapter);
+//                        chapter.setVideoLessonMap(videoLessonMap);
+//                    }
+//
+//                    for(String subjectName:subjectNames){
+//                        Subject subject = new Subject();
+//                        subject.setSubjectName(subjectName);
+//                        subjectMap.put(subjectName, subject);
+//                        subject.setChapterMap(chapterMap);
+//                    }
+//
+//
+//                    branch.setSubjectMap(subjectMap);
+//                    branchess.add(branch);
+//
+//                }
+//
+//            }
+//        });
+
+
+
+
         final List<Branch> branches = new ArrayList<>();
         mFirebaseUtil.mFirestore.collection("branches").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             Branch branch;
@@ -58,14 +132,14 @@ public class VideoFragment extends Fragment {
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
                 for (DocumentSnapshot documentSnapshot : documents) {
-                    String name = (String) documentSnapshot.get("name");
+                    String name = (String) documentSnapshot.get("branchName");
                     Map<String, Subject> stringSubjectMap = new HashMap<>();
                     branch = new Branch();
                     branch.setBranchName(name);
 
                     Map<String, Object> data = documentSnapshot.getData();
 
-                    Object stringSubjectMap1 = data.get("stringSubjectMap");
+                    Object stringSubjectMap1 = data.get("subjectMap");
 
                     Map<String, Object> map = (Map<String, Object>) stringSubjectMap1;
                     Set<String> subjectNames = map.keySet();
@@ -85,24 +159,6 @@ public class VideoFragment extends Fragment {
                 branchAdapter.notifyDataSetChanged();
             }
         });
-
-//        List<Branch> branches = new ArrayList<>();
-//        Branch branch;
-//
-//        for (int b = 0; b <= 5; b++) {
-//
-//            Map<String,Subject> stringSubjectMap = new HashMap<>();
-//            branch = new Branch();
-//            branch.setName("Programming "+b);
-//
-//            for (int i = 0; i <= 10; i++) {
-//                Subject subject = new Subject();
-//                subject.setName("Java " + i);
-//                stringSubjectMap.put("Java "+i,subject);
-//            }
-//            branch.setSubjectMap(stringSubjectMap);
-//            branches.add(branch);
-//        }
 
         RecyclerView branchRecycler =  view.findViewById(R.id.sub_branch_recyclerview);
         branchRecycler.setHasFixedSize(true);
@@ -208,6 +264,9 @@ public class VideoFragment extends Fragment {
                 public void onClick(View view) {
                     Toast.makeText(getActivity(), "ButtonClicked", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(getActivity(), PlayVideoActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("EXTRA_EXTRA_BRANCH", (Serializable) branches);
+                    intent.putExtras(bundle);
                     startActivity(intent);
                 }
             });

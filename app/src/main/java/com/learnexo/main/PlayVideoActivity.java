@@ -24,6 +24,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,8 +33,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.fragments.ExpandableListAdapter;
+import com.learnexo.model.video.Branch;
 import com.learnexo.util.FirebaseUtil;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,12 +57,21 @@ public class PlayVideoActivity extends AppCompatActivity {
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
+    private Serializable branches;
+
     private NestedScrollView nestedScroll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_video);
+
+//        branches = getIntent().getSerializableExtra("EXTRA_EXTRA_BRANCH");
+//        Bundle bundle = getIntent().getExtras();
+//        List<Branch> branches1 =(List<Branch>) bundle.getSerializable("EXTRA_EXTRA_BRANCH");
+//        Branch branch = branches1.get(0);
+//        String branchName = branch.getBranchName();
+//        Toast.makeText(PlayVideoActivity.this, branchName, Toast.LENGTH_SHORT).show();
 
         videoView = findViewById(R.id.videoView);
         mToolbar = findViewById(R.id.video_toolbar);
