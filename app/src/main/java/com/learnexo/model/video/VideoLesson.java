@@ -1,14 +1,35 @@
 package com.learnexo.model.video;
 
-public class VideoLesson {
+import java.io.Serializable;
+
+public class VideoLesson implements Serializable{
     private String mVideoName;
     private String uri;
+    private boolean isFreeVideo;
+    private String duration;
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
 
     public String getVideoName() {
         return mVideoName;
     }
 
+    public boolean isFreeVideo() {
+        return isFreeVideo;
+    }
+
+    public void setFreeVideo(boolean freeVideo) {
+        isFreeVideo = freeVideo;
+    }
+
     public void setVideoName(String videoName) {
+
         mVideoName = videoName;
     }
 

@@ -1,46 +1,32 @@
 package com.learnexo.main;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.fragments.ExpandableListAdapter;
-import com.learnexo.model.video.Branch;
+import com.learnexo.model.video.Subject;
 import com.learnexo.util.FirebaseUtil;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 public class PlayVideoActivity extends AppCompatActivity {
 
@@ -57,7 +43,7 @@ public class PlayVideoActivity extends AppCompatActivity {
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
-    private Serializable branches;
+
 
     private NestedScrollView nestedScroll;
 
@@ -65,13 +51,13 @@ public class PlayVideoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_video);
+        Intent intent= getIntent();
 
-//        branches = getIntent().getSerializableExtra("EXTRA_EXTRA_BRANCH");
-//        Bundle bundle = getIntent().getExtras();
-//        List<Branch> branches1 =(List<Branch>) bundle.getSerializable("EXTRA_EXTRA_BRANCH");
-//        Branch branch = branches1.get(0);
-//        String branchName = branch.getBranchName();
-//        Toast.makeText(PlayVideoActivity.this, branchName, Toast.LENGTH_SHORT).show();
+        Subject subject = (Subject) intent.getSerializableExtra("EXTRA_EXTRA_SUBJECT");
+
+
+
+        Toast.makeText(PlayVideoActivity.this, subject.getSubjectName(), Toast.LENGTH_SHORT).show();
 
         videoView = findViewById(R.id.videoView);
         mToolbar = findViewById(R.id.video_toolbar);

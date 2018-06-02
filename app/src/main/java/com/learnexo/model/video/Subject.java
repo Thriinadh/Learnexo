@@ -2,17 +2,20 @@ package com.learnexo.model.video;
 
 import com.learnexo.model.video.chapter.Chapter;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Subject {
+public class Subject implements Serializable{
     private String mSubjectName;
+    private Map<String,Chapter> mChapterMap=new HashMap<>();
     private Double mPrice;
     private Date lastUpdated;
-    private Map<String,Chapter> mChapterMap;
+
     //placed for interests recycler view issue
-    private boolean isChecked;
+    private transient boolean isChecked;
 
     public Subject() {}
 
@@ -63,4 +66,5 @@ public class Subject {
     public void setChapterMap(Map<String, Chapter> chapterMap) {
         mChapterMap = chapterMap;
     }
+
 }

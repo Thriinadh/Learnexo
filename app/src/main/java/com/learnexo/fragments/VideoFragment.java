@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -22,17 +21,12 @@ import com.learnexo.main.PlayVideoActivity;
 import com.learnexo.main.R;
 import com.learnexo.model.video.Branch;
 import com.learnexo.model.video.Subject;
-import com.learnexo.model.video.VideoLesson;
-import com.learnexo.model.video.chapter.Chapter;
 import com.learnexo.util.FirebaseUtil;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class VideoFragment extends Fragment {
 
@@ -40,8 +34,7 @@ public class VideoFragment extends Fragment {
 
     FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     BranchAdapter branchAdapter;
-    List<Branch> branches;
-    List<Branch> branchess;
+    List<Branch> branches= new ArrayList<>();
 
     public VideoFragment() {
         // Required empty public constructor
@@ -56,118 +49,36 @@ public class VideoFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_video, container, false);
 
+        setupBranchRecycler(view);
 
-//        branchess = new ArrayList<>();
-//        mFirebaseUtil.mFirestore.collection("branches").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//            Branch branch;
-//            @Override
-//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-//                for (DocumentSnapshot documentSnapshot : documents) {
-//                    String name = (String) documentSnapshot.get("branchName");
-//
-//                    Map<String, Subject> subjectMap = new HashMap<>();
-//                    Map<String, Chapter> chapterMap = new HashMap<>();
-//                    Map<String, VideoLesson> videoLessonMap = new HashMap<>();
-//
-//                    branch = new Branch();
-//                    branch.setBranchName(name);
-//
-//                    Map<String, Object> data = documentSnapshot.getData();
-//
-//                    Object subjectMap1 = data.get("subjectMap");
-//                    Object chapterMap1 = data.get("chapterMap");
-//                    Object videoLessionMap1 = data.get("videoLessonMap");
-//
-//                    Map<String, Object> smap = (Map<String, Object>) subjectMap1;
-//                    Map<String, Object> cmap = (Map<String, Object>) chapterMap1;
-//                    Map<String, Object> vmap = (Map<String, Object>) videoLessionMap1;
-//
-//                    Set<String> subjectNames = smap.keySet();
-//                    Set<String> chapterNames = cmap.keySet();
-//                    Set<String> videoLessonNames = vmap.keySet();
-//
-//                    for (String videoLessonName : videoLessonNames) {
-//                        VideoLesson videoLesson = new VideoLesson();
-//                        videoLesson.setVideoName(videoLessonName);
-//                        Object values = vmap.get(videoLessonName);
-//                        Map<String,Object> videoLessonn= (Map<String, Object>) values;
-//                        String uri = (String) videoLessonn.get("uri");
-//
-//                        videoLessonMap.put(videoLessonName, videoLesson);
-//                        videoLessonMap.put(uri, videoLesson);
-//                    }
-//
-//
-//                    for (String chapterName : chapterNames) {
-//                        Chapter chapter = new Chapter();
-//                        chapter.setChapterName(chapterName);
-//                        chapterMap.put(chapterName, chapter);
-//                        chapter.setVideoLessonMap(videoLessonMap);
-//                    }
-//
-//                    for(String subjectName:subjectNames){
-//                        Subject subject = new Subject();
-//                        subject.setSubjectName(subjectName);
-//                        subjectMap.put(subjectName, subject);
-//                        subject.setChapterMap(chapterMap);
-//                    }
-//
-//
-//                    branch.setSubjectMap(subjectMap);
-//                    branchess.add(branch);
-//
-//                }
-//
-//            }
-//        });
+        fetchNofityBranches();
 
+        return view;
+    }
 
-
-
-        final List<Branch> branches = new ArrayList<>();
+    private void fetchNofityBranches() {
         mFirebaseUtil.mFirestore.collection("branches").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             Branch branch;
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
                 for (DocumentSnapshot documentSnapshot : documents) {
-                    String name = (String) documentSnapshot.get("branchName");
-                    Map<String, Subject> stringSubjectMap = new HashMap<>();
-                    branch = new Branch();
-                    branch.setBranchName(name);
-
-                    Map<String, Object> data = documentSnapshot.getData();
-
-                    Object stringSubjectMap1 = data.get("subjectMap");
-
-                    Map<String, Object> map = (Map<String, Object>) stringSubjectMap1;
-                    Set<String> subjectNames = map.keySet();
-                    for(String subjectName:subjectNames){
-                        Subject subject = new Subject();
-                        subject.setSubjectName(subjectName);
-                        stringSubjectMap.put(subjectName, subject);
-//                        Object values = map.get(subjectName);
-//                        Map<String,Object> subject= (Map<String, Object>) values;
-//                        subject.get("name");
-                    }
-
-                    branch.setSubjectMap(stringSubjectMap);
+                    branch=documentSnapshot.toObject(Branch.class);
                     branches.add(branch);
                     branchAdapter.notifyDataSetChanged();
                 }
                 branchAdapter.notifyDataSetChanged();
             }
         });
+    }
 
+    private void setupBranchRecycler(View view) {
         RecyclerView branchRecycler =  view.findViewById(R.id.sub_branch_recyclerview);
         branchRecycler.setHasFixedSize(true);
 
         branchAdapter = new BranchAdapter(getActivity(), branches);
         branchRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         branchRecycler.setAdapter(branchAdapter);
-
-        return view;
     }
 
     public class BranchHolder extends RecyclerView.ViewHolder {
@@ -257,16 +168,13 @@ public class VideoFragment extends Fragment {
 
         }
 
-        public void bind(Subject subject) {
+        public void bind(final Subject subject) {
             mSubjectBtn.setText(subject.getSubjectName());
             mSubjectBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getActivity(), "ButtonClicked", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(getActivity(), PlayVideoActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("EXTRA_EXTRA_BRANCH", (Serializable) branches);
-                    intent.putExtras(bundle);
+                    intent.putExtra("EXTRA_EXTRA_SUBJECT", subject);
                     startActivity(intent);
                 }
             });

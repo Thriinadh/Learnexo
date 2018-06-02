@@ -2,11 +2,14 @@ package com.learnexo.model.video.chapter;
 
 import com.learnexo.model.video.VideoLesson;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class Chapter {
+public class Chapter implements Serializable {
     private String mChapterName;
     private Map<String,VideoLesson> mVideoLessonMap;
+    private Map<String,ChapterTest> mChapterTestMap;
+
 
     public String getChapterName() {
         return mChapterName;
@@ -24,14 +27,12 @@ public class Chapter {
         mVideoLessonMap = videoLessonMap;
     }
 
-    public Map<String, ChapterTest> getStringChapterTestMap() {
-        return mStringChapterTestMap;
+    public Map<String, ChapterTest> getChapterTestMap() {
+        return mChapterTestMap;
     }
 
-    public void setStringChapterTestMap(Map<String, ChapterTest> stringChapterTestMap) {
-        mStringChapterTestMap = stringChapterTestMap;
+    public void setChapterTestMap(Map<String, ChapterTest> chapterTestMap) {
+        mChapterTestMap = chapterTestMap;
     }
-
-    private Map<String,ChapterTest> mStringChapterTestMap;
 
 }
