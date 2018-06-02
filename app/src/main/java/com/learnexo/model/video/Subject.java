@@ -10,6 +10,7 @@ import java.util.Map;
 
 public class Subject implements Serializable{
     private String subjectName;
+    private String overView;
     private Map<String,Chapter> chapterMap =new HashMap<>();
     private Double price;
     private Date lastUpdated;
@@ -25,7 +26,13 @@ public class Subject implements Serializable{
 
         this.lastUpdated = lastUpdated;
     }
+    public String getOverView() {
+        return overView;
+    }
 
+    public void setOverView(String overView) {
+        this.overView = overView;
+    }
     public boolean isChecked() {
         return isChecked;
     }
