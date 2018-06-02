@@ -2,11 +2,16 @@ package com.learnexo.fragments;
 
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,11 +49,7 @@ public class ProfileFragment extends Fragment {
     public static String sDpUrl;
     public static String sName;
 
-    private String studiedAt;
-    private String firstCon;
-    private String secCon;
-    private String degreeType;
-    private String endYear;
+    private ImageView eduPlus;
 
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
@@ -75,6 +76,7 @@ public class ProfileFragment extends Fragment {
         eduDetails = view.findViewById(R.id.eduDetails);
         frameLayout = view.findViewById(R.id.fragment_container);
         fullProfileImage = view.findViewById(R.id.fullProfileImage);
+        eduPlus = view.findViewById(R.id.imageView7);
 
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,15 +112,24 @@ public class ProfileFragment extends Fragment {
         mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                studiedAt = (String) documentSnapshot.get("studiedAt");
-                firstCon = (String) documentSnapshot.get("firstCon");
-                secCon = (String) documentSnapshot.get("secondCon");
-                degreeType = (String) documentSnapshot.get("degreeType");
-                endYear = (String) documentSnapshot.get("endYear");
+                String studiedAt = (String) documentSnapshot.get("studiedAt");
+                String firstCon = (String) documentSnapshot.get("firstCon");
+                String secCon = (String) documentSnapshot.get("secondCon");
+                String degreeType = (String) documentSnapshot.get("degreeType");
+                String endYear = (String) documentSnapshot.get("endYear");
+
+                String total = studiedAt+","+firstCon+","+secCon+","+degreeType+" Graduated "+endYear;
+
+                eduDetails.setText(total);
+                eduDetails.setTextColor(Color.BLACK);
+                eduDetails.setEnabled(false);
+                Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_school_24px);
+                eduPlus.setImageDrawable(drawable);
+                drawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.light_black), PorterDuff.Mode.SRC_IN));
 
             }
         });
-        eduDetails.setText(studiedAt+" "+firstCon+" "+secCon+" "+degreeType+" "+endYear);
+
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 

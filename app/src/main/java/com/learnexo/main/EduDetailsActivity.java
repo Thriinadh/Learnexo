@@ -72,10 +72,10 @@ public class EduDetailsActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.edu_submit) {
-            String studied = studiedAt.getText().toString();
-            String fstCon = firstConcentration.getText().toString();
-            String secCon = secondConcentration.getText().toString();
-            String degreeTypee = degreeType.getText().toString();
+            String studied = studiedAt.getText().toString().trim();
+            String fstCon = firstConcentration.getText().toString().trim();
+            String secCon = secondConcentration.getText().toString().trim();
+            String degreeTypee = degreeType.getText().toString().trim();
 
             Map<String, Object> map = new HashMap<>();
             map.put("studiedAt", studied);
