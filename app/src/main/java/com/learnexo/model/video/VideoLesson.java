@@ -3,7 +3,7 @@ package com.learnexo.model.video;
 import java.io.Serializable;
 
 public class VideoLesson implements Serializable{
-    private String mVideoName;
+    private String videoName;
     private String uri;
     private boolean isFreeVideo;
     private String duration;
@@ -17,7 +17,7 @@ public class VideoLesson implements Serializable{
     }
 
     public String getVideoName() {
-        return mVideoName;
+        return videoName;
     }
 
     public boolean isFreeVideo() {
@@ -30,7 +30,7 @@ public class VideoLesson implements Serializable{
 
     public void setVideoName(String videoName) {
 
-        mVideoName = videoName;
+        this.videoName = videoName;
     }
 
     public String getUri() {

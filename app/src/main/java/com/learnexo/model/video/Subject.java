@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Subject implements Serializable{
-    private String mSubjectName;
-    private Map<String,Chapter> mChapterMap=new HashMap<>();
-    private Double mPrice;
+    private String subjectName;
+    private Map<String,Chapter> chapterMap =new HashMap<>();
+    private Double price;
     private Date lastUpdated;
 
     //placed for interests recycler view issue
@@ -21,7 +21,7 @@ public class Subject implements Serializable{
 
     public Subject(boolean isChecked, Department department, Branch branch, Double price, String subjectName, List<Chapter> mChapterMap, Date lastUpdated) {
         this.isChecked = isChecked;
-        mPrice = price;
+        this.price = price;
 
         this.lastUpdated = lastUpdated;
     }
@@ -35,11 +35,11 @@ public class Subject implements Serializable{
     }
 
     public Double getPrice() {
-        return mPrice;
+        return price;
     }
 
     public void setPrice(Double price) {
-        mPrice = price;
+        this.price = price;
     }
 
 
@@ -52,19 +52,19 @@ public class Subject implements Serializable{
     }
 
     public String getSubjectName() {
-        return mSubjectName;
+        return subjectName;
     }
 
     public void setSubjectName(String subjectName) {
-        mSubjectName = subjectName;
+        this.subjectName = subjectName;
     }
 
     public Map<String, Chapter> getChapterMap() {
-        return mChapterMap;
+        return chapterMap;
     }
 
     public void setChapterMap(Map<String, Chapter> chapterMap) {
-        mChapterMap = chapterMap;
+        this.chapterMap = chapterMap;
     }
 
 }

@@ -4,23 +4,23 @@ import java.util.Map;
 
 public class Branch {
 
-    private String mBranchName;
-    private Map<String, Subject> mSubjectMap;
+    private String branchName;
+    private Map<String, Subject> subjectMap;
 
     public String getBranchName() {
-        return mBranchName;
+        return branchName;
     }
 
     public void setBranchName(String branchName) {
-        mBranchName = branchName;
+        this.branchName = branchName;
     }
 
     public Map<String, Subject> getSubjectMap() {
-        return mSubjectMap;
+        return subjectMap;
     }
 
     public void setSubjectMap(Map<String, Subject> subjectMap) {
-        mSubjectMap = subjectMap;
+        this.subjectMap = subjectMap;
     }
 
 }

@@ -6,33 +6,33 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class Chapter implements Serializable {
-    private String mChapterName;
-    private Map<String,VideoLesson> mVideoLessonMap;
-    private Map<String,ChapterTest> mChapterTestMap;
+    private String chapterName;
+    private Map<String,VideoLesson> videoLessonMap;
+    private Map<String,ChapterTest> chapterTestMap;
 
 
     public String getChapterName() {
-        return mChapterName;
+        return chapterName;
     }
 
     public void setChapterName(String chapterName) {
-        mChapterName = chapterName;
+        this.chapterName = chapterName;
     }
 
     public Map<String, VideoLesson> getVideoLessonMap() {
-        return mVideoLessonMap;
+        return videoLessonMap;
     }
 
     public void setVideoLessonMap(Map<String, VideoLesson> videoLessonMap) {
-        mVideoLessonMap = videoLessonMap;
+        this.videoLessonMap = videoLessonMap;
     }
 
     public Map<String, ChapterTest> getChapterTestMap() {
-        return mChapterTestMap;
+        return chapterTestMap;
     }
 
     public void setChapterTestMap(Map<String, ChapterTest> chapterTestMap) {
-        mChapterTestMap = chapterTestMap;
+        this.chapterTestMap = chapterTestMap;
     }
 
 }

@@ -22,11 +22,14 @@ import android.widget.VideoView;
 
 import com.learnexo.fragments.ExpandableListAdapter;
 import com.learnexo.model.video.Subject;
+import com.learnexo.model.video.VideoLesson;
+import com.learnexo.model.video.chapter.Chapter;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PlayVideoActivity extends AppCompatActivity {
 
@@ -40,8 +43,8 @@ public class PlayVideoActivity extends AppCompatActivity {
 
     ExpandableListAdapter listAdapter;
     NonScrollExpandableListView expListView;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
+    List<String> listDataHeader=new ArrayList<>();
+    HashMap<String, List<String>> listDataChild=new HashMap<>();
 
 
 
@@ -55,6 +58,28 @@ public class PlayVideoActivity extends AppCompatActivity {
 
         Subject subject = (Subject) intent.getSerializableExtra("EXTRA_EXTRA_SUBJECT");
 
+        Map<String, Chapter> chapterMap = subject.getChapterMap();
+
+        List<Chapter> chpterList=new ArrayList(chapterMap.values());
+
+        List<String> chapterVideos;
+        for (Chapter chapter : chpterList){
+            String chapterName = chapter.getChapterName();
+            listDataHeader.add(chapterName);
+
+            Map<String, VideoLesson> videoLessonMap = chapter.getVideoLessonMap();
+            List<VideoLesson> videoLessonList=null;
+            if(videoLessonMap!=null) {
+                videoLessonList = new ArrayList(videoLessonMap.values());
+                chapterVideos = new ArrayList<>();
+
+                for (VideoLesson videoLesson : videoLessonList) {
+                    chapterVideos.add(videoLesson.getVideoName());
+                }
+
+                listDataChild.put(chapterName, chapterVideos);
+            }
+        }
 
 
         Toast.makeText(PlayVideoActivity.this, subject.getSubjectName(), Toast.LENGTH_SHORT).show();
@@ -77,7 +102,7 @@ public class PlayVideoActivity extends AppCompatActivity {
         expListView = findViewById(R.id.ExpListView);
 
         // preparing list data
-        prepareListData();
+        //prepareListData();
 
         listAdapter = new ExpandableListAdapter(PlayVideoActivity.this, listDataHeader, listDataChild);
 
@@ -89,7 +114,6 @@ public class PlayVideoActivity extends AppCompatActivity {
                 expListView.expandGroup(i);
         }
 
-//        ViewCompat.setNestedScrollingEnabled(expListView, true);
 
 //        mFirebaseUtil.mFirestore.collection("subjects").document("compilerDesign").collection("chap1")
 //                .document("introduction").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -222,51 +246,51 @@ public class PlayVideoActivity extends AppCompatActivity {
     }
 
     private void prepareListData() {
-        listDataHeader = new ArrayList<>();
-        listDataChild = new HashMap<>();
-
-        // Adding child data
-        listDataHeader.add("1. Introduction");
-        listDataHeader.add("2. Logic Gates");
-        listDataHeader.add("3. Computer Circuits");
-        listDataHeader.add("4. Random Access Memory");
-        listDataHeader.add("5. Decoders");
-
-        // Adding child data
-        List<String> fundamentals = new ArrayList<>();
-        fundamentals.add("How does a computer work..?");
-        fundamentals.add("What do you want");
-        fundamentals.add("Current is wrong");
-
-
-        List<String> programming = new ArrayList<>();
-        programming.add("Ruby on Rails");
-        programming.add("Design Patterns");
-        programming.add("Scala");
-
-        List<String> databases = new ArrayList<>();
-        databases.add("Relational Databases");
-        databases.add("Oracle Database");
-        databases.add("Microsoft Azure");
-
-        List<String> networking = new ArrayList<>();
-        networking.add("Wireless Networking");
-        networking.add("CCNA Networking");
-        networking.add("Firewalls protection");
-
-        List<String> artificial = new ArrayList<>();
-        artificial.add("Machine Learning");
-        artificial.add("Game Theory");
-        artificial.add("Speech Recognition");
-        artificial.add("Robotics");
-        artificial.add("Machine Algorithms");
-
-        // Header, Child data
-        listDataChild.put(listDataHeader.get(0), fundamentals);
-        listDataChild.put(listDataHeader.get(1), programming);
-        listDataChild.put(listDataHeader.get(2), databases);
-        listDataChild.put(listDataHeader.get(3), networking);
-        listDataChild.put(listDataHeader.get(4), artificial);
+//        listDataHeader = new ArrayList<>();
+//        listDataChild = new HashMap<>();
+//
+//        // Adding child data
+//        listDataHeader.add("1. Introduction");
+//        listDataHeader.add("2. Logic Gates");
+//        listDataHeader.add("3. Computer Circuits");
+//        listDataHeader.add("4. Random Access Memory");
+//        listDataHeader.add("5. Decoders");
+//
+//        // Adding child data
+//        List<String> fundamentals = new ArrayList<>();
+//        fundamentals.add("How does a computer work..?");
+//        fundamentals.add("What do you want");
+//        fundamentals.add("Current is wrong");
+//
+//
+//        List<String> programming = new ArrayList<>();
+//        programming.add("Ruby on Rails");
+//        programming.add("Design Patterns");
+//        programming.add("Scala");
+//
+//        List<String> databases = new ArrayList<>();
+//        databases.add("Relational Databases");
+//        databases.add("Oracle Database");
+//        databases.add("Microsoft Azure");
+//
+//        List<String> networking = new ArrayList<>();
+//        networking.add("Wireless Networking");
+//        networking.add("CCNA Networking");
+//        networking.add("Firewalls protection");
+//
+//        List<String> artificial = new ArrayList<>();
+//        artificial.add("Machine Learning");
+//        artificial.add("Game Theory");
+//        artificial.add("Speech Recognition");
+//        artificial.add("Robotics");
+//        artificial.add("Machine Algorithms");
+//
+//        // Header, Child data
+//        listDataChild.put(listDataHeader.get(0), fundamentals);
+//        listDataChild.put(listDataHeader.get(1), programming);
+//        listDataChild.put(listDataHeader.get(2), databases);
+//        listDataChild.put(listDataHeader.get(3), networking);
+//        listDataChild.put(listDataHeader.get(4), artificial);
     }
 
 }

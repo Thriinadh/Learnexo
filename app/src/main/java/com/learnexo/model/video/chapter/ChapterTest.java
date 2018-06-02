@@ -5,7 +5,7 @@ import java.util.Map;
 
 class ChapterTest implements Serializable{
     private String chapTestName;
-    private Map<String,ChapterTestQuestion> mChapterTestQuestionMap;
+    private Map<String,ChapterTestQuestion> chapterTestQuestionMap;
 
 
     public String getChapTestName() {
@@ -17,11 +17,11 @@ class ChapterTest implements Serializable{
     }
 
     public Map<String, ChapterTestQuestion> getChapterTestQuestionMap() {
-        return mChapterTestQuestionMap;
+        return chapterTestQuestionMap;
     }
 
     public void setChapterTestQuestionMap(Map<String, ChapterTestQuestion> chapterTestQuestionMap) {
-        mChapterTestQuestionMap = chapterTestQuestionMap;
+        this.chapterTestQuestionMap = chapterTestQuestionMap;
     }
 
 }
