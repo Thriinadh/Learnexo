@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.main.EduDetailsActivity;
@@ -42,6 +43,12 @@ public class ProfileFragment extends Fragment {
     private String mUserId;
     public static String sDpUrl;
     public static String sName;
+
+    private String studiedAt;
+    private String firstCon;
+    private String secCon;
+    private String degreeType;
+    private String endYear;
 
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
@@ -99,6 +106,19 @@ public class ProfileFragment extends Fragment {
                     .replace(R.id.fragment_container, new UserPostsFragment())
                     .commit();
         }
+
+        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                studiedAt = (String) documentSnapshot.get("studiedAt");
+                firstCon = (String) documentSnapshot.get("firstCon");
+                secCon = (String) documentSnapshot.get("secondCon");
+                degreeType = (String) documentSnapshot.get("degreeType");
+                endYear = (String) documentSnapshot.get("endYear");
+
+            }
+        });
+        eduDetails.setText(studiedAt+" "+firstCon+" "+secCon+" "+degreeType+" "+endYear);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
