@@ -8,11 +8,11 @@ import android.widget.TextView;
 
 import com.learnexo.main.R;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ListAdapter extends ExpandableListAdapter {
-    public ListAdapter(Context context, List<String> listDataHeader, HashMap<String, List<String>> listChildData) {
+    public ListAdapter(Context context, List<String> listDataHeader, Map<String, List<String>> listChildData) {
         super(context, listDataHeader, listChildData);
     }
 

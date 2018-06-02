@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.learnexo.main.R;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
@@ -20,10 +20,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     // header titles
     // child data in format of header title, child title
-    private HashMap<String, List<String>> _listDataChild;
+    private Map<String, List<String>> _listDataChild;
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
-                                 HashMap<String, List<String>> listChildData) {
+                                 Map<String, List<String>> listChildData) {
         this._context = context;
         this._listDataHeader = listDataHeader;
         this._listDataChild = listChildData;

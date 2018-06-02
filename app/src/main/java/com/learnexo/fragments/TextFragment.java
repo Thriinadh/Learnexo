@@ -10,7 +10,6 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
 
 import com.learnexo.main.NonScrollExpandableListView;
 import com.learnexo.main.R;
@@ -18,6 +17,7 @@ import com.learnexo.main.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class TextFragment extends Fragment {
@@ -25,7 +25,7 @@ public class TextFragment extends Fragment {
     ListAdapter listAdapter;
     NonScrollExpandableListView expListView;
     List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
+    Map<String, List<String>> listDataChild;
     private NestedScrollView nestedScroll;
 
     public TextFragment() {

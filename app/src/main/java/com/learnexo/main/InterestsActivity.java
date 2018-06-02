@@ -29,7 +29,7 @@ import com.learnexo.util.MyBounceInterpolator;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +39,7 @@ public class InterestsActivity extends AppCompatActivity {
     private Toolbar setupToolbar;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     MenuItem nextBtn;
-    Map<String,Boolean> interestMap=new HashMap<>();;
+    Map<String,Boolean> interestMap=new LinkedHashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class InterestsActivity extends AppCompatActivity {
 
         for (int b = 0; b <= 5; b++) {
 
-            Map<String,Subject> stringSubjectMap = new HashMap<>();
+            Map<String,Subject> stringSubjectMap = new LinkedHashMap<>();
             branch = new Branch();
             branch.setBranchName("Programming "+b);
 
