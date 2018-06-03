@@ -320,7 +320,6 @@ public class FullAnswerActivity extends AppCompatActivity {
             viewAllAns.setText("View all cracks");
         }
 
-
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(getApplicationContext()).load(publisherDP).apply(requestOptions).into(profileImage);
@@ -418,22 +417,16 @@ public class FullAnswerActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        seeAllComments.setEnabled(true);
-
-
+    protected void onPause() {
+        super.onPause();
         saveUnsaveBookMark();
-
     }
 
     private void saveUnsaveBookMark() {
         if(!flag && gag) {
             saveIncrementBookMarks();
         } else if(flag && !gag) {
-
             deleteDecrementBookMarks();
-
         }
     }
 
@@ -517,5 +510,11 @@ public class FullAnswerActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        seeAllComments.setEnabled(true);
     }
 }

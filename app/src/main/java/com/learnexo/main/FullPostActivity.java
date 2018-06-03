@@ -258,17 +258,20 @@ public class FullPostActivity extends AppCompatActivity {
         });
     }
 
-
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        seeAllComments.setEnabled(true);
-
+    protected void onPause() {
+        super.onPause();
         if(!flag && gag) {
             saveIncrementBookMark();
         } else if(flag && !gag) {
             deleteDecrementBookMark();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        seeAllComments.setEnabled(true);
     }
 
     private void deleteDecrementBookMark() {

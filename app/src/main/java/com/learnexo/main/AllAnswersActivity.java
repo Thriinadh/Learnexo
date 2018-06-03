@@ -55,7 +55,7 @@ public class AllAnswersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_answers);
 
-        setupAnswersRecyclerView();
+        setupAnswersRecycler();
 
         getIntentDetails();
 
@@ -65,6 +65,24 @@ public class AllAnswersActivity extends AppCompatActivity {
 
         bindData();
 
+        answerBtnListener();
+
+        User user = new User();
+        overflowListener(user);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mAdapter.saveUnsaveBookMark();
+    }
+
+    private void overflowListener(User user) {
+        quesOverFlow.setOnClickListener(new QuestionChallengeItemOverFlowListener(this, user));
+    }
+
+    private void answerBtnListener() {
         answerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,11 +99,6 @@ public class AllAnswersActivity extends AppCompatActivity {
                 overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
             }
         });
-
-        User user=new User();
-        quesOverFlow.setOnClickListener(new QuestionChallengeItemOverFlowListener(this, user));
-
-
     }
 
     private void getAnswers() {
@@ -136,13 +149,13 @@ public class AllAnswersActivity extends AppCompatActivity {
         quesOverFlow=findViewById(R.id.quesOverFlow);
     }
 
-    private void setupAnswersRecyclerView() {
+    private void setupAnswersRecycler() {
         mAnswers = new ArrayList<>();
         mAdapter = new AllAnswersAdapter(mAnswers);
 
-        RecyclerView answersRecyclerView = findViewById(R.id.allAnsRecycler);
-        answersRecyclerView.setLayoutManager(new LinearLayoutManager(AllAnswersActivity.this));
-        answersRecyclerView.setAdapter(mAdapter);
+        RecyclerView ansRecyclerView = findViewById(R.id.allAnsRecycler);
+        ansRecyclerView.setLayoutManager(new LinearLayoutManager(AllAnswersActivity.this));
+        ansRecyclerView.setAdapter(mAdapter);
     }
 
     private void getIntentDetails() {

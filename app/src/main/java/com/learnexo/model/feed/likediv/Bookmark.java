@@ -14,6 +14,15 @@ public class Bookmark {
     private BookMarkType mBookMarkType;
     @ServerTimestamp
     private Date bookMarkTime;
+    public Bookmark(){
+
+    }
+    public Bookmark(String bookMarkItemId, String publisherId, String bookMarkerId, BookMarkType bookMarkType) {
+        this.bookMarkItemId = bookMarkItemId;
+        this.publisherId = publisherId;
+        this.bookMarkerId = bookMarkerId;
+        mBookMarkType = bookMarkType;
+    }
 
     public String getBookMarkItemId() {
         return bookMarkItemId;

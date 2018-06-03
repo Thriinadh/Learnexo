@@ -3,12 +3,20 @@ package com.learnexo.main;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,19 +26,26 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
+import com.learnexo.model.core.BookMarkType;
 import com.learnexo.model.feed.answer.Answer;
+import com.learnexo.model.feed.likediv.Bookmark;
 import com.learnexo.model.feed.likediv.Comment;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -42,7 +57,11 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private Context mContext;
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
-
+    private Set<Bookmark> mBookmarks=new HashSet<>();
+    private boolean flag = true;
+    private boolean gag = true;
+    String quesId;
+    private String mUserId=FirebaseUtil.getCurrentUserId();
 
     public AllAnswersAdapter(List<Answer> mFeedItems) {
         this.mAnswers = mFeedItems;
@@ -75,7 +94,8 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             final String imageThumb = answer.getImgThmb();
             final String timeAgo = convertDateToAgo(answer.getPublishTime());
             String answerId = answer.getFeedItemId();
-            String quesId = answer.getQuesId();
+            if(quesId==null)
+                quesId = answer.getQuesId();
             long views=answer.getViews();
             long upVotes=answer.getUpVotes();
 
@@ -91,8 +111,169 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             overflowListener(answerHolder, publisher, answer);
             answererProfileListener(answerHolder, publisher, answerId);
 
+            checkIfAlreadyBookMarked(answerHolder, answerId);
+            bookMarkBtnListener(answerHolder, answerId, answerPublisherId);
 
         }
+    }
+
+
+
+    public void saveUnsaveBookMark() {
+        if(!flag && gag) {
+            saveIncrementBookMarks();
+        } else if(flag && !gag) {
+            deleteDecrementBookMarks();
+        }
+    }
+
+    private void saveIncrementBookMarks() {
+
+        for(final Bookmark bookmark:mBookmarks){
+            mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+                    .collection("bookmarks").add(bookmark).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                @Override
+                public void onSuccess(DocumentReference documentReference) {
+                    String id = documentReference.getId();
+                    mFirebaseUtil.mFirestore.collection("users").document(bookmark.getPublisherId()
+                    )
+                            .collection("answers").document(bookmark.getBookMarkItemId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                            long noOfBookMarks = (long) documentSnapshot.get("bookMarks");
+
+                            noOfBookMarks = noOfBookMarks + 1;
+
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("bookMarks", noOfBookMarks);
+
+                            mFirebaseUtil.mFirestore.collection("users").document(bookmark.getPublisherId())
+                                    .collection("answers").document(bookmark.getBookMarkItemId()).update(map);
+
+                            mFirebaseUtil.mFirestore.collection("questions").document(quesId)
+                                    .collection("answers").document(bookmark.getBookMarkItemId()).update(map);
+
+                        }
+                    });
+                }
+            });
+
+        }
+
+
+    }
+
+    private void deleteDecrementBookMarks() {
+        for(final Bookmark bookmark:mBookmarks){
+            CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users")
+                    .document(FirebaseUtil.getCurrentUserId()).collection("bookmarks");
+            Query query = collectionReference.whereEqualTo("bookMarkItemId", bookmark.getBookMarkItemId());
+
+            query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                    List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                    DocumentSnapshot documentSnapshot = documents.get(0);
+                    String id = documentSnapshot.getId();
+
+                    mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+                            .collection("bookmarks").document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+
+                            mFirebaseUtil.mFirestore.collection("users").document(bookmark.getPublisherId())
+                                    .collection("answers").document(bookmark.getBookMarkItemId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                    long noOfBookMarks = (long) documentSnapshot.get("bookMarks");
+
+                                    noOfBookMarks = noOfBookMarks - 1;
+
+                                    Map<String, Object> map = new HashMap<>();
+                                    map.put("bookMarks", noOfBookMarks);
+
+                                    mFirebaseUtil.mFirestore.collection("users").document(bookmark.getPublisherId())
+                                            .collection("answers").document(bookmark.getBookMarkItemId()).update(map);
+
+                                    mFirebaseUtil.mFirestore.collection("questions").document(quesId)
+                                            .collection("answers").document(bookmark.getBookMarkItemId()).update(map);
+
+                                }
+                            });
+
+                        }
+                    });
+
+                }
+            });
+        }
+
+
+    }
+
+    private void checkIfAlreadyBookMarked(final AnswerHolder answerHolder, final String ansId) {
+        mFirebaseUtil.mFirestore.collection("users").document(mUserId)
+                .collection("bookmarks").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                for(DocumentSnapshot documentSnapshot : documents) {
+                    Object bookMarkItemId = documentSnapshot.get("bookMarkItemId");
+                    String bookMarkItemIdd = (String) bookMarkItemId;
+                    if(bookMarkItemIdd != null) {
+                        if (bookMarkItemIdd.equals(ansId)) {
+                            Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px);
+                            answerHolder.bookmarkIview.setImageDrawable(drawable);
+                            if(drawable != null)
+                                drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
+                            flag = false;
+                            gag = false;
+                        }
+
+                    }
+                }
+
+
+            }
+        });
+    }
+
+
+
+    private void bookMarkBtnListener(final AnswerHolder answerHolder, final String answerId, final String answerPublisherId) {
+        answerHolder.bookmarkIview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Bookmark bookmark=new Bookmark(answerId,answerPublisherId,mUserId, BookMarkType.ANSWER);
+                mBookmarks.add(bookmark);
+
+                RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                anim.setInterpolator(new LinearInterpolator());
+                anim.setRepeatCount(0);
+                anim.setDuration(300);
+
+                answerHolder.bookmarkIview.startAnimation(anim);
+
+                if(flag) {
+                    Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px);
+                    answerHolder.bookmarkIview.setImageDrawable(drawable);
+                    if(drawable != null)
+                        drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
+                    flag = false;
+                } else {
+                    Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_outline_bookmark_border_24px);
+                    answerHolder.bookmarkIview.setImageDrawable(drawable);
+                    if(drawable != null)
+                        drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
+                    flag = true;
+                }
+
+            }
+        });
     }
 
     @NonNull
@@ -264,7 +445,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         private CircleImageView commentsImage;
         private TextView commentBtn;
         private TextView seeAllComments;
-        private ImageView full_post_bookmark;
+        private ImageView bookmarkIview;
         private RecyclerView commentsRecycler;
 
         private boolean flag = true;
@@ -284,7 +465,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             viewsText = mView.findViewById(R.id.viewsText);
             likesCount = mView.findViewById(R.id.likesCount);
             LikeBtn = mView.findViewById(R.id.full_post_like);
-            full_post_bookmark = mView.findViewById(R.id.full_post_bookmark);
+            bookmarkIview = mView.findViewById(R.id.full_post_bookmark);
             commentsImage = mView.findViewById(R.id.commentsImage);
             commentBtn = mView.findViewById(R.id.commentBtn);
             seeAllComments = mView.findViewById(R.id.seeAllComments);
