@@ -78,10 +78,15 @@ public class EduDetailsActivity extends AppCompatActivity {
             String degreeTypee = degreeType.getText().toString().trim();
 
             Map<String, Object> map = new HashMap<>();
+            if(!TextUtils.isEmpty(studied))
             map.put("studiedAt", studied);
+            if(!TextUtils.isEmpty(fstCon))
             map.put("firstCon", fstCon);
+            if(!TextUtils.isEmpty(secCon))
             map.put("secondCon", secCon);
+            if(!TextUtils.isEmpty(tag))
             map.put("endYear", tag);
+            if(!TextUtils.isEmpty(degreeTypee))
             map.put("degreeType", degreeTypee);
 
             if(!TextUtils.isEmpty(studied) || !TextUtils.isEmpty(fstCon) || !TextUtils.isEmpty(secCon) || !TextUtils.isEmpty(degreeTypee))

@@ -113,14 +113,11 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                StringBuilder stringBuilder=new StringBuilder();
-
                 String studiedAt = (String) documentSnapshot.get("studiedAt");
-                studiedAt=studiedAt!=null?studiedAt.concat(", "): "";
-
+                studiedAt = studiedAt != null ? studiedAt.concat(", "): "";
 
                 String firstCon = (String) documentSnapshot.get("firstCon");
-                firstCon=firstCon!=null?firstCon.concat(", "):"";
+                firstCon = firstCon != null ? firstCon.concat(", "):"";
 
                 String secondCon = (String) documentSnapshot.get("secondCon");
                 secondCon=secondCon!=null?secondCon.concat(", "):"";
@@ -131,18 +128,22 @@ public class ProfileFragment extends Fragment {
                 String endYear = (String) documentSnapshot.get("endYear");
                 endYear=endYear!=null?". Graduated in ".concat(endYear)+".":"";
 
-                stringBuilder.append(studiedAt);
-                stringBuilder.append(firstCon);
-                stringBuilder.append(secondCon);
-                stringBuilder.append(degreeType);
-                stringBuilder.append(endYear);
+                StringBuilder stringBuilder=new StringBuilder();
 
-                eduDetails.setText(stringBuilder.toString());
-                eduDetails.setTextColor(Color.BLACK);
-                eduDetails.setEnabled(false);
-                Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_school_24px);
-                eduPlus.setImageDrawable(drawable);
-                drawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.light_black), PorterDuff.Mode.SRC_IN));
+                if(!studiedAt.equals("") || !firstCon.equals("") || !secondCon.equals("") || !degreeType.equals("") ||  !endYear.equals("")) {
+                    stringBuilder.append(studiedAt);
+                    stringBuilder.append(firstCon);
+                    stringBuilder.append(secondCon);
+                    stringBuilder.append(degreeType);
+                    stringBuilder.append(endYear);
+
+                    eduDetails.setText(stringBuilder.toString());
+                    eduDetails.setTextColor(Color.BLACK);
+                    eduDetails.setEnabled(false);
+                    Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_school_24px);
+                    eduPlus.setImageDrawable(drawable);
+                    drawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.light_black), PorterDuff.Mode.SRC_IN));
+                }
 
             }
         });
