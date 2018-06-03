@@ -160,10 +160,11 @@ public class ProfileFragment extends Fragment {
                 addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
+
                 String studiedAt = (String) documentSnapshot.get("studiedAt");
 
                 StringBuilder fullDetails = studiedAt!=null? new StringBuilder(studiedAt):new StringBuilder();
-                fullDetails = fullDetails.length() >0 ? fullDetails.append(", "): fullDetails.append("");
+                if(fullDetails.length()>0) fullDetails.append(", ");
 
                 String firstCon = (String) documentSnapshot.get("firstCon");
                 if(firstCon!=null) fullDetails = fullDetails.append(firstCon).append(", ");
@@ -175,7 +176,7 @@ public class ProfileFragment extends Fragment {
                 if(degreeType!=null) fullDetails.append(degreeType).append(".");
 
                 String endYear = (String) documentSnapshot.get("endYear");
-                if(endYear!=null) fullDetails.append(". Graduated in ").append(endYear).append(".");
+                if(endYear!=null) fullDetails.append(" Graduated in ").append(endYear).append(".");
 
                 if(fullDetails.length()>0) {
                     eduDetails.setText(fullDetails.toString());
