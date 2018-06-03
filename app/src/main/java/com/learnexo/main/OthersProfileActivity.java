@@ -2,17 +2,31 @@ package com.learnexo.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.fragments.UserActivityFragment;
 import com.learnexo.fragments.UserAnswersFragment;
 import com.learnexo.fragments.UserChallengesFragment;
@@ -40,6 +54,16 @@ public class OthersProfileActivity extends AppCompatActivity {
     public static String sDpUrl;
     public static String sName;
 
+    private TextView eduDetails;
+    private TextView empDetails;
+    private TextView livingPlace;
+    private ImageView eduPlus;
+    private ImageView empPlus;
+
+    private RelativeLayout eduRelative;
+    private RelativeLayout empRelative;
+    private RelativeLayout locationRelative;
+
     private String publisherId;
    // private String postId;
 
@@ -53,13 +77,75 @@ public class OthersProfileActivity extends AppCompatActivity {
         Intent intent=getIntent();
         publisherId=intent.getStringExtra("PUBLISHER_ID");
       //  postId = intent.getStringExtra("POST_ID");
-        String publisherName = intent.getStringExtra(EXTRA_PUBLISHER_NAMEE);
+        final String publisherName = intent.getStringExtra(EXTRA_PUBLISHER_NAMEE);
         String publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DPP);
 
         profileImage = findViewById(R.id.profile_image);
         userName = findViewById(R.id.user_name);
         description = findViewById(R.id.description);
         frameLayout = findViewById(R.id.fragment_container);
+        eduDetails = findViewById(R.id.eduDetails);
+        empDetails = findViewById(R.id.empDetails);
+        livingPlace = findViewById(R.id.livingPlace);
+        eduRelative = findViewById(R.id.eduRelative);
+        empRelative = findViewById(R.id.empRelative);
+        locationRelative = findViewById(R.id.locationRelative);
+        eduPlus = findViewById(R.id.imageView7);
+        empPlus = findViewById(R.id.imageView8);
+
+
+        mFirebaseUtil.mFirestore.collection("users").document(publisherId)
+                .collection("details").document("fields")
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.getResult().exists()) {
+                    DocumentSnapshot result = task.getResult();
+
+                    String studiedAt = (String) result.get("studiedAt");
+
+                    StringBuilder fullDetails = studiedAt != null ? new StringBuilder(studiedAt) : new StringBuilder();
+                    if (fullDetails.length() > 0) fullDetails.append(", ");
+
+                    String firstCon = (String) result.get("firstCon");
+                    if (firstCon != null) fullDetails = fullDetails.append(firstCon).append(", ");
+
+                    String secondCon = (String) result.get("secondCon");
+                    if (secondCon != null) fullDetails.append(secondCon).append(", ");
+
+                    String degreeType = (String) result.get("degreeType");
+                    if (degreeType != null) fullDetails.append(degreeType).append(".");
+
+                    String endYear = (String) result.get("endYear");
+                    if (endYear != null)
+                        fullDetails.append(" Graduated in ").append(endYear).append(".");
+
+                    if (fullDetails.length() > 0) {
+                        eduDetails.setText(fullDetails.toString());
+                        eduDetails.setTextColor(Color.BLACK);
+                        eduDetails.setEnabled(false);
+
+                        Drawable drawable = null;
+
+                        drawable = ContextCompat.getDrawable(OthersProfileActivity.this, R.drawable.ic_baseline_school_24px);
+                        if (drawable != null) {
+                            eduPlus.setImageDrawable(drawable);
+                            drawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.light_black), PorterDuff.Mode.SRC_IN));
+                        }
+                    }
+                } else {
+
+                    eduRelative.setVisibility(View.INVISIBLE);
+                    locationRelative.setVisibility(View.INVISIBLE);
+                    empPlus.setVisibility(View.INVISIBLE);
+                    empDetails.setText(publisherName + " has not created their details");
+                    empDetails.setTextSize(16);
+                    empDetails.setTextColor(getResources().getColor(R.color.light_black));
+                }
+
+            }
+        });
+
 
         userName.setText(publisherName);
 

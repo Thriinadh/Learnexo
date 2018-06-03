@@ -156,7 +156,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void bindEduDetails() {
-        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).get().
+        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("details").document("fields").get().
                 addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
