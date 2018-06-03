@@ -161,18 +161,19 @@ public class FullAnswerActivity extends AppCompatActivity {
                 for(DocumentSnapshot documentSnapshot : documents) {
                     Object bookMarkItemId = documentSnapshot.get("bookMarkItemId");
                     bookMarkItemIdd = (String) bookMarkItemId;
-                }
-                if(bookMarkItemIdd != null) {
-                    if (bookMarkItemIdd.equals(ansId)) {
-                        Drawable drawable = ContextCompat.getDrawable(FullAnswerActivity.this, R.drawable.ic_baseline_bookmark_24px);
-                        full_answer_bookmark.setImageDrawable(drawable);
-                        if(drawable != null)
-                            drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
-                        flag = false;
-                        gag = false;
-                    }
+                    if(bookMarkItemIdd != null) {
+                        if (bookMarkItemIdd.equals(ansId)) {
+                            Drawable drawable = ContextCompat.getDrawable(FullAnswerActivity.this, R.drawable.ic_baseline_bookmark_24px);
+                            full_answer_bookmark.setImageDrawable(drawable);
+                            if(drawable != null)
+                                drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
+                            flag = false;
+                            gag = false;
+                        }
 
+                    }
                 }
+
 
             }
         });
