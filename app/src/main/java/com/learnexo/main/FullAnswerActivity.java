@@ -89,7 +89,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     private String imageThumb;
     private String publisherName;
     private String publisherDP;
-    private ImageView full_post_bookmark;
+    private ImageView full_answer_bookmark;
     private String bookMarkItemIdd;
 
     private long comments;
@@ -122,8 +122,8 @@ public class FullAnswerActivity extends AppCompatActivity {
         othersProfileListeners(publisher);
         overflowListener(publisher);
 
-        bookMarkBtnListener();
         checkIfAlreadyBookMarked();
+        bookMarkBtnListener();
 
     }
 
@@ -165,10 +165,9 @@ public class FullAnswerActivity extends AppCompatActivity {
                 if(bookMarkItemIdd != null) {
                     if (bookMarkItemIdd.equals(ansId)) {
                         Drawable drawable = ContextCompat.getDrawable(FullAnswerActivity.this, R.drawable.ic_baseline_bookmark_24px);
-                        full_post_bookmark.setImageDrawable(drawable);
+                        full_answer_bookmark.setImageDrawable(drawable);
                         if(drawable != null)
                             drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
-
                         flag = false;
                         gag = false;
                     }
@@ -180,7 +179,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     }
 
     private void bookMarkBtnListener() {
-        full_post_bookmark.setOnClickListener(new View.OnClickListener() {
+        full_answer_bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -189,17 +188,17 @@ public class FullAnswerActivity extends AppCompatActivity {
                 anim.setRepeatCount(0);
                 anim.setDuration(300);
 
-                full_post_bookmark.startAnimation(anim);
+                full_answer_bookmark.startAnimation(anim);
 
                 if(flag) {
                     Drawable drawable = ContextCompat.getDrawable(FullAnswerActivity.this, R.drawable.ic_baseline_bookmark_24px);
-                    full_post_bookmark.setImageDrawable(drawable);
+                    full_answer_bookmark.setImageDrawable(drawable);
                     if(drawable != null)
                         drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
                     flag = false;
                 } else {
                     Drawable drawable = ContextCompat.getDrawable(FullAnswerActivity.this, R.drawable.ic_outline_bookmark_border_24px);
-                    full_post_bookmark.setImageDrawable(drawable);
+                    full_answer_bookmark.setImageDrawable(drawable);
                     if(drawable != null)
                         drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
                     flag = true;
@@ -344,7 +343,7 @@ public class FullAnswerActivity extends AppCompatActivity {
         timeOfPost = findViewById(R.id.feed_time);
         postedImage = findViewById(R.id.postedImage);
         overFlowBtn = findViewById(R.id.imageView);
-        full_post_bookmark = findViewById(R.id.full_post_bookmark);
+        full_answer_bookmark = findViewById(R.id.full_answer_bookmark);
 
         commentsImage = findViewById(R.id.commentsImage);
         commentBtn = findViewById(R.id.commentBtn);
@@ -448,6 +447,7 @@ public class FullAnswerActivity extends AppCompatActivity {
                 .collection("bookmarks").add(bookmark).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
+                String id = documentReference.getId();
                 mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
                         .collection("answers").document(ansId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
