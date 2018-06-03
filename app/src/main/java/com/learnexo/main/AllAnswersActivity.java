@@ -75,7 +75,7 @@ public class AllAnswersActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mAdapter.saveUnsaveBookMark();
+        mAdapter.insertDeleteBookMarks();
     }
 
     private void overflowListener(User user) {

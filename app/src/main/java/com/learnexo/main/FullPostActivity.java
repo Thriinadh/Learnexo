@@ -262,7 +262,7 @@ public class FullPostActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if(!flag && gag) {
-            saveIncrementBookMark();
+            insertIncrementBookMark();
         } else if(flag && !gag) {
             deleteDecrementBookMark();
         }
@@ -317,7 +317,7 @@ public class FullPostActivity extends AppCompatActivity {
         });
     }
 
-    private void saveIncrementBookMark() {
+    private void insertIncrementBookMark() {
         Bookmark bookmark = new Bookmark();
         bookmark.setBookMarkerId(FirebaseUtil.getCurrentUserId());
         bookmark.setBookMarkItemId(postId);

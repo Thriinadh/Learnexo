@@ -6,27 +6,28 @@ import com.learnexo.model.core.BookMarkType;
 
 import java.util.Date;
 
+//////////// over ride equals and hashcode //////////////
+
 @IgnoreExtraProperties
 public class Bookmark {
     private String bookMarkItemId;
     private String publisherId;
     private String bookMarkerId;
-    private BookMarkType mBookMarkType;
+    private BookMarkType bookMarkType;
+
     @ServerTimestamp
     private Date bookMarkTime;
-    public Bookmark(){
-
-    }
+    public Bookmark(){}
     public Bookmark(String bookMarkItemId, String publisherId, String bookMarkerId, BookMarkType bookMarkType) {
         this.bookMarkItemId = bookMarkItemId;
         this.publisherId = publisherId;
         this.bookMarkerId = bookMarkerId;
-        mBookMarkType = bookMarkType;
+        this.bookMarkType = bookMarkType;
     }
-
     public String getBookMarkItemId() {
         return bookMarkItemId;
     }
+
 
     public void setBookMarkItemId(String bookMarkItemId) {
         this.bookMarkItemId = bookMarkItemId;
@@ -49,11 +50,11 @@ public class Bookmark {
     }
 
     public BookMarkType getBookMarkType() {
-        return mBookMarkType;
+        return bookMarkType;
     }
 
     public void setBookMarkType(BookMarkType bookMarkType) {
-        mBookMarkType = bookMarkType;
+        this.bookMarkType = bookMarkType;
     }
 
     public Date getBookMarkTime() {
@@ -62,5 +63,31 @@ public class Bookmark {
 
     public void setBookMarkTime(Date bookMarkTime) {
         this.bookMarkTime = bookMarkTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == this) return true;
+        if (!(o instanceof Bookmark)) {
+            return false;
+        }
+
+        Bookmark bookmark = (Bookmark) o;
+
+        return bookmark.bookMarkItemId.equals(bookMarkItemId) &&
+                bookmark.bookMarkerId.equals(bookMarkerId) &&
+                bookmark.bookMarkType.name().equals(bookMarkType.name()) &&
+                bookmark.publisherId.equals(publisherId);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + bookMarkItemId.hashCode();
+        result = 31 * result + bookMarkerId.hashCode();
+        result = 31 * result + bookMarkType.name().hashCode();
+        result = 31 * result + publisherId.hashCode();
+        return result;
     }
 }

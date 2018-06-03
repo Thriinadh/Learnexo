@@ -56,6 +56,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     private static final String EXTRA_THUMBNAIL = "com.learnexo.imagepostedthumbnail";
     private static final String EXTRA_TIME = "com.learnexo.postedtime";
     private static final String EXTRA_QUESTION_ID = "com.learnexo.questionId";
+    private String mUserId=FirebaseUtil.getCurrentUserId();
 
     private List<Comment> mComments;
     private CommentsAdapter mAdapter;
@@ -153,7 +154,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     }
 
     private void checkIfAlreadyBookMarked() {
-        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+        mFirebaseUtil.mFirestore.collection("users").document(mUserId)
                 .collection("bookmarks").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -424,24 +425,23 @@ public class FullAnswerActivity extends AppCompatActivity {
 
     private void saveUnsaveBookMark() {
         if(!flag && gag) {
-            saveIncrementBookMarks();
+            insertIncrementBookMark();
         } else if(flag && !gag) {
-            deleteDecrementBookMarks();
+            deleteDecrementBookMark();
         }
     }
 
-    private void saveIncrementBookMarks() {
+    private void insertIncrementBookMark() {
         Bookmark bookmark = new Bookmark();
-        bookmark.setBookMarkerId(FirebaseUtil.getCurrentUserId());
+        bookmark.setBookMarkerId(mUserId);
         bookmark.setBookMarkItemId(ansId);
         bookmark.setBookMarkType(BookMarkType.ANSWER);
         bookmark.setPublisherId(ansPublisherId);
 
-        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+        mFirebaseUtil.mFirestore.collection("users").document(mUserId)
                 .collection("bookmarks").add(bookmark).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
-                String id = documentReference.getId();
                 mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
                         .collection("answers").document(ansId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -466,9 +466,9 @@ public class FullAnswerActivity extends AppCompatActivity {
         });
     }
 
-    private void deleteDecrementBookMarks() {
+    private void deleteDecrementBookMark() {
         CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users")
-                .document(FirebaseUtil.getCurrentUserId()).collection("bookmarks");
+                .document(mUserId).collection("bookmarks");
         Query query = collectionReference.whereEqualTo("bookMarkItemId", ansId);
 
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -479,7 +479,7 @@ public class FullAnswerActivity extends AppCompatActivity {
                 DocumentSnapshot documentSnapshot = documents.get(0);
                 String id = documentSnapshot.getId();
 
-                mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+                mFirebaseUtil.mFirestore.collection("users").document(mUserId)
                         .collection("bookmarks").document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

@@ -57,10 +57,10 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private Context mContext;
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
-    private Set<Bookmark> mBookmarks=new HashSet<>();
-    private boolean flag = true;
-    private boolean gag = true;
-    String quesId;
+    private Set<Bookmark> addBookMarks =new HashSet<>();
+    private Set<Bookmark> removeBookMarks =new HashSet<>();
+    private Set<String> prevBkMarkedAnsIds =new HashSet<>();
+    private String quesId;
     private String mUserId=FirebaseUtil.getCurrentUserId();
 
     public AllAnswersAdapter(List<Answer> mFeedItems) {
@@ -119,24 +119,19 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
 
-    public void saveUnsaveBookMark() {
-        if(!flag && gag) {
-            saveIncrementBookMarks();
-        } else if(flag && !gag) {
+    public void insertDeleteBookMarks() {
+            insertIncrementBookMarks();
             deleteDecrementBookMarks();
-        }
     }
 
-    private void saveIncrementBookMarks() {
+    private void insertIncrementBookMarks() {
 
-        for(final Bookmark bookmark:mBookmarks){
-            mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+        for(final Bookmark bookmark: addBookMarks){
+            mFirebaseUtil.mFirestore.collection("users").document(mUserId)
                     .collection("bookmarks").add(bookmark).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
-                    String id = documentReference.getId();
-                    mFirebaseUtil.mFirestore.collection("users").document(bookmark.getPublisherId()
-                    )
+                    mFirebaseUtil.mFirestore.collection("users").document(bookmark.getPublisherId())
                             .collection("answers").document(bookmark.getBookMarkItemId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -165,9 +160,9 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private void deleteDecrementBookMarks() {
-        for(final Bookmark bookmark:mBookmarks){
+        for(final Bookmark bookmark: removeBookMarks){
             CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users")
-                    .document(FirebaseUtil.getCurrentUserId()).collection("bookmarks");
+                    .document(mUserId).collection("bookmarks");
             Query query = collectionReference.whereEqualTo("bookMarkItemId", bookmark.getBookMarkItemId());
 
             query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -175,10 +170,14 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
                     List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-                    DocumentSnapshot documentSnapshot = documents.get(0);
-                    String id = documentSnapshot.getId();
-
-                    mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+                    DocumentSnapshot documentSnapshot;
+                    String id = null;
+                    if(documents.size()>=1) {
+                        documentSnapshot = documents.get(0);
+                        id = documentSnapshot.getId();
+                    }
+                    if(id!=null)
+                    mFirebaseUtil.mFirestore.collection("users").document(mUserId)
                             .collection("bookmarks").document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -217,26 +216,29 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void checkIfAlreadyBookMarked(final AnswerHolder answerHolder, final String ansId) {
         mFirebaseUtil.mFirestore.collection("users").document(mUserId)
                 .collection("bookmarks").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px);
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-                for(DocumentSnapshot documentSnapshot : documents) {
-                    Object bookMarkItemId = documentSnapshot.get("bookMarkItemId");
-                    String bookMarkItemIdd = (String) bookMarkItemId;
-                    if(bookMarkItemIdd != null) {
-                        if (bookMarkItemIdd.equals(ansId)) {
-                            Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px);
+
+                for(DocumentSnapshot docuSnapshot : documents) {
+                    String bookMarkItemId=null;
+
+                    Bookmark bookmark = docuSnapshot.toObject(Bookmark.class);
+                    if(bookmark!=null) {
+                        bookMarkItemId = bookmark.getBookMarkItemId();
+                    }
+                    if(bookMarkItemId != null) {
+                        if (bookMarkItemId.equals(ansId)) {
+                            prevBkMarkedAnsIds.add(ansId);
                             answerHolder.bookmarkIview.setImageDrawable(drawable);
                             if(drawable != null)
                                 drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
-                            flag = false;
-                            gag = false;
+
                         }
 
                     }
                 }
-
-
             }
         });
     }
@@ -245,33 +247,39 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void bookMarkBtnListener(final AnswerHolder answerHolder, final String answerId, final String answerPublisherId) {
         answerHolder.bookmarkIview.setOnClickListener(new View.OnClickListener() {
+
+            Bookmark bookmark;
+            RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            Drawable baseline = ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px);
+            Drawable outline = ContextCompat.getDrawable(mContext, R.drawable.ic_outline_bookmark_border_24px);
+
             @Override
             public void onClick(View view) {
+                doAnimation();
 
-                Bookmark bookmark=new Bookmark(answerId,answerPublisherId,mUserId, BookMarkType.ANSWER);
-                mBookmarks.add(bookmark);
+                bookmark = new Bookmark(answerId, answerPublisherId, mUserId, BookMarkType.ANSWER);
+                if(!prevBkMarkedAnsIds.contains(answerId)) {
+                    addBookMarks.add(bookmark);
+                    prevBkMarkedAnsIds.add(answerId);
+                    answerHolder.bookmarkIview.setImageDrawable(baseline);
+                    if (baseline != null)
+                        baseline.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
+                }else{
+                    removeBookMarks.add(bookmark);
+                    addBookMarks.remove(bookmark);
+                    prevBkMarkedAnsIds.remove(answerId);
+                    answerHolder.bookmarkIview.setImageDrawable(outline);
+                    if (outline != null)
+                        outline.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
+                }
 
-                RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                answerHolder.bookmarkIview.startAnimation(anim);
+            }
+
+            private void doAnimation() {
                 anim.setInterpolator(new LinearInterpolator());
                 anim.setRepeatCount(0);
                 anim.setDuration(300);
-
-                answerHolder.bookmarkIview.startAnimation(anim);
-
-                if(flag) {
-                    Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px);
-                    answerHolder.bookmarkIview.setImageDrawable(drawable);
-                    if(drawable != null)
-                        drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
-                    flag = false;
-                } else {
-                    Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_outline_bookmark_border_24px);
-                    answerHolder.bookmarkIview.setImageDrawable(drawable);
-                    if(drawable != null)
-                        drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
-                    flag = true;
-                }
-
             }
         });
     }
