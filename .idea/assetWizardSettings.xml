@@ -54,9 +54,10 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_outline_search_24px" />
+                            <entry key="opacityPercent" value="74" />
+                            <entry key="outputName" value="ic_baseline_work_24px" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="C:\Users\hp\Desktop\outline-search-24px.svg" />
+                            <entry key="sourceFile" value="C:\Users\hp\Desktop\baseline-work-24px.svg" />
                           </map>
                         </option>
                       </PersistentState>

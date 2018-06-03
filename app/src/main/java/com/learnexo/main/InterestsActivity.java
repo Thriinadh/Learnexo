@@ -22,6 +22,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.model.video.Branch;
 import com.learnexo.model.video.Subject;
 import com.learnexo.util.FirebaseUtil;
@@ -40,6 +42,8 @@ public class InterestsActivity extends AppCompatActivity {
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     MenuItem nextBtn;
     Map<String,Boolean> interestMap=new LinkedHashMap<>();
+    SubBranchAdapter mSubBranchAdapter;
+    final List<Branch> mBranches = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,30 +56,48 @@ public class InterestsActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Choose Interests");
         }
 
-        List<Branch> mBranches = new ArrayList<>();
-        Branch branch;
 
-        for (int b = 0; b <= 5; b++) {
+//        Branch branch;
+//
+//        for (int b = 0; b <= 5; b++) {
+//
+//            Map<String,Subject> stringSubjectMap = new LinkedHashMap<>();
+//            branch = new Branch();
+//            branch.setBranchName("Programming "+b);
+//
+//            for (int i = 0; i <= 10; i++) {
+//                Subject subject = new Subject();
+//                subject.setSubjectName("Java " + i);
+//                stringSubjectMap.put("Java "+i,subject);
+//            }
+//            branch.setSubjectMap(stringSubjectMap);
+//            mBranches.add(branch);
+//        }
 
-            Map<String,Subject> stringSubjectMap = new LinkedHashMap<>();
-            branch = new Branch();
-            branch.setBranchName("Programming "+b);
-
-            for (int i = 0; i <= 10; i++) {
-                Subject subject = new Subject();
-                subject.setSubjectName("Java " + i);
-                stringSubjectMap.put("Java "+i,subject);
-            }
-            branch.setSubjectMap(stringSubjectMap);
-            mBranches.add(branch);
-        }
+        fetchNofityBranches();
 
         RecyclerView mSubBranchRecyclerview =  findViewById(R.id.sub_branch_recyclerview);
         mSubBranchRecyclerview.setHasFixedSize(true);
-        SubBranchAdapter mSubBranchAdapter = new SubBranchAdapter(this, mBranches);
+        mSubBranchAdapter = new SubBranchAdapter(this, mBranches);
         mSubBranchRecyclerview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mSubBranchRecyclerview.setAdapter(mSubBranchAdapter);
 
+    }
+
+    private void fetchNofityBranches() {
+        mFirebaseUtil.mFirestore.collection("branches").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            Branch branch;
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                for (DocumentSnapshot documentSnapshot : documents) {
+                    branch=documentSnapshot.toObject(Branch.class);
+                    mBranches.add(branch);
+                    mSubBranchAdapter.notifyDataSetChanged();
+                }
+                mSubBranchAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
