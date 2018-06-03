@@ -116,10 +116,70 @@ public class FullAnswerActivity extends AppCompatActivity {
         commentBtnListener();
         seeAllCommentsListener();
 
+        viewAllAnswersListener();
+
         final User publisher =new User(ansPublisherId,publisherName,publisherDP);
         othersProfileListeners(publisher);
-        overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
+        overflowListener(publisher);
 
+        bookMarkBtnListener();
+        checkIfAlreadyBookMarked();
+
+    }
+
+    private void overflowListener(User publisher) {
+        overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
+    }
+
+    private void viewAllAnswersListener() {
+        viewAllAns.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Question question=new Question();
+                question.setFeedItemId(questionId);
+                question.setContent(questionData);
+                question.setUserId(questionerId);
+                question.setTags(Collections.singletonList(tag));
+                Intent intent11 = AllAnswersActivity.newIntent(FullAnswerActivity.this, question);
+                if(is_crack)
+                    intent11.putExtra("ANSWER_TYPE", FeedItem.CRACK);
+                else
+                    intent11.putExtra("ANSWER_TYPE", FeedItem.ANSWER);
+                startActivity(intent11);
+
+            }
+        });
+    }
+
+    private void checkIfAlreadyBookMarked() {
+        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+                .collection("bookmarks").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                for(DocumentSnapshot documentSnapshot : documents) {
+                    Object bookMarkItemId = documentSnapshot.get("bookMarkItemId");
+                    bookMarkItemIdd = (String) bookMarkItemId;
+                }
+                if(bookMarkItemIdd != null) {
+                    if (bookMarkItemIdd.equals(ansId)) {
+                        Drawable drawable = ContextCompat.getDrawable(FullAnswerActivity.this, R.drawable.ic_baseline_bookmark_24px);
+                        full_post_bookmark.setImageDrawable(drawable);
+                        if(drawable != null)
+                            drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
+
+                        flag = false;
+                        gag = false;
+                    }
+
+                }
+
+            }
+        });
+    }
+
+    private void bookMarkBtnListener() {
         full_post_bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,34 +207,6 @@ public class FullAnswerActivity extends AppCompatActivity {
 
             }
         });
-
-
-        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
-                .collection("bookmarks").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-                for(DocumentSnapshot documentSnapshot : documents) {
-                    Object bookMarkItemId = documentSnapshot.get("bookMarkItemId");
-                    bookMarkItemIdd = (String) bookMarkItemId;
-                }
-                if(bookMarkItemIdd != null) {
-                    if (bookMarkItemIdd.equals(ansId)) {
-                        Drawable drawable = ContextCompat.getDrawable(FullAnswerActivity.this, R.drawable.ic_baseline_bookmark_24px);
-                        full_post_bookmark.setImageDrawable(drawable);
-                        if(drawable != null)
-                            drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
-                        
-                        flag = false;
-                        gag = false;
-                    }
-
-                }
-
-            }
-        });
-
-
     }
 
     private void commentBtnListener() {
@@ -287,24 +319,7 @@ public class FullAnswerActivity extends AppCompatActivity {
             challengeIcon.setVisibility(View.VISIBLE);
             viewAllAns.setText("View all cracks");
         }
-        viewAllAns.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                Question question=new Question();
-                question.setFeedItemId(questionId);
-                question.setContent(questionData);
-                question.setUserId(questionerId);
-                question.setTags(Collections.singletonList(tag));
-                Intent intent11 = AllAnswersActivity.newIntent(FullAnswerActivity.this, question);
-                if(is_crack)
-                    intent11.putExtra("ANSWER_TYPE", FeedItem.CRACK);
-                else
-                    intent11.putExtra("ANSWER_TYPE", FeedItem.ANSWER);
-                startActivity(intent11);
-
-            }
-        });
 
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
@@ -408,86 +423,98 @@ public class FullAnswerActivity extends AppCompatActivity {
         seeAllComments.setEnabled(true);
 
 
+        saveUnsaveBookMark();
+
+    }
+
+    private void saveUnsaveBookMark() {
         if(!flag && gag) {
-            Bookmark bookmark = new Bookmark();
-            bookmark.setBookMarkerId(FirebaseUtil.getCurrentUserId());
-            bookmark.setBookMarkItemId(ansId);
-            bookmark.setBookMarkType(BookMarkType.ANSWER);
-            bookmark.setPublisherId(ansPublisherId);
-
-            mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
-                    .collection("bookmarks").add(bookmark).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                @Override
-                public void onSuccess(DocumentReference documentReference) {
-                    mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
-                            .collection("answers").document(ansId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                            long noOfBookMarks = (long) documentSnapshot.get("bookMarks");
-
-                            noOfBookMarks = noOfBookMarks + 1;
-
-                            Map<String, Object> map = new HashMap<>();
-                            map.put("bookMarks", noOfBookMarks);
-
-                            mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
-                                    .collection("answers").document(ansId).update(map);
-
-                            mFirebaseUtil.mFirestore.collection("questions").document(questionId)
-                                    .collection("answers").document(ansId).update(map);
-
-                        }
-                    });
-                }
-            });
+            saveIncrementBookMarks();
         } else if(flag && !gag) {
 
-            CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users")
-                    .document(FirebaseUtil.getCurrentUserId()).collection("bookmarks");
-            Query query = collectionReference.whereEqualTo("bookMarkItemId", ansId);
-
-            query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-
-                    List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-                    DocumentSnapshot documentSnapshot = documents.get(0);
-                    String id = documentSnapshot.getId();
-
-                    mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
-                            .collection("bookmarks").document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-
-                            mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
-                                    .collection("answers").document(ansId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                                    long noOfBookMarks = (long) documentSnapshot.get("bookMarks");
-
-                                    noOfBookMarks = noOfBookMarks - 1;
-
-                                    Map<String, Object> map = new HashMap<>();
-                                    map.put("bookMarks", noOfBookMarks);
-
-                                    mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
-                                            .collection("answers").document(ansId).update(map);
-
-                                    mFirebaseUtil.mFirestore.collection("questions").document(questionId)
-                                            .collection("answers").document(ansId).update(map);
-
-                                }
-                            });
-
-                        }
-                    });
-
-                }
-            });
+            deleteDecrementBookMarks();
 
         }
+    }
 
+    private void saveIncrementBookMarks() {
+        Bookmark bookmark = new Bookmark();
+        bookmark.setBookMarkerId(FirebaseUtil.getCurrentUserId());
+        bookmark.setBookMarkItemId(ansId);
+        bookmark.setBookMarkType(BookMarkType.ANSWER);
+        bookmark.setPublisherId(ansPublisherId);
+
+        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+                .collection("bookmarks").add(bookmark).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
+                        .collection("answers").document(ansId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                        long noOfBookMarks = (long) documentSnapshot.get("bookMarks");
+
+                        noOfBookMarks = noOfBookMarks + 1;
+
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("bookMarks", noOfBookMarks);
+
+                        mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
+                                .collection("answers").document(ansId).update(map);
+
+                        mFirebaseUtil.mFirestore.collection("questions").document(questionId)
+                                .collection("answers").document(ansId).update(map);
+
+                    }
+                });
+            }
+        });
+    }
+
+    private void deleteDecrementBookMarks() {
+        CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users")
+                .document(FirebaseUtil.getCurrentUserId()).collection("bookmarks");
+        Query query = collectionReference.whereEqualTo("bookMarkItemId", ansId);
+
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                DocumentSnapshot documentSnapshot = documents.get(0);
+                String id = documentSnapshot.getId();
+
+                mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+                        .collection("bookmarks").document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
+                                .collection("answers").document(ansId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                long noOfBookMarks = (long) documentSnapshot.get("bookMarks");
+
+                                noOfBookMarks = noOfBookMarks - 1;
+
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("bookMarks", noOfBookMarks);
+
+                                mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
+                                        .collection("answers").document(ansId).update(map);
+
+                                mFirebaseUtil.mFirestore.collection("questions").document(questionId)
+                                        .collection("answers").document(ansId).update(map);
+
+                            }
+                        });
+
+                    }
+                });
+
+            }
+        });
     }
 }

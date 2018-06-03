@@ -98,12 +98,7 @@ public class PlayVideoActivity extends AppCompatActivity {
         if(nestedScroll!=null)
             nestedScroll.setNestedScrollingEnabled(true);
 
-        // get the listview
         expListView = findViewById(R.id.ExpListView);
-
-        // preparing list data
-        //prepareListData();
-
         listAdapter = new ExpandableListAdapter(PlayVideoActivity.this, listDataHeader, listDataChild);
 
         if(expListView != null) {
@@ -136,6 +131,7 @@ public class PlayVideoActivity extends AppCompatActivity {
 //
 //            }
 //        });
+
 
     }
 
@@ -243,54 +239,6 @@ public class PlayVideoActivity extends AppCompatActivity {
             return null;
         }
 
-    }
-
-    private void prepareListData() {
-//        listDataHeader = new ArrayList<>();
-//        listDataChild = new HashMap<>();
-//
-//        // Adding child data
-//        listDataHeader.add("1. Introduction");
-//        listDataHeader.add("2. Logic Gates");
-//        listDataHeader.add("3. Computer Circuits");
-//        listDataHeader.add("4. Random Access Memory");
-//        listDataHeader.add("5. Decoders");
-//
-//        // Adding child data
-//        List<String> fundamentals = new ArrayList<>();
-//        fundamentals.add("How does a computer work..?");
-//        fundamentals.add("What do you want");
-//        fundamentals.add("Current is wrong");
-//
-//
-//        List<String> programming = new ArrayList<>();
-//        programming.add("Ruby on Rails");
-//        programming.add("Design Patterns");
-//        programming.add("Scala");
-//
-//        List<String> databases = new ArrayList<>();
-//        databases.add("Relational Databases");
-//        databases.add("Oracle Database");
-//        databases.add("Microsoft Azure");
-//
-//        List<String> networking = new ArrayList<>();
-//        networking.add("Wireless Networking");
-//        networking.add("CCNA Networking");
-//        networking.add("Firewalls protection");
-//
-//        List<String> artificial = new ArrayList<>();
-//        artificial.add("Machine Learning");
-//        artificial.add("Game Theory");
-//        artificial.add("Speech Recognition");
-//        artificial.add("Robotics");
-//        artificial.add("Machine Algorithms");
-//
-//        // Header, Child data
-//        listDataChild.put(listDataHeader.get(0), fundamentals);
-//        listDataChild.put(listDataHeader.get(1), programming);
-//        listDataChild.put(listDataHeader.get(2), databases);
-//        listDataChild.put(listDataHeader.get(3), networking);
-//        listDataChild.put(listDataHeader.get(4), artificial);
     }
 
 }
