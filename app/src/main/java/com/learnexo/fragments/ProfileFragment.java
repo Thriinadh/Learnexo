@@ -1,6 +1,7 @@
 package com.learnexo.fragments;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -44,6 +45,7 @@ public class ProfileFragment extends Fragment {
     private TextView editProfile;
     private TextView eduDetails;
     private ImageView fullProfileImage;
+    private Activity mActivity;
 
     private String mUserId;
     public static String sDpUrl;
@@ -69,86 +71,32 @@ public class ProfileFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        editProfile = view.findViewById(R.id.edit_profile);
-        profileImage = view.findViewById(R.id.profile_image);
-        userName = view.findViewById(R.id.user_name);
-        description = view.findViewById(R.id.description);
-        eduDetails = view.findViewById(R.id.eduDetails);
-        frameLayout = view.findViewById(R.id.fragment_container);
-        fullProfileImage = view.findViewById(R.id.fullProfileImage);
-        eduPlus = view.findViewById(R.id.imageView7);
+        wireViews(view);
+        setUpTabLayout(view);
+        getDPandUserName();
+        bindEduDetails();
+        setUserPostsFragment(savedInstanceState);
 
-        profileImage.setOnClickListener(new View.OnClickListener() {
+        onTabSelectedListener();
+        profileImageListener();
+        eduDetailsListener();
+        editProfileBtnListener();
+
+        return view;
+    }
+
+    private void editProfileBtnListener() {
+        editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-            }
-        });
-
-        eduDetails.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), EduDetailsActivity.class);
+                Intent intent = new Intent(getActivity(), SetupActivity.class);
+                intent.putExtra("IS_EDIT_NAME_CLICKED", true);
                 startActivity(intent);
             }
         });
+    }
 
-        tabLayout = view.findViewById(R.id.tabs);
-        tabLayout.addTab(tabLayout.newTab().setText("Posts"));
-        tabLayout.addTab(tabLayout.newTab().setText("Answers"));
-        tabLayout.addTab(tabLayout.newTab().setText("Cracks"));
-        tabLayout.addTab(tabLayout.newTab().setText("Questions"));
-        tabLayout.addTab(tabLayout.newTab().setText("Challenges"));
-        tabLayout.addTab(tabLayout.newTab().setText("Interests"));
-        tabLayout.addTab(tabLayout.newTab().setText("Activity"));
-
-        if (savedInstanceState == null) {
-            getChildFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, new UserPostsFragment())
-                    .commit();
-        }
-
-        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                String studiedAt = (String) documentSnapshot.get("studiedAt");
-                studiedAt = studiedAt != null ? studiedAt.concat(", "): "";
-
-                String firstCon = (String) documentSnapshot.get("firstCon");
-                firstCon = firstCon != null ? firstCon.concat(", "):"";
-
-                String secondCon = (String) documentSnapshot.get("secondCon");
-                secondCon=secondCon!=null?secondCon.concat(", "):"";
-
-                String degreeType = (String) documentSnapshot.get("degreeType");
-                degreeType=degreeType!=null?degreeType.concat("."):"";
-
-                String endYear = (String) documentSnapshot.get("endYear");
-                endYear=endYear!=null?". Graduated in ".concat(endYear)+".":"";
-
-                StringBuilder stringBuilder=new StringBuilder();
-
-                if(!studiedAt.equals("") || !firstCon.equals("") || !secondCon.equals("") || !degreeType.equals("") ||  !endYear.equals("")) {
-                    stringBuilder.append(studiedAt);
-                    stringBuilder.append(firstCon);
-                    stringBuilder.append(secondCon);
-                    stringBuilder.append(degreeType);
-                    stringBuilder.append(endYear);
-
-                    eduDetails.setText(stringBuilder.toString());
-                    eduDetails.setTextColor(Color.BLACK);
-                    eduDetails.setEnabled(false);
-                    Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_school_24px);
-                    eduPlus.setImageDrawable(drawable);
-                    drawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.light_black), PorterDuff.Mode.SRC_IN));
-                }
-
-            }
-        });
-
-
+    private void onTabSelectedListener() {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
             Fragment fragment;
@@ -205,20 +153,97 @@ public class ProfileFragment extends Fragment {
 
             }
         });
+    }
 
-        getDPandUserName();
+    private void bindEduDetails() {
+        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).get().
+                addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                String studiedAt = (String) documentSnapshot.get("studiedAt");
 
-        editProfile.setOnClickListener(new View.OnClickListener() {
+                StringBuilder fullDetails = studiedAt!=null? new StringBuilder(studiedAt):new StringBuilder();
+                fullDetails = fullDetails.length() >0 ? fullDetails.append(", "): fullDetails.append("");
+
+                String firstCon = (String) documentSnapshot.get("firstCon");
+                if(firstCon!=null) fullDetails = fullDetails.append(firstCon).append(", ");
+
+                String secondCon = (String) documentSnapshot.get("secondCon");
+                if(secondCon!=null) fullDetails.append(secondCon).append(", ");
+
+                String degreeType = (String) documentSnapshot.get("degreeType");
+                if(degreeType!=null) fullDetails.append(degreeType).append(".");
+
+                String endYear = (String) documentSnapshot.get("endYear");
+                if(endYear!=null) fullDetails.append(". Graduated in ").append(endYear).append(".");
+
+                if(fullDetails.length()>0) {
+                    eduDetails.setText(fullDetails.toString());
+                    eduDetails.setTextColor(Color.BLACK);
+                    eduDetails.setEnabled(false);
+
+                    Drawable drawable=null;
+                    mActivity=getActivity();
+                    if(mActivity!=null)
+                        drawable = ContextCompat.getDrawable(mActivity, R.drawable.ic_baseline_school_24px);
+                    if(drawable!=null) {
+                        eduPlus.setImageDrawable(drawable);
+                        drawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.light_black), PorterDuff.Mode.SRC_IN));
+                    }
+                }
+
+            }
+        });
+    }
+
+    private void setUserPostsFragment(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new UserPostsFragment())
+                    .commit();
+        }
+    }
+
+    private void setUpTabLayout(View view) {
+        tabLayout = view.findViewById(R.id.tabs);
+        tabLayout.addTab(tabLayout.newTab().setText("Posts"));
+        tabLayout.addTab(tabLayout.newTab().setText("Answers"));
+        tabLayout.addTab(tabLayout.newTab().setText("Cracks"));
+        tabLayout.addTab(tabLayout.newTab().setText("Questions"));
+        tabLayout.addTab(tabLayout.newTab().setText("Challenges"));
+        tabLayout.addTab(tabLayout.newTab().setText("Interests"));
+        tabLayout.addTab(tabLayout.newTab().setText("Activity"));
+    }
+
+    private void eduDetailsListener() {
+        eduDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SetupActivity.class);
-                intent.putExtra("IS_EDIT_NAME_CLICKED", true);
+                Intent intent = new Intent(getActivity(), EduDetailsActivity.class);
                 startActivity(intent);
             }
         });
+    }
 
-        // Inflate the layout for this fragment
-        return view;
+    private void profileImageListener() {
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+    }
+
+    private void wireViews(View view) {
+        editProfile = view.findViewById(R.id.edit_profile);
+        profileImage = view.findViewById(R.id.profile_image);
+        userName = view.findViewById(R.id.user_name);
+        description = view.findViewById(R.id.description);
+        eduDetails = view.findViewById(R.id.eduDetails);
+        frameLayout = view.findViewById(R.id.fragment_container);
+        fullProfileImage = view.findViewById(R.id.fullProfileImage);
+        eduPlus = view.findViewById(R.id.imageView7);
     }
 
     public void replaceFragment(Fragment fragment) {
