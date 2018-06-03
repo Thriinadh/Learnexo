@@ -15,13 +15,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.learnexo.main.R;
-import com.learnexo.model.connect.LearnerOptions;
+import com.learnexo.model.connect.ConnectOptions;
 import com.learnexo.util.DummyData;
 
 import java.util.List;
 
-import static com.learnexo.model.connect.LearnerOptions.LINE_TYPE;
-import static com.learnexo.model.connect.LearnerOptions.OPTION_TYPE;
+import static com.learnexo.model.connect.ConnectOptions.LINE_TYPE;
+import static com.learnexo.model.connect.ConnectOptions.OPTION_TYPE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +39,7 @@ public class LearnersFragment extends Fragment {
 
         RecyclerView learnersRecycler = view.findViewById(R.id.learnersRecyclerView);
         learnersRecycler.setHasFixedSize(true);
-        DifferentRowAdapter differentRowAdapter = new DifferentRowAdapter(DummyData.getData());
+        DifferentRowAdapter differentRowAdapter = new DifferentRowAdapter(DummyData.getLearnerOptions());
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         learnersRecycler.setLayoutManager(layoutManager);
         learnersRecycler.setAdapter(differentRowAdapter);
@@ -49,8 +49,8 @@ public class LearnersFragment extends Fragment {
     }
 
     public class DifferentRowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        private List<LearnerOptions> mList;
-        public DifferentRowAdapter(List<LearnerOptions> list) {
+        private List<ConnectOptions> mList;
+        public DifferentRowAdapter(List<ConnectOptions> list) {
             this.mList = list;
         }
 
@@ -71,7 +71,7 @@ public class LearnersFragment extends Fragment {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-            LearnerOptions object = mList.get(position);
+            ConnectOptions object = mList.get(position);
             if (object != null) {
                 switch (object.getmOptionType()) {
                     case OPTION_TYPE:
@@ -100,7 +100,7 @@ public class LearnersFragment extends Fragment {
         @Override
         public int getItemViewType(int position) {
             if (mList != null) {
-                LearnerOptions object = mList.get(position);
+                ConnectOptions object = mList.get(position);
                 if (object != null) {
                     return object.getmOptionType();
                 }

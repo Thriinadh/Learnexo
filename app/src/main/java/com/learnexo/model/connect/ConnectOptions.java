@@ -1,6 +1,6 @@
 package com.learnexo.model.connect;
 
-public class LearnerOptions {
+public class ConnectOptions {
     private String mOption;
     private int mOptionType;//line or option
     private String mOptionTarget;
@@ -9,7 +9,7 @@ public class LearnerOptions {
     public static final int OPTION_TYPE = 0;
     public static final int LINE_TYPE = 1;
 
-    public LearnerOptions(String mOption, String mOptionTarget, int mOptionType, String mOptionIcon) {
+    public ConnectOptions(String mOption, String mOptionTarget, int mOptionType, String mOptionIcon) {
         this.mOption = mOption;
         this.mOptionType = mOptionType;
         this.mOptionTarget = mOptionTarget;
