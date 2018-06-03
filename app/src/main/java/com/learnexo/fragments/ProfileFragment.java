@@ -112,15 +112,32 @@ public class ProfileFragment extends Fragment {
         mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                StringBuilder stringBuilder=new StringBuilder();
+
                 String studiedAt = (String) documentSnapshot.get("studiedAt");
+                studiedAt=studiedAt!=null?studiedAt.concat(", "): "";
+
+
                 String firstCon = (String) documentSnapshot.get("firstCon");
-                String secCon = (String) documentSnapshot.get("secondCon");
+                firstCon=firstCon!=null?firstCon.concat(", "):"";
+
+                String secondCon = (String) documentSnapshot.get("secondCon");
+                secondCon=secondCon!=null?secondCon.concat(", "):"";
+
                 String degreeType = (String) documentSnapshot.get("degreeType");
+                degreeType=degreeType!=null?degreeType.concat("."):"";
+
                 String endYear = (String) documentSnapshot.get("endYear");
+                endYear=endYear!=null?". Graduated in ".concat(endYear)+".":"";
 
-                String total = studiedAt+","+firstCon+","+secCon+","+degreeType+" Graduated "+endYear;
+                stringBuilder.append(studiedAt);
+                stringBuilder.append(firstCon);
+                stringBuilder.append(secondCon);
+                stringBuilder.append(degreeType);
+                stringBuilder.append(endYear);
 
-                eduDetails.setText(total);
+                eduDetails.setText(stringBuilder.toString());
                 eduDetails.setTextColor(Color.BLACK);
                 eduDetails.setEnabled(false);
                 Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_baseline_school_24px);
