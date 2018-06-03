@@ -42,7 +42,7 @@ public class InterestsActivity extends AppCompatActivity {
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     MenuItem nextBtn;
     Map<String,Boolean> interestMap=new LinkedHashMap<>();
-    SubBranchAdapter mSubBranchAdapter;
+    BranchAdapter mBranchAdapter;
     final List<Branch> mBranches = new ArrayList<>();
 
     @Override
@@ -50,38 +50,28 @@ public class InterestsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_interests);
 
+        setupToolBar();
+
+        setupBranchRecycler();
+
+        fetchNofityBranches();
+
+    }
+
+    private void setupBranchRecycler() {
+        RecyclerView branchRecyclerview =  findViewById(R.id.sub_branch_recyclerview);
+        branchRecyclerview.setHasFixedSize(true);
+        mBranchAdapter = new BranchAdapter(this, mBranches);
+        branchRecyclerview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        branchRecyclerview.setAdapter(mBranchAdapter);
+    }
+
+    private void setupToolBar() {
         setupToolbar = findViewById(R.id.include);
         setSupportActionBar(setupToolbar);
         if(getSupportActionBar() != null){
             getSupportActionBar().setTitle("Choose Interests");
         }
-
-
-//        Branch branch;
-//
-//        for (int b = 0; b <= 5; b++) {
-//
-//            Map<String,Subject> stringSubjectMap = new LinkedHashMap<>();
-//            branch = new Branch();
-//            branch.setBranchName("Programming "+b);
-//
-//            for (int i = 0; i <= 10; i++) {
-//                Subject subject = new Subject();
-//                subject.setSubjectName("Java " + i);
-//                stringSubjectMap.put("Java "+i,subject);
-//            }
-//            branch.setSubjectMap(stringSubjectMap);
-//            mBranches.add(branch);
-//        }
-
-        fetchNofityBranches();
-
-        RecyclerView mSubBranchRecyclerview =  findViewById(R.id.sub_branch_recyclerview);
-        mSubBranchRecyclerview.setHasFixedSize(true);
-        mSubBranchAdapter = new SubBranchAdapter(this, mBranches);
-        mSubBranchRecyclerview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mSubBranchRecyclerview.setAdapter(mSubBranchAdapter);
-
     }
 
     private void fetchNofityBranches() {
@@ -93,9 +83,8 @@ public class InterestsActivity extends AppCompatActivity {
                 for (DocumentSnapshot documentSnapshot : documents) {
                     branch=documentSnapshot.toObject(Branch.class);
                     mBranches.add(branch);
-                    mSubBranchAdapter.notifyDataSetChanged();
                 }
-                mSubBranchAdapter.notifyDataSetChanged();
+                mBranchAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -139,11 +128,11 @@ public class InterestsActivity extends AppCompatActivity {
 
 
     ////////////////
-    public class SubBranchHolder extends RecyclerView.ViewHolder {
+    public class BranchHolder extends RecyclerView.ViewHolder {
         protected TextView mSubBranchTView;
         protected RecyclerView mSubjectRecycler;
 
-        public SubBranchHolder(View view) {
+        public BranchHolder(View view) {
             super(view);
 
             mSubBranchTView = view.findViewById(R.id.sub_branch_tview);
@@ -152,25 +141,25 @@ public class InterestsActivity extends AppCompatActivity {
     }
 
     ////////////////
-    public class SubBranchAdapter extends RecyclerView.Adapter<SubBranchHolder>{
+    public class BranchAdapter extends RecyclerView.Adapter<BranchHolder>{
 
         private List<Branch> mBranches;
         private Context context;
 
-        public SubBranchAdapter(Context context, List<Branch> mBranches) {
+        public BranchAdapter(Context context, List<Branch> mBranches) {
             this.context = context;
             this.mBranches = mBranches;
         }
 
         @NonNull
         @Override
-        public SubBranchHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public BranchHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_sub_branch_interests,parent, false);
-            return new SubBranchHolder(view);
+            return new BranchHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull final SubBranchHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final BranchHolder holder, int position) {
 
             Branch branch =  mBranches.get(position);
 
@@ -272,7 +261,7 @@ public class InterestsActivity extends AppCompatActivity {
 
                     subject.setChecked(holder.mSubjectCheckbox.isChecked());
 
-                    String subjectName = null;
+                    String subjectName;
                     subjectName = subject.getSubjectName();
 
                     if (null != interestMap&&subjectName!=null) {
@@ -281,7 +270,7 @@ public class InterestsActivity extends AppCompatActivity {
                         else
                             interestMap.put(subjectName, true);
 
-                        if (interestMap.size() >= 4) {
+                        if (interestMap.size() >= 2) {
                             nextBtn.setEnabled(true);
                            View view1 = findViewById(R.id.action_button);
                             if (view1 != null && view1 instanceof TextView) {

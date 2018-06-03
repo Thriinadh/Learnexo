@@ -65,7 +65,6 @@ public class VideoFragment extends Fragment {
                 for (DocumentSnapshot documentSnapshot : documents) {
                     branch=documentSnapshot.toObject(Branch.class);
                     branches.add(branch);
-                    branchAdapter.notifyDataSetChanged();
                 }
                 branchAdapter.notifyDataSetChanged();
             }
