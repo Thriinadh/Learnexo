@@ -74,7 +74,8 @@
         <activity android:name=".OthersProfileActivity" />
         <activity android:name=".CommentsActivity" />
         <activity android:name=".SearchResultActivity" />
-        <activity android:name=".BookmarksActivity"></activity>
+        <activity android:name=".BookmarksActivity" />
+        <activity android:name=".GroupsActivity"></activity>
     </application>
 
 </manifest>
