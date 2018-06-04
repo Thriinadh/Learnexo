@@ -199,7 +199,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/eduRelative">
 
                 <TextView
-                    android:id="@+id/textView16"
+                    android:id="@+id/empDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
@@ -210,11 +210,11 @@
                     android:hyphenationFrequency="none"
                     android:textColor="@color/com_facebook_blue"
                     android:textSize="16sp"
-                    android:layout_toRightOf="@+id/imageView8"
-                    android:layout_toEndOf="@+id/imageView8" />
+                    android:layout_toRightOf="@+id/empPlus"
+                    android:layout_toEndOf="@+id/empPlus" />
 
                     <ImageView
-                        android:id="@+id/imageView8"
+                        android:id="@+id/empPlus"
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:layout_alignParentLeft="true"
@@ -237,7 +237,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/empRelative">
                 <TextView
-                    android:id="@+id/living_place"
+                    android:id="@+id/livingPlace"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"

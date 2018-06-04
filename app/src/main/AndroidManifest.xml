@@ -75,7 +75,9 @@
         <activity android:name=".CommentsActivity" />
         <activity android:name=".SearchResultActivity" />
         <activity android:name=".BookmarksActivity" />
-        <activity android:name=".GroupsActivity"></activity>
+        <activity android:name=".GroupsActivity" />
+        <activity android:name=".EmpDetailsActivity" />
+        <activity android:name=".LocationDetailsActivity"></activity>
     </application>
 
 </manifest>

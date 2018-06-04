@@ -150,7 +150,7 @@
         android:id="@+id/degreeType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Degree type"
+        android:hint="@string/degree_type"
         android:background="@android:color/transparent"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"

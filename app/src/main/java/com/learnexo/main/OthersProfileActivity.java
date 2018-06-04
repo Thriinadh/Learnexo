@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.fragments.UserActivityFragment;
 import com.learnexo.fragments.UserAnswersFragment;
 import com.learnexo.fragments.UserChallengesFragment;
@@ -36,6 +37,8 @@ import com.learnexo.fragments.UserQuestionsFragment;
 import com.learnexo.fragments.UserPostsFragment;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
+
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -59,6 +62,7 @@ public class OthersProfileActivity extends AppCompatActivity {
     private TextView livingPlace;
     private ImageView eduPlus;
     private ImageView empPlus;
+    private ImageView locPlus;
 
     private RelativeLayout eduRelative;
     private RelativeLayout empRelative;
@@ -92,48 +96,15 @@ public class OthersProfileActivity extends AppCompatActivity {
         locationRelative = findViewById(R.id.locationRelative);
         eduPlus = findViewById(R.id.imageView7);
         empPlus = findViewById(R.id.imageView8);
+        locPlus = findViewById(R.id.imageView9);
 
 
-        mFirebaseUtil.mFirestore.collection("users").document(publisherId)
-                .collection("details").document("fields")
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("details").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.getResult().exists()) {
-                    DocumentSnapshot result = task.getResult();
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
-                    String studiedAt = (String) result.get("studiedAt");
-
-                    StringBuilder fullDetails = studiedAt != null ? new StringBuilder(studiedAt) : new StringBuilder();
-                    if (fullDetails.length() > 0) fullDetails.append(", ");
-
-                    String firstCon = (String) result.get("firstCon");
-                    if (firstCon != null) fullDetails = fullDetails.append(firstCon).append(", ");
-
-                    String secondCon = (String) result.get("secondCon");
-                    if (secondCon != null) fullDetails.append(secondCon).append(", ");
-
-                    String degreeType = (String) result.get("degreeType");
-                    if (degreeType != null) fullDetails.append(degreeType).append(".");
-
-                    String endYear = (String) result.get("endYear");
-                    if (endYear != null)
-                        fullDetails.append(" Graduated in ").append(endYear).append(".");
-
-                    if (fullDetails.length() > 0) {
-                        eduDetails.setText(fullDetails.toString());
-                        eduDetails.setTextColor(Color.BLACK);
-                        eduDetails.setEnabled(false);
-
-                        Drawable drawable = null;
-
-                        drawable = ContextCompat.getDrawable(OthersProfileActivity.this, R.drawable.ic_baseline_school_24px);
-                        if (drawable != null) {
-                            eduPlus.setImageDrawable(drawable);
-                            drawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.light_black), PorterDuff.Mode.SRC_IN));
-                        }
-                    }
-                } else {
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                if(documents.size() == 0) {
 
                     eduRelative.setVisibility(View.INVISIBLE);
                     locationRelative.setVisibility(View.INVISIBLE);
@@ -141,6 +112,101 @@ public class OthersProfileActivity extends AppCompatActivity {
                     empDetails.setText(publisherName + " has not created their details");
                     empDetails.setTextSize(16);
                     empDetails.setTextColor(getResources().getColor(R.color.light_black));
+
+                }
+
+                for (DocumentSnapshot documentSnapshot : documents){
+                    String id = documentSnapshot.getId();
+
+                    if(id.equals("eduDetails")){
+
+                        String studiedAt = (String) documentSnapshot.get("studiedAt");
+
+                        StringBuilder fullDetails = studiedAt!=null? new StringBuilder(studiedAt):new StringBuilder();
+                        if(fullDetails.length()>0) fullDetails.append(". ");
+
+                        String firstCon = (String) documentSnapshot.get("firstCon");
+                        if(firstCon!=null) fullDetails = fullDetails.append(firstCon).append(". ");
+
+                        String secondCon = (String) documentSnapshot.get("secondCon");
+                        if(secondCon!=null) fullDetails.append(secondCon).append(". ");
+
+                        String degreeType = (String) documentSnapshot.get("degreeType");
+                        if(degreeType!=null) fullDetails.append(degreeType).append(".");
+
+                        String endYear = (String) documentSnapshot.get("endYear");
+                        if(endYear!=null) fullDetails.append(" Graduated in ").append(endYear).append(".");
+
+                        if(fullDetails.length()>0) {
+                            eduDetails.setText(fullDetails.toString());
+                            eduDetails.setTextColor(Color.BLACK);
+                            eduDetails.setEnabled(false);
+
+                            Drawable drawable;
+
+                                drawable = ContextCompat.getDrawable(OthersProfileActivity.this, R.drawable.ic_baseline_school_24px);
+                            if(drawable!=null) {
+                                eduPlus.setImageDrawable(drawable);
+                                drawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.light_black), PorterDuff.Mode.SRC_IN));
+                            }
+                        }
+
+                    }
+
+                    if (id.equals("empDetails")) {
+
+                        String position = (String) documentSnapshot.get("position");
+
+                        StringBuilder fullDetails = position!=null? new StringBuilder(position):new StringBuilder();
+                        if(fullDetails.length()>0) fullDetails.append(". ");
+
+                        String company = (String) documentSnapshot.get("company");
+                        if(company!=null) fullDetails = fullDetails.append(company).append(". ");
+
+                        if(fullDetails.length()>0) {
+                            empDetails.setText(fullDetails.toString());
+                            empDetails.setTextColor(Color.BLACK);
+                            empDetails.setEnabled(false);
+
+                            Drawable drawable;
+
+                                drawable = ContextCompat.getDrawable(OthersProfileActivity.this, R.drawable.ic_baseline_work_24px);
+                            if(drawable!=null) {
+                                empPlus.setImageDrawable(drawable);
+                                drawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.light_black), PorterDuff.Mode.SRC_IN));
+                            }
+                        }
+
+                    }
+
+                    if (id.equals("locationDetails")) {
+
+                        String location = (String) documentSnapshot.get("location");
+                        boolean check = (boolean) documentSnapshot.get("currentStatus");
+
+                        StringBuilder fullDetails = (location != null && check) ? new StringBuilder("Lives in "+location) : new StringBuilder();
+                        if (location != null && !check) fullDetails = new StringBuilder("Lived in "+location);
+                        if(fullDetails.length()>0) fullDetails.append(". ");
+
+                        long startYear = (long) documentSnapshot.get("startYear");
+                        if(startYear != 0) fullDetails = fullDetails.append("From ").append(startYear).append(". ");
+
+                        if(fullDetails.length()>0) {
+                            livingPlace.setText(fullDetails.toString());
+                            livingPlace.setTextColor(Color.BLACK);
+                            livingPlace.setEnabled(false);
+
+                            Drawable drawable;
+
+                                drawable = ContextCompat.getDrawable(OthersProfileActivity.this, R.drawable.ic_baseline_location_on_24px);
+                            if(drawable!=null) {
+                                locPlus.setImageDrawable(drawable);
+                                drawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.light_black), PorterDuff.Mode.SRC_IN));
+                            }
+                        }
+
+                    }
+
                 }
 
             }

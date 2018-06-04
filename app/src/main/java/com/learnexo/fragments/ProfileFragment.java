@@ -28,10 +28,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.main.EduDetailsActivity;
+import com.learnexo.main.EmpDetailsActivity;
+import com.learnexo.main.LocationDetailsActivity;
 import com.learnexo.main.R;
 import com.learnexo.main.SetupActivity;
 import com.learnexo.util.FirebaseUtil;
+
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -44,6 +49,8 @@ public class ProfileFragment extends Fragment {
     private TextView description;
     private TextView editProfile;
     private TextView eduDetails;
+    private TextView empDetails;
+    private TextView livingPlace;
     private ImageView fullProfileImage;
     private Activity mActivity;
 
@@ -52,6 +59,8 @@ public class ProfileFragment extends Fragment {
     public static String sName;
 
     private ImageView eduPlus;
+    private ImageView empPlus;
+    private ImageView locPlus;
 
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
@@ -80,6 +89,8 @@ public class ProfileFragment extends Fragment {
         onTabSelectedListener();
         profileImageListener();
         eduDetailsListener();
+        empDetailsListener();
+        locationDetailsListener();
         editProfileBtnListener();
 
         return view;
@@ -156,45 +167,111 @@ public class ProfileFragment extends Fragment {
     }
 
     private void bindEduDetails() {
-        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("details").document("fields").get().
-                addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("details").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
-                String studiedAt = (String) documentSnapshot.get("studiedAt");
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                for (DocumentSnapshot documentSnapshot : documents){
+                    String id = documentSnapshot.getId();
 
-                StringBuilder fullDetails = studiedAt!=null? new StringBuilder(studiedAt):new StringBuilder();
-                if(fullDetails.length()>0) fullDetails.append(". ");
+                    if(id.equals("eduDetails")){
 
-                String firstCon = (String) documentSnapshot.get("firstCon");
-                if(firstCon!=null) fullDetails = fullDetails.append(firstCon).append(". ");
+                        String studiedAt = (String) documentSnapshot.get("studiedAt");
 
-                String secondCon = (String) documentSnapshot.get("secondCon");
-                if(secondCon!=null) fullDetails.append(secondCon).append(". ");
+                        StringBuilder fullDetails = studiedAt!=null? new StringBuilder(studiedAt):new StringBuilder();
+                        if(fullDetails.length()>0) fullDetails.append(". ");
 
-                String degreeType = (String) documentSnapshot.get("degreeType");
-                if(degreeType!=null) fullDetails.append(degreeType).append(".");
+                        String firstCon = (String) documentSnapshot.get("firstCon");
+                        if(firstCon!=null) fullDetails = fullDetails.append(firstCon).append(". ");
 
-                String endYear = (String) documentSnapshot.get("endYear");
-                if(endYear!=null) fullDetails.append(" Graduated in ").append(endYear).append(".");
+                        String secondCon = (String) documentSnapshot.get("secondCon");
+                        if(secondCon!=null) fullDetails.append(secondCon).append(". ");
 
-                if(fullDetails.length()>0) {
-                    eduDetails.setText(fullDetails.toString());
-                    eduDetails.setTextColor(Color.BLACK);
-                    eduDetails.setEnabled(false);
+                        String degreeType = (String) documentSnapshot.get("degreeType");
+                        if(degreeType!=null) fullDetails.append(degreeType).append(".");
 
-                    Drawable drawable=null;
-                    mActivity=getActivity();
-                    if(mActivity!=null)
-                        drawable = ContextCompat.getDrawable(mActivity, R.drawable.ic_baseline_school_24px);
-                    if(drawable!=null) {
-                        eduPlus.setImageDrawable(drawable);
-                        drawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.light_black), PorterDuff.Mode.SRC_IN));
+                        String endYear = (String) documentSnapshot.get("endYear");
+                        if(endYear!=null) fullDetails.append(" Graduated in ").append(endYear).append(".");
+
+                        if(fullDetails.length()>0) {
+                            eduDetails.setText(fullDetails.toString());
+                            eduDetails.setTextColor(Color.BLACK);
+                            eduDetails.setEnabled(false);
+
+                            Drawable drawable=null;
+                            mActivity=getActivity();
+                            if(mActivity!=null)
+                                drawable = ContextCompat.getDrawable(mActivity, R.drawable.ic_baseline_school_24px);
+                            if(drawable!=null) {
+                                eduPlus.setImageDrawable(drawable);
+                                drawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.light_black), PorterDuff.Mode.SRC_IN));
+                            }
+                        }
+
                     }
+
+                    if (id.equals("empDetails")) {
+
+                        String position = (String) documentSnapshot.get("position");
+
+                        StringBuilder fullDetails = position!=null? new StringBuilder(position):new StringBuilder();
+                        if(fullDetails.length()>0) fullDetails.append(". ");
+
+                        String company = (String) documentSnapshot.get("company");
+                        if(company!=null) fullDetails = fullDetails.append(company).append(". ");
+
+                        if(fullDetails.length()>0) {
+                            empDetails.setText(fullDetails.toString());
+                            empDetails.setTextColor(Color.BLACK);
+                            empDetails.setEnabled(false);
+
+                            Drawable drawable=null;
+                            mActivity=getActivity();
+                            if(mActivity!=null)
+                                drawable = ContextCompat.getDrawable(mActivity, R.drawable.ic_baseline_work_24px);
+                            if(drawable!=null) {
+                                empPlus.setImageDrawable(drawable);
+                                drawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.light_black), PorterDuff.Mode.SRC_IN));
+                            }
+                        }
+
+                    }
+
+                    if (id.equals("locationDetails")) {
+
+                        String location = (String) documentSnapshot.get("location");
+                        boolean check = (boolean) documentSnapshot.get("currentStatus");
+
+                        StringBuilder fullDetails = (location != null && check) ? new StringBuilder("Lives in "+location) : new StringBuilder();
+                        if (location != null && !check) fullDetails = new StringBuilder("Lived in "+location);
+                        if(fullDetails.length()>0) fullDetails.append(". ");
+
+                        long startYear = (long) documentSnapshot.get("startYear");
+                        if(startYear != 0) fullDetails = fullDetails.append("From ").append(startYear).append(". ");
+
+                        if(fullDetails.length()>0) {
+                            livingPlace.setText(fullDetails.toString());
+                            livingPlace.setTextColor(Color.BLACK);
+                            livingPlace.setEnabled(false);
+
+                            Drawable drawable=null;
+                            mActivity=getActivity();
+                            if(mActivity!=null)
+                                drawable = ContextCompat.getDrawable(mActivity, R.drawable.ic_baseline_location_on_24px);
+                            if(drawable!=null) {
+                                locPlus.setImageDrawable(drawable);
+                                drawable.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.light_black), PorterDuff.Mode.SRC_IN));
+                            }
+                        }
+
+                    }
+
                 }
 
             }
         });
+
     }
 
     private void setUserPostsFragment(Bundle savedInstanceState) {
@@ -227,6 +304,26 @@ public class ProfileFragment extends Fragment {
         });
     }
 
+    private void empDetailsListener() {
+        empDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), EmpDetailsActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void locationDetailsListener() {
+        livingPlace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), LocationDetailsActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
     private void profileImageListener() {
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -242,9 +339,13 @@ public class ProfileFragment extends Fragment {
         userName = view.findViewById(R.id.user_name);
         description = view.findViewById(R.id.description);
         eduDetails = view.findViewById(R.id.eduDetails);
+        empDetails = view.findViewById(R.id.empDetails);
+        livingPlace = view.findViewById(R.id.livingPlace);
         frameLayout = view.findViewById(R.id.fragment_container);
         fullProfileImage = view.findViewById(R.id.fullProfileImage);
         eduPlus = view.findViewById(R.id.imageView7);
+        empPlus = view.findViewById(R.id.empPlus);
+        locPlus = view.findViewById(R.id.imageView9);
     }
 
     public void replaceFragment(Fragment fragment) {

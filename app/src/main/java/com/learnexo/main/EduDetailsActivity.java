@@ -90,7 +90,7 @@ public class EduDetailsActivity extends AppCompatActivity {
             map.put("degreeType", degreeTypee);
 
             if(!TextUtils.isEmpty(studied) || !TextUtils.isEmpty(fstCon) || !TextUtils.isEmpty(secCon) || !TextUtils.isEmpty(degreeTypee))
-            mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("details").document("fields").set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+            mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("details").document("eduDetails").set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Intent intent = new Intent(EduDetailsActivity.this, TabsActivity.class);
