@@ -164,13 +164,13 @@ public class ProfileFragment extends Fragment {
                 String studiedAt = (String) documentSnapshot.get("studiedAt");
 
                 StringBuilder fullDetails = studiedAt!=null? new StringBuilder(studiedAt):new StringBuilder();
-                if(fullDetails.length()>0) fullDetails.append(", ");
+                if(fullDetails.length()>0) fullDetails.append(". ");
 
                 String firstCon = (String) documentSnapshot.get("firstCon");
-                if(firstCon!=null) fullDetails = fullDetails.append(firstCon).append(", ");
+                if(firstCon!=null) fullDetails = fullDetails.append(firstCon).append(". ");
 
                 String secondCon = (String) documentSnapshot.get("secondCon");
-                if(secondCon!=null) fullDetails.append(secondCon).append(", ");
+                if(secondCon!=null) fullDetails.append(secondCon).append(". ");
 
                 String degreeType = (String) documentSnapshot.get("degreeType");
                 if(degreeType!=null) fullDetails.append(degreeType).append(".");
