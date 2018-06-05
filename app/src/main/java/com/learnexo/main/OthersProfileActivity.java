@@ -13,6 +13,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -64,6 +68,9 @@ public class OthersProfileActivity extends AppCompatActivity {
     private ImageView empPlus;
     private ImageView locPlus;
 
+    private TextView following;
+    private TextView followers;
+
     private RelativeLayout eduRelative;
     private RelativeLayout empRelative;
     private RelativeLayout locationRelative;
@@ -97,6 +104,50 @@ public class OthersProfileActivity extends AppCompatActivity {
         eduPlus = findViewById(R.id.imageView7);
         empPlus = findViewById(R.id.imageView8);
         locPlus = findViewById(R.id.imageView9);
+        following = findViewById(R.id.following);
+        followers = findViewById(R.id.followers);
+
+        mFirebaseUtil.mFirestore.collection("users").document(publisherId)
+                .collection("following").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                int size = documents.size();
+                String docSize = Integer.toString(size);
+                int length = docSize.length();
+                String total = docSize + " Following";
+
+                SpannableStringBuilder sb = new SpannableStringBuilder(total);
+
+                StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD);
+                sb.setSpan(bss, 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                sb.setSpan(new ForegroundColorSpan(Color.BLACK), 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+
+                following.setText(sb);
+            }
+        });
+
+        mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("followers").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            String total;
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                int size = documents.size();
+                String docSize = Integer.toString(size);
+                int length = docSize.length();
+                if (size>1)
+                    total = docSize + " Followers";
+                else
+                    total = docSize + " Follower";
+
+                SpannableStringBuilder sb = new SpannableStringBuilder(total);
+
+                sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                sb.setSpan(new ForegroundColorSpan(Color.BLACK), 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+
+                followers.setText(sb);
+            }
+        });
 
 
         mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("details").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
