@@ -100,16 +100,46 @@ public class ProfileFragment extends Fragment {
         locationDetailsListener();
         editProfileBtnListener();
 
-        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
-                .collection("following").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        fetchFollowing();
+        fetchFollowers();
+
+        return view;
+    }
+
+    private void fetchFollowers() {
+        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("followers").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            String total;
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
                 int size = documents.size();
-                String docSize = Integer.toString(size);
-                int length = docSize.length();
-                String total = docSize + " Following";
+                String stringSize = Integer.toString(size);
+                if (size>1) total = stringSize + " Followers";
+                else total = stringSize + " Follower";
 
+                int length = stringSize.length();
+
+                SpannableStringBuilder sb = new SpannableStringBuilder(total);
+                sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                sb.setSpan(new ForegroundColorSpan(Color.BLACK), 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+
+                followers.setText(sb);
+            }
+        });
+    }
+
+    private void fetchFollowing() {
+        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+                .collection("following").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            String total;
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                int size = documents.size();
+                String stringSize = Integer.toString(size);
+                total = stringSize + " Following";
+
+                int length = stringSize.length();
                 SpannableStringBuilder sb = new SpannableStringBuilder(total);
 
                 StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD);
@@ -119,30 +149,6 @@ public class ProfileFragment extends Fragment {
                 following.setText(sb);
             }
         });
-
-        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId()).collection("followers").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            String total;
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-                int size = documents.size();
-                String docSize = Integer.toString(size);
-                int length = docSize.length();
-                if (size>1)
-                total = docSize + " Followers";
-                else
-                    total = docSize + " Follower";
-
-                SpannableStringBuilder sb = new SpannableStringBuilder(total);
-
-                sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                sb.setSpan(new ForegroundColorSpan(Color.BLACK), 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-
-                followers.setText(sb);
-            }
-        });
-
-        return view;
     }
 
     private void editProfileBtnListener() {
