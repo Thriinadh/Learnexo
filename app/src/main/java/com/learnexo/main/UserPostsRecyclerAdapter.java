@@ -17,7 +17,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.fragments.FeedFragment;
-import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
+import com.learnexo.fragments.OverflowMenuListener;
+import com.learnexo.model.core.OverflowType;
 import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
@@ -86,7 +87,7 @@ public class UserPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     private void allPostsOverflowListener(AllPostsHolder allPostsHolder, Post post) {
-        allPostsHolder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, mUser));
+        allPostsHolder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, mUser, OverflowType.POST_ANS_CRACK));
     }
 
     @Override

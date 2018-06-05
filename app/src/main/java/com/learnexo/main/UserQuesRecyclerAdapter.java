@@ -9,21 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.learnexo.fragments.FeedFragment;
-import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
-import com.learnexo.model.feed.answer.Answer;
-import com.learnexo.model.feed.post.Post;
+import com.learnexo.fragments.OverflowMenuListener;
+import com.learnexo.model.core.OverflowType;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
 import java.util.List;
-import java.util.PriorityQueue;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.learnexo.util.DateUtil.convertDateToAgo;
 
@@ -83,7 +76,7 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     private void allPostsOverflowListener(AllQuesHolder allQuesHolder, Question question) {
-        allQuesHolder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, mUser));
+        allQuesHolder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, mUser, OverflowType.POST_ANS_CRACK));
     }
 
     @Override

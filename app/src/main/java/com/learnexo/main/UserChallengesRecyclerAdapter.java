@@ -11,7 +11,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.learnexo.fragments.FeedFragment;
-import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
+import com.learnexo.fragments.OverflowMenuListener;
+import com.learnexo.model.core.OverflowType;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
@@ -75,7 +76,7 @@ public class UserChallengesRecyclerAdapter extends RecyclerView.Adapter<Recycler
     }
 
     private void allPostsOverflowListener(AllQuesHolder allQuesHolder, Question question) {
-        allQuesHolder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, mUser));
+        allQuesHolder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, mUser, OverflowType.POST_ANS_CRACK));
     }
 
     @Override

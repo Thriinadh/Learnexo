@@ -24,6 +24,7 @@ import com.learnexo.main.FullAnswerActivity;
 import com.learnexo.main.FullPostActivity;
 import com.learnexo.main.OthersProfileActivity;
 import com.learnexo.main.R;
+import com.learnexo.model.core.OverflowType;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.post.Post;
@@ -440,20 +441,20 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void postOverflowListener(@NonNull PostHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, publisher));
+        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher,OverflowType.POST_ANS_CRACK));
     }
     private void answerOverflowListener(@NonNull AnswerHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, publisher));
+        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher,OverflowType.POST_ANS_CRACK));
     }
     private void crackOverflowListener(@NonNull CrackHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, publisher));
+        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher, OverflowType.POST_ANS_CRACK));
     }
 
     private void questionOverflowListener(@NonNull QuestionHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(new QuestionChallengeItemOverFlowListener(mContext, publisher));
+        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher,OverflowType.QUES_CHALLENGE));
     }
     private void challengeOverflowListener(@NonNull ChallengeHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(new QuestionChallengeItemOverFlowListener(mContext, publisher));
+        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher, OverflowType.QUES_CHALLENGE));
     }
 
 

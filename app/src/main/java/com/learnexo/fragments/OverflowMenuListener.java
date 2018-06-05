@@ -14,6 +14,7 @@ import com.cocosw.bottomsheet.BottomSheet;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.learnexo.main.R;
+import com.learnexo.model.core.OverflowType;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
@@ -22,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PostAnsCrackItemOverflowListener implements View.OnClickListener {
+public class OverflowMenuListener implements View.OnClickListener {
 
     private Context mContext;
     private User publisher;
@@ -30,28 +31,46 @@ public class PostAnsCrackItemOverflowListener implements View.OnClickListener {
     private String mCurrentUserId=FirebaseUtil.getCurrentUserId();
     private String mPublisherId;
 
-    public PostAnsCrackItemOverflowListener(Context context, User publisher) {
+    List<String> menuItems =new ArrayList<>();
+    List<Drawable> iconList =new ArrayList<>();
+
+    public OverflowMenuListener(Context context, User publisher, OverflowType overflowType) {
         mContext = context;
         this.publisher = publisher;
+
+        if(overflowType==OverflowType.POST_ANS_CRACK) {
+            menuItems.add("Follow");
+            menuItems.add("Edit Post");
+            menuItems.add("Delete Post");
+            menuItems.add("Copy Link");
+            menuItems.add("Turn Off Notifications");
+            menuItems.add("Connect");
+
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
+        }
+
+        if(overflowType==OverflowType.QUES_CHALLENGE) {
+            menuItems.add("Follow");
+            menuItems.add("Edit Post");
+            menuItems.add("Delete Post");
+            menuItems.add("Copy Link");
+
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
+
+        }
     }
 
     @Override
     public void onClick(View view) {
-        List<String> menuItems =new ArrayList<>();
-        menuItems.add("Follow");
-        menuItems.add("Edit Post");
-        menuItems.add("Delete Post");
-        menuItems.add("Copy Link");
-        menuItems.add("Turn Off Notifications");
-        menuItems.add("Connect");
 
-        List<Drawable> iconList =new ArrayList<>();
-        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
-        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
-        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
-        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
-        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
-        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
 
 
 

@@ -13,7 +13,8 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.learnexo.fragments.QuestionChallengeItemOverFlowListener;
+import com.learnexo.fragments.OverflowMenuListener;
+import com.learnexo.model.core.OverflowType;
 import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.question.Question;
@@ -79,7 +80,7 @@ public class AllAnswersActivity extends AppCompatActivity {
     }
 
     private void overflowListener(User user) {
-        quesOverFlow.setOnClickListener(new QuestionChallengeItemOverFlowListener(this, user));
+        quesOverFlow.setOnClickListener(new OverflowMenuListener(this, user, OverflowType.QUES_CHALLENGE));
     }
 
     private void answerBtnListener() {

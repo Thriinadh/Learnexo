@@ -13,9 +13,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.learnexo.fragments.FeedFragment;
-import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
+import com.learnexo.fragments.OverflowMenuListener;
+import com.learnexo.model.core.OverflowType;
 import com.learnexo.model.feed.answer.Answer;
-import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
@@ -81,7 +81,7 @@ public class UserAnswersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     private void allPostsOverflowListener(AllAnswersHolder allAnswersHolder, Answer answer) {
-        allAnswersHolder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, mUser));
+        allAnswersHolder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, mUser, OverflowType.POST_ANS_CRACK));
     }
 
     @Override

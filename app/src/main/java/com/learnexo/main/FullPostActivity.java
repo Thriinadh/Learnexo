@@ -29,8 +29,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.fragments.FeedFragment;
-import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
+import com.learnexo.fragments.OverflowMenuListener;
 import com.learnexo.model.core.BookMarkType;
+import com.learnexo.model.core.OverflowType;
 import com.learnexo.model.feed.likediv.Bookmark;
 import com.learnexo.model.feed.likediv.Comment;
 import com.learnexo.model.user.User;
@@ -183,7 +184,7 @@ public class FullPostActivity extends AppCompatActivity {
 
 
     private void overFlowListener(User publisher) {
-        overFlowBtn.setOnClickListener(new PostAnsCrackItemOverflowListener(this, publisher));
+        overFlowBtn.setOnClickListener(new OverflowMenuListener(this, publisher, OverflowType.POST_ANS_CRACK));
     }
 
     private void handleIntent() {

@@ -32,8 +32,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.fragments.FeedFragment;
-import com.learnexo.fragments.PostAnsCrackItemOverflowListener;
+import com.learnexo.fragments.OverflowMenuListener;
 import com.learnexo.model.core.BookMarkType;
+import com.learnexo.model.core.OverflowType;
 import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.likediv.Bookmark;
 import com.learnexo.model.feed.likediv.Comment;
@@ -384,7 +385,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
     private void overflowListener(AnswerHolder answerHolder, User publisher, Answer answer) {
-        answerHolder.overflowImgView.setOnClickListener(new PostAnsCrackItemOverflowListener(mContext, publisher));
+        answerHolder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher, OverflowType.POST_ANS_CRACK));
     }
 
     private void answererProfileListener(final AnswerHolder answerHolder, final User publisher, final String postId) {
