@@ -6,12 +6,6 @@
     android:focusableInTouchMode="true"
     tools:context="com.learnexo.fragments.ProfileFragment">
 
-    <ImageView
-        android:id="@+id/fullProfileImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true"/>
-
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -159,20 +153,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/view3">
-                <TextView
-                    android:id="@+id/eduDetails"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="8dp"
-                    android:text="Educational details"
-                    android:hyphenationFrequency="none"
-                    android:textColor="@color/com_facebook_blue"
-                    android:textSize="16sp"
-                    android:layout_toRightOf="@+id/imageView7"
-                    android:layout_toEndOf="@+id/imageView7" />
 
                     <ImageView
                         android:id="@+id/imageView7"
@@ -186,6 +166,22 @@
                         android:layout_marginStart="20dp"
                         android:background="@drawable/ic_baseline_school_24px"
                         android:backgroundTint="@color/com_facebook_blue" />
+
+                    <TextView
+                        android:id="@+id/eduDetails"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_toEndOf="@+id/imageView7"
+                        android:layout_toRightOf="@+id/imageView7"
+                        android:hyphenationFrequency="none"
+                        android:text="Educational details"
+                        android:textColor="@color/com_facebook_blue"
+                        android:textSize="16sp" />
+
 
                 </RelativeLayout>
 
@@ -202,10 +198,10 @@
                     android:id="@+id/empDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="8dp"
+                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     android:text="Employment details"
                     android:hyphenationFrequency="none"
                     android:textColor="@color/com_facebook_blue"
@@ -240,10 +236,10 @@
                     android:id="@+id/livingPlace"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="8dp"
+                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     android:text="Location details"
                     android:hyphenationFrequency="none"
                     android:layout_centerVertical="true"
