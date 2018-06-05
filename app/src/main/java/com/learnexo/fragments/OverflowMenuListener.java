@@ -2,6 +2,9 @@ package com.learnexo.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -46,12 +49,14 @@ public class OverflowMenuListener implements View.OnClickListener {
             menuItems.add("Turn Off Notifications");
             menuItems.add("Connect");
 
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
+            Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px);
+            iconList.add(drawable);
+            drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_notifications_off_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_assignment_24px));
         }
 
         if(overflowType==OverflowType.QUES_CHALLENGE) {
@@ -60,10 +65,10 @@ public class OverflowMenuListener implements View.OnClickListener {
             menuItems.add("Delete Post");
             menuItems.add("Copy Link");
 
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
 
         }
     }
