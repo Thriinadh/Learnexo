@@ -1,7 +1,8 @@
 package com.learnexo.fragments;
 
-
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -51,7 +52,6 @@ public class ProfileFragment extends Fragment {
     private TextView eduDetails;
     private TextView empDetails;
     private TextView livingPlace;
-    private ImageView fullProfileImage;
     private Activity mActivity;
 
     private String mUserId;
@@ -329,6 +329,22 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
+                LayoutInflater inflater = (LayoutInflater) getActivity()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View dialoglayout = inflater.inflate(R.layout.dialog_profile_image, null);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.MyDialogTheme);
+
+                ImageView imageView = dialoglayout.findViewById(R.id.dialogImage);
+
+                if (sDpUrl !=null&&null!=getActivity()) {
+                    Glide.with(getActivity().getApplicationContext()).load(sDpUrl).into(imageView);
+                }
+                builder.setView(dialoglayout);
+
+                builder.show();
+
+
             }
         });
     }
@@ -342,7 +358,6 @@ public class ProfileFragment extends Fragment {
         empDetails = view.findViewById(R.id.empDetails);
         livingPlace = view.findViewById(R.id.livingPlace);
         frameLayout = view.findViewById(R.id.fragment_container);
-        fullProfileImage = view.findViewById(R.id.fullProfileImage);
         eduPlus = view.findViewById(R.id.imageView7);
         empPlus = view.findViewById(R.id.empPlus);
         locPlus = view.findViewById(R.id.imageView9);
