@@ -1,22 +1,26 @@
 package com.learnexo.fragments;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetDialog;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cocosw.bottomsheet.BottomSheet;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.learnexo.main.R;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PostAnsCrackItemOverflowListener implements View.OnClickListener {
@@ -27,6 +31,7 @@ public class PostAnsCrackItemOverflowListener implements View.OnClickListener {
     private LinearLayout copyBtnLayout;
     private LinearLayout notifBtnLayout;
     private LinearLayout connectBtnLayout;
+
 
     private Context mContext;
     private Dialog mDialog;
@@ -42,14 +47,44 @@ public class PostAnsCrackItemOverflowListener implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        List list =new ArrayList<>();
+        list.add("aaa");
+        list.add("fdljkaf d");
+        list.add("fdljkaf d");
+        list.add("fdljkaf d");
 
-        View bottomSheetView = View.inflate(mContext, R.layout.bottom_sheet_dialog_for_sharedposts, null);
+//        View bottomSheetView = View.inflate(mContext, R.layout.bottom_sheet_dialog_for_sharedposts, null);
+//
+//        mDialog = new BottomSheetDialog(mContext);
+//        mDialog.setContentView(bottomSheetView);
+//        mDialog.show();
 
-        mDialog = new BottomSheetDialog(mContext);
-        mDialog.setContentView(bottomSheetView);
-        mDialog.show();
 
-        inflateBottomSheetButtons(bottomSheetView);
+        BottomSheet.Builder builder = new BottomSheet.Builder((Activity) mContext);
+        for (int i = 0; i<list.size(); i++) {
+             String s = (String) list.get(i);
+             builder.sheet(i, null, s);
+        }
+        builder.build();
+        builder.listener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+//                item.
+
+                switch ((String)item.getTitle()){
+                    case "aaa":
+                        Toast.makeText(mContext,"fdjasl",Toast.LENGTH_LONG);
+                        Log.d("fdjalfdsaj","fdjlaskdf aljfdslak");
+
+                }
+                return false;
+            }
+        });
+        BottomSheet bottomSheet = builder.show();
+
+
+
+        //inflateBottomSheetButtons(bottomSheetView);
     }
 
     private void inflateBottomSheetButtons(final View bottomSheetView) {

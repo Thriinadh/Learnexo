@@ -34,6 +34,8 @@ dependencies {
     implementation "com.android.support:design:$SUPPORT_LIB_VERSION"
     implementation "com.android.support:support-v4:$SUPPORT_LIB_VERSION"
 
+    implementation 'com.cocosw:bottomsheet:1.+@aar'
+
 
     implementation 'com.facebook.android:facebook-login:4.32.0'
     implementation "com.google.android.gms:play-services-auth:$FIREBASE_LIB_VERSION"
