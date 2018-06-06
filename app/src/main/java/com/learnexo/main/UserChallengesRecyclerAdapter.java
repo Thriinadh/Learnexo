@@ -76,7 +76,7 @@ public class UserChallengesRecyclerAdapter extends RecyclerView.Adapter<Recycler
     }
 
     private void allPostsOverflowListener(AllQuesHolder allQuesHolder, Question question) {
-        allQuesHolder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, mUser, OverflowType.POST_ANS_CRACK));
+        allQuesHolder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, mUser, OverflowType.POST_ANS_CRACK,question));
     }
 
     @Override

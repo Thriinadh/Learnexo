@@ -87,7 +87,7 @@ public class UserPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     private void allPostsOverflowListener(AllPostsHolder allPostsHolder, Post post) {
-        allPostsHolder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, mUser, OverflowType.POST_ANS_CRACK));
+        allPostsHolder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, mUser, OverflowType.POST_ANS_CRACK,post));
     }
 
     @Override

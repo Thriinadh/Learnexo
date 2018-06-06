@@ -441,20 +441,20 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void postOverflowListener(@NonNull PostHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher,OverflowType.POST_ANS_CRACK));
+        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher,OverflowType.POST_ANS_CRACK, feedItem));
     }
     private void answerOverflowListener(@NonNull AnswerHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher,OverflowType.POST_ANS_CRACK));
+        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher,OverflowType.POST_ANS_CRACK, feedItem));
     }
     private void crackOverflowListener(@NonNull CrackHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher, OverflowType.POST_ANS_CRACK));
+        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher, OverflowType.POST_ANS_CRACK, feedItem));
     }
 
     private void questionOverflowListener(@NonNull QuestionHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher,OverflowType.QUES_CHALLENGE));
+        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher,OverflowType.QUES_CHALLENGE, feedItem));
     }
     private void challengeOverflowListener(@NonNull ChallengeHolder holder, final User publisher, final FeedItem feedItem) {
-        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher, OverflowType.QUES_CHALLENGE));
+        holder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher, OverflowType.QUES_CHALLENGE, feedItem));
     }
 
 

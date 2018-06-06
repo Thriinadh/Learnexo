@@ -33,6 +33,7 @@ import com.learnexo.fragments.OverflowMenuListener;
 import com.learnexo.model.core.BookMarkType;
 import com.learnexo.model.core.OverflowType;
 import com.learnexo.model.feed.FeedItem;
+import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.likediv.Bookmark;
 import com.learnexo.model.feed.likediv.Comment;
 import com.learnexo.model.feed.question.Question;
@@ -101,6 +102,8 @@ public class FullAnswerActivity extends AppCompatActivity {
     private boolean flag = true;
     private boolean gag = true;
 
+    private Answer mAnswer;
+
     FirebaseUtil mFirebaseUtil=new FirebaseUtil();
 
     @Override
@@ -130,7 +133,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     }
 
     private void overflowListener(User publisher) {
-        overFlowBtn.setOnClickListener(new OverflowMenuListener(this, publisher, OverflowType.POST_ANS_CRACK));
+        overFlowBtn.setOnClickListener(new OverflowMenuListener(this, publisher, OverflowType.POST_ANS_CRACK,mAnswer));
     }
 
     private void viewAllAnswersListener() {
@@ -273,6 +276,16 @@ public class FullAnswerActivity extends AppCompatActivity {
         comments=intent.getLongExtra("ANS_COMMENTS",0);
         views=intent.getLongExtra("ANS_VIEWS",0);
         upVotes=intent.getLongExtra("ANS_UPVOTES",0);
+
+        mAnswer=new Answer();
+        mAnswer.setFeedItemId(ansId);
+        if(is_crack)
+        mAnswer.setType(FeedItem.CRACK);
+        else
+        mAnswer.setType(FeedItem.ANSWER);
+
+        mAnswer.setUserId(ansPublisherId);
+        mAnswer.setUserId(publisherName);
     }
 
     public void bindViewsUpvotes() {

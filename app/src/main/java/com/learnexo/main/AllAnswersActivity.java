@@ -49,6 +49,7 @@ public class AllAnswersActivity extends AppCompatActivity {
     private String feedItemId;
     private int is_Challenge;
 
+    private Question question;
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
     @Override
@@ -69,6 +70,8 @@ public class AllAnswersActivity extends AppCompatActivity {
         answerBtnListener();
 
         User user = new User();
+
+
         overflowListener(user);
 
     }
@@ -80,7 +83,7 @@ public class AllAnswersActivity extends AppCompatActivity {
     }
 
     private void overflowListener(User user) {
-        quesOverFlow.setOnClickListener(new OverflowMenuListener(this, user, OverflowType.QUES_CHALLENGE));
+        quesOverFlow.setOnClickListener(new OverflowMenuListener(this, user, OverflowType.QUES_CHALLENGE,question));
     }
 
     private void answerBtnListener() {
@@ -166,6 +169,9 @@ public class AllAnswersActivity extends AppCompatActivity {
         questionerId = intent.getStringExtra(EXTRA_QUESTIONER_ID);
         feedItemId = intent.getStringExtra(EXTRA_ITEM_ID);
         is_Challenge=intent.getIntExtra("ANSWER_TYPE",10);
+
+        question = new Question();
+        question.setUserId(questionerId);
     }
 
 

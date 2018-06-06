@@ -76,7 +76,7 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     private void allPostsOverflowListener(AllQuesHolder allQuesHolder, Question question) {
-        allQuesHolder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, mUser, OverflowType.POST_ANS_CRACK));
+        allQuesHolder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, mUser, OverflowType.POST_ANS_CRACK,question));
     }
 
     @Override

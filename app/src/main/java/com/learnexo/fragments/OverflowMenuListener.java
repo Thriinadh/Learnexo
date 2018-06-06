@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.learnexo.main.R;
 import com.learnexo.model.core.OverflowType;
+import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
@@ -28,6 +29,7 @@ import java.util.Map;
 
 public class OverflowMenuListener implements View.OnClickListener {
 
+    private String publisherName;
     private Context mContext;
     private User publisher;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
@@ -37,17 +39,23 @@ public class OverflowMenuListener implements View.OnClickListener {
     List<String> menuItems =new ArrayList<>();
     List<Drawable> iconList =new ArrayList<>();
 
-    public OverflowMenuListener(Context context, User publisher, OverflowType overflowType) {
+    public OverflowMenuListener(Context context, User publisher, OverflowType overflowType, FeedItem feedItem) {
         mContext = context;
         this.publisher = publisher;
 
+        publisherName=feedItem.getUserName();
+
+
+
         if(overflowType==OverflowType.POST_ANS_CRACK) {
-            menuItems.add("Follow");
-            menuItems.add("Edit Post");
-            menuItems.add("Delete Post");
-            menuItems.add("Copy Link");
-            menuItems.add("Turn Off Notifications");
-            menuItems.add("Connect");
+            menuItems.add("Follow "+publisherName);//toggle
+            menuItems.add("Turn ON Notifications");//toggle
+            menuItems.add("Copy Link");//web
+            menuItems.add("Thank");
+            menuItems.add("Suggest Edits");
+            menuItems.add("Down Vote");
+            menuItems.add("Report");
+            menuItems.add("Log");
 
             Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px);
             iconList.add(drawable);
@@ -57,28 +65,42 @@ public class OverflowMenuListener implements View.OnClickListener {
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_notifications_off_24px));
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_assignment_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_notifications_off_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_assignment_24px));
         }
-
-        if(overflowType==OverflowType.QUES_CHALLENGE) {
-            menuItems.add("Follow");
-            menuItems.add("Edit Post");
-            menuItems.add("Delete Post");
-            menuItems.add("Copy Link");
+        else if(overflowType==OverflowType.QUES_CHALLENGE) {
+            menuItems.add("Add a Comment");// view 1 comment
+            menuItems.add("Share");
+            menuItems.add("Answer Later");
+            menuItems.add("Answer Anonymously");
+            menuItems.add("Follow Privately");
+            menuItems.add("View Status Log");
+            menuItems.add("Turn On Notifications");
+            menuItems.add("Report");
+            menuItems.add("Merge Question");
+            menuItems.add("Up Vote Question");
+            menuItems.add("Down Vote Question");
+            menuItems.add("View Status and Log");
 
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
+            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
+
 
         }
     }
 
     @Override
     public void onClick(View view) {
-
-
-
-
 
         BottomSheet.Builder builder = new BottomSheet.Builder((Activity) mContext);
         for (int i = 0; i<menuItems.size(); i++) {
@@ -89,16 +111,14 @@ public class OverflowMenuListener implements View.OnClickListener {
         builder.listener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-
-                switch ((String)item.getTitle()){
-                    case "Follow":
-                        followListener();
-                        return true;
-
-                    default:
-                        return false;
+                CharSequence title = item.getTitle();
+                String strTitle=(String)title;
+                if(strTitle.contains("Follow")){
+                    followListener();
                 }
 
+
+                return true;
             }
         });
 

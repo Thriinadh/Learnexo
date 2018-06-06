@@ -32,8 +32,10 @@ import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.OverflowMenuListener;
 import com.learnexo.model.core.BookMarkType;
 import com.learnexo.model.core.OverflowType;
+import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.likediv.Bookmark;
 import com.learnexo.model.feed.likediv.Comment;
+import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
@@ -55,6 +57,7 @@ public class FullPostActivity extends AppCompatActivity {
 
     private List<Comment> mComments;
     private CommentsAdapter mAdapter;
+    private Post post;
 
     private TextView fullText;
     private TextView timeOfPost;
@@ -184,7 +187,7 @@ public class FullPostActivity extends AppCompatActivity {
 
 
     private void overFlowListener(User publisher) {
-        overFlowBtn.setOnClickListener(new OverflowMenuListener(this, publisher, OverflowType.POST_ANS_CRACK));
+        overFlowBtn.setOnClickListener(new OverflowMenuListener(this, publisher, OverflowType.POST_ANS_CRACK, post));
     }
 
     private void handleIntent() {
@@ -201,6 +204,13 @@ public class FullPostActivity extends AppCompatActivity {
         comments = intent.getLongExtra("COMMENTS", 0);
         views = intent.getLongExtra("VIEWS", 0);
         upVotes = intent.getLongExtra("UPVOTES", 0);
+
+
+        post = new Post();
+        post.setFeedItemId(postId);
+        post.setType(FeedItem.POST);
+        post.setUserId(publisherId);
+        post.setUserName(publisherName);
     }
 
 

@@ -385,7 +385,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
     private void overflowListener(AnswerHolder answerHolder, User publisher, Answer answer) {
-        answerHolder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher, OverflowType.POST_ANS_CRACK));
+        answerHolder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, publisher, OverflowType.POST_ANS_CRACK, answer));
     }
 
     private void answererProfileListener(final AnswerHolder answerHolder, final User publisher, final String postId) {
