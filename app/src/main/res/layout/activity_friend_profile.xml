@@ -86,17 +86,26 @@
                 app:layout_constraintTop_toBottomOf="@+id/description" />
 
             <TextView
-                android:id="@+id/edit_profile"
+                android:id="@+id/followOr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="14dp"
                 android:text="Following"
-                android:textColor="@color/com_facebook_blue"
+                android:textColor="#1da1f2"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/description" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:background="@drawable/ic_baseline_how_to_reg_24px"
+                android:backgroundTint="#1da1f2"
+                app:layout_constraintEnd_toStartOf="@id/followOr"
                 app:layout_constraintTop_toBottomOf="@+id/description" />
 
             <!--style="@style/edit_profile_btn"-->
@@ -109,7 +118,7 @@
                 android:background="#ccddff"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edit_profile" />
+                app:layout_constraintTop_toBottomOf="@+id/followOr" />
 
             <TextView
                 android:id="@+id/credentials"

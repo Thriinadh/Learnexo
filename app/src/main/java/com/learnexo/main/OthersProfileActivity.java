@@ -118,9 +118,7 @@ public class OthersProfileActivity extends AppCompatActivity {
                 String total = docSize + " Following";
 
                 SpannableStringBuilder sb = new SpannableStringBuilder(total);
-
-                StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD);
-                sb.setSpan(bss, 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                 sb.setSpan(new ForegroundColorSpan(Color.BLACK), 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
                 following.setText(sb);
@@ -141,7 +139,6 @@ public class OthersProfileActivity extends AppCompatActivity {
                     total = docSize + " Follower";
 
                 SpannableStringBuilder sb = new SpannableStringBuilder(total);
-
                 sb.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                 sb.setSpan(new ForegroundColorSpan(Color.BLACK), 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 

@@ -31,7 +31,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getGroupCount() {
+        if (_listDataHeader != null)
         return this._listDataHeader.size();
+        else
+            return 0;
     }
 
     @Override

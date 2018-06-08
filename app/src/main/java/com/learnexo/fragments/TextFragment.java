@@ -11,14 +11,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.main.NonScrollExpandableListView;
 import com.learnexo.main.R;
+import com.learnexo.model.video.Branch;
+import com.learnexo.model.video.Subject;
+import com.learnexo.model.video.VideoLesson;
+import com.learnexo.model.video.chapter.Chapter;
+import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class TextFragment extends Fragment {
 
@@ -27,6 +38,10 @@ public class TextFragment extends Fragment {
     List<String> listDataHeader;
     Map<String, List<String>> listDataChild;
     private NestedScrollView nestedScroll;
+
+    List<String> list;
+
+    FirebaseUtil mFirebaseUtil=new FirebaseUtil();
 
     public TextFragment() {
         // Required empty public constructor
@@ -50,11 +65,32 @@ public class TextFragment extends Fragment {
         expListView = view.findViewById(R.id.lvExp);
 
         // preparing list data
-        prepareListData();
+       // prepareListData();
+
+        listDataHeader = new ArrayList<>();
+        listDataChild = new HashMap<>();
+        mFirebaseUtil.mFirestore.collection("branches").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+                for (DocumentSnapshot documentSnapshot : documents) {
+                    String branchName = (String) documentSnapshot.get("branchName");
+
+                    listDataHeader.add(branchName);
+
+                    Object subjectMap = documentSnapshot.get("subjectMap");
+                    Map<String, Object> map = (Map<String, Object>) subjectMap;
+                    Set<String> subjectNames = map.keySet();
+
+                    listDataChild.put(branchName, new ArrayList<>(subjectNames));
+                }
+            }
+        });
 
         listAdapter = new ListAdapter(getActivity(), listDataHeader, listDataChild);
 
         // setting list adapter
+        if (expListView != null)
         expListView.setAdapter(listAdapter);
 
         Display newDisplay = Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay();
