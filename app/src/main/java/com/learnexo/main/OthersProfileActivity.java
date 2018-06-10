@@ -189,7 +189,6 @@ public class OthersProfileActivity extends AppCompatActivity {
                 if (followOr.getText().toString().equals("Following")) {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(OthersProfileActivity.this);
-
                 builder.setTitle("Unfollow");
                 builder.setMessage("Stop following " + publisherName + " ?");
                 builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
