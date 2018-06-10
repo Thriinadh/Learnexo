@@ -14,9 +14,12 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.cocosw.bottomsheet.BottomSheet;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.main.R;
 import com.learnexo.model.core.OverflowType;
 import com.learnexo.model.feed.FeedItem;
@@ -36,6 +39,7 @@ public class OverflowMenuListener implements View.OnClickListener {
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     private String mCurrentUserId=FirebaseUtil.getCurrentUserId();
     private String mPublisherId;
+    private static final String TAG=OverflowMenuListener.class.getSimpleName();
 
     List<String> menuItems =new ArrayList<>();
     List<Drawable> iconList =new ArrayList<>();
@@ -46,8 +50,6 @@ public class OverflowMenuListener implements View.OnClickListener {
         mPublisherId=publisher.getUserId();
         publisherName=feedItem.getUserName();
 
-        checkIfFollowing(mPublisherId, mCurrentUserId);
-
         if(overflowType==OverflowType.POST_ANS_CRACK) {
             menuItems.add("Follow "+publisherName);//toggle
             menuItems.add("Turn ON Notifications");//toggle
@@ -57,6 +59,8 @@ public class OverflowMenuListener implements View.OnClickListener {
             //menuItems.add("Thank");
             //menuItems.add("Suggest Edits");
             //menuItems.add("Log");
+
+            checkIfAlreadyFollowing(mPublisherId, mCurrentUserId);
 
             Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px);
             iconList.add(drawable);
@@ -100,10 +104,24 @@ public class OverflowMenuListener implements View.OnClickListener {
         }
     }
 
-    private void checkIfFollowing(String publisherId, String currentUserId) {
+    private void checkIfAlreadyFollowing(String publisherId, String currentUserId) {
         DocumentReference docRef = mFirebaseUtil.mFirestore.collection("users").document(currentUserId).collection("following").document(publisherId);
-        //ApiFuture<DocumentSnapshot> future = docRef.get();//
-
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        menuItems.set(0,"Un Follow "+publisherName);
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
     }
 
     @Override
@@ -120,8 +138,10 @@ public class OverflowMenuListener implements View.OnClickListener {
             public boolean onMenuItemClick(MenuItem item) {
                 CharSequence title = item.getTitle();
                 String strTitle=(String)title;
-                if(strTitle.contains("Follow")&&mPublisherId!=mCurrentUserId){
+                if(strTitle.startsWith("Follow")&&!mPublisherId.equals(mCurrentUserId)){
                     followListener();
+                }else if (strTitle.startsWith("Un Follow")&&!mPublisherId.equals(mCurrentUserId)){
+                    unFollowListener();
                 }
 
 
@@ -170,11 +190,32 @@ public class OverflowMenuListener implements View.OnClickListener {
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(mContext, "SomethingWentWrong", Toast.LENGTH_LONG).show();
+                        Log.d("FeedAdapter", "SomethingWentWrong "+e);
+
+                    }
+                });
+    }
+    private void unFollowListener() {
+
+        mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId)
+                .collection("following").document(mPublisherId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                mFirebaseUtil.mFirestore.collection("users").document(mPublisherId)
+                        .collection("followers").document(mCurrentUserId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(mContext, "You Un followed "+publisher.getFirstName(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
                 Toast.makeText(mContext, "SomethingWentWrong", Toast.LENGTH_LONG).show();
-
                 Log.d("FeedAdapter", "SomethingWentWrong "+e);
 
             }
