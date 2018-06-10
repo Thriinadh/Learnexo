@@ -35,13 +35,13 @@ public class FollowingListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_following_list);
 
-        setupToolbar();
-        setupRecyclerView();
-
         Intent intent = getIntent();
         isFrom = intent.getBooleanExtra("EXTRA_IS_FROM_FOLLOWING", false);
         isFromOthers =intent.getBooleanExtra("EXTRA_IS_FROM_OTHERS_FOLLOWING", false);
         publisherId = intent.getStringExtra("EXTRA_PUBLISHER_ID_OTHERS");
+
+        setupToolbar();
+        setupRecyclerView();
 
         if (isFrom)
             ingORer = "following";

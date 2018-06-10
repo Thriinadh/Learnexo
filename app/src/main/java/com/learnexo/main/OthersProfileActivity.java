@@ -6,21 +6,29 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -31,6 +39,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.elmargomez.typer.Font;
+import com.elmargomez.typer.Typer;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -59,6 +69,10 @@ public class OthersProfileActivity extends AppCompatActivity {
     public static final String EXTRA_PUBLISHER_NAMEE = "com.learnexo.publisher_namee";
     public static final String EXTRA_PUBLISHER_DPP = "com.learnexo.publisher_dpp";
 
+    AppBarLayout appBar;
+    Toolbar mToolbar;
+    CollapsingToolbarLayout collapsing_toolbar;
+
     private TabLayout tabLayout;
     private FrameLayout frameLayout;
     private CircleImageView profileImage;
@@ -85,8 +99,10 @@ public class OthersProfileActivity extends AppCompatActivity {
     private RelativeLayout empRelative;
     private RelativeLayout locationRelative;
 
+    private CircleImageView toolbar_image;
+    private TextView toolbar_title;
+
     private String publisherId;
-   // private String postId;
 
     private String mCurrentUserId=FirebaseUtil.getCurrentUserId();
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
@@ -101,6 +117,49 @@ public class OthersProfileActivity extends AppCompatActivity {
       //  postId = intent.getStringExtra("POST_ID");
         final String publisherName = intent.getStringExtra(EXTRA_PUBLISHER_NAMEE);
         final String publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DPP);
+
+        mToolbar = findViewById(R.id.toolbarr);
+        setSupportActionBar(mToolbar);
+        if(getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+        toolbar_title = findViewById(R.id.toolbar_title);
+        toolbar_image = findViewById(R.id.toolbar_image);
+        collapsing_toolbar = findViewById(R.id.collapsing_toolbar);
+        appBar = findViewById(R.id.appBar);
+
+        appBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = true;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    toolbar_title.setVisibility(View.GONE);
+                    collapsing_toolbar.setTitle(publisherName);
+                    Typeface font = Typer.set(OthersProfileActivity.this).getFont(Font.ROBOTO_MEDIUM);
+                    collapsing_toolbar.setCollapsedTitleTypeface(font);
+                    toolbar_image.setVisibility(View.VISIBLE);
+                    RequestOptions requestOptions = new RequestOptions();
+                    requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+                    Glide.with(getApplicationContext()).load(publisherDP).apply(requestOptions).into(toolbar_image);
+                    isShow = true;
+                } else if(isShow) {
+                    collapsing_toolbar.setTitle(" ");
+                    toolbar_title.setVisibility(View.VISIBLE);
+                    toolbar_image.setVisibility(View.INVISIBLE);
+                    toolbar_title.setText("Profile");
+                    toolbar_title.setTextColor(Color.parseColor("#1da1f2"));
+                    isShow = false;
+                }
+            }
+        });
+
 
         profileImage = findViewById(R.id.profile_image);
         userName = findViewById(R.id.user_name);
@@ -492,6 +551,13 @@ public class OthersProfileActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_other_profile, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
