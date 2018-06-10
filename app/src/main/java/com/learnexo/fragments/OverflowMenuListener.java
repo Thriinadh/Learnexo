@@ -34,7 +34,7 @@ public class OverflowMenuListener implements View.OnClickListener {
     private User publisher;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     private String mCurrentUserId=FirebaseUtil.getCurrentUserId();
-    private String mPublisherId;
+    private String mPublisherId=publisher.getUserId();
 
     List<String> menuItems =new ArrayList<>();
     List<Drawable> iconList =new ArrayList<>();
@@ -44,8 +44,6 @@ public class OverflowMenuListener implements View.OnClickListener {
         this.publisher = publisher;
 
         publisherName=feedItem.getUserName();
-
-
 
         if(overflowType==OverflowType.POST_ANS_CRACK) {
             menuItems.add("Follow "+publisherName);//toggle
@@ -113,7 +111,7 @@ public class OverflowMenuListener implements View.OnClickListener {
             public boolean onMenuItemClick(MenuItem item) {
                 CharSequence title = item.getTitle();
                 String strTitle=(String)title;
-                if(strTitle.contains("Follow")){
+                if(strTitle.contains("Follow")&&mPublisherId!=mCurrentUserId){
                     followListener();
                 }
 
@@ -132,7 +130,6 @@ public class OverflowMenuListener implements View.OnClickListener {
         final Map<String, Object> user = new HashMap<>();
         user.put("firstName", publisher.getFirstName());
         user.put("dpUrl", publisher.getDpUrl());
-        mPublisherId = publisher.getUserId();
         user.put("userId", mPublisherId);
 
         mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId)
@@ -142,7 +139,6 @@ public class OverflowMenuListener implements View.OnClickListener {
                     public void onSuccess(Void aVoid) {
 
                         user.put("firstName", FeedFragment.sName);
-
                         user.put("dpUrl", FeedFragment.sDpUrl);
                         user.put("userId", mCurrentUserId);
 
