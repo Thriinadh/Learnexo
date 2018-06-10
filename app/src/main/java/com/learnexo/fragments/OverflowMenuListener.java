@@ -39,72 +39,172 @@ public class OverflowMenuListener implements View.OnClickListener {
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     private String mCurrentUserId=FirebaseUtil.getCurrentUserId();
     private String mPublisherId;
+    private String mFeedItemId;
     private static final String TAG=OverflowMenuListener.class.getSimpleName();
 
     List<String> menuItems =new ArrayList<>();
     List<Drawable> iconList =new ArrayList<>();
 
     public OverflowMenuListener(Context context, User publisher, OverflowType overflowType, FeedItem feedItem) {
-        mContext = context;
-        this.publisher = publisher;
-        mPublisherId=publisher.getUserId();
-        publisherName=feedItem.getUserName();
+        bindData(context, publisher, feedItem);
+
+        if(mFeedItemId!=null)
+            checkIfAlreadyFollowingFeedItem(mFeedItemId);
 
         if(overflowType==OverflowType.POST_ANS_CRACK) {
-            menuItems.add("Follow "+publisherName);//toggle
-            menuItems.add("Turn ON Notifications");//toggle
-            menuItems.add("Down Vote");//toggle - remove down vote
-            menuItems.add("Report");
-            //menuItems.add("Copy Link");//web
-            //menuItems.add("Thank");
-            //menuItems.add("Suggest Edits");
-            //menuItems.add("Log");
-
-            checkIfAlreadyFollowing(mPublisherId, mCurrentUserId);
-
-            Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px);
-            iconList.add(drawable);
-            drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_notifications_off_24px));
-            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
-            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_notifications_off_24px));
-            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_assignment_24px));
-            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_assignment_24px));
+            buildPostAnsCrackItems();
+            checkIfAlreadyFollowingPublisher(mPublisherId, mCurrentUserId);
         }
         else if(overflowType==OverflowType.QUES_CHALLENGE) {
-            menuItems.add("Up Vote Question");
-            menuItems.add("Add a Comment on Question");// view 1 comment
-            menuItems.add("Down Vote Question");
-            menuItems.add("Share");
-            menuItems.add("Turn On Notifications");
-            menuItems.add("Report");
-            //menuItems.add("Answer Later");
-            //menuItems.add("Answer Anonymously");
-            //menuItems.add("Follow Privately");
-            //menuItems.add("View Status Log");
-            //menuItems.add("Merge Question");
-            //menuItems.add("View Status and Log");
-
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
-            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
-            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
-            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
-            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
-            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
-            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
+            buildQuesChallengeItems();
 
 
         }
     }
 
-    private void checkIfAlreadyFollowing(String publisherId, String currentUserId) {
+
+    @Override
+    public void onClick(View view) {
+
+        BottomSheet.Builder builder = getBuilder();
+
+        itemClickListener(builder);
+
+
+    }
+
+
+    private void bindData(Context context, User publisher, FeedItem feedItem) {
+        mContext = context;
+        this.publisher = publisher;
+        mPublisherId=publisher.getUserId();
+        publisherName=feedItem.getUserName();
+        mFeedItemId=feedItem.getFeedItemId();
+    }
+
+    private void buildQuesChallengeItems() {
+        menuItems.add("Up Vote Question");
+        menuItems.add("Turn ON Notifications");
+        menuItems.add("Add a Comment on Question");// view 1 comment
+        menuItems.add("Down Vote Question");
+        menuItems.add("Share");
+        menuItems.add("Report");
+        //menuItems.add("Answer Later");
+        //menuItems.add("Answer Anonymously");
+        //menuItems.add("Follow Privately");
+        //menuItems.add("View Status Log");
+        //menuItems.add("Merge Question");
+        //menuItems.add("View Status and Log");
+
+        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
+        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
+        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
+        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
+        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
+        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
+        //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
+        //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
+        //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
+        //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
+        //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
+        //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
+    }
+
+    private void buildPostAnsCrackItems() {
+        menuItems.add("Follow "+publisherName);//toggle
+        menuItems.add("Turn ON Notifications");//toggle
+        menuItems.add("Down Vote");//toggle - remove down vote
+        menuItems.add("Report");
+        //menuItems.add("Copy Link");//web
+        //menuItems.add("Thank");
+        //menuItems.add("Suggest Edits");
+        //menuItems.add("Log");
+
+
+        Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px);
+        iconList.add(drawable);
+        drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
+        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
+        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
+        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_notifications_off_24px));
+        //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
+        //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_notifications_off_24px));
+        //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_assignment_24px));
+        //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_assignment_24px));
+    }
+
+
+    private void itemClickListener(BottomSheet.Builder builder) {
+        builder.listener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                CharSequence title = item.getTitle();
+                String strTitle=(String)title;
+                if(strTitle.startsWith("Follow")&&!mPublisherId.equals(mCurrentUserId)){
+                    followListener();
+                }else if (strTitle.startsWith("Un Follow")&&!mPublisherId.equals(mCurrentUserId)){
+                    unFollowListener();
+                }else{
+                    switch (strTitle){
+                        case "Turn ON Notifications":
+                            turnOnNotifications(mCurrentUserId,mPublisherId,mFeedItemId);
+                            break;
+                        case "Turn OFF Notifications":
+                            if(mFeedItemId!=null)
+                            turnOFFNotifications(mCurrentUserId,mFeedItemId);
+                            break;
+
+
+                    }
+
+
+                }
+
+
+
+
+                return true;
+            }
+        });
+    }
+
+    @NonNull
+    private BottomSheet.Builder getBuilder() {
+        final BottomSheet.Builder builder = new BottomSheet.Builder((Activity) mContext);
+        for (int i = 0; i<menuItems.size(); i++) {
+            String s = menuItems.get(i);
+            builder.sheet(i,iconList.get(i), s);
+        }
+        builder.build();
+        builder.show();
+        return builder;
+    }
+
+
+    private void checkIfAlreadyFollowingFeedItem(String feedItemId) {
+        mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId).collection("following_feed_items").document(feedItemId).
+                get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        menuItems.set(1,"Turn OFF Notifications");
+                        iconList.set(1,ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+
+
+            }
+        });
+
+    }
+
+    private void checkIfAlreadyFollowingPublisher(String publisherId, String currentUserId) {
         DocumentReference docRef = mFirebaseUtil.mFirestore.collection("users").document(currentUserId).collection("following").document(publisherId);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -112,8 +212,9 @@ public class OverflowMenuListener implements View.OnClickListener {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         menuItems.set(0,"Un Follow "+publisherName);
+                        iconList.set(0,ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
+
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -124,33 +225,27 @@ public class OverflowMenuListener implements View.OnClickListener {
         });
     }
 
-    @Override
-    public void onClick(View view) {
-
-        BottomSheet.Builder builder = new BottomSheet.Builder((Activity) mContext);
-        for (int i = 0; i<menuItems.size(); i++) {
-             String s = menuItems.get(i);
-             builder.sheet(i,iconList.get(i), s);
-        }
-        builder.build();
-        builder.listener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                CharSequence title = item.getTitle();
-                String strTitle=(String)title;
-                if(strTitle.startsWith("Follow")&&!mPublisherId.equals(mCurrentUserId)){
-                    followListener();
-                }else if (strTitle.startsWith("Un Follow")&&!mPublisherId.equals(mCurrentUserId)){
-                    unFollowListener();
-                }
 
 
-                return true;
-            }
-        });
 
 
-        builder.show();
+
+
+
+    private void turnOFFNotifications(String currentUserId, String feedItemId) {
+        mFirebaseUtil.mFirestore.collection("users").document(currentUserId).collection("following_feed_items").
+                document(feedItemId).delete();
+        Toast.makeText(mContext, "You un followed this item", Toast.LENGTH_SHORT).show();
+    }
+
+    private void turnOnNotifications(String currentUserId, String publisherId, String feedItemId) {
+        Map<String,Object> map=new HashMap<>();
+        map.put("publisherId",publisherId);
+        map.put("feedItemId",feedItemId);
+
+        mFirebaseUtil.mFirestore.collection("users").document(currentUserId).collection("following_feed_items").
+                document(feedItemId).set(map);
+        Toast.makeText(mContext, "Now You are following this item", Toast.LENGTH_SHORT).show();
 
 
     }
@@ -175,8 +270,6 @@ public class OverflowMenuListener implements View.OnClickListener {
                                 .collection("followers").document(mCurrentUserId).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-
-                                //  followTView.setText("Unfollow");
                                 Toast.makeText(mContext, "Now You are following "+publisher.getFirstName(), Toast.LENGTH_SHORT).show();
 
                             }
