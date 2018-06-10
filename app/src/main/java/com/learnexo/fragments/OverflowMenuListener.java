@@ -34,7 +34,7 @@ public class OverflowMenuListener implements View.OnClickListener {
     private User publisher;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     private String mCurrentUserId=FirebaseUtil.getCurrentUserId();
-    private String mPublisherId=publisher.getUserId();
+    private String mPublisherId;
 
     List<String> menuItems =new ArrayList<>();
     List<Drawable> iconList =new ArrayList<>();
@@ -42,7 +42,7 @@ public class OverflowMenuListener implements View.OnClickListener {
     public OverflowMenuListener(Context context, User publisher, OverflowType overflowType, FeedItem feedItem) {
         mContext = context;
         this.publisher = publisher;
-
+        mPublisherId=publisher.getUserId();
         publisherName=feedItem.getUserName();
 
         if(overflowType==OverflowType.POST_ANS_CRACK) {
