@@ -115,8 +115,10 @@ public class AllAnswersActivity extends AppCompatActivity {
                 bindNoOfAns();
                 for(DocumentSnapshot documentSnapshot:documents){
                     Answer answer=documentSnapshot.toObject(Answer.class);
-                    answer.setFeedItemId(documentSnapshot.getId());
-                    mAnswers.add(answer);
+                    if(answer!=null) {
+                        answer.setFeedItemId(documentSnapshot.getId());
+                        mAnswers.add(answer);
+                    }
                 }
                 mAdapter.notifyDataSetChanged();
             }
@@ -172,6 +174,10 @@ public class AllAnswersActivity extends AppCompatActivity {
 
         question = new Question();
         question.setUserId(questionerId);
+        if(is_Challenge==FeedItem.CRACK)
+            question.setType(FeedItem.QUESTION);
+        else
+            question.setType(FeedItem.CHALLENGE);
     }
 
 

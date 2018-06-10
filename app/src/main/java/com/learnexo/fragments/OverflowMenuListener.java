@@ -40,6 +40,7 @@ public class OverflowMenuListener implements View.OnClickListener {
     private String mCurrentUserId=FirebaseUtil.getCurrentUserId();
     private String mPublisherId;
     private String mFeedItemId;
+    private int feedItemType;
     private static final String TAG=OverflowMenuListener.class.getSimpleName();
 
     List<String> menuItems =new ArrayList<>();
@@ -54,12 +55,35 @@ public class OverflowMenuListener implements View.OnClickListener {
         if(overflowType==OverflowType.POST_ANS_CRACK) {
             buildPostAnsCrackItems();
             checkIfAlreadyFollowingPublisher(mPublisherId, mCurrentUserId);
+            if(mFeedItemId!=null)
+                checkIfAlreadyDownVotedFeedItem(mCurrentUserId, mFeedItemId);
         }
         else if(overflowType==OverflowType.QUES_CHALLENGE) {
             buildQuesChallengeItems();
 
-
         }
+    }
+
+    private void checkIfAlreadyDownVotedFeedItem(String currentUserId, String feedItemId) {
+        mFirebaseUtil.mFirestore.collection("users").document(currentUserId).collection("down_votes").
+                document(feedItemId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        menuItems.set(2,"Remove Down Vote");
+                        iconList.set(2,ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+
+            }
+        });
     }
 
 
@@ -67,12 +91,62 @@ public class OverflowMenuListener implements View.OnClickListener {
     public void onClick(View view) {
 
         BottomSheet.Builder builder = getBuilder();
-
         itemClickListener(builder);
 
 
     }
 
+    private void itemClickListener(BottomSheet.Builder builder) {
+        builder.listener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                CharSequence title = item.getTitle();
+                String strTitle=(String)title;
+                if(strTitle.startsWith("Follow")&&!mPublisherId.equals(mCurrentUserId)){
+                    followListener();
+                }else if (strTitle.startsWith("Un Follow")&&!mPublisherId.equals(mCurrentUserId)){
+                    unFollowListener();
+                }else{
+                    switch (strTitle){
+                        case "Turn ON Notifications":
+                            turnOnNotifications(mCurrentUserId,mPublisherId,mFeedItemId);
+                            break;
+                        case "Turn OFF Notifications":
+                            if(mFeedItemId!=null)
+                                turnOFFNotifications(mCurrentUserId,mFeedItemId);
+                            break;
+                        case "Down Vote":
+                            downVote(mPublisherId,mFeedItemId,feedItemType);
+                            break;
+                        case "Remove Down Vote":
+                            removeDownVote(mPublisherId,mFeedItemId,feedItemType);
+                            break;
+
+
+                    }
+
+
+                }
+
+
+
+
+                return true;
+            }
+        });
+    }
+
+    @NonNull
+    private BottomSheet.Builder getBuilder() {
+        final BottomSheet.Builder builder = new BottomSheet.Builder((Activity) mContext);
+        for (int i = 0; i<menuItems.size(); i++) {
+            String s = menuItems.get(i);
+            builder.sheet(i,iconList.get(i), s);
+        }
+        builder.build();
+        builder.show();
+        return builder;
+    }
 
     private void bindData(Context context, User publisher, FeedItem feedItem) {
         mContext = context;
@@ -80,15 +154,16 @@ public class OverflowMenuListener implements View.OnClickListener {
         mPublisherId=publisher.getUserId();
         publisherName=feedItem.getUserName();
         mFeedItemId=feedItem.getFeedItemId();
+        feedItemType=feedItem.getType();
     }
 
     private void buildQuesChallengeItems() {
-        menuItems.add("Up Vote Question");
-        menuItems.add("Turn ON Notifications");
-        menuItems.add("Add a Comment on Question");// view 1 comment
-        menuItems.add("Down Vote Question");
         menuItems.add("Share");
+        menuItems.add("Turn ON Notifications");
         menuItems.add("Report");
+        //menuItems.add("Up Vote Question");
+        //menuItems.add("Add a Comment on Question");// view 1 comment
+        //menuItems.add("Down Vote Question");
         //menuItems.add("Answer Later");
         //menuItems.add("Answer Anonymously");
         //menuItems.add("Follow Privately");
@@ -99,9 +174,9 @@ public class OverflowMenuListener implements View.OnClickListener {
         iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
         iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
         iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
-        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
-        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
-        iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
+        //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
+        //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
+        //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
         //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
         //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
         //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
@@ -134,51 +209,110 @@ public class OverflowMenuListener implements View.OnClickListener {
     }
 
 
-    private void itemClickListener(BottomSheet.Builder builder) {
-        builder.listener(new MenuItem.OnMenuItemClickListener() {
+
+
+    private void removeDownVote(final String publisherId, final String feedItemId, final int feedItemType) {
+        final String path;
+        if(feedItemType==FeedItem.POST)
+            path = "posts";
+        else
+            path="answers";
+
+        mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection(path).document(feedItemId)
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                CharSequence title = item.getTitle();
-                String strTitle=(String)title;
-                if(strTitle.startsWith("Follow")&&!mPublisherId.equals(mCurrentUserId)){
-                    followListener();
-                }else if (strTitle.startsWith("Un Follow")&&!mPublisherId.equals(mCurrentUserId)){
-                    unFollowListener();
-                }else{
-                    switch (strTitle){
-                        case "Turn ON Notifications":
-                            turnOnNotifications(mCurrentUserId,mPublisherId,mFeedItemId);
-                            break;
-                        case "Turn OFF Notifications":
-                            if(mFeedItemId!=null)
-                            turnOFFNotifications(mCurrentUserId,mFeedItemId);
-                            break;
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    Object downVotes1 = documentSnapshot.get("downVotes");
+                    long downVotes=0;
+                    if(downVotes1!=null)
+                        downVotes = (Long) downVotes1;
+                    downVotes=downVotes-1;
+
+                    final Map<String, Object> map= new HashMap();
+                    map.put("downVotes", downVotes);
 
 
-                    }
+                    String path;
+                    if(feedItemType==FeedItem.POST)
+                        path = "posts";
+                    else
+                        path="answers";
 
+                    mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection(path).
+                            document(feedItemId).update(map);
+                    if(path.equals("answers")&&feedItemId!=null)
+                        mFirebaseUtil.mFirestore.collection("questions").document(feedItemId).collection(path).
+                                document(feedItemId).update(map);
+
+                    Map<String,Object> map1=new HashMap<>();
+                    map1.put("publisherId",mPublisherId);
+                    map1.put("feedItemType",feedItemType);
+                    mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId).collection("down_votes").document(feedItemId).delete();
+
+                    Toast.makeText(mContext, "You Removed Down Vote on this item", Toast.LENGTH_SHORT).show();
 
                 }
-
-
-
-
-                return true;
             }
         });
+
+
+
+
     }
 
-    @NonNull
-    private BottomSheet.Builder getBuilder() {
-        final BottomSheet.Builder builder = new BottomSheet.Builder((Activity) mContext);
-        for (int i = 0; i<menuItems.size(); i++) {
-            String s = menuItems.get(i);
-            builder.sheet(i,iconList.get(i), s);
-        }
-        builder.build();
-        builder.show();
-        return builder;
+    private void downVote(final String publisherId, final String feedItemId, final int feedItemType) {
+        final String path;
+        if(feedItemType==FeedItem.POST)
+            path = "posts";
+        else
+            path="answers";
+
+        mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection(path).document(feedItemId)
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    Object downVotes1 = documentSnapshot.get("downVotes");
+                    long downVotes=0;
+                    if(downVotes1!=null)
+                        downVotes = (Long) downVotes1;
+                    downVotes=downVotes+1;
+
+                    final Map<String, Object> map= new HashMap();
+                    map.put("downVotes", downVotes);
+
+
+                    String path;
+                    if(feedItemType==FeedItem.POST)
+                        path = "posts";
+                    else
+                        path="answers";
+
+                    mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection(path).
+                             document(feedItemId).update(map);
+                    if(path.equals("answers")&&feedItemId!=null)
+                        mFirebaseUtil.mFirestore.collection("questions").document(feedItemId).collection(path).
+                                 document(feedItemId).update(map);
+
+                    Map<String,Object> map1=new HashMap<>();
+                    map1.put("publisherId",mPublisherId);
+                    map1.put("feedItemType",feedItemType);
+                    mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId).collection("down_votes").document(feedItemId).set(map1);
+
+                    Toast.makeText(mContext, "You Down Voted this item", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+
+
+
+
     }
+
 
 
     private void checkIfAlreadyFollowingFeedItem(String feedItemId) {

@@ -280,9 +280,9 @@ public class FullAnswerActivity extends AppCompatActivity {
         mAnswer=new Answer();
         mAnswer.setFeedItemId(ansId);
         if(is_crack)
-        mAnswer.setType(FeedItem.CRACK);
+            mAnswer.setType(FeedItem.CRACK);
         else
-        mAnswer.setType(FeedItem.ANSWER);
+            mAnswer.setType(FeedItem.ANSWER);
 
         mAnswer.setUserId(ansPublisherId);
         mAnswer.setUserName(publisherName);
