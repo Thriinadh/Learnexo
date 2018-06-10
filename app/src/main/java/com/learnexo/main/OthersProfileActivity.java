@@ -1,27 +1,32 @@
 package com.learnexo.main;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -32,6 +37,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.UserActivityFragment;
 import com.learnexo.fragments.UserAnswersFragment;
 import com.learnexo.fragments.UserChallengesFragment;
@@ -42,7 +48,9 @@ import com.learnexo.fragments.UserPostsFragment;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -70,6 +78,8 @@ public class OthersProfileActivity extends AppCompatActivity {
 
     private TextView following;
     private TextView followers;
+    private TextView followOr;
+    private ImageView followingIcon;
 
     private RelativeLayout eduRelative;
     private RelativeLayout empRelative;
@@ -78,6 +88,7 @@ public class OthersProfileActivity extends AppCompatActivity {
     private String publisherId;
    // private String postId;
 
+    private String mCurrentUserId=FirebaseUtil.getCurrentUserId();
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
     @Override
@@ -89,7 +100,7 @@ public class OthersProfileActivity extends AppCompatActivity {
         publisherId=intent.getStringExtra("PUBLISHER_ID");
       //  postId = intent.getStringExtra("POST_ID");
         final String publisherName = intent.getStringExtra(EXTRA_PUBLISHER_NAMEE);
-        String publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DPP);
+        final String publisherDP = intent.getStringExtra(EXTRA_PUBLISHER_DPP);
 
         profileImage = findViewById(R.id.profile_image);
         userName = findViewById(R.id.user_name);
@@ -106,6 +117,8 @@ public class OthersProfileActivity extends AppCompatActivity {
         locPlus = findViewById(R.id.imageView9);
         following = findViewById(R.id.following);
         followers = findViewById(R.id.followers);
+        followOr = findViewById(R.id.followOr);
+        followingIcon = findViewById(R.id.followingIcon);
 
         mFirebaseUtil.mFirestore.collection("users").document(publisherId)
                 .collection("following").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -143,6 +156,110 @@ public class OthersProfileActivity extends AppCompatActivity {
                 sb.setSpan(new ForegroundColorSpan(Color.BLACK), 0, length, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
                 followers.setText(sb);
+            }
+        });
+
+        mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId).collection("following")
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+
+                for (DocumentSnapshot documentSnapshot : documents) {
+                    String userId = documentSnapshot.getId();
+                    if (userId.equals(publisherId)) {
+
+                        followOr.setText("Following");
+                        followingIcon.setVisibility(View.VISIBLE);
+
+                    } else {
+
+                        followOr.setText("Follow");
+                        followingIcon.setVisibility(View.INVISIBLE);
+
+                    }
+                }
+
+            }
+        });
+
+        followOr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (followOr.getText().toString().equals("Following")) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(OthersProfileActivity.this);
+
+                builder.setTitle("Unfollow");
+                builder.setMessage("Stop following " + publisherName + " ?");
+                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        followOr.setText("Follow");
+                        followingIcon.setVisibility(View.INVISIBLE);
+                        mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId)
+                                .collection("following").document(publisherId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                                mFirebaseUtil.mFirestore.collection("users").document(publisherId)
+                                        .collection("followers").document(mCurrentUserId).delete();
+
+                            }
+                        });
+                    }
+                });
+                builder.setNegativeButton("NO", null);
+                builder.show();
+            } else {
+
+                    followOr.setText("Following");
+                    followingIcon.setVisibility(View.VISIBLE);
+
+                    final Map<String, Object> user = new HashMap<>();
+                    user.put("firstName", publisherName);
+                    user.put("dpUrl", publisherDP);
+                    user.put("userId", publisherId);
+
+                    mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId)
+                            .collection("following").document(publisherId).set(user)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+
+                                    user.put("firstName", FeedFragment.sName);
+
+                                    user.put("dpUrl", FeedFragment.sDpUrl);
+                                    user.put("userId", mCurrentUserId);
+
+                                    mFirebaseUtil.mFirestore.collection("users").document(publisherId)
+                                            .collection("followers").document(mCurrentUserId).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+
+                                            Toast.makeText(OthersProfileActivity.this, "Now You are following " + publisherName, Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(OthersProfileActivity.this, "SomethingWentWrong", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                            Toast.makeText(OthersProfileActivity.this, "SomethingWentWrong", Toast.LENGTH_LONG).show();
+
+                            Log.d("FeedAdapter", "SomethingWentWrong " + e);
+
+                        }
+                    });
+
+                }
             }
         });
 

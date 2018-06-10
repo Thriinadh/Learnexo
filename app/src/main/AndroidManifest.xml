@@ -78,7 +78,8 @@
         <activity android:name=".GroupsActivity" />
         <activity android:name=".EmpDetailsActivity" />
         <activity android:name=".LocationDetailsActivity" />
-        <activity android:name=".EditDetailsActivity"></activity>
+        <activity android:name=".EditDetailsActivity" />
+        <activity android:name=".FollowingListActivity"></activity>
     </application>
 
 </manifest>
