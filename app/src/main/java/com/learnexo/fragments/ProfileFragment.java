@@ -113,6 +113,7 @@ public class ProfileFragment extends Fragment {
         editDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent intent = new Intent(getActivity(), EditDetailsActivity.class);
                 intent.putExtra("EXTRA_STUDIED_AT", studiedAt);
                 intent.putExtra("EXTRA_POSITION", position);

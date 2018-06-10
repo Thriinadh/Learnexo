@@ -69,5 +69,14 @@ public class EditDetailsActivity extends AppCompatActivity {
             }
         });
 
+        if (studiedAt == null && position == null && location == null && company == null) {
+
+            editEduTView.setVisibility(View.INVISIBLE);
+            editEmpTView.setVisibility(View.INVISIBLE);
+            editLocTView.setText("Add details");
+            editLocTView.setTextSize(18);
+
+        }
+
     }
 }
