@@ -170,7 +170,7 @@ public class LocationDetailsActivity extends AppCompatActivity {
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
             supportActionBar.setDisplayShowHomeEnabled(true);
-            supportActionBar.setTitle("Education details");
+            supportActionBar.setTitle("Location details");
         }
     }
 

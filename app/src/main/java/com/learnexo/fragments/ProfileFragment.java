@@ -37,6 +37,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.main.EditDetailsActivity;
 import com.learnexo.main.EduDetailsActivity;
 import com.learnexo.main.EmpDetailsActivity;
+import com.learnexo.main.FollowingListActivity;
 import com.learnexo.main.LocationDetailsActivity;
 import com.learnexo.main.R;
 import com.learnexo.main.SetupActivity;
@@ -119,6 +120,23 @@ public class ProfileFragment extends Fragment {
                 intent.putExtra("EXTRA_POSITION", position);
                 intent.putExtra("EXTRA_LOCATION", location);
                 intent.putExtra("EXTRA_COMPANY", company);
+                startActivity(intent);
+            }
+        });
+
+        following.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), FollowingListActivity.class);
+                intent.putExtra("EXTRA_IS_FROM_FOLLOWING", true);
+                startActivity(intent);
+            }
+        });
+
+        followers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), FollowingListActivity.class);
                 startActivity(intent);
             }
         });
