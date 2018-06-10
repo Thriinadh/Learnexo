@@ -285,7 +285,7 @@ public class FullAnswerActivity extends AppCompatActivity {
         mAnswer.setType(FeedItem.ANSWER);
 
         mAnswer.setUserId(ansPublisherId);
-        mAnswer.setUserId(publisherName);
+        mAnswer.setUserName(publisherName);
     }
 
     public void bindViewsUpvotes() {
