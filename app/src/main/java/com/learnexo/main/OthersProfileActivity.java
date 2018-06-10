@@ -120,6 +120,29 @@ public class OthersProfileActivity extends AppCompatActivity {
         followOr = findViewById(R.id.followOr);
         followingIcon = findViewById(R.id.followingIcon);
 
+
+        following.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(OthersProfileActivity.this, FollowingListActivity.class);
+                intent.putExtra("EXTRA_IS_FROM_FOLLOWING", true);
+                intent.putExtra("EXTRA_IS_FROM_OTHERS_FOLLOWING", true);
+                intent.putExtra("EXTRA_PUBLISHER_ID_OTHERS", publisherId);
+                startActivity(intent);
+            }
+        });
+
+        followers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(OthersProfileActivity.this, FollowingListActivity.class);
+                intent.putExtra("EXTRA_IS_FROM_OTHERS_FOLLOWING", true);
+                intent.putExtra("EXTRA_PUBLISHER_ID_OTHERS", publisherId);
+                startActivity(intent);
+            }
+        });
+
+
         mFirebaseUtil.mFirestore.collection("users").document(publisherId)
                 .collection("following").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
