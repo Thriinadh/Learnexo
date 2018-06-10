@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.learnexo.main.R;
 import com.learnexo.model.core.OverflowType;
 import com.learnexo.model.feed.FeedItem;
@@ -45,40 +46,42 @@ public class OverflowMenuListener implements View.OnClickListener {
         mPublisherId=publisher.getUserId();
         publisherName=feedItem.getUserName();
 
+        checkIfFollowing(mPublisherId, mCurrentUserId);
+
         if(overflowType==OverflowType.POST_ANS_CRACK) {
             menuItems.add("Follow "+publisherName);//toggle
             menuItems.add("Turn ON Notifications");//toggle
-            menuItems.add("Copy Link");//web
-            menuItems.add("Thank");
-            menuItems.add("Suggest Edits");
-            menuItems.add("Down Vote");
+            menuItems.add("Down Vote");//toggle - remove down vote
             menuItems.add("Report");
-            menuItems.add("Log");
+            //menuItems.add("Copy Link");//web
+            //menuItems.add("Thank");
+            //menuItems.add("Suggest Edits");
+            //menuItems.add("Log");
 
             Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px);
             iconList.add(drawable);
             drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_notifications_off_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_assignment_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_notifications_off_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_assignment_24px));
+            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
+            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_notifications_off_24px));
+            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_assignment_24px));
+            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_assignment_24px));
         }
         else if(overflowType==OverflowType.QUES_CHALLENGE) {
-            menuItems.add("Add a Comment");// view 1 comment
+            menuItems.add("Up Vote Question");
+            menuItems.add("Add a Comment on Question");// view 1 comment
+            menuItems.add("Down Vote Question");
             menuItems.add("Share");
-            menuItems.add("Answer Later");
-            menuItems.add("Answer Anonymously");
-            menuItems.add("Follow Privately");
-            menuItems.add("View Status Log");
             menuItems.add("Turn On Notifications");
             menuItems.add("Report");
-            menuItems.add("Merge Question");
-            menuItems.add("Up Vote Question");
-            menuItems.add("Down Vote Question");
-            menuItems.add("View Status and Log");
+            //menuItems.add("Answer Later");
+            //menuItems.add("Answer Anonymously");
+            //menuItems.add("Follow Privately");
+            //menuItems.add("View Status Log");
+            //menuItems.add("Merge Question");
+            //menuItems.add("View Status and Log");
 
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
@@ -86,15 +89,21 @@ public class OverflowMenuListener implements View.OnClickListener {
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
             iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
-            iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
+            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
+            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_link_24px));
+            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_person_add_24px));
+            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_edit_24px));
+            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
+            //iconList.add(ContextCompat.getDrawable(mContext, R.drawable.ic_outline_delete_24px));
 
 
         }
+    }
+
+    private void checkIfFollowing(String publisherId, String currentUserId) {
+        DocumentReference docRef = mFirebaseUtil.mFirestore.collection("users").document(currentUserId).collection("following").document(publisherId);
+        //ApiFuture<DocumentSnapshot> future = docRef.get();//
+
     }
 
     @Override

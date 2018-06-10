@@ -2,16 +2,14 @@ package com.learnexo.main;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.google.android.gms.tasks.OnSuccessListener;
 
 public class EditDetailsActivity extends AppCompatActivity {
 
@@ -106,6 +104,16 @@ public class EditDetailsActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 // The 'which' argument contains the index position
                                 // of the selected item
+                                if(which==0){
+                                    Intent intent1=new Intent(EditDetailsActivity.this, EduDetailsActivity.class);
+                                    startActivity(intent1);
+                                }else if(which==1){
+                                    Intent intent1=new Intent(EditDetailsActivity.this, EmpDetailsActivity.class);
+                                    startActivity(intent1);
+                                }else {
+                                    Intent intent1=new Intent(EditDetailsActivity.this, LocationDetailsActivity.class);
+                                    startActivity(intent1);
+                                }
                             }
                         });
 
