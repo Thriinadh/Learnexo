@@ -35,8 +35,8 @@ public class TextFragment extends Fragment {
 
     ListAdapter listAdapter;
     NonScrollExpandableListView expListView;
-    List<String> listDataHeader;
-    Map<String, List<String>> listDataChild;
+    List<String> listDataHeader = new ArrayList<>();
+    Map<String, List<String>> listDataChild = new HashMap<>();
     private NestedScrollView nestedScroll;
 
     List<String> list;
@@ -67,8 +67,6 @@ public class TextFragment extends Fragment {
         // preparing list data
        // prepareListData();
 
-        listDataHeader = new ArrayList<>();
-        listDataChild = new HashMap<>();
         mFirebaseUtil.mFirestore.collection("branches").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -84,6 +82,7 @@ public class TextFragment extends Fragment {
 
                     listDataChild.put(branchName, new ArrayList<>(subjectNames));
                 }
+                listAdapter.notifyDataSetChanged();
             }
         });
 

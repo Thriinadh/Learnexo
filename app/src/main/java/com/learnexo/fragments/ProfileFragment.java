@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.learnexo.main.EditDetailsActivity;
 import com.learnexo.main.EduDetailsActivity;
 import com.learnexo.main.EmpDetailsActivity;
 import com.learnexo.main.LocationDetailsActivity;
@@ -56,6 +57,7 @@ public class ProfileFragment extends Fragment {
     private TextView eduDetails;
     private TextView empDetails;
     private TextView livingPlace;
+    private TextView editDetails;
     private Activity mActivity;
 
     private TextView following;
@@ -68,6 +70,11 @@ public class ProfileFragment extends Fragment {
     private ImageView eduPlus;
     private ImageView empPlus;
     private ImageView locPlus;
+
+    String studiedAt;
+    String position;
+    String company;
+    String location;
 
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
@@ -102,6 +109,18 @@ public class ProfileFragment extends Fragment {
 
         fetchFollowing();
         fetchFollowers();
+
+        editDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), EditDetailsActivity.class);
+                intent.putExtra("EXTRA_STUDIED_AT", studiedAt);
+                intent.putExtra("EXTRA_POSITION", position);
+                intent.putExtra("EXTRA_LOCATION", location);
+                intent.putExtra("EXTRA_COMPANY", company);
+                startActivity(intent);
+            }
+        });
 
         return view;
     }
@@ -232,7 +251,7 @@ public class ProfileFragment extends Fragment {
 
                     if(id.equals("eduDetails")){
 
-                        String studiedAt = (String) documentSnapshot.get("studiedAt");
+                        studiedAt = (String) documentSnapshot.get("studiedAt");
 
                         StringBuilder fullDetails = studiedAt!=null? new StringBuilder(studiedAt):new StringBuilder();
                         if(fullDetails.length()>0) fullDetails.append(". ");
@@ -268,12 +287,12 @@ public class ProfileFragment extends Fragment {
 
                     if (id.equals("empDetails")) {
 
-                        String position = (String) documentSnapshot.get("position");
+                        position = (String) documentSnapshot.get("position");
 
                         StringBuilder fullDetails = position!=null? new StringBuilder(position):new StringBuilder();
-                        if(fullDetails.length()>0) fullDetails.append(". ");
+                        if(fullDetails.length()>0) fullDetails.append(" at ");
 
-                        String company = (String) documentSnapshot.get("company");
+                        company = (String) documentSnapshot.get("company");
                         if(company!=null) fullDetails = fullDetails.append(company).append(". ");
 
                         if(fullDetails.length()>0) {
@@ -295,7 +314,7 @@ public class ProfileFragment extends Fragment {
 
                     if (id.equals("locationDetails")) {
 
-                        String location = (String) documentSnapshot.get("location");
+                        location = (String) documentSnapshot.get("location");
                         boolean check = (boolean) documentSnapshot.get("currentStatus");
 
                         StringBuilder fullDetails = (location != null && check) ? new StringBuilder("Lives in "+location) : new StringBuilder();
@@ -418,6 +437,7 @@ public class ProfileFragment extends Fragment {
         locPlus = view.findViewById(R.id.imageView9);
         following = view.findViewById(R.id.following);
         followers = view.findViewById(R.id.followers);
+        editDetails = view.findViewById(R.id.edit_details);
     }
 
     public void replaceFragment(Fragment fragment) {
