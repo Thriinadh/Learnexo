@@ -73,7 +73,11 @@ public class UserAnswersFragment extends Fragment {
                 List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
 
                 for(DocumentSnapshot documentSnapshot:documents){
-                    mAnswers.add(documentSnapshot.toObject(Answer.class));
+                    Answer answer = documentSnapshot.toObject(Answer.class);
+                    if(answer!=null) {
+                        answer.setFeedItemId(documentSnapshot.getId());
+                        mAnswers.add(answer);
+                    }
                 }
                 mAdapter.notifyDataSetChanged();
             }

@@ -1,5 +1,6 @@
 package com.learnexo.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -71,12 +72,34 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             final String timeAgo = convertDateToAgo(question.getPublishTime());
 
             AllQuesHolder allQuesHolder = (AllQuesHolder) holder;
-            allQuesHolder.wireViews();
-            bindQuestion(allQuesHolder, questionn, timeAgo, isChallenge);
+            allQuesHolder.wireViews(question.getNoOfAns(), isChallenge);
+            bindQuestion(allQuesHolder, questionn, timeAgo);
             allQuestionsOverflowListener(allQuesHolder, question);
             questionListener(allQuesHolder, question);
 
+            answerBtnListener(allQuesHolder, question, isChallenge);
+
         }
+    }
+    private void answerBtnListener(AllQuesHolder holder, final Question question, boolean isChallenge) {
+        if(isChallenge)
+            holder.answer.setOnClickListener(answerCrackListener(question, FeedItem.CRACK));
+        else
+            holder.answer.setOnClickListener(answerCrackListener(question, FeedItem.ANSWER));
+
+    }
+
+    @NonNull
+    private View.OnClickListener answerCrackListener(final Question question, final int answerType) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = AnswerActivity.newIntent(mContext, question);
+                intent.putExtra("ANSWER_TYPE", answerType);
+                mContext.startActivity(intent);
+                ((Activity) mContext).overridePendingTransition( R.anim.slide_in_up, R.anim.slide_out_up );
+            }
+        };
     }
     private void questionListener(AllQuesHolder holder, final Question question) {
 
@@ -105,13 +128,9 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         return mQuestions.size();
     }
 
-    private void bindQuestion(@NonNull AllQuesHolder holder, final String question, String timeAgo, boolean isChallenge) {
+    private void bindQuestion(@NonNull AllQuesHolder holder, final String question, String timeAgo) {
         holder.setContent(question);
         holder.setTime(timeAgo);
-        if(isChallenge) {
-            holder.noAnswerYet.setText("No Cracks Yet.");
-            holder.challengeIcon.setVisibility(View.VISIBLE);
-        }
     }
 
     public class AllQuesHolder extends RecyclerView.ViewHolder {
@@ -131,14 +150,37 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             mView = itemView;
         }
 
-        public void wireViews(){
+        public void wireViews(int noOfAns, boolean isChallenge){
             questionContent = mView.findViewById(R.id.questionTView);
             noAnswerYet = mView.findViewById(R.id.noAnswerYet);
             answer = mView.findViewById(R.id.answer);
-            followQues = mView.findViewById(R.id.followQues);
             challengeIcon = mView.findViewById(R.id.imageView2);
+            if(isChallenge) {
+                answer.setText("Crack");
+                challengeIcon.setVisibility(View.VISIBLE);
+            }
+            followQues = mView.findViewById(R.id.followQues);
             answeredTime = mView.findViewById(R.id.postedTime);
             overflowImgView = mView.findViewById(R.id.quesOverFlow);
+
+            if(noOfAns==0) {
+                if(isChallenge)
+                    noAnswerYet.setText("No Cracks Yet.");
+                else
+                    noAnswerYet.setText("No Answers Yet.");
+            }
+            else if(noOfAns==1) {
+                if(isChallenge)
+                    noAnswerYet.setText(noOfAns+ " Crack.");
+                else
+                noAnswerYet.setText(noOfAns+ " Answer.");
+            }
+            else {
+                if(isChallenge)
+                    noAnswerYet.setText(noOfAns+ " Cracks.");
+                else
+                    noAnswerYet.setText(noOfAns+ " Answers.");
+            }
         }
 
         public void setContent(String question) {

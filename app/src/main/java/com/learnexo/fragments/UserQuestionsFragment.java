@@ -74,7 +74,11 @@ public class UserQuestionsFragment extends Fragment {
                 List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
 
                 for(DocumentSnapshot documentSnapshot:documents){
-                    mQuestions.add(documentSnapshot.toObject(Question.class));
+                    Question question = documentSnapshot.toObject(Question.class);
+                    if(question!=null) {
+                        question.setFeedItemId(documentSnapshot.getId());
+                        mQuestions.add(question);
+                    }
                 }
                 mAdapter.notifyDataSetChanged();
             }

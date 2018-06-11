@@ -70,10 +70,13 @@ public class UserChallengesFragment extends Fragment {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-                int totalChallenges = documents.size();
 
                 for(DocumentSnapshot documentSnapshot:documents){
-                    mChallenges.add(documentSnapshot.toObject(Question.class));
+                    Question question = documentSnapshot.toObject(Question.class);
+                    if(question!=null) {
+                        question.setFeedItemId(documentSnapshot.getId());
+                        mChallenges.add(question);
+                    }
 
                 }
                 mAdapter.notifyDataSetChanged();

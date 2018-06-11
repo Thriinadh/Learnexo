@@ -68,7 +68,11 @@ public class UserPostsFragment extends Fragment {
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
                 for(DocumentSnapshot documentSnapshot:documents){
-                    mPosts.add(documentSnapshot.toObject(Post.class));
+                    Post post = documentSnapshot.toObject(Post.class);
+                    if(post!=null) {
+                        post.setFeedItemId(documentSnapshot.getId());
+                        mPosts.add(post);
+                    }
                 }
                 mAdapter.notifyDataSetChanged();
             }
