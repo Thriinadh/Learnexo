@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -35,6 +37,7 @@ import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.OverflowMenuListener;
 import com.learnexo.model.core.BookMarkType;
 import com.learnexo.model.core.OverflowType;
+import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.likediv.Bookmark;
 import com.learnexo.model.feed.likediv.Comment;
@@ -47,6 +50,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -104,7 +108,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             bindAnswer(answerHolder, itemContent, imagePosted, imageThumb, timeAgo);
             bindAnswererData(answerHolder, publisher);
-            bindViewsUpvotes(answerHolder, views, upVotes, quesId, answerPublisherId, answerId);
+            bindViewsUpvotes(answerHolder, views, upVotes, quesId, answerPublisherId, answerId, answer.isCrack());
 
             commentBtnListener(answerHolder,quesId,answerId, answerId);
             seeAllCommentsListener(answerHolder, quesId, answerId, mComments, commentsAdapter);
@@ -345,42 +349,52 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
     }
 
-    public void bindViewsUpvotes(AnswerHolder answerHolder, long views, long upVotes, String questionId, String answererId, String answerId) {
+    public void bindViewsUpvotes(AnswerHolder answerHolder, long views, long upVotes, String questionId, String answerPublisherId, String answerId, boolean isCrack) {
         try {
             //store it in his activity log
             //generate edge rank
             //notify publisher
             //notify his followers
             answerHolder.LikeBtn.setOnClickListener(
-                    new LikeBtnListener(answerHolder.LikeBtn, answerHolder.likesCount, answerHolder.flag,
-                            answererId, answerId, upVotes, (Activity) mContext, true, questionId)
+                    new UpVoteListener(answerHolder.LikeBtn, answerHolder.likesCount, answerHolder.flag, answerPublisherId, answerId, upVotes, (Activity) mContext, true, questionId, isCrack)
             );
 
-            answerHolder.likesCount.setText(upVotes+" Up votes");
-            if(views==0){
-                views=1;
-                answerHolder.viewsText.setText("1 View");
-            }else{
-                answerHolder.viewsText.setText(views+ " Views");
-            }
+            views = bindViews(answerHolder, views, upVotes);
 
-
-            views = views+1;
-            Map<String, Object> map= new HashMap();
-            map.put("views",views);
-
-            mFirebaseUtil.mFirestore.collection("users").
-                    document(answererId).
-                    collection("answers").
-                    document(answerId).update(map);
-            mFirebaseUtil.mFirestore.collection("questions").
-                    document(questionId).
-                    collection("answers").
-                    document(answerId).update(map);
+            new ViewChecker().execute(views,questionId,answerPublisherId,answerId,isCrack);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void incrementViews(long views, String questionId, String answerPublisherId, String answerId, boolean isCrack) {
+        views = views+1;
+        Map<String, Object> map= new HashMap();
+        map.put("views",views);
+
+        mFirebaseUtil.mFirestore.collection("users").document(answerPublisherId).collection("answers").document(answerId).update(map);
+        mFirebaseUtil.mFirestore.collection("questions").document(questionId).collection("answers").document(answerId).update(map);
+
+        Map<String, Object> map1= new HashMap();
+        map1.put("publisherId",answerPublisherId);
+        if(isCrack)
+            map1.put("feedItemType", FeedItem.CRACK);
+        else
+            map1.put("feedItemType", FeedItem.ANSWER);
+
+        mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("views").document(answerId).set(map1);
+    }
+
+    private long bindViews(AnswerHolder answerHolder, long views, long upVotes) {
+        answerHolder.likesCount.setText(upVotes+" Up votes");
+        if(views==0){
+            views=1;
+            answerHolder.viewsText.setText("1 View");
+        }else{
+            answerHolder.viewsText.setText(views+ " Views");
+        }
+        return views;
     }
 
 
@@ -519,5 +533,48 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 
     }
+
+    public class ViewChecker extends AsyncTask<Object,Void,Boolean> {
+        long views;
+        String questionId;
+        String answerPublisherId;
+        String answerId;
+        boolean isCrack;
+
+        @Override
+        protected Boolean doInBackground(Object... objects) {
+            views=(long) objects[0];
+            questionId=(String)objects[1];
+            answerPublisherId=(String)objects[2];
+            answerId=(String)objects[3];
+            isCrack=(boolean)objects[4];
+
+            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("views").
+                    document(answerId).get();
+            DocumentSnapshot documentSnapshot=null;
+            try {
+
+                documentSnapshot = Tasks.await(documentSnapshotTask);
+
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return (documentSnapshot!=null&&documentSnapshot.exists());
+
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isViewed) {
+            super.onPostExecute(isViewed);
+            if(!isViewed)
+                incrementViews(views, questionId, answerPublisherId, answerId, isCrack);
+        }
+    }
+
 
 }

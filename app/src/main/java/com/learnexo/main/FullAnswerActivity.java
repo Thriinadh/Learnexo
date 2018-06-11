@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -23,6 +24,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -45,6 +48,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -85,7 +89,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     private String tag;
     private String questionerId;
     private String ansPublisherId;
-    private String ansId;
+    private String answerId;
     private String posTime;
     private String postData;
     private String imagePosted;
@@ -167,7 +171,7 @@ public class FullAnswerActivity extends AppCompatActivity {
                     Object bookMarkItemId = documentSnapshot.get("bookMarkItemId");
                     bookMarkItemIdd = (String) bookMarkItemId;
                     if(bookMarkItemIdd != null) {
-                        if (bookMarkItemIdd.equals(ansId)) {
+                        if (bookMarkItemIdd.equals(answerId)) {
                             Drawable drawable = ContextCompat.getDrawable(FullAnswerActivity.this, R.drawable.ic_baseline_bookmark_24px);
                             full_answer_bookmark.setImageDrawable(drawable);
                             if(drawable != null)
@@ -220,7 +224,7 @@ public class FullAnswerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(FullAnswerActivity.this, CommentsActivity.class);
                 intent.putExtra("EXTRA_QUESTION_ID", questionId);
-                intent.putExtra("EXTRA_FEED_ITEM_ID", ansId);
+                intent.putExtra("EXTRA_FEED_ITEM_ID", answerId);
                 intent.putExtra("EXTRA_PUBLISHER_IDDD", ansPublisherId);
                 intent.putExtra("IF_FROM_FULL_ANSWER_ACTIVITY", flag);
                 startActivity(intent);
@@ -231,7 +235,7 @@ public class FullAnswerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(FullAnswerActivity.this, CommentsActivity.class);
                 intent.putExtra("EXTRA_QUESTION_ID", questionId);
-                intent.putExtra("EXTRA_FEED_ITEM_ID", ansId);
+                intent.putExtra("EXTRA_FEED_ITEM_ID", answerId);
                 intent.putExtra("EXTRA_PUBLISHER_IDDD", ansPublisherId);
                 intent.putExtra("IF_FROM_FULL_ANSWER_ACTIVITY", flag);
                 startActivity(intent);
@@ -262,7 +266,7 @@ public class FullAnswerActivity extends AppCompatActivity {
         Intent intent=getIntent();
         is_crack = intent.getBooleanExtra("IS_CRACK", false);
         ansPublisherId = intent.getStringExtra("ANS_PUBLISHER_ID");
-        ansId = intent.getStringExtra("ANS_ID");
+        answerId = intent.getStringExtra("ANS_ID");
         tag = intent.getStringExtra("TAG");
         questionerId = intent.getStringExtra("QUESTIONER_ID");
         questionData = intent.getStringExtra(EXTRA_QUESTION_CONTENT);
@@ -278,7 +282,7 @@ public class FullAnswerActivity extends AppCompatActivity {
         upVotes=intent.getLongExtra("ANS_UPVOTES",0);
 
         mAnswer=new Answer();
-        mAnswer.setFeedItemId(ansId);
+        mAnswer.setFeedItemId(answerId);
         if(is_crack)
             mAnswer.setType(FeedItem.CRACK);
         else
@@ -295,35 +299,45 @@ public class FullAnswerActivity extends AppCompatActivity {
             //notify publisher
             //notify his followers
             LikeBtn.setOnClickListener(
-                    new LikeBtnListener(LikeBtn,likesCount,flag, ansPublisherId, ansId, upVotes,FullAnswerActivity.this, true, null)
+                    new UpVoteListener(LikeBtn,likesCount,flag, ansPublisherId, answerId, upVotes,FullAnswerActivity.this, true, null, is_crack)
             );
 
-            likesCount.setText(upVotes+" Up votes");
-            if(views==0){
-                views=1;
-                viewsText.setText("1 View");
-            }else{
-                viewsText.setText(views+ " Views");
-            }
-
-
-            long viewss = views+1;
-            Map<String, Object> map= new HashMap();
-            map.put("views",viewss);
-
-            mFirebaseUtil.mFirestore.collection("users").
-                    document(ansPublisherId).
-                    collection("answers").
-                    document(ansId).update(map);
-            mFirebaseUtil.mFirestore.collection("questions").
-                    document(questionId).
-                    collection("answers").
-                    document(ansId).update(map);
+            bindViews();
+            new ViewChecker().execute();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    private void incrementViews() {
+        long viewss = views+1;
+        Map<String, Object> map= new HashMap();
+        map.put("views",viewss);
+
+        mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId).collection("answers").document(answerId).update(map);
+        mFirebaseUtil.mFirestore.collection("questions").document(questionId).collection("answers").document(answerId).update(map);
+
+        Map<String, Object> map1= new HashMap();
+        map1.put("publisherId",ansPublisherId);
+        if(is_crack)
+            map1.put("feedItemType", FeedItem.CRACK);
+        else
+            map1.put("feedItemType", FeedItem.ANSWER);
+
+        mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("views").document(answerId).set(map1);
+    }
+
+    private void bindViews() {
+        likesCount.setText(upVotes+" Up votes");
+        if(views==0){
+            views=1;
+            viewsText.setText("1 View");
+        }else{
+            viewsText.setText(views+ " Views");
+        }
+    }
+
     private void bindData(String posTime, String postData, String imagePosted, String imageThumb) {
         questionAsked.setText(questionData);
         fullText.setText(postData);
@@ -415,7 +429,7 @@ public class FullAnswerActivity extends AppCompatActivity {
                 seeAllComments.setEnabled(false);
 
                 mFirebaseUtil.mFirestore.collection("questions").document(questionId).collection("answers").
-                        document(ansId).collection("comments").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        document(answerId).collection("comments").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
@@ -448,7 +462,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     private void insertIncrementBookMark() {
         Bookmark bookmark = new Bookmark();
         bookmark.setBookMarkerId(mUserId);
-        bookmark.setBookMarkItemId(ansId);
+        bookmark.setBookMarkItemId(answerId);
         bookmark.setBookMarkType(BookMarkType.ANSWER);
         bookmark.setPublisherId(ansPublisherId);
 
@@ -457,7 +471,7 @@ public class FullAnswerActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
-                        .collection("answers").document(ansId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        .collection("answers").document(answerId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
@@ -469,10 +483,10 @@ public class FullAnswerActivity extends AppCompatActivity {
                         map.put("bookMarks", noOfBookMarks);
 
                         mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
-                                .collection("answers").document(ansId).update(map);
+                                .collection("answers").document(answerId).update(map);
 
                         mFirebaseUtil.mFirestore.collection("questions").document(questionId)
-                                .collection("answers").document(ansId).update(map);
+                                .collection("answers").document(answerId).update(map);
 
                     }
                 });
@@ -483,7 +497,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     private void deleteDecrementBookMark() {
         CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users")
                 .document(mUserId).collection("bookmarks");
-        Query query = collectionReference.whereEqualTo("bookMarkItemId", ansId);
+        Query query = collectionReference.whereEqualTo("bookMarkItemId", answerId);
 
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -499,7 +513,7 @@ public class FullAnswerActivity extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
 
                         mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
-                                .collection("answers").document(ansId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                .collection("answers").document(answerId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
 
@@ -511,10 +525,10 @@ public class FullAnswerActivity extends AppCompatActivity {
                                 map.put("bookMarks", noOfBookMarks);
 
                                 mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
-                                        .collection("answers").document(ansId).update(map);
+                                        .collection("answers").document(answerId).update(map);
 
                                 mFirebaseUtil.mFirestore.collection("questions").document(questionId)
-                                        .collection("answers").document(ansId).update(map);
+                                        .collection("answers").document(answerId).update(map);
 
                             }
                         });
@@ -526,9 +540,44 @@ public class FullAnswerActivity extends AppCompatActivity {
         });
     }
 
+    public class ViewChecker extends AsyncTask<String,Void,Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+
+            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("views").
+                    document(answerId).get();
+            DocumentSnapshot documentSnapshot=null;
+            try {
+
+                documentSnapshot = Tasks.await(documentSnapshotTask);
+
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return (documentSnapshot!=null&&documentSnapshot.exists());
+
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isViewed) {
+            super.onPostExecute(isViewed);
+            if(!isViewed)
+                incrementViews();
+        }
+    }
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         seeAllComments.setEnabled(true);
     }
+
+
 }

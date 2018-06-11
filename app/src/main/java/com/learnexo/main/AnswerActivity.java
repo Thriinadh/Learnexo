@@ -78,7 +78,7 @@ public class AnswerActivity extends AppCompatActivity {
     String questionTag;
     String questionerId;
     String question;
-    int ansType;
+    int answerType;
 
 
     private String mUserId = FirebaseUtil.getCurrentUserId();
@@ -154,7 +154,7 @@ public class AnswerActivity extends AppCompatActivity {
 
     private void wireViews() {
         title=findViewById(R.id.textView6);
-        if(ansType==FeedItem.CRACK)
+        if(answerType ==FeedItem.CRACK)
             title.setText("Crack");
 
         mProgressBar = findViewById(R.id.progressbaar);
@@ -172,7 +172,7 @@ public class AnswerActivity extends AppCompatActivity {
 
     private void initQuesFromIntent() {
         Intent intent = getIntent();
-        ansType=intent.getIntExtra("ANSWER_TYPE",-1);
+        answerType =intent.getIntExtra("ANSWER_TYPE",-1);
         quesContent = intent.getStringExtra(EXTRA_QUESTION_CONTENT);
         questionId = intent.getStringExtra(EXTRA_QUESTION_ID);
         questionTag = intent.getStringExtra(EXTRA_QUESTION_TAG);
@@ -242,13 +242,19 @@ public class AnswerActivity extends AppCompatActivity {
     }
 
     private void prepareAnswer(String content) {
-            answer.setType(ansType);
+            answer.setType(answerType);
             answer.setContent(content);
             answer.setUserId(mUserId);
             answer.setUserName(mPublisherName);
             answer.setQuesId(questionId);
             answer.setQuesContent(quesContent);
             answer.setTags(Collections.singletonList(questionTag));
+
+            if(answerType==FeedItem.ANSWER)
+                answer.setCrack(false);
+            else
+                answer.setCrack(true);
+
 
             if(mPublishedImageUri != null) {
                 saveImagetoStorage();

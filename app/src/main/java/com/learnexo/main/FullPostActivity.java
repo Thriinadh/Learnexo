@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -43,6 +46,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -54,6 +58,7 @@ public class FullPostActivity extends AppCompatActivity {
     public static final String EXTRA_IMAGE = "com.learnexo.imageposted";
     public static final String EXTRA_THUMB = "com.learnexo.imagepostedthumb";
     public static final String EXTRA_TIME = "com.learnexo.postedtime";
+    private static final String TAG = FullPostActivity.class.getSimpleName();
 
     private List<Comment> mComments;
     private CommentsAdapter mAdapter;
@@ -95,6 +100,7 @@ public class FullPostActivity extends AppCompatActivity {
     boolean gag = true;
 
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
+    private String mCurrentUserId=FirebaseUtil.getCurrentUserId();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +135,7 @@ public class FullPostActivity extends AppCompatActivity {
     }
 
     private void checkIfBookMarkAdded() {
-        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+        mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId)
                 .collection("bookmarks").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -287,7 +293,7 @@ public class FullPostActivity extends AppCompatActivity {
 
     private void deleteDecrementBookMark() {
         CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users")
-                .document(FirebaseUtil.getCurrentUserId()).collection("bookmarks");
+                .document(mCurrentUserId).collection("bookmarks");
         Query query = collectionReference.whereEqualTo("bookMarkItemId", postId);
 
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -298,7 +304,7 @@ public class FullPostActivity extends AppCompatActivity {
                 DocumentSnapshot documentSnapshot = documents.get(0);
                 String id = documentSnapshot.getId();
 
-                mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+                mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId)
                         .collection("bookmarks").document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -315,8 +321,7 @@ public class FullPostActivity extends AppCompatActivity {
                                 Map<String, Object> map = new HashMap<>();
                                 map.put("bookMarks", noOfBookMarks);
 
-                                mFirebaseUtil.mFirestore.collection("users").document(publisherId)
-                                        .collection("posts").document(postId).update(map);
+                                mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").document(postId).update(map);
 
                             }
                         });
@@ -330,12 +335,12 @@ public class FullPostActivity extends AppCompatActivity {
 
     private void insertIncrementBookMark() {
         Bookmark bookmark = new Bookmark();
-        bookmark.setBookMarkerId(FirebaseUtil.getCurrentUserId());
+        bookmark.setBookMarkerId(mCurrentUserId);
         bookmark.setBookMarkItemId(postId);
         bookmark.setBookMarkType(BookMarkType.POST);
         bookmark.setPublisherId(publisherId);
 
-        mFirebaseUtil.mFirestore.collection("users").document(FirebaseUtil.getCurrentUserId())
+        mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId)
                 .collection("bookmarks").add(bookmark).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
@@ -351,8 +356,7 @@ public class FullPostActivity extends AppCompatActivity {
                         Map<String, Object> map = new HashMap<>();
                         map.put("bookMarks", noOfBookMarks);
 
-                        mFirebaseUtil.mFirestore.collection("users").document(publisherId)
-                                .collection("posts").document(postId).update(map);
+                        mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").document(postId).update(map);
 
                     }
                 });
@@ -386,30 +390,42 @@ public class FullPostActivity extends AppCompatActivity {
             //notify publisher
             //notify his followers
             fullPostLikeBtn.setOnClickListener(
-                    new LikeBtnListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,FullPostActivity.this, false, null)
+                    new UpVoteListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,FullPostActivity.this, false, null, false)
             );
 
-            likesCount.setText(upVotes+" Up votes");
-            if(views==0){
-                views=1;
-                viewsText.setText("1 View");
-            }else{
-                viewsText.setText(views+ " Views");
-            }
+            bindViews();
 
-            views = views+1;
-            Map<String, Object> map= new HashMap();
-            map.put("views",views);
-
-            mFirebaseUtil.mFirestore.collection("users").
-                    document(publisherId).
-                    collection("posts").
-                    document(postId).update(map);
+            new ViewChecker().execute();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    private void bindViews() {
+        likesCount.setText(upVotes+" Up votes");
+        if(views==0){
+            views=1;
+            viewsText.setText("1 View");
+        }else{
+            viewsText.setText(views+ " Views");
+        }
+    }
+
+    private void incrementViews() {
+        views = views+1;
+        Map<String, Object> map= new HashMap();
+        map.put("views",views);
+
+        mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").document(postId).update(map);
+
+        Map<String, Object> map1= new HashMap();
+        map1.put("publisherId",publisherId);
+        map1.put("feedItemType", FeedItem.POST);
+
+        mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId).collection("views").document(postId).set(map1);
+    }
+
 
     private void bindData(String imagePosted, String imageThumb, String publisherName, String posTime, String publisherDP) {
         fullText.setText(postData);
@@ -478,6 +494,38 @@ public class FullPostActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_THUMB, imageThumb);
         }
         return intent;
+    }
+
+    public class ViewChecker extends AsyncTask<String,Void,Boolean>{
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+
+            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId).collection("views").
+                    document(postId).get();
+            DocumentSnapshot documentSnapshot=null;
+            try {
+
+                documentSnapshot = Tasks.await(documentSnapshotTask);
+
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return (documentSnapshot!=null&&documentSnapshot.exists());
+
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isViewed) {
+            super.onPostExecute(isViewed);
+            if(!isViewed)
+                incrementViews();
+        }
     }
 
 }
