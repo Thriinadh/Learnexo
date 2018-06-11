@@ -14,10 +14,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.learnexo.main.R;
-import com.learnexo.main.UserAnswersRecyclerAdapter;
-import com.learnexo.main.UserChallengesRecyclerAdapter;
 import com.learnexo.main.UserQuesRecyclerAdapter;
-import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.util.FirebaseUtil;
 
@@ -27,7 +24,7 @@ import java.util.List;
 public class UserChallengesFragment extends Fragment {
 
     private List<Question> mChallenges;
-    private UserChallengesRecyclerAdapter mAdapter;
+    private UserQuesRecyclerAdapter mAdapter;
     FirebaseUtil mFirebaseUtil = new FirebaseUtil();
 
     private String otherProfileId;
@@ -85,14 +82,12 @@ public class UserChallengesFragment extends Fragment {
     }
 
     private void setupRecyclerView(View view) {
-//        mChallenges = new ArrayList<>();
-//        mAdapter = new UserChallengesRecyclerAdapter(mChallenges);
 
         mChallenges = new ArrayList<>();
         if(isOtherProfile)
-            mAdapter = new UserChallengesRecyclerAdapter(mChallenges, true, otherProfileId, otherProfileName, otherProfileDP);
+            mAdapter = new UserQuesRecyclerAdapter(mChallenges, true, otherProfileId, otherProfileName, otherProfileDP, true);
         else
-            mAdapter = new UserChallengesRecyclerAdapter(mChallenges, false, null, null, null);
+            mAdapter = new UserQuesRecyclerAdapter(mChallenges, false, null, null, null, true);
 
         RecyclerView profilePostsRecyclerView = view.findViewById(R.id.profilePostsRecycler);
         profilePostsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

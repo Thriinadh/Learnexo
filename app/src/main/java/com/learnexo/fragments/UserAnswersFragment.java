@@ -83,9 +83,9 @@ public class UserAnswersFragment extends Fragment {
     private void setupRecyclerView(View view) {
         mAnswers = new ArrayList<>();
         if(isOtherProfile)
-            mAdapter = new UserAnswersRecyclerAdapter(mAnswers, true, otherProfileId, otherProfileName, otherProfileDP);
+            mAdapter = new UserAnswersRecyclerAdapter(mAnswers, true, otherProfileId, otherProfileName, otherProfileDP, false);
         else
-            mAdapter = new UserAnswersRecyclerAdapter(mAnswers, false, null, null, null);
+            mAdapter = new UserAnswersRecyclerAdapter(mAnswers, false, null, null, null, false);
 
         RecyclerView profilePostsRecyclerView = view.findViewById(R.id.profilePostsRecycler);
         profilePostsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

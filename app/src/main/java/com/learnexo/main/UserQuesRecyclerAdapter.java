@@ -1,6 +1,7 @@
 package com.learnexo.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.OverflowMenuListener;
 import com.learnexo.model.core.OverflowType;
+import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.question.Question;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
@@ -31,16 +33,19 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     private String otherProfileId;
     private String otherProfileName;
     private String otherProfileDP;
+    private boolean isChallenge;
 
     User mUser;
 
-    public UserQuesRecyclerAdapter(List<Question> mFeedItems, boolean isOtherProfile, String otherProfileId, String otherProfileName, String  otherProfileDP) {
+    public UserQuesRecyclerAdapter(List<Question> mFeedItems, boolean isOtherProfile, String otherProfileId,
+                                   String otherProfileName, String  otherProfileDP, boolean isChallenge) {
         this.mQuestions = mFeedItems;
 
         this.isOtherProfile=isOtherProfile;
         this.otherProfileId=otherProfileId;
         this.otherProfileName=otherProfileName;
         this.otherProfileDP=otherProfileDP;
+        this.isChallenge=isChallenge;
         if(isOtherProfile)
             mUser = new User(otherProfileId,otherProfileName,otherProfileDP);
         else
@@ -63,19 +68,35 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (question != null) {
 
             final String questionn = question.getContent();
-            final String imagePosted = question.getImgUrl();
-            final String imageThumb = question.getImgThmb();
             final String timeAgo = convertDateToAgo(question.getPublishTime());
 
             AllQuesHolder allQuesHolder = (AllQuesHolder) holder;
             allQuesHolder.wireViews();
-            bindPost(allQuesHolder, questionn, imagePosted, imageThumb, timeAgo);
-            allPostsOverflowListener(allQuesHolder, question);
+            bindQuestion(allQuesHolder, questionn, timeAgo, isChallenge);
+            allQuestionsOverflowListener(allQuesHolder, question);
+            questionListener(allQuesHolder, question);
 
         }
     }
+    private void questionListener(AllQuesHolder holder, final Question question) {
 
-    private void allPostsOverflowListener(AllQuesHolder allQuesHolder, Question question) {
+        if(isChallenge)
+            holder.questionContent.setOnClickListener(questionChallengeListener(question, FeedItem.CRACK));
+        else
+            holder.questionContent.setOnClickListener(questionChallengeListener(question, FeedItem.ANSWER));
+    }
+    @NonNull
+    private View.OnClickListener questionChallengeListener(final Question question, final int answerType) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = AllAnswersActivity.newIntent(mContext, question);
+                intent.putExtra("ANSWER_TYPE", answerType);
+                mContext.startActivity(intent);
+            }
+        };
+    }
+    private void allQuestionsOverflowListener(AllQuesHolder allQuesHolder, Question question) {
         allQuesHolder.overflowImgView.setOnClickListener(new OverflowMenuListener(mContext, mUser, OverflowType.QUES_CHALLENGE,question));
     }
 
@@ -84,16 +105,20 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         return mQuestions.size();
     }
 
-    private void bindPost(@NonNull AllQuesHolder holder, final String question, final String publishedImg, final String publishedThumb, String timeAgo) {
+    private void bindQuestion(@NonNull AllQuesHolder holder, final String question, String timeAgo, boolean isChallenge) {
         holder.setContent(question);
         holder.setTime(timeAgo);
+        if(isChallenge) {
+            holder.noAnswerYet.setText("No Cracks Yet.");
+            holder.challengeIcon.setVisibility(View.VISIBLE);
+        }
     }
 
     public class AllQuesHolder extends RecyclerView.ViewHolder {
 
         private View mView;
 
-        private TextView questionTView;
+        private TextView questionContent;
         private TextView noAnswerYet;
         private TextView answer;
         private TextView followQues;
@@ -107,7 +132,7 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
         public void wireViews(){
-            questionTView = mView.findViewById(R.id.questionTView);
+            questionContent = mView.findViewById(R.id.questionTView);
             noAnswerYet = mView.findViewById(R.id.noAnswerYet);
             answer = mView.findViewById(R.id.answer);
             followQues = mView.findViewById(R.id.followQues);
@@ -117,7 +142,7 @@ public class UserQuesRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
         public void setContent(String question) {
-            questionTView.setText(question);
+            questionContent.setText(question);
 
         }
 

@@ -13,9 +13,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.learnexo.fragments.FeedFragment;
 import com.learnexo.fragments.OverflowMenuListener;
 import com.learnexo.model.core.OverflowType;
@@ -23,9 +20,7 @@ import com.learnexo.model.feed.post.Post;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -72,15 +67,24 @@ public class UserPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         Post post = mPosts.get(position);
 
         if (post != null) {
+            User publisher =new User();
+            publisher.setUserId(post.getUserId());
+            publisher.setFirstName(FeedFragment.sName);
+            publisher.setDpUrl(FeedFragment.sDpUrl);
 
-            final String itemContent = post.getContent();
-            final String imagePosted = post.getImgUrl();
-            final String imageThumb = post.getImgThmb();
-            final String timeAgo = convertDateToAgo(post.getPublishTime());
+            String itemContent = post.getContent();
+            String imagePosted = post.getImgUrl();
+            String imageThumb = post.getImgThmb();
+            String feedItemId = post.getFeedItemId();
+            String timeAgo = convertDateToAgo(post.getPublishTime());
+            long views = post.getViews();
+            long upVotes = post.getUpVotes();
+            long comments = post.getComments();
 
             AllPostsHolder allPostsHolder = (AllPostsHolder) holder;
             allPostsHolder.wireViews();
             bindPost(allPostsHolder, itemContent, imagePosted, imageThumb, timeAgo);
+            postContentListener(allPostsHolder,itemContent, imagePosted, imageThumb, timeAgo, publisher, feedItemId, comments, views, upVotes);
             allPostsOverflowListener(allPostsHolder, post);
 
         }
@@ -95,37 +99,19 @@ public class UserPostsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         return mPosts.size();
     }
 
-    private void postContentListener(@NonNull AllPostsHolder holder, final String itemContent, final String imagePosted, final String imageThumb, final String timeAgo, final User publisher, final String postId) {
-        holder.postContent.setOnClickListener(new View.OnClickListener() {
+    private void postContentListener(AllPostsHolder allPostsHolder, final String itemContent, final String imagePosted, final String imageThumb,
+                                     final String timeAgo, final User publisher, final String postId,
+                                     final long comments, final long views, final long upVotes) {
+        allPostsHolder.postContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").
-                        document(publisher.getUserId()).collection("posts").document(postId).get();
 
-                documentSnapshotTask.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            DocumentSnapshot documentSnapshot = task.getResult();
-                            Object views = documentSnapshot.get("views");
-                            long viewss=0;
-                            if(views!=null)
-                                viewss = ((Long) views).longValue()+1;
-                            Map<String, Object> map= new HashMap();
-                            map.put("views",viewss);
-
-                            Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, imageThumb, timeAgo, publisher, postId, 0, 0, 0);
-                            mContext.startActivity(intent);
-
-                            mFirebaseUtil.mFirestore.collection("users").document(publisher.getUserId()).collection("posts").
-                                    document(postId).update(map);
-
-                        }
-                    }
-                });
-
+        Intent intent = FullPostActivity.newIntent(mContext, itemContent, imagePosted, imageThumb, timeAgo, publisher, postId, comments, views, upVotes);
+        mContext.startActivity(intent);
             }
         });
+
+
     }
 
     private void bindPost(@NonNull AllPostsHolder holder, final String answer, final String publishedImg,

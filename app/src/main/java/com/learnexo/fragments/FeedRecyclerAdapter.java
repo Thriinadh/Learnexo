@@ -243,7 +243,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.answerContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                gotoFullAnswerActivity(itemContent, questionAsked, imagePosted, imageThumb, timeAgo, publisher, questionId, false, tags.get(0), ansId, comments, ansViews, ansUpvotes);
+                gotoFullAnswerActivity(itemContent, questionAsked, imagePosted, imageThumb, timeAgo, publisher,
+                        questionId, false, tags.get(0), ansId, comments, ansViews, ansUpvotes);
             }
         });
     }
@@ -345,15 +346,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void questionListener(@NonNull QuestionHolder holder, final Question question) {
         holder.quesContent.setOnClickListener(
-                questionCrackListener(question, FeedItem.ANSWER));
+                questionChallengeListener(question, FeedItem.ANSWER));
     }
     private void challengeListener(@NonNull ChallengeHolder holder, final Question question) {
         holder.challengeContent.setOnClickListener(
-                questionCrackListener(question, FeedItem.CRACK));
+                questionChallengeListener(question, FeedItem.CRACK));
     }
 
     @NonNull
-    private View.OnClickListener questionCrackListener(final Question question, final int answerType) {
+    private View.OnClickListener questionChallengeListener(final Question question, final int answerType) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {

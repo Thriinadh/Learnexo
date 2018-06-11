@@ -82,9 +82,9 @@ public class UserCracksFragment extends Fragment {
     private void setupRecyclerView(View view) {
         mAnswers = new ArrayList<>();
         if(isOtherProfile)
-            mAdapter = new UserAnswersRecyclerAdapter(mAnswers, true, otherProfileId, otherProfileName, otherProfileDP);
+            mAdapter = new UserAnswersRecyclerAdapter(mAnswers, true, otherProfileId, otherProfileName, otherProfileDP, true);
         else
-            mAdapter = new UserAnswersRecyclerAdapter(mAnswers, false, null, null, null);
+            mAdapter = new UserAnswersRecyclerAdapter(mAnswers, false, null, null, null, true);
 
 
         RecyclerView profilePostsRecyclerView = view.findViewById(R.id.profilePostsRecycler);
