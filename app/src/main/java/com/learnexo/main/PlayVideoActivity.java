@@ -62,6 +62,8 @@ public class PlayVideoActivity extends AppCompatActivity {
     Map<String, List<String>> listDataChild=new LinkedHashMap<>();
 
     private NestedScrollView nestedScroll;
+    private boolean isDestroyed;
+    private boolean isPaused;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,12 +156,14 @@ public class PlayVideoActivity extends AppCompatActivity {
                 if (isPlaying) {
                     videoView.pause();
                     isPlaying = false;
+                    isPaused=true;
                     playBtn.setImageResource(R.drawable.ic_outline_play_circle_outline_24px);
                     playBtn.setColorFilter(Color.WHITE);
                     mediaControlsRelative.setVisibility(View.VISIBLE);
                     progressRelative.setVisibility(View.INVISIBLE);
 
                 } else {
+                    isPaused=false;
                     videoView.start();
                     isPlaying = true;
                     playBtn.setImageResource(R.drawable.ic_outline_pause_circle_outline);
@@ -276,17 +280,24 @@ public class PlayVideoActivity extends AppCompatActivity {
         isPlaying = false;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isDestroyed=true;
+    }
+
     public class VideoProgress extends AsyncTask<Void, Object, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
-            do {
-                if (isPlaying) {
+            while (true){
+                if(!isPaused&&!isDestroyed&&isPlaying)
                     current = videoView.getCurrentPosition() / 1000;
                     int currentPercent = current*100/duration;
                     String currentString = String.format("%02d:%02d", current / 60, current % 60);
                     publishProgress(currentPercent, currentString);
-                }
-            } while (videoProgress.getProgress() <= 100);
+                    if(videoProgress.getProgress() ==100 ||isDestroyed)
+                        break;
+            }
             return null;
         }
 

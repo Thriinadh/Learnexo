@@ -533,10 +533,10 @@ public class FullAnswerActivity extends AppCompatActivity {
         });
     }
 
-    public class ViewChecker extends AsyncTask<String,Void,Boolean> {
+    public class ViewChecker extends AsyncTask<Void,Void,Boolean> {
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Boolean doInBackground(Void... voids) {
 
             Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("views").
                     document(answerId).get();
@@ -566,10 +566,10 @@ public class FullAnswerActivity extends AppCompatActivity {
     }
 
 
-    public class UpVoteChecker extends AsyncTask<String,Void,Boolean>{
+    public class UpVoteChecker extends AsyncTask<Void,Void,Boolean>{
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Boolean doInBackground(Void... voids) {
 
             Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("up_votes").
                     document(answerId).get();

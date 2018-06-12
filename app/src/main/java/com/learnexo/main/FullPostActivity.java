@@ -511,10 +511,10 @@ public class FullPostActivity extends AppCompatActivity {
         return intent;
     }
 
-    public class ViewChecker extends AsyncTask<String,Void,Boolean>{
+    public class ViewChecker extends AsyncTask<Void,Void,Boolean>{
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Boolean doInBackground(Void... voids) {
 
             Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId).collection("views").
                     document(postId).get();
@@ -544,10 +544,10 @@ public class FullPostActivity extends AppCompatActivity {
     }
 
 
-    public class UpVoteChecker extends AsyncTask<String,Void,Boolean>{
+    public class UpVoteChecker extends AsyncTask<Void,Void,Boolean>{
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Boolean doInBackground(Void... voids) {
 
             Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId).collection("up_votes").
                     document(postId).get();
