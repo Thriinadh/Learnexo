@@ -76,8 +76,8 @@ public class FullPostActivity extends AppCompatActivity {
     private long views;
     private long comments;
     private boolean flag = true;
-    private boolean upVoteFlag = true;
     private boolean gag = true;
+    private boolean upVoteFlag = true;
     private boolean upVoteGag = true;
 
     private CircleImageView profileImage;
@@ -98,8 +98,8 @@ public class FullPostActivity extends AppCompatActivity {
     private ImageView overFlowBtn;
 
     private ImageView full_post_bookmark;
-    String bookMarkItemIdd;
-    RotateAnimation anim;
+    private String bookMarkItemIdd;
+    private RotateAnimation anim;
 
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
     private String mCurrentUserId=FirebaseUtil.getCurrentUserId();
@@ -132,9 +132,34 @@ public class FullPostActivity extends AppCompatActivity {
 
         bookMarkBtnListener();
 
+        likeBtnListener();
+
         checkIfBookMarkAdded();
 
 
+    }
+
+    private void likeBtnListener() {
+        fullPostLikeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                fullPostLikeBtn.startAnimation(anim);
+
+                if(upVoteFlag) {
+                    Drawable drawable = ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_likeblue_icon);
+                    fullPostLikeBtn.setImageDrawable(drawable);
+                    likesCount.setText(upVotes+1+" Up votes");
+                    upVoteFlag = false;
+                } else {
+                    Drawable drawable = ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_like_icn);
+                    fullPostLikeBtn.setImageDrawable(drawable);
+                    likesCount.setText(upVotes-1+" Up votes");
+                    upVoteFlag = true;
+                }
+
+            }
+        });
     }
 
     private void createAnim() {
@@ -189,26 +214,6 @@ public class FullPostActivity extends AppCompatActivity {
                     if(drawable != null)
                     drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
                     flag = true;
-                }
-
-            }
-        });
-        fullPostLikeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                fullPostLikeBtn.startAnimation(anim);
-
-                if(upVoteFlag) {
-                    Drawable drawable = ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_likeblue_icon);
-                    fullPostLikeBtn.setImageDrawable(drawable);
-                    likesCount.setText(upVotes+1+" Up votes");
-                    upVoteFlag = false;
-                } else {
-                    Drawable drawable = ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_like_icn);
-                    fullPostLikeBtn.setImageDrawable(drawable);
-                    likesCount.setText(upVotes-1+" Up votes");
-                    upVoteFlag = true;
                 }
 
             }
@@ -470,7 +475,7 @@ public class FullPostActivity extends AppCompatActivity {
 
             //upVoteListeners();
 
-            bindViews();
+            //bindViews();
 
             new ViewChecker().execute();
             new UpVoteChecker().execute();
@@ -489,30 +494,28 @@ public class FullPostActivity extends AppCompatActivity {
 
     }
 
-    private void upVoteListeners(Boolean isUpVoted) {
-        fullPostLikeBtn.setOnClickListener(
-                new UpVoteListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,
-                        FullPostActivity.this, false, null, false, isUpVoted)
-        );
-    }
+//    private void upVoteListeners(Boolean isUpVoted) {
+//        fullPostLikeBtn.setOnClickListener(
+//                new UpVoteListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,
+//                        FullPostActivity.this, false, null, false, isUpVoted)
+//        );
+//    }
 
-    private void bindViews() {
+    private void bindViews(boolean isViewed) {
         likesCount.setText(upVotes+" Up votes");
-        if(views==0){
-            viewsText.setText("1 View");
-        }else{
+        if(isViewed) {
             viewsText.setText(views+ " Views");
-        }
+        }else
+            viewsText.setText(views+1+ " Views");
     }
 
     private void incrementViews() {
-        views = views+1;
-        Map<String, Object> map= new HashMap();
-        map.put("views",views);
+        Map<String, Object> map= new HashMap<>();
+        map.put("views",views+1);
 
         mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").document(postId).update(map);
 
-        Map<String, Object> map1= new HashMap();
+        Map<String, Object> map1= new HashMap<>();
         map1.put("publisherId",publisherId);
         map1.put("feedItemType", FeedItem.POST);
 
@@ -616,6 +619,7 @@ public class FullPostActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean isViewed) {
             super.onPostExecute(isViewed);
+            bindViews(isViewed);
             if(!isViewed)
                 incrementViews();
         }
@@ -661,22 +665,25 @@ public class FullPostActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+        handleBookMark();
+        handleUpVote();
+    }
+
+    private void handleBookMark() {
         if(!flag && gag) {
             insertIncrementBookMark();
         } else if(flag && !gag) {
             deleteDecrementBookMark();
         }
+    }
 
+    private void handleUpVote() {
         if(!upVoteFlag && upVoteGag) {
             insertIncrementUpVote();
         } else if(upVoteFlag && !upVoteGag) {
             deleteDecrementUpVote();
         }
-
-
-
-
-
     }
 
     @Override

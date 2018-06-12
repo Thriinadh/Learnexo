@@ -79,7 +79,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     private ImageView overFlowBtn;
     private ImageView postedImage;
     private ImageView challengeIcon;
-    private ImageView LikeBtn;
+    private ImageView likeBtn;
     private CircleImageView profileImage;
     private CircleImageView commentsImage;
     private RecyclerView commentsRecycler;
@@ -105,7 +105,10 @@ public class FullAnswerActivity extends AppCompatActivity {
     private boolean is_crack;
     private boolean flag = true;
     private boolean gag = true;
+    private boolean upVoteFlag = true;
+    private boolean upVoteGag = true;
 
+    private RotateAnimation anim;
     private Answer mAnswer;
 
     FirebaseUtil mFirebaseUtil=new FirebaseUtil();
@@ -115,6 +118,7 @@ public class FullAnswerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_answer);
         hangleIntent();
+        createAnim();
 
         wireViews();
         setupCommentsRecycler();
@@ -133,11 +137,42 @@ public class FullAnswerActivity extends AppCompatActivity {
 
         checkIfAlreadyBookMarked();
         bookMarkBtnListener();
+        likeBtnListener();
 
     }
 
     private void overflowListener(User publisher) {
         overFlowBtn.setOnClickListener(new OverflowMenuListener(this, publisher, OverflowType.POST_ANS_CRACK,mAnswer));
+    }
+
+    private void createAnim() {
+        anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim.setInterpolator(new LinearInterpolator());
+        anim.setRepeatCount(0);
+        anim.setDuration(300);
+    }
+
+    private void likeBtnListener() {
+        likeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                likeBtn.startAnimation(anim);
+
+                if(upVoteFlag) {
+                    Drawable drawable = ContextCompat.getDrawable(FullAnswerActivity.this, R.drawable.post_likeblue_icon);
+                    likeBtn.setImageDrawable(drawable);
+                    likesCount.setText(upVotes+1+" Up votes");
+                    upVoteFlag = false;
+                } else {
+                    Drawable drawable = ContextCompat.getDrawable(FullAnswerActivity.this, R.drawable.post_like_icn);
+                    likeBtn.setImageDrawable(drawable);
+                    likesCount.setText(upVotes-1+" Up votes");
+                    upVoteFlag = true;
+                }
+
+            }
+        });
     }
 
     private void viewAllAnswersListener() {
@@ -192,11 +227,6 @@ public class FullAnswerActivity extends AppCompatActivity {
         full_answer_bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                anim.setInterpolator(new LinearInterpolator());
-                anim.setRepeatCount(0);
-                anim.setDuration(300);
 
                 full_answer_bookmark.startAnimation(anim);
 
@@ -301,7 +331,7 @@ public class FullAnswerActivity extends AppCompatActivity {
 
             //upVoteListener();
 
-            bindViews();
+            //bindViews();
             new ViewChecker().execute();
             new UpVoteChecker().execute();
 
@@ -310,21 +340,28 @@ public class FullAnswerActivity extends AppCompatActivity {
         }
     }
 
-    private void upVoteListener(Boolean isUpVoted) {
-        LikeBtn.setOnClickListener(
-                new UpVoteListener(LikeBtn,likesCount,flag, ansPublisherId, answerId, upVotes,FullAnswerActivity.this, true, null, is_crack, isUpVoted)
-        );
+    private void handleIfUpVoted() {
+        likeBtn.setImageDrawable(ContextCompat.getDrawable(FullAnswerActivity.this, R.drawable.post_likeblue_icon));
+        upVoteFlag = false;
+        upVoteGag = false;
+
     }
 
+//    private void upVoteListener(Boolean isUpVoted) {
+//        likeBtn.setOnClickListener(
+//                new UpVoteListener(likeBtn,likesCount,flag, ansPublisherId, answerId, upVotes,FullAnswerActivity.this,
+//                        true, null, is_crack, isUpVoted)
+//        );
+//    }
+
     private void incrementViews() {
-        long viewss = views+1;
-        Map<String, Object> map= new HashMap();
-        map.put("views",viewss);
+        Map<String, Object> map= new HashMap<>();
+        map.put("views",views+1);
 
         mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId).collection("answers").document(answerId).update(map);
         mFirebaseUtil.mFirestore.collection("questions").document(questionId).collection("answers").document(answerId).update(map);
 
-        Map<String, Object> map1= new HashMap();
+        Map<String, Object> map1= new HashMap<>();
         map1.put("publisherId",ansPublisherId);
         if(is_crack)
             map1.put("feedItemType", FeedItem.CRACK);
@@ -334,14 +371,12 @@ public class FullAnswerActivity extends AppCompatActivity {
         mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("views").document(answerId).set(map1);
     }
 
-    private void bindViews() {
+    private void bindViews(Boolean isViewed) {
         likesCount.setText(upVotes+" Up votes");
-        if(views==0){
-            views=1;
-            viewsText.setText("1 View");
-        }else{
+        if(isViewed) {
             viewsText.setText(views+ " Views");
-        }
+        }else
+            viewsText.setText(views+1+ " Views");
     }
 
     private void bindData(String posTime, String postData, String imagePosted, String imageThumb) {
@@ -369,7 +404,7 @@ public class FullAnswerActivity extends AppCompatActivity {
     private void wireViews() {
         viewsText = findViewById(R.id.viewsText);
         likesCount = findViewById(R.id.likesCount);
-        LikeBtn = findViewById(R.id.full_post_like);
+        likeBtn = findViewById(R.id.full_post_like);
         viewAllAns = findViewById(R.id.viewAllAns);
         questionAsked = findViewById(R.id.questionAsked);
         fullText = findViewById(R.id.full_text);
@@ -559,6 +594,7 @@ public class FullAnswerActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean isViewed) {
             super.onPostExecute(isViewed);
+            bindViews(isViewed);
             if(!isViewed)
                 incrementViews();
         }
@@ -591,20 +627,106 @@ public class FullAnswerActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean isUpVoted) {
             super.onPostExecute(isUpVoted);
-
-            upVoteListener(isUpVoted);
-
+            if(isUpVoted)
+                handleIfUpVoted();
+            //upVoteListener(isUpVoted);
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
+        handleBookMark();
+        handleUpVote();
+    }
+
+    private void handleUpVote() {
+        if(!upVoteFlag && upVoteGag) {
+            insertIncrementUpVote();
+        } else if(upVoteFlag && !upVoteGag) {
+            deleteDecrementUpVote();
+        }
+    }
+
+    private void handleBookMark() {
         if(!flag && gag) {
             insertIncrementBookMark();
         } else if(flag && !gag) {
             deleteDecrementBookMark();
         }
+    }
+
+    private void deleteDecrementUpVote() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("up_votes").document(answerId).
+                        delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
+                                .collection("answers").document(answerId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                long upVotes = (long) documentSnapshot.get("upVotes");
+
+                                upVotes = upVotes - 1;
+
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("upVotes", upVotes);
+
+                                mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId).collection("answers").document(answerId).update(map);
+
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    private void insertIncrementUpVote() {
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Map<String, Object> map1= new HashMap<>();
+                map1.put("publisherId",ansPublisherId);
+
+                if(is_crack)
+                    map1.put("feedItemType", FeedItem.CRACK);
+                else
+                    map1.put("feedItemType", FeedItem.ANSWER);
+
+                mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("up_votes").document(answerId).set(map1).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId)
+                                .collection("answers").document(answerId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                long upVotes = (long) documentSnapshot.get("upVotes");
+
+                                upVotes = upVotes + 1;
+
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("upVotes", upVotes);
+
+                                mFirebaseUtil.mFirestore.collection("users").document(ansPublisherId).collection("answers").document(answerId).update(map);
+
+                            }
+                        });
+                    }
+                });
+
+            }
+        });
+
+
+
     }
 
     @Override
