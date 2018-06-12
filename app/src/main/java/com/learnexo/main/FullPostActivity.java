@@ -77,6 +77,7 @@ public class FullPostActivity extends AppCompatActivity {
     private long views;
     private long comments;
     private boolean flag = true;
+    private boolean gag = true;
 
     private CircleImageView profileImage;
     private CircleImageView commentsImage;
@@ -97,7 +98,6 @@ public class FullPostActivity extends AppCompatActivity {
 
     private ImageView full_post_bookmark;
     String bookMarkItemIdd;
-    boolean gag = true;
 
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
     private String mCurrentUserId=FirebaseUtil.getCurrentUserId();
@@ -389,17 +389,32 @@ public class FullPostActivity extends AppCompatActivity {
             //generate edge rank
             //notify publisher
             //notify his followers
-            fullPostLikeBtn.setOnClickListener(
-                    new UpVoteListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,FullPostActivity.this, false, null, false)
-            );
+
+            //upVoteListeners();
 
             bindViews();
 
             new ViewChecker().execute();
+            new UpVoteChecker().execute();
+
+            //bindUpVote();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void bindUpVote() {
+        fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_likeblue_icon));
+        //flag=false;
+
+    }
+
+    private void upVoteListeners(Boolean isUpVoted) {
+        fullPostLikeBtn.setOnClickListener(
+                new UpVoteListener(fullPostLikeBtn,likesCount,flag, publisherId,postId, upVotes,
+                        FullPostActivity.this, false, null, false, isUpVoted)
+        );
     }
 
     private void bindViews() {
@@ -525,6 +540,42 @@ public class FullPostActivity extends AppCompatActivity {
             super.onPostExecute(isViewed);
             if(!isViewed)
                 incrementViews();
+        }
+    }
+
+
+    public class UpVoteChecker extends AsyncTask<String,Void,Boolean>{
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+
+            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId).collection("up_votes").
+                    document(postId).get();
+            DocumentSnapshot documentSnapshot=null;
+            try {
+
+                documentSnapshot = Tasks.await(documentSnapshotTask);
+
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return (documentSnapshot!=null&&documentSnapshot.exists());
+
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isUpVoted) {
+            super.onPostExecute(isUpVoted);
+            if(isUpVoted)
+                bindUpVote();
+            upVoteListeners(isUpVoted);
+
+
         }
     }
 

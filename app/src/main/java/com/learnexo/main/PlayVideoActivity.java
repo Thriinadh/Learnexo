@@ -52,7 +52,7 @@ public class PlayVideoActivity extends AppCompatActivity {
     private boolean isPlaying = false;
 
     private int current = 0;
-    private int duration = 0;
+    private int duration = 1;
 
     Handler handler;
 
@@ -104,13 +104,13 @@ public class PlayVideoActivity extends AppCompatActivity {
                 @Override
                 public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
 
-                    if (i == mediaPlayer.MEDIA_INFO_BUFFERING_START) {
+                    if (i == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
 
                         progressBarCir.setVisibility(View.VISIBLE);
                         mediaControlsRelative.setVisibility(View.INVISIBLE);
                         progressRelative.setVisibility(View.INVISIBLE);
 
-                    } else if (i == mediaPlayer.MEDIA_INFO_BUFFERING_END) {
+                    } else if (i == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
 
                         progressBarCir.setVisibility(View.INVISIBLE);
                         mediaControlsRelative.setVisibility(View.VISIBLE);
@@ -276,27 +276,27 @@ public class PlayVideoActivity extends AppCompatActivity {
         isPlaying = false;
     }
 
-    public class VideoProgress extends AsyncTask<Void, Integer, Void> {
+    public class VideoProgress extends AsyncTask<Void, Object, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
             do {
                 if (isPlaying) {
                     current = videoView.getCurrentPosition() / 1000;
-                    publishProgress(current);
+                    int currentPercent = current*100/duration;
+                    String currentString = String.format("%02d:%02d", current / 60, current % 60);
+                    publishProgress(currentPercent, currentString);
                 }
             } while (videoProgress.getProgress() <= 100);
             return null;
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
+        protected void onProgressUpdate(Object... values) {
             super.onProgressUpdate(values);
 
             try {
-                int currentPercent = values[0]*100/duration;
-                videoProgress.setProgress(currentPercent);
-                String currentString = String.format("%02d:%02d", values[0] / 60, values[0] % 60);
-                currentDuration.setText(currentString);
+                videoProgress.setProgress((Integer) values[0]);
+                currentDuration.setText((String)values[1]);
             } catch (Exception e) {
                 //Error Handling here...
                 Toast.makeText(PlayVideoActivity.this, "Bazinga", Toast.LENGTH_SHORT).show();

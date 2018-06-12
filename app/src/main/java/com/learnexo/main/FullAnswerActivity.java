@@ -298,16 +298,22 @@ public class FullAnswerActivity extends AppCompatActivity {
             //generate edge rank
             //notify publisher
             //notify his followers
-            LikeBtn.setOnClickListener(
-                    new UpVoteListener(LikeBtn,likesCount,flag, ansPublisherId, answerId, upVotes,FullAnswerActivity.this, true, null, is_crack)
-            );
+
+            //upVoteListener();
 
             bindViews();
             new ViewChecker().execute();
+            new UpVoteChecker().execute();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void upVoteListener(Boolean isUpVoted) {
+        LikeBtn.setOnClickListener(
+                new UpVoteListener(LikeBtn,likesCount,flag, ansPublisherId, answerId, upVotes,FullAnswerActivity.this, true, null, is_crack, isUpVoted)
+        );
     }
 
     private void incrementViews() {
@@ -445,19 +451,6 @@ public class FullAnswerActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        saveUnsaveBookMark();
-    }
-
-    private void saveUnsaveBookMark() {
-        if(!flag && gag) {
-            insertIncrementBookMark();
-        } else if(flag && !gag) {
-            deleteDecrementBookMark();
-        }
-    }
 
     private void insertIncrementBookMark() {
         Bookmark bookmark = new Bookmark();
@@ -572,6 +565,48 @@ public class FullAnswerActivity extends AppCompatActivity {
         }
     }
 
+
+    public class UpVoteChecker extends AsyncTask<String,Void,Boolean>{
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+
+            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("up_votes").
+                    document(answerId).get();
+            DocumentSnapshot documentSnapshot=null;
+            try {
+
+                documentSnapshot = Tasks.await(documentSnapshotTask);
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return (documentSnapshot!=null&&documentSnapshot.exists());
+
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isUpVoted) {
+            super.onPostExecute(isUpVoted);
+
+            upVoteListener(isUpVoted);
+
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(!flag && gag) {
+            insertIncrementBookMark();
+        } else if(flag && !gag) {
+            deleteDecrementBookMark();
+        }
+    }
 
     @Override
     protected void onDestroy() {

@@ -30,12 +30,13 @@ public class UpVoteListener implements View.OnClickListener {
     private Activity mActivity;
     private boolean isAnswer;
     private boolean isCrack;
+    private boolean isUpVoted;
 
     private String questionId;
     private String mCurrentUserId=FirebaseUtil.getCurrentUserId();
 
     public UpVoteListener(ImageView mUpVoteBtn, TextView upVoteView, boolean flag, String publisherId,
-                          String mFeedItemId, long upVotes, Activity activity, boolean isAnswer, String questionId, boolean isCrack) {
+                          String mFeedItemId, long upVotes, Activity activity, boolean isAnswer, String questionId, boolean isCrack, Boolean isUpVoted) {
         this.mUpVoteBtn = mUpVoteBtn;
         this.mUpVoteView = upVoteView;
         this.flag = flag;
@@ -45,19 +46,37 @@ public class UpVoteListener implements View.OnClickListener {
         this.questionId=questionId;
         this.isAnswer=isAnswer;
         this.isCrack=isCrack;
+        this.isUpVoted=isUpVoted;
         mActivity = activity;
     }
 
     @Override
     public void onClick(View view) {
 
-        RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF,
-                0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+
+        RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         anim.setInterpolator(new LinearInterpolator());
         anim.setRepeatCount(0);
         anim.setDuration(300);
 
         mUpVoteBtn.startAnimation(anim);
+
+//        if(flag) {
+//            Drawable drawable = ContextCompat.getDrawable(mActivity, R.drawable.ic_baseline_bookmark_24px);
+//            mUpVoteBtn.setImageDrawable(drawable);
+//            if(drawable != null)
+//                drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
+//            flag = false;
+//        } else {
+//            Drawable drawable = ContextCompat.getDrawable(mActivity, R.drawable.ic_outline_bookmark_border_24px);
+//            mUpVoteBtn.setImageDrawable(drawable);
+//            if(drawable != null)
+//                drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
+//            flag = true;
+//        }
+
+
+
 
         if(flag){
             mUpVoteBtn.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.post_likeblue_icon));

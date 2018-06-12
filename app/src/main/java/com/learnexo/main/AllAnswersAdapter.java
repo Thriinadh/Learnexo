@@ -355,17 +355,23 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             //generate edge rank
             //notify publisher
             //notify his followers
-            answerHolder.LikeBtn.setOnClickListener(
-                    new UpVoteListener(answerHolder.LikeBtn, answerHolder.likesCount, answerHolder.flag, answerPublisherId, answerId, upVotes, (Activity) mContext, true, questionId, isCrack)
-            );
+
+            //upVoteListner(answerHolder, upVotes, questionId, answerPublisherId, answerId, isCrack);
 
             views = bindViews(answerHolder, views, upVotes);
 
             new ViewChecker().execute(views,questionId,answerPublisherId,answerId,isCrack);
+            new UpVoteChecker().execute(answerHolder,upVotes,questionId,answerPublisherId,answerId,isCrack);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void upVoteListner(AnswerHolder answerHolder, long upVotes, String questionId, String answerPublisherId, String answerId, boolean isCrack, Boolean isUpVoted) {
+        answerHolder.LikeBtn.setOnClickListener(
+                new UpVoteListener(answerHolder.LikeBtn, answerHolder.likesCount, answerHolder.flag, answerPublisherId, answerId, upVotes, (Activity) mContext, true, questionId, isCrack, isUpVoted)
+        );
     }
 
     private void incrementViews(long views, String questionId, String answerPublisherId, String answerId, boolean isCrack) {
@@ -573,6 +579,51 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             super.onPostExecute(isViewed);
             if(!isViewed)
                 incrementViews(views, questionId, answerPublisherId, answerId, isCrack);
+        }
+    }
+
+    public class UpVoteChecker extends AsyncTask<Object,Void,Boolean> {
+        AnswerHolder answerHolder;
+        long upVotes;
+        String questionId;
+        String answerPublisherId;
+        String answerId;
+        boolean isCrack;
+
+        @Override
+        protected Boolean doInBackground(Object... objects) {
+            answerHolder=(AnswerHolder) objects[0];
+            upVotes=(long) objects[1];
+            questionId=(String)objects[2];
+            answerPublisherId=(String)objects[3];
+            answerId=(String)objects[4];
+            isCrack=(boolean)objects[5];
+
+            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("up_votes").
+                    document(answerId).get();
+            DocumentSnapshot documentSnapshot=null;
+            try {
+
+                documentSnapshot = Tasks.await(documentSnapshotTask);
+
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return (documentSnapshot!=null&&documentSnapshot.exists());
+
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isUpVoted) {
+            super.onPostExecute(isUpVoted);
+
+            upVoteListner(answerHolder, upVotes, questionId, answerPublisherId, answerId, isCrack,isUpVoted);
+
         }
     }
 
