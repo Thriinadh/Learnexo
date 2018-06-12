@@ -37,6 +37,92 @@
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
+        <RelativeLayout
+            android:id="@+id/mediaControlsRelative"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/skip_previous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_outline_skip_previous_24px"
+                android:backgroundTint="@android:color/white"
+                android:layout_toLeftOf="@+id/pause"
+                android:layout_toStartOf="@+id/pause" />
+
+            <ImageView
+                android:id="@+id/pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp" />
+
+            <ImageView
+                android:id="@+id/skip_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/white"
+                android:background="@drawable/ic_outline_skip_next_24px"
+                android:layout_toRightOf="@id/pause"
+                android:layout_toEndOf="@id/pause" />
+
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBarHor"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true" />
+
+        <RelativeLayout
+            android:id="@+id/progressRelative"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:id="@+id/currentDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0:00"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp" />
+
+            <ProgressBar
+                android:id="@+id/videoProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_toLeftOf="@+id/totalDuration"
+                android:layout_toStartOf="@+id/totalDuration"
+                android:layout_toRightOf="@+id/currentDuration"
+                android:layout_toEndOf="@+id/currentDuration"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp" />
+
+            <TextView
+                android:id="@+id/totalDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0:00"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="12dp"
+                android:layout_marginEnd="12dp" />
+
+        </RelativeLayout>
+
     </android.support.design.widget.CollapsingToolbarLayout>
 
         <RelativeLayout
