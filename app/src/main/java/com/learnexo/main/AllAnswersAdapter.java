@@ -262,7 +262,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             public void onClick(View view) {
                 doAnimation();
 
-                bookmark = new Bookmark(answerId, answerPublisherId, mUserId, BookMarkType.ANSWER);
+                bookmark = new Bookmark(answerId, answerPublisherId, BookMarkType.ANSWER);
                 if(!prevBkMarkedAnsIds.contains(answerId)) {
                     addBookMarks.add(bookmark);
                     prevBkMarkedAnsIds.add(answerId);

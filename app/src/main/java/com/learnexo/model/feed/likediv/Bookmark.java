@@ -18,10 +18,9 @@ public class Bookmark {
     @ServerTimestamp
     private Date bookMarkTime;
     public Bookmark(){}
-    public Bookmark(String bookMarkItemId, String publisherId, String bookMarkerId, BookMarkType bookMarkType) {
+    public Bookmark(String bookMarkItemId, String publisherId, BookMarkType bookMarkType) {
         this.bookMarkItemId = bookMarkItemId;
         this.publisherId = publisherId;
-        this.bookMarkerId = bookMarkerId;
         this.bookMarkType = bookMarkType;
     }
     public String getBookMarkItemId() {

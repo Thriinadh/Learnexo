@@ -72,16 +72,17 @@ public class FullPostActivity extends AppCompatActivity {
     private TextView seeAllComments;
     private TextView commentBtn;
 
-    private Toolbar toolbar;
     private long upVotes;
     private long views;
     private long comments;
     private boolean flag = true;
+    private boolean upVoteFlag = true;
     private boolean gag = true;
+    private boolean upVoteGag = true;
 
     private CircleImageView profileImage;
     private CircleImageView commentsImage;
-    private RecyclerView commentsRecycler;
+
 
     private String publisherId;
     private String postId;
@@ -98,6 +99,7 @@ public class FullPostActivity extends AppCompatActivity {
 
     private ImageView full_post_bookmark;
     String bookMarkItemIdd;
+    RotateAnimation anim;
 
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
     private String mCurrentUserId=FirebaseUtil.getCurrentUserId();
@@ -107,6 +109,7 @@ public class FullPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_post);
         handleIntent();
+        createAnim();
 
         wireViews();
         setupToolbar();
@@ -132,6 +135,13 @@ public class FullPostActivity extends AppCompatActivity {
         checkIfBookMarkAdded();
 
 
+    }
+
+    private void createAnim() {
+        anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim.setInterpolator(new LinearInterpolator());
+        anim.setRepeatCount(0);
+        anim.setDuration(300);
     }
 
     private void checkIfBookMarkAdded() {
@@ -165,12 +175,6 @@ public class FullPostActivity extends AppCompatActivity {
         full_post_bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                anim.setInterpolator(new LinearInterpolator());
-                anim.setRepeatCount(0);
-                anim.setDuration(300);
-
                 full_post_bookmark.startAnimation(anim);
 
                 if(flag) {
@@ -185,6 +189,26 @@ public class FullPostActivity extends AppCompatActivity {
                     if(drawable != null)
                     drawable.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
                     flag = true;
+                }
+
+            }
+        });
+        fullPostLikeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                fullPostLikeBtn.startAnimation(anim);
+
+                if(upVoteFlag) {
+                    Drawable drawable = ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_likeblue_icon);
+                    fullPostLikeBtn.setImageDrawable(drawable);
+                    likesCount.setText(upVotes+1+" Up votes");
+                    upVoteFlag = false;
+                } else {
+                    Drawable drawable = ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_like_icn);
+                    fullPostLikeBtn.setImageDrawable(drawable);
+                    likesCount.setText(upVotes-1+" Up votes");
+                    upVoteFlag = true;
                 }
 
             }
@@ -247,7 +271,7 @@ public class FullPostActivity extends AppCompatActivity {
         mComments = new ArrayList<>();
         mAdapter = new CommentsAdapter(mComments);
 
-        commentsRecycler = findViewById(R.id.commentsRecycler);
+        RecyclerView commentsRecycler = findViewById(R.id.commentsRecycler);
         commentsRecycler.setHasFixedSize(true);
         commentsRecycler.setLayoutManager(new LinearLayoutManager(FullPostActivity.this));
         commentsRecycler.setAdapter(mAdapter);
@@ -275,21 +299,7 @@ public class FullPostActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if(!flag && gag) {
-            insertIncrementBookMark();
-        } else if(flag && !gag) {
-            deleteDecrementBookMark();
-        }
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        seeAllComments.setEnabled(true);
-    }
 
     private void deleteDecrementBookMark() {
         CollectionReference collectionReference = mFirebaseUtil.mFirestore.collection("users")
@@ -333,6 +343,36 @@ public class FullPostActivity extends AppCompatActivity {
         });
     }
 
+    private void deleteDecrementUpVote() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId).collection("up_votes").document(postId).
+                        delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        mFirebaseUtil.mFirestore.collection("users").document(publisherId)
+                                .collection("posts").document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                long upVotes = (long) documentSnapshot.get("upVotes");
+
+                                upVotes = upVotes - 1;
+
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("upVotes", upVotes);
+
+                                mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").document(postId).update(map);
+
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
     private void insertIncrementBookMark() {
         Bookmark bookmark = new Bookmark();
         bookmark.setBookMarkerId(mCurrentUserId);
@@ -362,6 +402,44 @@ public class FullPostActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    private void insertIncrementUpVote() {
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Map<String, Object> map1= new HashMap<>();
+                map1.put("publisherId",publisherId);
+                map1.put("feedItemType", FeedItem.POST);
+
+                mFirebaseUtil.mFirestore.collection("users").document(mCurrentUserId).collection("up_votes").document(postId).set(map1).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        mFirebaseUtil.mFirestore.collection("users").document(publisherId)
+                                .collection("posts").document(postId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                long upVotes = (long) documentSnapshot.get("upVotes");
+
+                                upVotes = upVotes + 1;
+
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("upVotes", upVotes);
+
+                                mFirebaseUtil.mFirestore.collection("users").document(publisherId).collection("posts").document(postId).update(map);
+
+                            }
+                        });
+                    }
+                });
+
+            }
+        });
+
+
+
     }
 
 
@@ -397,16 +475,17 @@ public class FullPostActivity extends AppCompatActivity {
             new ViewChecker().execute();
             new UpVoteChecker().execute();
 
-            //bindUpVote();
+            //handleIfUpVoted();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void bindUpVote() {
+    private void handleIfUpVoted() {
         fullPostLikeBtn.setImageDrawable(ContextCompat.getDrawable(FullPostActivity.this, R.drawable.post_likeblue_icon));
-        //flag=false;
+        upVoteFlag = false;
+        upVoteGag = false;
 
     }
 
@@ -420,7 +499,6 @@ public class FullPostActivity extends AppCompatActivity {
     private void bindViews() {
         likesCount.setText(upVotes+" Up votes");
         if(views==0){
-            views=1;
             viewsText.setText("1 View");
         }else{
             viewsText.setText(views+ " Views");
@@ -484,7 +562,7 @@ public class FullPostActivity extends AppCompatActivity {
     }
 
     private void setupToolbar() {
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if(getSupportActionBar() != null){
             getSupportActionBar().setTitle("Full Post");
@@ -572,11 +650,39 @@ public class FullPostActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean isUpVoted) {
             super.onPostExecute(isUpVoted);
             if(isUpVoted)
-                bindUpVote();
-            upVoteListeners(isUpVoted);
+                handleIfUpVoted();
+            //upVoteListeners(isUpVoted);
 
 
         }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(!flag && gag) {
+            insertIncrementBookMark();
+        } else if(flag && !gag) {
+            deleteDecrementBookMark();
+        }
+
+        if(!upVoteFlag && upVoteGag) {
+            insertIncrementUpVote();
+        } else if(upVoteFlag && !upVoteGag) {
+            deleteDecrementUpVote();
+        }
+
+
+
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        seeAllComments.setEnabled(true);
     }
 
 }

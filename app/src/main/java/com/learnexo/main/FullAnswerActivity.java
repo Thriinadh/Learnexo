@@ -454,7 +454,6 @@ public class FullAnswerActivity extends AppCompatActivity {
 
     private void insertIncrementBookMark() {
         Bookmark bookmark = new Bookmark();
-        bookmark.setBookMarkerId(mUserId);
         bookmark.setBookMarkItemId(answerId);
         bookmark.setBookMarkType(BookMarkType.ANSWER);
         bookmark.setPublisherId(ansPublisherId);
