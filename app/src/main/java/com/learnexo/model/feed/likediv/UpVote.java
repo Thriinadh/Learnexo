@@ -16,7 +16,16 @@ public class UpVote {
         this.publisherId = publisherId;
         this.upVoteType = upVoteType;
     }
+
     public UpVote(){}
+
+    public BookMarkType getUpVoteType() {
+        return upVoteType;
+    }
+
+    public void setUpVoteType(BookMarkType upVoteType) {
+        this.upVoteType = upVoteType;
+    }
 
     public String getFeedItemId() {
         return feedItemId;
@@ -62,6 +71,7 @@ public class UpVote {
         UpVote upVote = (UpVote) o;
 
         return upVote.feedItemId.equals(feedItemId) &&
+                upVote.upVoteType.name().equals(upVoteType.name()) &&
                 upVote.publisherId.equals(publisherId);
     }
 
@@ -69,6 +79,7 @@ public class UpVote {
     public int hashCode() {
         int result = 17;
         result = 31 * result + feedItemId.hashCode();
+        result = 31 * result + upVoteType.name().hashCode();
         result = 31 * result + publisherId.hashCode();
         return result;
     }
