@@ -1,26 +1,30 @@
 package com.learnexo.main;
 
-import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.NonNull;
+import android.provider.MediaStore;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -29,8 +33,10 @@ import com.learnexo.fragments.ExpandableListAdapter;
 import com.learnexo.model.video.Subject;
 import com.learnexo.model.video.VideoLesson;
 import com.learnexo.model.video.chapter.Chapter;
+import com.learnexo.util.FirebaseUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,25 +44,16 @@ import java.util.Map;
 public class PlayVideoActivity extends AppCompatActivity {
 
     private VideoView videoView;
+    private MediaController mediaControls;
+    private String url;
+    private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     private Toolbar mToolbar;
+    private ImageView expandText;
+    private TextView overviewText;
 
-    private ImageView playBtn;
-    private TextView currentDuration;
-    private ProgressBar videoProgress;
     private ProgressBar progressBarCir;
-    private TextView totalDuration;
-    private RelativeLayout mediaControlsRelative;
-    private RelativeLayout progressRelative;
 
-    private Uri videoUri;
-
-    private boolean isPlaying = false;
-
-    private int current = 0;
-    private int duration = 1;
-    private int current1;
-
-    Handler handler;
+    int current = 0;
 
     ExpandableListAdapter listAdapter;
     NonScrollExpandableListView expListView;
@@ -64,121 +61,16 @@ public class PlayVideoActivity extends AppCompatActivity {
     Map<String, List<String>> listDataChild=new LinkedHashMap<>();
 
     private NestedScrollView nestedScroll;
-    private boolean isDestroyed;
-    private boolean isPaused;
-    private boolean isMinimized;
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_play_video);
-        setUpToolBar();
 
-        wireViews();
-        setUpVideoView();
-
-        new VideoProgress().execute();
-
-        playBtnListener();
-        onCompleteListener();
-        onTouchListener();
-
-        setVideoLessons();
-        setUpScrollViewNAdapter();
-    }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        videoView.requestFocus();
-        if (current1 > 0) {
-            videoView.seekTo(current1);
-        } else {
-            // Skipping to 1 shows the first frame of the video.
-            videoView.seekTo(1);
-        }
-        videoView.start();
-        isPlaying = true; //set it only after video starts
-        progressBarCir.setVisibility(View.INVISIBLE);
-        isMinimized=false;
-        new VideoProgress().execute();
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        current1 = videoView.getCurrentPosition();
-        isPlaying = false;
-        isMinimized=true;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        isDestroyed=true;
-    }
-
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        outState.putInt("CURRENT", videoView.getCurrentPosition());
-//    }
-//
-//    @Override
-//    public void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        //we use onRestoreInstanceState in order to play the video playback from the stored position
-//        current = savedInstanceState.getInt("CURRENT");
-//        videoView.seekTo(current);
-//    }
-
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            View decorView = getWindow().getDecorView();
-            int uiOptions = 0;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-            }
-            decorView.setSystemUiVisibility(uiOptions);
-        } else {
-            View decorView = getWindow().getDecorView();
-            int uiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
-            decorView.setSystemUiVisibility(uiOptions);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_other_profile, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    private void setUpScrollViewNAdapter() {
-        nestedScroll = findViewById(R.id.nestedScroll);
-        if(nestedScroll!=null)
-            nestedScroll.setNestedScrollingEnabled(true);
-
-        expListView = findViewById(R.id.ExpListView);
-        listAdapter = new ExpandableListAdapter(PlayVideoActivity.this, listDataHeader, listDataChild);
-
-        if(expListView != null) {
-            // setting list adapter
-            expListView.setAdapter(listAdapter);
-
-            for (int i = 0; i < listAdapter.getGroupCount(); i++)
-                expListView.expandGroup(i);
-        }
-    }
-
-    @NonNull
-    private void setVideoLessons() {
         Intent intent= getIntent();
         Subject subject = (Subject) intent.getSerializableExtra("EXTRA_EXTRA_SUBJECT");
 
@@ -204,130 +96,12 @@ public class PlayVideoActivity extends AppCompatActivity {
                 listDataChild.put(chapterName, chapterVideos);
             }
         }
+
+
         Toast.makeText(PlayVideoActivity.this, subject.getSubjectName(), Toast.LENGTH_SHORT).show();
-    }
 
-    private void onTouchListener() {
-        videoView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-
-                if (!isPlaying) {
-                    mediaControlsRelative.setVisibility(View.VISIBLE);
-                    progressRelative.setVisibility(View.VISIBLE);
-                    handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressRelative.setVisibility(View.INVISIBLE);
-                        }
-                    }, 2000);
-                } else {
-                    progressRelative.setVisibility(View.VISIBLE);
-                    mediaControlsRelative.setVisibility(View.VISIBLE);
-                    mToolbar.setVisibility(View.VISIBLE);
-                    handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() { mediaControlsRelative.setVisibility(View.VISIBLE);
-                            progressRelative.setVisibility(View.INVISIBLE);
-                            mediaControlsRelative.setVisibility(View.INVISIBLE);
-                            mToolbar.setVisibility(View.INVISIBLE);
-                        }
-                    }, 2000);
-                }
-
-                return false;
-            }
-        });
-    }
-
-    private void onCompleteListener() {
-        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                mediaControlsRelative.setVisibility(View.VISIBLE);
-                progressRelative.setVisibility(View.VISIBLE);
-                mToolbar.setVisibility(View.VISIBLE);
-            }
-        });
-    }
-
-    private void playBtnListener() {
-        playBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isPlaying) {
-                    videoView.pause();
-                    //current = videoView.getCurrentPosition()/1000;
-                    isPlaying = false;
-                    isPaused=true;
-                    playBtn.setImageResource(R.drawable.ic_outline_play_circle_outline_24px);
-                    playBtn.setColorFilter(Color.WHITE);
-                    mediaControlsRelative.setVisibility(View.VISIBLE);
-                    progressRelative.setVisibility(View.INVISIBLE);
-
-                } else {
-                    isPaused=false;
-                    videoView.start();
-                    isPlaying = true;
-                    playBtn.setImageResource(R.drawable.ic_outline_pause_circle_outline);
-                    playBtn.setColorFilter(Color.WHITE);
-                    progressRelative.setVisibility(View.VISIBLE);
-
-                    handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mediaControlsRelative.setVisibility(View.INVISIBLE);
-                            progressRelative.setVisibility(View.INVISIBLE);
-                        }
-                    }, 2000);
-
-                }
-            }
-        });
-    }
-
-    private void setUpVideoView() {
-        videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/authentication-5ca13.appspot.com/o/Subject_videos%2FVID-20160108-WA0001.mp4?alt=media&token=5eb183ee-eaac-49c4-987d-76837b95e719");
-
-        videoView.setVideoURI(videoUri);
-        videoView.requestFocus();
-
-        mediaControlsRelative.setVisibility(View.INVISIBLE);
-        progressRelative.setVisibility(View.INVISIBLE);
-        mToolbar.setVisibility(View.INVISIBLE);
-
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mediaPlayer) {
-
-                duration = mediaPlayer.getDuration()/1000;
-                String durationString = String.format("%02d:%02d", duration/60, duration%60);
-                totalDuration.setText(durationString);
-
-            }
-        });
-    }
-
-    private void wireViews() {
+        progressBarCir = findViewById(R.id.progressBarCir);
         videoView = findViewById(R.id.videoView);
-        playBtn = findViewById(R.id.pause);
-        currentDuration = findViewById(R.id.currentDuration);
-        videoProgress = findViewById(R.id.videoProgress);
-        progressBarCir = findViewById(R.id.progressBarHor);
-        totalDuration = findViewById(R.id.totalDuration);
-        mediaControlsRelative = findViewById(R.id.mediaControlsRelative);
-        progressRelative = findViewById(R.id.progressRelative);
-
-        videoProgress.setMax(100);
-        playBtn.setImageResource(R.drawable.ic_outline_pause_circle_outline);
-        playBtn.setColorFilter(Color.WHITE);
-
-    }
-
-    private void setUpToolBar() {
         mToolbar = findViewById(R.id.video_toolbar);
         setSupportActionBar(mToolbar);
         ActionBar supportActionBar = getSupportActionBar();
@@ -336,79 +110,165 @@ public class PlayVideoActivity extends AppCompatActivity {
             supportActionBar.setDisplayShowHomeEnabled(true);
             supportActionBar.setTitle("");
         }
-    }
 
+        nestedScroll = findViewById(R.id.nestedScroll);
+        if(nestedScroll!=null)
+            nestedScroll.setNestedScrollingEnabled(true);
 
+        expListView = findViewById(R.id.ExpListView);
+        listAdapter = new ExpandableListAdapter(PlayVideoActivity.this, listDataHeader, listDataChild);
 
-    public class VideoProgress extends AsyncTask<Void, Object, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            while (true){
-                if(videoProgress.getProgress() ==100 ||isDestroyed||isMinimized)
-                    break;
-                if(!isPaused&&!isDestroyed&&isPlaying)
-                    if(current1>0)
-                        current= current1/1000;
-                    else
-                        current = videoView.getCurrentPosition() / 1000;
-                    int currentPercent = current*100/duration;
-                    String currentString = String.format("%02d:%02d", current / 60, current % 60);
-                    publishProgress(currentPercent, currentString);
+        if(expListView != null) {
+            // setting list adapter
+            expListView.setAdapter(listAdapter);
 
-            }
-            return null;
+            for (int i = 0; i < listAdapter.getGroupCount(); i++)
+                expListView.expandGroup(i);
         }
 
-        @Override
-        protected void onProgressUpdate(Object... values) {
-            super.onProgressUpdate(values);
 
-            try {
-                videoProgress.setProgress((Integer) values[0]);
-                currentDuration.setText((String)values[1]);
-            } catch (Exception e) {
-                //Error Handling here...
-                Toast.makeText(PlayVideoActivity.this, "Bazinga", Toast.LENGTH_SHORT).show();
-            }
-
-        }
-    }
-
-
-}
-
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-//            videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
-//                @Override
-//                public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
+//        mFirebaseUtil.mFirestore.collection("subjects").document("compilerDesign").collection("chap1")
+//                .document("introduction").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 //
-//                    if (i == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
+//                if(task.isSuccessful()) {
 //
-//                        progressBarCir.setVisibility(View.VISIBLE);
-//                        mediaControlsRelative.setVisibility(View.INVISIBLE);
-//                        progressRelative.setVisibility(View.INVISIBLE);
+//                    if(task.getResult().exists()) {
 //
-//                    } else if (i == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
+//                          url = task.getResult().getString("url");
+//                          videoView.setVideoURI(Uri.parse(url));
+//                          videoView.start();
 //
-//                        progressBarCir.setVisibility(View.INVISIBLE);
-//                        mediaControlsRelative.setVisibility(View.VISIBLE);
-//                        progressRelative.setVisibility(View.VISIBLE);
-//                        mToolbar.setVisibility(View.VISIBLE);
-//
-//                        handler = new Handler();
-//                        handler.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                mediaControlsRelative.setVisibility(View.INVISIBLE);
-//                                progressRelative.setVisibility(View.INVISIBLE);
-//                                mToolbar.setVisibility(View.INVISIBLE);
-//                            }
-//                        }, 2000);
+//                        new BackgroundAsyncTask().execute(url);
 //
 //                    }
 //
-//                    return false;
 //                }
-//            });
-//        }
+//
+//            }
+//        });
+
+        url = "https://firebasestorage.googleapis.com/v0/b/authentication-5ca13.appspot.com/o/Subject_videos%2FVID-20160108-WA0001.mp4?alt=media&token=5eb183ee-eaac-49c4-987d-76837b95e719";
+        new BackgroundAsyncTask().execute(url);
+
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("CURRENT", videoView.getCurrentPosition());
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        current = savedInstanceState.getInt("CURRENT");
+        videoView.seekTo(current);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_other_profile, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        current = videoView.getCurrentPosition();
+    }
+
+    public class BackgroundAsyncTask extends AsyncTask<String, Uri, Void> {
+        Integer track = 0;
+        ProgressDialog dialog;
+
+        protected void onPreExecute() {
+//            dialog = new ProgressDialog(PlayVideoActivity.this);
+//            dialog.setMessage("Loading, Please Wait...");
+//            dialog.setCancelable(true);
+//            dialog.show();
+            progressBarCir.setVisibility(View.VISIBLE);
+
+        }
+
+        protected void onProgressUpdate(final Uri... uri) {
+
+            try {
+
+                mediaControls = new MediaController(PlayVideoActivity.this);
+                mediaControls.setPrevNextListeners(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // next button clicked
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        finish();
+                    }
+                });
+
+                mediaControls.show(10000);
+                videoView.setMediaController(mediaControls);
+                videoView.setVideoURI(uri[0]);
+                videoView.requestFocus();
+
+                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+                    @Override
+                    public void onPrepared(MediaPlayer mediaPlayer) {
+                        if (current > 0) {
+                            videoView.seekTo(current);
+                        } else {
+                            videoView.seekTo(1);
+                        }
+
+                        videoView.start();
+                        //  dialog.dismiss();
+                        progressBarCir.setVisibility(View.GONE);
+
+                        mediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
+                            @Override
+                            public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+                                /*
+                                 * and set its position on screen
+                                 */
+                                mediaControls.setAnchorView(videoView);
+                            }
+                        });
+                    }
+                });
+
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (SecurityException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                Uri uri = Uri.parse(params[0]);
+
+                publishProgress(uri);
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            }
+
+            return null;
+        }
+
+    }
+
+}
+
