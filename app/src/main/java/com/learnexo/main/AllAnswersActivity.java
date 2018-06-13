@@ -76,11 +76,7 @@ public class AllAnswersActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mAdapter.insertDeleteBookMarks();
-    }
+
 
     private void overflowListener(User user) {
         quesOverFlow.setOnClickListener(new OverflowMenuListener(this, user, OverflowType.QUES_CHALLENGE,question));
@@ -191,6 +187,12 @@ public class AllAnswersActivity extends AppCompatActivity {
         return intent;
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
 
+        mAdapter.insertDeleteBookMarks();
+        mAdapter.insertDeleteUpVotes();
+    }
 
 }

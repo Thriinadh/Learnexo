@@ -1,5 +1,7 @@
 package com.learnexo.model.feed.likediv;
 
+import com.learnexo.model.core.BookMarkType;
+
 import java.util.Date;
 
 public class UpVote {
@@ -7,6 +9,14 @@ public class UpVote {
     private String upVoterId;
     private String publisherId;
     private Date upvoteTime;
+    private BookMarkType upVoteType;
+
+    public UpVote(String feedItemId, String publisherId, BookMarkType upVoteType) {
+        this.feedItemId = feedItemId;
+        this.publisherId = publisherId;
+        this.upVoteType = upVoteType;
+    }
+    public UpVote(){}
 
     public String getFeedItemId() {
         return feedItemId;
@@ -38,5 +48,28 @@ public class UpVote {
 
     public void setUpvoteTime(Date upvoteTime) {
         this.upvoteTime = upvoteTime;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == this) return true;
+        if (!(o instanceof Bookmark)) {
+            return false;
+        }
+
+        UpVote upVote = (UpVote) o;
+
+        return upVote.feedItemId.equals(feedItemId) &&
+                upVote.publisherId.equals(publisherId);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + feedItemId.hashCode();
+        result = 31 * result + publisherId.hashCode();
+        return result;
     }
 }

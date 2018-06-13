@@ -1,6 +1,5 @@
 package com.learnexo.main;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -41,6 +40,7 @@ import com.learnexo.model.feed.FeedItem;
 import com.learnexo.model.feed.answer.Answer;
 import com.learnexo.model.feed.likediv.Bookmark;
 import com.learnexo.model.feed.likediv.Comment;
+import com.learnexo.model.feed.likediv.UpVote;
 import com.learnexo.model.user.User;
 import com.learnexo.util.FirebaseUtil;
 
@@ -62,14 +62,35 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private Context mContext;
     private FirebaseUtil mFirebaseUtil = new FirebaseUtil();
+
     private Set<Bookmark> addBookMarks =new HashSet<>();
     private Set<Bookmark> removeBookMarks =new HashSet<>();
     private Set<String> prevBkMarkedAnsIds =new HashSet<>();
+
+    private Set<UpVote> addUpVotes =new HashSet<>();
+    private Set<UpVote> removeUpVotes =new HashSet<>();
+    private Set<String> prevUpVotedAnsIds =new HashSet<>();
+
     private String quesId;
     private String mUserId=FirebaseUtil.getCurrentUserId();
 
+    private RotateAnimation anim;
+
+    private Drawable baseline;
+    private Drawable outline;
+    private Drawable bookMarkBaseline;
+    private Drawable bookMarkOutline;
+
+
     public AllAnswersAdapter(List<Answer> mFeedItems) {
         this.mAnswers = mFeedItems;
+
+        anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF,
+                0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+
+        anim.setInterpolator(new LinearInterpolator());
+        anim.setRepeatCount(0);
+        anim.setDuration(300);
     }
 
     @NonNull
@@ -77,6 +98,12 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         View view = LayoutInflater.from(mContext).inflate(R.layout.all_ans_list_item, parent, false);
+
+        baseline = ContextCompat.getDrawable(mContext, R.drawable.post_likeblue_icon);
+        outline = ContextCompat.getDrawable(mContext, R.drawable.post_like_icn);
+        bookMarkBaseline = ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px);
+        bookMarkOutline = ContextCompat.getDrawable(mContext, R.drawable.ic_outline_bookmark_border_24px);
+
         return new AnswerHolder(view);
     }
 
@@ -108,6 +135,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             bindAnswer(answerHolder, itemContent, imagePosted, imageThumb, timeAgo);
             bindAnswererData(answerHolder, publisher);
+
             bindViewsUpvotes(answerHolder, views, upVotes, quesId, answerPublisherId, answerId, answer.isCrack());
 
             commentBtnListener(answerHolder,quesId,answerId, answerId);
@@ -117,7 +145,10 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             answererProfileListener(answerHolder, publisher, answerId);
 
             checkIfAlreadyBookMarked(answerHolder, answerId);
+            //handleIfAlreadyUpVoted(answerHolder, answerId);
+
             bookMarkBtnListener(answerHolder, answerId, answerPublisherId);
+            likeBtnListener(answerHolder,answerId,answerPublisherId,upVotes,answer.getType());
 
         }
     }
@@ -127,6 +158,10 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void insertDeleteBookMarks() {
             insertIncrementBookMarks();
             deleteDecrementBookMarks();
+    }
+    public void insertDeleteUpVotes() {
+        insertIncrementUpVotes();
+        deleteDecrementUpVotes();
     }
 
     private void insertIncrementBookMarks() {
@@ -218,6 +253,74 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     }
 
+    private void insertIncrementUpVotes() {
+
+        for(final UpVote upVote: addUpVotes){
+            mFirebaseUtil.mFirestore.collection("users").document(mUserId)
+                    .collection("up_votes").document(upVote.getFeedItemId()).set(upVote).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    mFirebaseUtil.mFirestore.collection("users").document(upVote.getPublisherId())
+                            .collection("answers").document(upVote.getFeedItemId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                            long noOfUpVotes = (long) documentSnapshot.get("upVotes");
+
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("upVotes", noOfUpVotes+1);
+
+                            mFirebaseUtil.mFirestore.collection("users").document(upVote.getPublisherId())
+                                    .collection("answers").document(upVote.getFeedItemId()).update(map);
+
+                            mFirebaseUtil.mFirestore.collection("questions").document(quesId)
+                                    .collection("answers").document(upVote.getFeedItemId()).update(map);
+
+                        }
+                    });
+                }
+            });
+        }
+
+
+    }
+
+    private void deleteDecrementUpVotes() {
+        for(final UpVote upVote: removeUpVotes){
+
+            mFirebaseUtil.mFirestore.collection("users").document(mUserId)
+                    .collection("up_votes").document(upVote.getFeedItemId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+
+                                mFirebaseUtil.mFirestore.collection("users").document(upVote.getPublisherId()).collection("answers").
+                                        document(upVote.getFeedItemId()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                        long noOfUpVotes = (long) documentSnapshot.get("upVotes");
+
+                                        Map<String, Object> map = new HashMap<>();
+                                        map.put("upVotes", noOfUpVotes-1);
+
+                                        mFirebaseUtil.mFirestore.collection("users").document(upVote.getPublisherId())
+                                                .collection("answers").document(upVote.getFeedItemId()).update(map);
+
+                                        mFirebaseUtil.mFirestore.collection("questions").document(quesId)
+                                                .collection("answers").document(upVote.getFeedItemId()).update(map);
+
+                                    }
+                                });
+
+                        }});
+
+        }
+
+
+
+
+    }
+
     private void checkIfAlreadyBookMarked(final AnswerHolder answerHolder, final String ansId) {
         mFirebaseUtil.mFirestore.collection("users").document(mUserId)
                 .collection("bookmarks").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -248,44 +351,74 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
     }
 
+    private void handleIfAlreadyUpVoted(final AnswerHolder answerHolder, final String ansId) {
+        prevUpVotedAnsIds.add(ansId);
+        answerHolder.likeBtn.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.post_likeblue_icon));
+
+    }
+
 
 
     private void bookMarkBtnListener(final AnswerHolder answerHolder, final String answerId, final String answerPublisherId) {
         answerHolder.bookmarkIview.setOnClickListener(new View.OnClickListener() {
 
             Bookmark bookmark;
-            RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            Drawable baseline = ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_bookmark_24px);
-            Drawable outline = ContextCompat.getDrawable(mContext, R.drawable.ic_outline_bookmark_border_24px);
 
             @Override
             public void onClick(View view) {
-                doAnimation();
 
                 bookmark = new Bookmark(answerId, answerPublisherId, BookMarkType.ANSWER);
                 if(!prevBkMarkedAnsIds.contains(answerId)) {
                     addBookMarks.add(bookmark);
                     prevBkMarkedAnsIds.add(answerId);
-                    answerHolder.bookmarkIview.setImageDrawable(baseline);
-                    if (baseline != null)
-                        baseline.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
+                    answerHolder.bookmarkIview.setImageDrawable(bookMarkBaseline);
+                    if (bookMarkBaseline != null)
+                        bookMarkBaseline.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
                 }else{
                     removeBookMarks.add(bookmark);
                     addBookMarks.remove(bookmark);
                     prevBkMarkedAnsIds.remove(answerId);
-                    answerHolder.bookmarkIview.setImageDrawable(outline);
-                    if (outline != null)
-                        outline.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
+                    answerHolder.bookmarkIview.setImageDrawable(bookMarkOutline);
+                    if (bookMarkOutline != null)
+                        bookMarkOutline.setColorFilter(new PorterDuffColorFilter(Color.parseColor("#1da1f2"), PorterDuff.Mode.SRC_IN));
                 }
 
                 answerHolder.bookmarkIview.startAnimation(anim);
             }
 
-            private void doAnimation() {
-                anim.setInterpolator(new LinearInterpolator());
-                anim.setRepeatCount(0);
-                anim.setDuration(300);
+        });
+    }
+
+    private void likeBtnListener(final AnswerHolder answerHolder, final String answerId, final String answerPublisherId, final long upVotes, final int type) {
+        answerHolder.likeBtn.setOnClickListener(new View.OnClickListener() {
+
+            UpVote upVote;
+
+            @Override
+            public void onClick(View view) {
+                if(type==FeedItem.CRACK)
+                    upVote = new UpVote(answerId, answerPublisherId, BookMarkType.CRACK);
+                else
+                    upVote = new UpVote(answerId, answerPublisherId, BookMarkType.ANSWER);
+
+                if(!prevUpVotedAnsIds.contains(answerId)) {
+                    addUpVotes.add(upVote);
+                    prevUpVotedAnsIds.add(answerId);
+                    answerHolder.likeBtn.setImageDrawable(baseline);
+                    answerHolder.likesCount.setText(upVotes+1+" Up Votes");
+
+                }else{
+                    removeUpVotes.add(upVote);
+                    addUpVotes.remove(upVote);
+                    prevUpVotedAnsIds.remove(answerId);
+                    answerHolder.likeBtn.setImageDrawable(outline);
+                    answerHolder.likesCount.setText(upVotes-1+" Up Votes");
+
+                }
+
+                answerHolder.bookmarkIview.startAnimation(anim);
             }
+
         });
     }
 
@@ -358,31 +491,42 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             //upVoteListner(answerHolder, upVotes, questionId, answerPublisherId, answerId, isCrack);
 
-            views = bindViews(answerHolder, views, upVotes);
+            //bindViews(answerHolder, views, upVotes);
+            bindUpVotes(answerHolder, upVotes);
 
-            new ViewChecker().execute(views,questionId,answerPublisherId,answerId,isCrack);
-            new UpVoteChecker().execute(answerHolder,upVotes,questionId,answerPublisherId,answerId,isCrack);
+            new ViewChecker().execute(answerHolder,views,questionId,answerPublisherId,answerId,isCrack);
+            new UpVoteChecker().execute(answerHolder,answerId);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void upVoteListner(AnswerHolder answerHolder, long upVotes, String questionId, String answerPublisherId, String answerId, boolean isCrack, Boolean isUpVoted) {
-        answerHolder.LikeBtn.setOnClickListener(
-                new UpVoteListener(answerHolder.LikeBtn, answerHolder.likesCount, answerHolder.flag, answerPublisherId, answerId, upVotes, (Activity) mContext, true, questionId, isCrack, isUpVoted)
-        );
+    private void bindUpVotes(AnswerHolder answerHolder, long upVotes) {
+            answerHolder.likesCount.setText(upVotes+" Up votes");
     }
 
+    private void bindViews(AnswerHolder answerHolder, long views, Boolean isViewed) {
+        if(isViewed)
+            answerHolder.viewsText.setText(views + " Views");
+        else
+            answerHolder.viewsText.setText(views+1+ " Views");
+    }
+
+//    private void upVoteListner(AnswerHolder answerHolder, long upVotes, String questionId, String answerPublisherId, String answerId, boolean isCrack, Boolean isUpVoted) {
+//        answerHolder.likeBtn.setOnClickListener(
+//                new UpVoteListener(answerHolder.likeBtn, answerHolder.likesCount, answerHolder.flag, answerPublisherId, answerId, upVotes, (Activity) mContext, true, questionId, isCrack, isUpVoted)
+//        );
+//    }
+
     private void incrementViews(long views, String questionId, String answerPublisherId, String answerId, boolean isCrack) {
-        views = views+1;
-        Map<String, Object> map= new HashMap();
-        map.put("views",views);
+        Map<String, Object> map= new HashMap<>();
+        map.put("views",views+1);
 
         mFirebaseUtil.mFirestore.collection("users").document(answerPublisherId).collection("answers").document(answerId).update(map);
         mFirebaseUtil.mFirestore.collection("questions").document(questionId).collection("answers").document(answerId).update(map);
 
-        Map<String, Object> map1= new HashMap();
+        Map<String, Object> map1= new HashMap<>();
         map1.put("publisherId",answerPublisherId);
         if(isCrack)
             map1.put("feedItemType", FeedItem.CRACK);
@@ -392,16 +536,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("views").document(answerId).set(map1);
     }
 
-    private long bindViews(AnswerHolder answerHolder, long views, long upVotes) {
-        answerHolder.likesCount.setText(upVotes+" Up votes");
-        if(views==0){
-            views=1;
-            answerHolder.viewsText.setText("1 View");
-        }else{
-            answerHolder.viewsText.setText(views+ " Views");
-        }
-        return views;
-    }
+
 
 
     private void overflowListener(AnswerHolder answerHolder, User publisher, Answer answer) {
@@ -470,7 +605,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         private ImageView postedImgView;
         private TextView viewsText;
         private TextView likesCount;
-        private ImageView LikeBtn;
+        private ImageView likeBtn;
         private CircleImageView commentsImage;
         private TextView commentBtn;
         private TextView seeAllComments;
@@ -493,7 +628,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             answerContent = mView.findViewById(R.id.full_text);
             viewsText = mView.findViewById(R.id.viewsText);
             likesCount = mView.findViewById(R.id.likesCount);
-            LikeBtn = mView.findViewById(R.id.full_post_like);
+            likeBtn = mView.findViewById(R.id.full_post_like);
             bookmarkIview = mView.findViewById(R.id.full_post_bookmark);
             commentsImage = mView.findViewById(R.id.commentsImage);
             commentBtn = mView.findViewById(R.id.commentBtn);
@@ -505,9 +640,6 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             RequestOptions placeholderOption = new RequestOptions();
             placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
             Glide.with(mContext.getApplicationContext()).load(FeedFragment.sDpUrl).apply(placeholderOption).into(commentsImage);
-
-
-
         }
 
 
@@ -535,12 +667,12 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
             if (image!=null&&null!=mContext)
                 Glide.with(mContext.getApplicationContext()).load(image).apply(placeholderOption).into(userImage);
-
         }
 
     }
 
     public class ViewChecker extends AsyncTask<Object,Void,Boolean> {
+        AnswerHolder answerHolder;
         long views;
         String questionId;
         String answerPublisherId;
@@ -549,14 +681,15 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         @Override
         protected Boolean doInBackground(Object... objects) {
-            views=(long) objects[0];
-            questionId=(String)objects[1];
-            answerPublisherId=(String)objects[2];
-            answerId=(String)objects[3];
-            isCrack=(boolean)objects[4];
+            answerHolder=(AnswerHolder) objects[0];
+            views=(long) objects[1];
+            questionId=(String)objects[2];
+            answerPublisherId=(String)objects[3];
+            answerId=(String)objects[4];
+            isCrack=(boolean)objects[5];
 
-            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("views").
-                    document(answerId).get();
+            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.
+                    collection("users").document(mUserId).collection("views").document(answerId).get();
             DocumentSnapshot documentSnapshot=null;
             try {
 
@@ -577,6 +710,7 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         @Override
         protected void onPostExecute(Boolean isViewed) {
             super.onPostExecute(isViewed);
+            bindViews(answerHolder,views,isViewed);
             if(!isViewed)
                 incrementViews(views, questionId, answerPublisherId, answerId, isCrack);
         }
@@ -584,28 +718,18 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public class UpVoteChecker extends AsyncTask<Object,Void,Boolean> {
         AnswerHolder answerHolder;
-        long upVotes;
-        String questionId;
-        String answerPublisherId;
         String answerId;
-        boolean isCrack;
 
         @Override
         protected Boolean doInBackground(Object... objects) {
             answerHolder=(AnswerHolder) objects[0];
-            upVotes=(long) objects[1];
-            questionId=(String)objects[2];
-            answerPublisherId=(String)objects[3];
-            answerId=(String)objects[4];
-            isCrack=(boolean)objects[5];
+            answerId=(String)objects[1];
 
-            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.collection("users").document(mUserId).collection("up_votes").
-                    document(answerId).get();
+            Task<DocumentSnapshot> documentSnapshotTask = mFirebaseUtil.mFirestore.
+                            collection("users").document(mUserId).collection("up_votes").document(answerId).get();
             DocumentSnapshot documentSnapshot=null;
             try {
-
                 documentSnapshot = Tasks.await(documentSnapshotTask);
-
 
             } catch (ExecutionException e) {
                 e.printStackTrace();
@@ -621,8 +745,8 @@ public class AllAnswersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         @Override
         protected void onPostExecute(Boolean isUpVoted) {
             super.onPostExecute(isUpVoted);
-
-            upVoteListner(answerHolder, upVotes, questionId, answerPublisherId, answerId, isCrack,isUpVoted);
+            if(isUpVoted)
+                handleIfAlreadyUpVoted(answerHolder,answerId);
 
         }
     }
