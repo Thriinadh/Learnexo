@@ -1,5 +1,6 @@
 package com.learnexo.main;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -65,6 +66,7 @@ public class PlayVideoActivity extends AppCompatActivity {
     private boolean isDestroyed;
     private boolean isPaused;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,52 +103,52 @@ public class PlayVideoActivity extends AppCompatActivity {
         progressRelative.setVisibility(View.INVISIBLE);
         mToolbar.setVisibility(View.INVISIBLE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
-                @Override
-                public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
-
-                    if (i == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
-
-                        progressBarCir.setVisibility(View.VISIBLE);
-                        mediaControlsRelative.setVisibility(View.INVISIBLE);
-                        progressRelative.setVisibility(View.INVISIBLE);
-
-                    } else if (i == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
-
-                        progressBarCir.setVisibility(View.INVISIBLE);
-                        mediaControlsRelative.setVisibility(View.VISIBLE);
-                        progressRelative.setVisibility(View.VISIBLE);
-                        mToolbar.setVisibility(View.VISIBLE);
-
-                        handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mediaControlsRelative.setVisibility(View.INVISIBLE);
-                                progressRelative.setVisibility(View.INVISIBLE);
-                                mToolbar.setVisibility(View.INVISIBLE);
-                            }
-                        }, 2000);
-
-                    }
-
-                    return false;
-                }
-            });
-        }
-
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
+
                 duration = mediaPlayer.getDuration()/1000;
                 String durationString = String.format("%02d:%02d", duration/60, duration%60);
                 totalDuration.setText(durationString);
+
             }
         });
 
-        videoView.start();
-        isPlaying = true; //set it only after video starts
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+//            videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+//                @Override
+//                public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
+//
+//                    if (i == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
+//
+//                        progressBarCir.setVisibility(View.VISIBLE);
+//                        mediaControlsRelative.setVisibility(View.INVISIBLE);
+//                        progressRelative.setVisibility(View.INVISIBLE);
+//
+//                    } else if (i == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
+//
+//                        progressBarCir.setVisibility(View.INVISIBLE);
+//                        mediaControlsRelative.setVisibility(View.VISIBLE);
+//                        progressRelative.setVisibility(View.VISIBLE);
+//                        mToolbar.setVisibility(View.VISIBLE);
+//
+//                        handler = new Handler();
+//                        handler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                mediaControlsRelative.setVisibility(View.INVISIBLE);
+//                                progressRelative.setVisibility(View.INVISIBLE);
+//                                mToolbar.setVisibility(View.INVISIBLE);
+//                            }
+//                        }, 2000);
+//
+//                    }
+//
+//                    return false;
+//                }
+//            });
+//        }
 
         new VideoProgress().execute();
 
@@ -155,6 +157,7 @@ public class PlayVideoActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (isPlaying) {
                     videoView.pause();
+                    current = videoView.getCurrentPosition()/1000;
                     isPlaying = false;
                     isPaused=true;
                     playBtn.setImageResource(R.drawable.ic_outline_play_circle_outline_24px);
@@ -274,9 +277,41 @@ public class PlayVideoActivity extends AppCompatActivity {
 
     }
 
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        outState.putInt("CURRENT", videoView.getCurrentPosition());
+//    }
+//
+//    @Override
+//    public void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        //we use onRestoreInstanceState in order to play the video playback from the stored position
+//        current = savedInstanceState.getInt("CURRENT");
+//        videoView.seekTo(current);
+//    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (current > 0) {
+            videoView.seekTo(current);
+        } else {
+            // Skipping to 1 shows the first frame of the video.
+            videoView.seekTo(1);
+        }
+        videoView.start();
+        isPlaying = true; //set it only after video starts
+        progressBarCir.setVisibility(View.INVISIBLE);
+
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
+        current = videoView.getCurrentPosition()/1000;
         isPlaying = false;
     }
 

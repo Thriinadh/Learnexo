@@ -27,7 +27,6 @@
             android:id="@+id/videoView"
             android:layout_width="wrap_content"
             android:layout_height="216dp"
-            app:layout_collapseMode="parallax"
             android:fitsSystemWindows="true"
             android:layout_gravity="center"/>
 
