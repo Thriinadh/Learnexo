@@ -66,6 +66,7 @@ public class PlayVideoActivity extends AppCompatActivity {
     private NestedScrollView nestedScroll;
     private boolean isDestroyed;
     private boolean isPaused;
+    private boolean isMinimized;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -91,7 +92,7 @@ public class PlayVideoActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
+        videoView.requestFocus();
         if (current1 > 0) {
             videoView.seekTo(current1);
         } else {
@@ -101,14 +102,17 @@ public class PlayVideoActivity extends AppCompatActivity {
         videoView.start();
         isPlaying = true; //set it only after video starts
         progressBarCir.setVisibility(View.INVISIBLE);
+        isMinimized=false;
+        new VideoProgress().execute();
 
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        current1 = videoView.getCurrentPosition()/1000;
+        current1 = videoView.getCurrentPosition();
         isPlaying = false;
+        isMinimized=true;
     }
 
     @Override
@@ -255,7 +259,7 @@ public class PlayVideoActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (isPlaying) {
                     videoView.pause();
-                    current = videoView.getCurrentPosition()/1000;
+                    //current = videoView.getCurrentPosition()/1000;
                     isPlaying = false;
                     isPaused=true;
                     playBtn.setImageResource(R.drawable.ic_outline_play_circle_outline_24px);
@@ -340,16 +344,17 @@ public class PlayVideoActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             while (true){
+                if(videoProgress.getProgress() ==100 ||isDestroyed||isMinimized)
+                    break;
                 if(!isPaused&&!isDestroyed&&isPlaying)
                     if(current1>0)
-                        current= current1;
+                        current= current1/1000;
                     else
                         current = videoView.getCurrentPosition() / 1000;
                     int currentPercent = current*100/duration;
                     String currentString = String.format("%02d:%02d", current / 60, current % 60);
                     publishProgress(currentPercent, currentString);
-                    if(videoProgress.getProgress() ==100 ||isDestroyed)
-                        break;
+
             }
             return null;
         }
