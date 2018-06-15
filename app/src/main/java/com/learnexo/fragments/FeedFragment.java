@@ -1,5 +1,8 @@
 package com.learnexo.fragments;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -49,6 +52,8 @@ public class FeedFragment extends Fragment {
     public static String sDpUrl;
     public static String sName;
 
+    ConnectivityManager cm;
+
 
     FirebaseUtil mFireBaseUtil = new FirebaseUtil();
 
@@ -72,7 +77,11 @@ public class FeedFragment extends Fragment {
         wireViews(view);
 
         askQuestionListener();
-        generateFeedItemList();
+        if (internet_connection()) {
+            generateFeedItemList();
+        } else {
+            Toast.makeText(getActivity(), "Cannot retrieve data coz client is offline", Toast.LENGTH_SHORT).show();
+        }
 
         return view;
     }
@@ -105,6 +114,20 @@ public class FeedFragment extends Fragment {
     //    show related topics to follow
     //    show related people to follow
     //    news
+
+    boolean internet_connection(){
+        //Check if connected to internet, output accordingly
+        if (getActivity() != null)
+        cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = null;
+        if (cm != null) {
+            activeNetwork = cm.getActiveNetworkInfo();
+        }
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
+    }
 
     private void generateFeedItemList() {
 
@@ -159,6 +182,7 @@ public class FeedFragment extends Fragment {
                                                 .collection("posts").document(interestFeed.getFeedItemId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
                                                 DocumentSnapshot documentSnapshot = task.getResult();
                                                 Post post=documentSnapshot.toObject(Post.class);
                                                 if(post!=null) {

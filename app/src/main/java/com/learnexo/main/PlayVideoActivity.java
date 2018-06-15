@@ -1,6 +1,7 @@
 package com.learnexo.main;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -13,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +24,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
@@ -44,7 +47,7 @@ import java.util.Map;
 public class PlayVideoActivity extends AppCompatActivity {
 
     private VideoView videoView;
-    private MediaController mediaControls;
+    private MyMediaController mediaControls;
     private String url;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     private Toolbar mToolbar;
@@ -150,6 +153,7 @@ public class PlayVideoActivity extends AppCompatActivity {
 //        });
 
         url = "https://firebasestorage.googleapis.com/v0/b/authentication-5ca13.appspot.com/o/Subject_videos%2FVID-20160108-WA0001.mp4?alt=media&token=5eb183ee-eaac-49c4-987d-76837b95e719";
+
         new BackgroundAsyncTask().execute(url);
 
     }
@@ -198,7 +202,7 @@ public class PlayVideoActivity extends AppCompatActivity {
 
             try {
 
-                mediaControls = new MediaController(PlayVideoActivity.this);
+                mediaControls = new MyMediaController(PlayVideoActivity.this, (FrameLayout) findViewById(R.id.controlsAnchor));
                 mediaControls.setPrevNextListeners(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -209,6 +213,20 @@ public class PlayVideoActivity extends AppCompatActivity {
                     public void onClick(View v) {
 
                         finish();
+                    }
+                });
+
+                mediaControls.setPrevNextListeners(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // next button clicked
+                        Toast.makeText(PlayVideoActivity.this, "NextButoon", Toast.LENGTH_SHORT).show();
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // previous button clicked
+                        Toast.makeText(PlayVideoActivity.this, "PrevButoon", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -237,11 +255,13 @@ public class PlayVideoActivity extends AppCompatActivity {
                                 /*
                                  * and set its position on screen
                                  */
-                                mediaControls.setAnchorView(videoView);
+                                FrameLayout controllerAnchor = findViewById(R.id.controlsAnchor);
+                                mediaControls.setAnchorView(controllerAnchor);
                             }
                         });
                     }
                 });
+
 
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
@@ -268,6 +288,29 @@ public class PlayVideoActivity extends AppCompatActivity {
             return null;
         }
 
+    }
+
+    public class MyMediaController extends MediaController
+    {
+        private FrameLayout anchorView;
+
+        public MyMediaController(Context context, FrameLayout anchorView)
+        {
+            super(context);
+            this.anchorView = anchorView;
+        }
+
+        @Override
+        protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld)
+        {
+            super.onSizeChanged(xNew, yNew, xOld, yOld);
+
+            CollapsingToolbarLayout.LayoutParams lp = (CollapsingToolbarLayout.LayoutParams) anchorView.getLayoutParams();
+            lp.setMargins(0, 0, 0, yNew);
+
+            anchorView.setLayoutParams(lp);
+            anchorView.requestLayout();
+        }
     }
 
 }

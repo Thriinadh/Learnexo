@@ -30,6 +30,12 @@
             android:fitsSystemWindows="true"
             android:layout_gravity="center"/>
 
+        <FrameLayout
+            android:id="@+id/controlsAnchor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"/>
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/video_toolbar"
             android:layout_width="match_parent"
