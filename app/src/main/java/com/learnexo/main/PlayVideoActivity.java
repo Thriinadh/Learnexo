@@ -1,7 +1,6 @@
 package com.learnexo.main;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -14,17 +13,16 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
@@ -47,7 +45,7 @@ import java.util.Map;
 public class PlayVideoActivity extends AppCompatActivity {
 
     private VideoView videoView;
-    private MyMediaController mediaControls;
+    private MediaController mediaControls;
     private String url;
     private FirebaseUtil mFirebaseUtil=new FirebaseUtil();
     private Toolbar mToolbar;
@@ -156,6 +154,26 @@ public class PlayVideoActivity extends AppCompatActivity {
 
         new BackgroundAsyncTask().execute(url);
 
+        nestedScroll.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                mediaControls.setVisibility(View.INVISIBLE);
+
+                return false;
+            }
+        });
+
+        videoView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                mediaControls.setVisibility(View.VISIBLE);
+
+                return false;
+            }
+        });
+
     }
 
 
@@ -202,7 +220,7 @@ public class PlayVideoActivity extends AppCompatActivity {
 
             try {
 
-                mediaControls = new MyMediaController(PlayVideoActivity.this, (FrameLayout) findViewById(R.id.controlsAnchor));
+                mediaControls = new MediaController(PlayVideoActivity.this);
                 mediaControls.setPrevNextListeners(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -255,8 +273,7 @@ public class PlayVideoActivity extends AppCompatActivity {
                                 /*
                                  * and set its position on screen
                                  */
-                                FrameLayout controllerAnchor = findViewById(R.id.controlsAnchor);
-                                mediaControls.setAnchorView(controllerAnchor);
+                                mediaControls.setAnchorView(videoView);
                             }
                         });
                     }
@@ -288,29 +305,6 @@ public class PlayVideoActivity extends AppCompatActivity {
             return null;
         }
 
-    }
-
-    public class MyMediaController extends MediaController
-    {
-        private FrameLayout anchorView;
-
-        public MyMediaController(Context context, FrameLayout anchorView)
-        {
-            super(context);
-            this.anchorView = anchorView;
-        }
-
-        @Override
-        protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld)
-        {
-            super.onSizeChanged(xNew, yNew, xOld, yOld);
-
-            CollapsingToolbarLayout.LayoutParams lp = (CollapsingToolbarLayout.LayoutParams) anchorView.getLayoutParams();
-            lp.setMargins(0, 0, 0, yNew);
-
-            anchorView.setLayoutParams(lp);
-            anchorView.requestLayout();
-        }
     }
 
 }
