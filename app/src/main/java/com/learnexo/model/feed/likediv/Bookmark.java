@@ -75,7 +75,6 @@ public class Bookmark {
         Bookmark bookmark = (Bookmark) o;
 
         return bookmark.bookMarkItemId.equals(bookMarkItemId) &&
-                bookmark.bookMarkerId.equals(bookMarkerId) &&
                 bookmark.bookMarkType.name().equals(bookMarkType.name()) &&
                 bookmark.publisherId.equals(publisherId);
     }
@@ -84,7 +83,6 @@ public class Bookmark {
     public int hashCode() {
         int result = 17;
         result = 31 * result + bookMarkItemId.hashCode();
-        result = 31 * result + bookMarkerId.hashCode();
         result = 31 * result + bookMarkType.name().hashCode();
         result = 31 * result + publisherId.hashCode();
         return result;
