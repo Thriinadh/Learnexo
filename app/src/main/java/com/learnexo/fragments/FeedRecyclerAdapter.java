@@ -550,7 +550,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         public void setTime(String timeAgo) {
-            this.timeAgo.setText(timeAgo);
+            this.timeAgo.setText("posted "+timeAgo);
         }
 
         public void setUserData(String name, String image, String tag) {
@@ -623,7 +623,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         public void setTime(String timeAgo) {
-            this.timeAgo.setText(timeAgo);
+            this.timeAgo.setText("answered "+timeAgo);
         }
 
         public void setUserData(String name, String image) {
@@ -698,7 +698,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         public void setTime(String timeAgo) {
-            this.timeAgo.setText(timeAgo);
+            this.timeAgo.setText("cracked "+timeAgo);
         }
 
         public void setUserData(String name, String image) {
@@ -756,7 +756,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
         public void setTime(String timeAgo) {
-            this.timeAgo.setText(timeAgo);
+            this.timeAgo.setText("asked "+timeAgo);
         }
 
 
@@ -809,7 +809,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
         public void setTime(String timeAgo) {
-            this.timeAgo.setText(timeAgo);
+            this.timeAgo.setText("challenged "+timeAgo);
         }
 
 
