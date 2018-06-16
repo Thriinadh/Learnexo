@@ -3,6 +3,7 @@ package com.learnexo.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
@@ -607,8 +608,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 @Override
                 public void run() {
                     int lineCount = answerContent.getLineCount();
-                    if(lineCount>=3)
+                    if(lineCount>=3) {
                         seeMore.setVisibility(View.VISIBLE);
+                        seeMore.setBackgroundColor(Color.parseColor("#f2f2f2"));
+                    }
+
                 }
             });
 
@@ -683,8 +687,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 @Override
                 public void run() {
                     int lineCount = crackContent.getLineCount();
-                    if(lineCount>=3)
+                    if(lineCount>=3) {
                         seeMore.setVisibility(View.VISIBLE);
+                        seeMore.setBackgroundColor(Color.parseColor("#f5f5f5"));
+                    }
+
                 }
             });
         }
