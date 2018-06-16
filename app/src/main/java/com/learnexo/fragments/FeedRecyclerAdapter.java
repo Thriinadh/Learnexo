@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,6 +118,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             final String itemContent = feedItem.getContent();
             final String imagePosted = feedItem.getImgUrl();
             final String imageThumb = feedItem.getImgThmb();
+            final String tag = feedItem.getTags().get(0);
+
             final long comments = feedItem.getComments();
             final String timeAgo = convertDateToAgo(feedItem.getPublishTime());
 
@@ -131,7 +134,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     PostHolder postHolder = (PostHolder) holder;
                     postHolder.wireViews();
                     bindPost(postHolder, itemContent, imagePosted, imageThumb, timeAgo);
-                    bindPostUserData(postHolder, publisher);
+                    bindPostUserData(postHolder, publisher, tag);
                     postContentListener(postHolder, itemContent, imagePosted, imageThumb, timeAgo, publisher, feedItemId, comments, views, upVotes);
                     postProfileListener(postHolder, publisher, feedItemId);
                     postOverflowListener(postHolder, publisher, feedItem);
@@ -368,7 +371,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
 
-    private void bindPostUserData(@NonNull final PostHolder holder, final User user) {
+    private void bindPostUserData(@NonNull final PostHolder holder, final User user, final String tag) {
         mFireBaseUtil.mFirestore.collection("users").document(user.getUserId()).
                 collection("reg_details").document("doc").get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -381,7 +384,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     name=name.concat(" "+snapshot.getString("lastName"));
                         String image = snapshot.getString("dpUrl");
 
-                        holder.setUserData(name, image);
+                        holder.setUserData(name, image, tag);
 
                         user.setDpUrl(image);
                         user.setFirstName(name);
@@ -550,9 +553,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             this.timeAgo.setText(timeAgo);
         }
 
-        public void setUserData(String name, String image) {
+        public void setUserData(String name, String image, String tag) {
+            name=name.concat(" #"+tag);
             userName.setText(name);
             userName.setTypeface(null, Typeface.BOLD);
+            userName.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
             RequestOptions placeholderOption = new RequestOptions();
             placeholderOption.diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.empty_profilee);
             if (image!=null&&null!=content)
