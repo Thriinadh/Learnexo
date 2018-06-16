@@ -150,16 +150,15 @@ public class PlayVideoActivity extends AppCompatActivity {
 //            }
 //        });
 
-        url = "https://firebasestorage.googleapis.com/v0/b/authentication-5ca13.appspot.com/o/Subject_videos%2FVID-20160108-WA0001.mp4?alt=media&token=5eb183ee-eaac-49c4-987d-76837b95e719";
+        url = "https://firebasestorage.googleapis.com/v0/b/authentication-5ca13.appspot.com/o/Subject_videos%2FSampleVideo_720x480_1mb.mp4?alt=media&token=973719f7-f87a-4d48-b23d-8a3aa7e02bd4";
 
         new BackgroundAsyncTask().execute(url);
 
+        if (nestedScroll != null)
         nestedScroll.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
                 mediaControls.setVisibility(View.INVISIBLE);
-
                 return false;
             }
         });
@@ -167,9 +166,7 @@ public class PlayVideoActivity extends AppCompatActivity {
         videoView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
                 mediaControls.setVisibility(View.VISIBLE);
-
                 return false;
             }
         });

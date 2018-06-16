@@ -479,7 +479,7 @@ public class PublishActivity extends AppCompatActivity {
 
     private void setupDropDownSpinner() {
 
-        String subjects[] = {"Department0 Java 0","Relational Database", "Java","Mongo DB","Scala","Python","Ruby", "C sharp","Android", "others"};
+        String subjects[] = {"Data Structures","Computer Programming", "Java","Mongo DB","Scala","Python","Ruby", "C sharp","Android", "others"};
 
         subjectsList = new ArrayList<>(Arrays.asList(subjects));
 
