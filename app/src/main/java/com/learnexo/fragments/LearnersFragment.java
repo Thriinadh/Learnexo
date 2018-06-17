@@ -1,6 +1,7 @@
 package com.learnexo.fragments;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.learnexo.main.GroupsActivity;
 import com.learnexo.main.R;
 import com.learnexo.model.connect.ConnectOptions;
 import com.learnexo.util.DummyData;
@@ -76,6 +78,13 @@ public class LearnersFragment extends Fragment {
                 switch (object.getmOptionType()) {
                     case OPTION_TYPE:
                         ((LearnersViewHolder) holder).mTitle.setText(object.getmOption());
+                        ((LearnersViewHolder) holder).mTitle.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(getActivity(), GroupsActivity.class);
+                                startActivity(intent);
+                            }
+                        });
 
                         String uri="@drawable/connect_icon";
                         if(null != object.getmOptionIcon())
